@@ -803,11 +803,11 @@ app.get('/', (c) => {
       const container = document.getElementById('sieveSelector');
       if (!container) return;
       const models = getActiveSieveModels();
-      let html = '<button onclick="selectSieve(\'all\')" class="sieve-chip' + (currentSieve === 'all' ? ' active' : '') + '" data-sieve="all"><i class="fas fa-globe text-gray-400"></i>全部机会</button>';
+      let html = '<button onclick="selectSieve(&apos;all&apos;)" class="sieve-chip' + (currentSieve === 'all' ? ' active' : '') + '" data-sieve="all"><i class="fas fa-globe text-gray-400"></i>全部机会</button>';
       mySieves.forEach(key => {
         const s = SIEVE_LIBRARY[key];
         if (!s) return;
-        html += '<button onclick="selectSieve(\'' + key + '\')" class="sieve-chip' + (currentSieve === key ? ' active' : '') + '" data-sieve="' + key + '"><i class="fas ' + s.icon + '" style="color:' + s.color + ';"></i>' + s.name + '</button>';
+        html += '<button onclick="selectSieve(&apos;' + key + '&apos;)" class="sieve-chip' + (currentSieve === key ? ' active' : '') + '" data-sieve="' + key + '"><i class="fas ' + s.icon + '" style="color:' + s.color + ';"></i>' + s.name + '</button>';
       });
       container.innerHTML = html;
     }
@@ -874,7 +874,7 @@ app.get('/', (c) => {
           '</div>' +
           (isAdded
             ? '<span class="text-xs text-gray-400 flex-shrink-0 px-2 py-1"><i class="fas fa-check"></i> 已添加</span>'
-            : '<button onclick="addSieve(\'' + key + '\')" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-cyan-600 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors"><i class="fas fa-plus mr-1"></i>添加</button>') +
+            : '<button onclick="addSieve(&apos;' + key + '&apos;)" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-cyan-600 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors"><i class="fas fa-plus mr-1"></i>添加</button>') +
         '</div>';
       }).join('');
     }
@@ -893,7 +893,7 @@ app.get('/', (c) => {
             '<p class="text-sm font-semibold text-gray-800 truncate">' + s.name + '</p>' +
             '<p class="text-xs text-gray-400 truncate">' + (s.category || '') + '</p>' +
           '</div>' +
-          '<button onclick="removeSieve(\'' + key + '\')" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors opacity-0 group-hover:opacity-100"><i class="fas fa-trash-alt mr-1"></i>移除</button>' +
+          '<button onclick="removeSieve(&apos;' + key + '&apos;)" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors opacity-0 group-hover:opacity-100"><i class="fas fa-trash-alt mr-1"></i>移除</button>' +
         '</div>';
       }).join('');
     }
