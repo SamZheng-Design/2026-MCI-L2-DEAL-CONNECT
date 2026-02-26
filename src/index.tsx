@@ -19,12 +19,12 @@
  *   /news     → NewsPage    (新闻动态)
  *   /contact  → ContactPage (联系我们)
  *
- * 产品占位页路由(动态生成):
+ * 产品占位页路由(动态生成, opportunity已升级为独立页面):
  *   /identity    → 身份通
  *   /application → 发起通 (原名"申请通"，V20改名)
  *   /assess      → 评估通
  *   /risk        → 风控通
- *   /opportunity → 参与通 (原名"机会通"，V20改名)
+ *   /opportunity → 参与通 (独立完整页面DealConnectPage, V20升级)
  *   /terms       → 条款通
  *   /contract    → 合约通 (注意：有externalUrl时会跳转外部应用)
  *   /settlement  → 结算通
@@ -46,6 +46,7 @@ import { AboutPage } from './pages/AboutPage'
 import { TeamPage } from './pages/TeamPage'
 import { NewsPage } from './pages/NewsPage'
 import { ContactPage } from './pages/ContactPage'
+import { DealConnectPage } from './pages/DealConnectPage'
 
 const app = new Hono()
 
@@ -88,13 +89,22 @@ app.get('/contact', (c) => {
   return c.render(<ContactPage lang={lang} />, { title: tt(t.titles.contact, lang), lang })
 })
 
+// === 参与通独立路由 (从PlaceholderPage升级为完整DealConnectPage) ===
+app.get('/opportunity', (c) => {
+  const lang = getLangFromQuery(c.req.url)
+  return c.render(<DealConnectPage lang={lang} />, {
+    title: lang === 'en' ? 'Deal Connect - Micro Connect' : '参与通 - Micro Connect 滴灌通',
+    lang,
+  })
+})
+
 // === 产品占位页路由 ===
-// 动态生成9个产品的路由，每个产品渲染PlaceholderPage
+// 动态生成8个产品的路由(opportunity已升级为独立页面)，每个产品渲染PlaceholderPage
 // 路由ID保持不变(即使中文名已改名)以确保URL兼容性
 // 注意：合约通(contract)有externalUrl，PlaceholderPage会提示跳转
 const productIds = [
   'identity', 'application', 'assess',
-  'risk', 'opportunity', 'terms', 'contract',
+  'risk', 'terms', 'contract',
   'settlement', 'performance'
 ]
 
