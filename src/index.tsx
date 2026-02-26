@@ -1,10 +1,10 @@
 /**
  * ===================================================================
- * 参与通 Engage Connect — Full-Stack SPA
+ * 参与通 Deal Connect — Full-Stack SPA
  * ===================================================================
  * Self-contained product: Loading → Login/Register → Dashboard → Detail
  * Visual mother template: 合约通 Contract Connect (V33)
- * Brand: ENGAGE CONNECT / 参与通
+ * Brand: DEAL CONNECT / 参与通
  * Powered by Micro Connect Group
  *
  * Business domain: Deal participation & opportunity engagement
@@ -36,7 +36,7 @@ app.post('/api/auth/register', async (c) => {
   }
   const user = { id: 'U_' + Date.now(), username, email, password, displayName: displayName || username, phone, role: role || 'both', createdAt: new Date().toISOString() }
   users.set(username, user)
-  return c.json({ success: true, user: { ...user, password: undefined }, message: '注册成功，欢迎加入参与通！' })
+  return c.json({ success: true, user: { ...user, password: undefined }, message: '注册成功，欢迎加入Deal Connect！' })
 })
 
 app.post('/api/auth/login', async (c) => {
@@ -63,12 +63,12 @@ app.get('/', (c) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>参与通 Engage Connect</title>
-  <meta name="description" content="参与通 Engage Connect — 投资参与机会的智能匹配与管理平台。Powered by Micro Connect Group.">
+  <title>参与通 Deal Connect</title>
+  <meta name="description" content="参与通 Deal Connect — 投资参与机会的智能匹配与管理平台。Powered by Micro Connect Group.">
   <meta name="theme-color" content="#0a2e2a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta property="og:title" content="参与通 Engage Connect">
+  <meta property="og:title" content="参与通 Deal Connect">
   <meta property="og:description" content="投资参与机会的智能匹配与管理平台">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Micro Connect">
@@ -107,7 +107,7 @@ app.get('/', (c) => {
       <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #2EC4B6 0%, #3DD8CA 100%); position:absolute; top:0; left:4px; box-shadow: 0 4px 20px rgba(46,196,182,0.4); animation: pulse 2s ease-in-out infinite;"></div>
       <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #28A696 0%, #2EC4B6 100%); position:absolute; bottom:0; left:4px; box-shadow: 0 4px 20px rgba(40,166,150,0.35); opacity:0.85; animation: pulse 2s ease-in-out infinite 0.3s;"></div>
     </div>
-    <div class="loading-text" style="font-family:'Montserrat',sans-serif; font-weight:900; letter-spacing:0.05em;">ENGAGE CONNECT</div>
+    <div class="loading-text" style="font-family:'Montserrat',sans-serif; font-weight:900; letter-spacing:0.05em;">DEAL CONNECT</div>
     <div class="loading-sub" style="font-size:14px; letter-spacing:0.15em; margin-top:4px;">参与通</div>
     <div class="loading-sub" id="loadingStatus" style="margin-top:12px;">正在初始化...</div>
     <div style="width: 200px; height: 3px; background: rgba(255,255,255,0.15); border-radius: 99px; margin-top: 16px; overflow: hidden;">
@@ -191,7 +191,7 @@ app.get('/', (c) => {
             <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, #2EC4B6 0%, #3DD8CA 100%); position:absolute; top:0; left:4px; box-shadow: 0 4px 16px rgba(46,196,182,0.35);"></div>
             <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, #28A696 0%, #2EC4B6 100%); position:absolute; bottom:0; left:4px; box-shadow: 0 4px 16px rgba(40,166,150,0.3); opacity:0.85;"></div>
           </div>
-          <h1 style="font-family:'Montserrat',sans-serif; font-weight:900; font-size:22px; letter-spacing:0.04em; color:#1a1a1a; line-height:1.15; margin-bottom:6px;">ENGAGE<br>CONNECT</h1>
+          <h1 style="font-family:'Montserrat',sans-serif; font-weight:900; font-size:22px; letter-spacing:0.04em; color:#1a1a1a; line-height:1.15; margin-bottom:6px;">DEAL<br>CONNECT</h1>
           <div style="width:120px; height:2.5px; background:#2EC4B6; margin:8px auto 10px; border-radius:2px;"></div>
           <p style="font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:0.2em; color:#666; font-weight:500;">POWERED BY MICRO CONNECT GROUP</p>
           <p class="text-lg font-bold mt-3" style="color:#1a1a1a;">参与通</p>
@@ -258,7 +258,7 @@ app.get('/', (c) => {
           </form>
         </div>
         <!-- Footer -->
-        <div class="px-6 pb-4 text-center"><p class="text-xs text-gray-400">&copy; 2026 参与通 Engage Connect · Micro Connect Group</p></div>
+        <div class="px-6 pb-4 text-center"><p class="text-xs text-gray-400">&copy; 2026 参与通 Deal Connect · Micro Connect Group</p></div>
       </div>
     </div>
   </div>
@@ -275,7 +275,7 @@ app.get('/', (c) => {
           </div>
           <div>
             <h1 class="text-base font-bold tracking-tight" style="color:#1a1a1a;">参与通</h1>
-            <p class="text-xs -mt-0.5" style="color:#86868b; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-weight:600; font-size:9px;">ENGAGE CONNECT</p>
+            <p class="text-xs -mt-0.5" style="color:#86868b; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-weight:600; font-size:9px;">DEAL CONNECT</p>
           </div>
         </div>
         <div class="flex items-center space-x-1.5">
@@ -474,9 +474,9 @@ app.get('/', (c) => {
   <!-- ==================== AI Assistant FAB ==================== -->
   <div id="aiFab" class="ai-assistant-fab hidden" onclick="toggleAIChat()"><i class="fas fa-robot"></i></div>
   <div id="aiChat" class="ai-chat-window hidden">
-    <div class="ai-chat-header"><div class="flex items-center space-x-2"><i class="fas fa-robot text-white"></i><span class="text-white font-semibold text-sm">参与通 AI 助手</span></div><button onclick="toggleAIChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button></div>
+    <div class="ai-chat-header"><div class="flex items-center space-x-2"><i class="fas fa-robot text-white"></i><span class="text-white font-semibold text-sm">Deal Connect AI 助手</span></div><button onclick="toggleAIChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button></div>
     <div class="ai-chat-messages" id="aiMessages">
-      <div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content">您好！我是参与通的AI助手。有关投资机会的问题都可以问我。</div></div>
+      <div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content">您好！我是Deal Connect的AI助手。有关投资机会的问题都可以问我。</div></div>
     </div>
     <div class="ai-chat-input">
       <div class="flex items-center gap-2">
