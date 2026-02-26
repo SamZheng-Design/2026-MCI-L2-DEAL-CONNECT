@@ -347,15 +347,10 @@ app.get('/', (c) => {
                 <p class="text-xs text-gray-400">选择筛子模型过滤机会，不选则展示全部</p>
               </div>
             </div>
-            <button onclick="showToast('info','管理筛子','跳转评估通管理您的筛子模型')" class="text-xs text-cyan-600 hover:text-cyan-700 font-medium"><i class="fas fa-external-link-alt mr-1"></i>管理筛子</button>
+            <button onclick="showSieveManager()" class="text-xs text-cyan-600 hover:text-cyan-700 font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-cyan-50 transition-colors"><i class="fas fa-cogs mr-1"></i>管理筛子</button>
           </div>
           <div class="flex flex-wrap gap-2" id="sieveSelector">
-            <button onclick="selectSieve('all')" class="sieve-chip active" data-sieve="all"><i class="fas fa-globe text-gray-400"></i>全部机会</button>
-            <button onclick="selectSieve('industry')" class="sieve-chip" data-sieve="industry"><i class="fas fa-brain text-purple-400"></i>行业偏好筛子</button>
-            <button onclick="selectSieve('risk')" class="sieve-chip" data-sieve="risk"><i class="fas fa-shield-alt text-emerald-400"></i>风控优先筛子</button>
-            <button onclick="selectSieve('return')" class="sieve-chip" data-sieve="return"><i class="fas fa-chart-line text-amber-400"></i>高回报筛子</button>
-            <button onclick="selectSieve('location')" class="sieve-chip" data-sieve="location"><i class="fas fa-map-marker-alt text-rose-400"></i>区域聚焦筛子</button>
-            <button onclick="selectSieve('composite')" class="sieve-chip" data-sieve="composite"><i class="fas fa-layer-group text-cyan-400"></i>综合评估筛子</button>
+            <!-- 动态渲染 by renderSieveSelector() -->
           </div>
           <!-- 筛子说明 -->
           <div id="sieveDescription" class="mt-3 p-3 bg-gray-50 rounded-xl text-xs text-gray-500 hidden">
@@ -504,15 +499,10 @@ app.get('/', (c) => {
     let currentSieve = 'all'; // 当前选中的筛子
     let obStep = 0;
 
-    // ==================== 筛子模型定义 ====================
-    const SIEVE_MODELS = {
-      all: {
-        name: '全部机会', icon: 'fa-globe', color: '#6b7280',
-        desc: '不使用筛子，展示发起通的所有投资机会',
-        filter: (deals) => deals.map(d => ({ ...d, matchScore: null, sieveResult: 'all' }))
-      },
+    // ==================== 筛子库（全量可用筛子）====================
+    const SIEVE_LIBRARY = {
       industry: {
-        name: '行业偏好筛子', icon: 'fa-brain', color: '#8b5cf6',
+        name: '行业偏好筛子', icon: 'fa-brain', color: '#8b5cf6', category: '行业',
         desc: '基于您的行业投资偏好（餐饮、零售、科技），筛选符合行业方向的项目',
         preferredIndustries: ['餐饮', '零售', '科技'],
         filter: function(deals) {
@@ -523,7 +513,7 @@ app.get('/', (c) => {
         }
       },
       risk: {
-        name: '风控优先筛子', icon: 'fa-shield-alt', color: '#10b981',
+        name: '风控优先筛子', icon: 'fa-shield-alt', color: '#10b981', category: '风控',
         desc: '严格风控标准：AI评分>=8.5、金额<=800万、有明确退出机制的低风险项目',
         filter: function(deals) {
           return deals.map(d => {
@@ -535,7 +525,7 @@ app.get('/', (c) => {
         }
       },
       'return': {
-        name: '高回报筛子', icon: 'fa-chart-line', color: '#f59e0b',
+        name: '高回报筛子', icon: 'fa-chart-line', color: '#f59e0b', category: '收益',
         desc: '聚焦高回报项目：分成比例>=12%、AI评分>=8.0的高潜力机会',
         filter: function(deals) {
           return deals.map(d => {
@@ -547,7 +537,7 @@ app.get('/', (c) => {
         }
       },
       location: {
-        name: '区域聚焦筛子', icon: 'fa-map-marker-alt', color: '#ef4444',
+        name: '区域聚焦筛子', icon: 'fa-map-marker-alt', color: '#ef4444', category: '区域',
         desc: '聚焦一线城市（北京、上海、深圳、杭州）的优质项目',
         focusCities: ['北京', '上海', '深圳', '杭州'],
         filter: function(deals) {
@@ -558,7 +548,7 @@ app.get('/', (c) => {
         }
       },
       composite: {
-        name: '综合评估筛子', icon: 'fa-layer-group', color: '#06b6d4',
+        name: '综合评估筛子', icon: 'fa-layer-group', color: '#06b6d4', category: '综合',
         desc: '多维度综合评估：AI评分、行业前景、风控等级、回报潜力的加权筛选',
         filter: function(deals) {
           return deals.map(d => {
@@ -569,8 +559,103 @@ app.get('/', (c) => {
             return { ...d, matchScore: Math.min(99, Math.floor(composite)), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
           }).filter(d => d.sieveResult === 'pass');
         }
+      },
+      // ---- 筛子库扩展筛子 ----
+      growth: {
+        name: '高成长筛子', icon: 'fa-seedling', color: '#22c55e', category: '成长',
+        desc: '优选运营年限<=3年、月营收增速良好的高成长型早期项目',
+        filter: function(deals) {
+          return deals.map(d => {
+            const years = parseFloat(d.operatingYears);
+            const score = parseFloat(d.aiScore);
+            const pass = years <= 3 && score >= 7.5;
+            return { ...d, matchScore: pass ? 78 + Math.floor(Math.random() * 22) : 18 + Math.floor(Math.random() * 25), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
+          }).filter(d => d.sieveResult === 'pass');
+        }
+      },
+      largeScale: {
+        name: '大额项目筛子', icon: 'fa-gem', color: '#a855f7', category: '规模',
+        desc: '筛选投资金额>=500万的大体量、高门槛优质项目',
+        filter: function(deals) {
+          return deals.map(d => {
+            const amt = d.amount / 10000;
+            const pass = amt >= 500;
+            return { ...d, matchScore: pass ? 72 + Math.floor(Math.random() * 28) : 12 + Math.floor(Math.random() * 25), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
+          }).filter(d => d.sieveResult === 'pass');
+        }
+      },
+      teamStrength: {
+        name: '团队实力筛子', icon: 'fa-users', color: '#0ea5e9', category: '团队',
+        desc: '优选员工>=50人、运营年限>=3年的成熟团队项目',
+        filter: function(deals) {
+          return deals.map(d => {
+            const emp = d.employeeCount || 0;
+            const years = parseFloat(d.operatingYears);
+            const pass = emp >= 50 && years >= 3;
+            return { ...d, matchScore: pass ? 75 + Math.floor(Math.random() * 25) : 15 + Math.floor(Math.random() * 28), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
+          }).filter(d => d.sieveResult === 'pass');
+        }
+      },
+      quickReturn: {
+        name: '短周期筛子', icon: 'fa-bolt', color: '#eab308', category: '周期',
+        desc: '聚焦分成期限<=24个月的快速回收项目',
+        filter: function(deals) {
+          return deals.map(d => {
+            const months = parseInt(d.period);
+            const pass = months <= 24;
+            return { ...d, matchScore: pass ? 80 + Math.floor(Math.random() * 20) : 20 + Math.floor(Math.random() * 22), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
+          }).filter(d => d.sieveResult === 'pass');
+        }
+      },
+      safeHaven: {
+        name: '稳健保守筛子', icon: 'fa-umbrella', color: '#64748b', category: '风控',
+        desc: '极保守策略：风控评级A及以上、AI评分>=9.0、金额<=500万',
+        filter: function(deals) {
+          return deals.map(d => {
+            const score = parseFloat(d.aiScore);
+            const amt = d.amount / 10000;
+            const grade = d.riskGrade || '';
+            const pass = score >= 9.0 && amt <= 500 && (grade.startsWith('A'));
+            return { ...d, matchScore: pass ? 88 + Math.floor(Math.random() * 12) : 8 + Math.floor(Math.random() * 20), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
+          }).filter(d => d.sieveResult === 'pass');
+        }
       }
     };
+
+    // 「全部机会」内置筛子（不可删除）
+    const SIEVE_ALL = {
+      name: '全部机会', icon: 'fa-globe', color: '#6b7280',
+      desc: '不使用筛子，展示发起通的所有投资机会',
+      filter: (deals) => deals.map(d => ({ ...d, matchScore: null, sieveResult: 'all' }))
+    };
+
+    // 用户面板筛子（从筛子库中选取的键名列表）
+    let mySieves = [];
+
+    // 初始化用户筛子面板
+    function initMySieves() {
+      const saved = localStorage.getItem('ec_mySieves');
+      if (saved) {
+        try { mySieves = JSON.parse(saved).filter(k => SIEVE_LIBRARY[k]); } catch(e) { mySieves = []; }
+      }
+      if (mySieves.length === 0) {
+        // 默认预装3个筛子
+        mySieves = ['industry', 'risk', 'composite'];
+        saveMySieves();
+      }
+    }
+    function saveMySieves() {
+      localStorage.setItem('ec_mySieves', JSON.stringify(mySieves));
+    }
+
+    // 构建当前可用的筛子模型（all + mySieves中的）
+    function getActiveSieveModels() {
+      const models = { all: SIEVE_ALL };
+      mySieves.forEach(key => {
+        if (SIEVE_LIBRARY[key]) models[key] = SIEVE_LIBRARY[key];
+      });
+      return models;
+    }
 
     // ==================== Toast System ====================
     function initToastContainer() {
@@ -667,6 +752,8 @@ app.get('/', (c) => {
       document.getElementById('ddRole').textContent = '投资者';
       document.getElementById('welcomeText').textContent = '欢迎回来，' + name;
       switchPage('pageDashboard');
+      initMySieves();
+      renderSieveSelector();
       selectSieve('all');
       showToast('success', '登录成功', '欢迎回来，' + name);
       if (!localStorage.getItem('ec_onboarded')) { setTimeout(showOnboarding, 800); }
@@ -711,6 +798,142 @@ app.get('/', (c) => {
       localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
     }
 
+    // ==================== 动态渲染筛子选择器 ====================
+    function renderSieveSelector() {
+      const container = document.getElementById('sieveSelector');
+      if (!container) return;
+      const models = getActiveSieveModels();
+      let html = '<button onclick="selectSieve(\'all\')" class="sieve-chip' + (currentSieve === 'all' ? ' active' : '') + '" data-sieve="all"><i class="fas fa-globe text-gray-400"></i>全部机会</button>';
+      mySieves.forEach(key => {
+        const s = SIEVE_LIBRARY[key];
+        if (!s) return;
+        html += '<button onclick="selectSieve(\'' + key + '\')" class="sieve-chip' + (currentSieve === key ? ' active' : '') + '" data-sieve="' + key + '"><i class="fas ' + s.icon + '" style="color:' + s.color + ';"></i>' + s.name + '</button>';
+      });
+      container.innerHTML = html;
+    }
+
+    // ==================== 筛子管理弹窗 ====================
+    function showSieveManager() {
+      // 移除旧弹窗
+      const old = document.getElementById('sieveManagerModal'); if (old) old.remove();
+
+      const libraryKeys = Object.keys(SIEVE_LIBRARY);
+      const availableKeys = libraryKeys.filter(k => !mySieves.includes(k));
+
+      const modal = document.createElement('div');
+      modal.id = 'sieveManagerModal';
+      modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[300]';
+      modal.style.animation = 'fadeIn 0.2s ease';
+      modal.onclick = (e) => { if (e.target === modal) closeSieveManager(); };
+
+      modal.innerHTML = '<div style="animation: scaleIn 0.25s cubic-bezier(0.28,0.11,0.32,1);" class="bg-white rounded-3xl max-w-3xl w-full mx-4 overflow-hidden" style="box-shadow: 0 24px 80px rgba(0,0,0,0.2);">' +
+        // Header
+        '<div class="p-5 border-b border-gray-100" style="background: linear-gradient(135deg, rgba(6,182,212,0.06), rgba(14,165,233,0.04));">' +
+          '<div class="flex items-center justify-between">' +
+            '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #06b6d4, #0ea5e9); box-shadow: 0 4px 12px rgba(6,182,212,0.3);"><i class="fas fa-cogs text-white"></i></div><div><h2 class="text-lg font-bold text-gray-900">管理我的筛子</h2><p class="text-xs text-gray-400">从筛子库添加，或移除已有筛子</p></div></div>' +
+            '<button onclick="closeSieveManager()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"><i class="fas fa-times"></i></button>' +
+          '</div>' +
+        '</div>' +
+        // Body — 双栏
+        '<div class="flex" style="min-height: 380px; max-height: 70vh;">' +
+          // 左栏：筛子库
+          '<div class="w-1/2 border-r border-gray-100 flex flex-col">' +
+            '<div class="p-4 border-b border-gray-50 flex items-center justify-between"><h3 class="text-sm font-bold text-gray-700"><i class="fas fa-warehouse mr-1.5 text-cyan-500"></i>筛子库</h3><span class="text-xs text-gray-400">' + libraryKeys.length + ' 个可用</span></div>' +
+            '<div class="flex-1 overflow-y-auto p-3 space-y-2" id="sieveLibraryList">' +
+              renderLibraryItems(libraryKeys) +
+            '</div>' +
+          '</div>' +
+          // 右栏：我的筛子
+          '<div class="w-1/2 flex flex-col" style="background: #fafbfc;">' +
+            '<div class="p-4 border-b border-gray-50 flex items-center justify-between"><h3 class="text-sm font-bold text-gray-700"><i class="fas fa-star mr-1.5 text-amber-500"></i>我的筛子</h3><span class="text-xs text-gray-400" id="mySieveCount">' + mySieves.length + ' 个已添加</span></div>' +
+            '<div class="flex-1 overflow-y-auto p-3 space-y-2" id="mySieveList">' +
+              renderMySieveItems() +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        // Footer
+        '<div class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50">' +
+          '<p class="text-xs text-gray-400"><i class="fas fa-info-circle mr-1"></i>「全部机会」为内置项，始终可用无需添加</p>' +
+          '<button onclick="closeSieveManager()" class="px-5 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-sm font-medium hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-200 transition-all"><i class="fas fa-check mr-1.5"></i>完成</button>' +
+        '</div>' +
+      '</div>';
+
+      document.body.appendChild(modal);
+    }
+
+    function renderLibraryItems(keys) {
+      if (!keys) keys = Object.keys(SIEVE_LIBRARY);
+      return keys.map(key => {
+        const s = SIEVE_LIBRARY[key];
+        const isAdded = mySieves.includes(key);
+        return '<div class="flex items-center gap-3 p-3 rounded-xl border transition-all ' + (isAdded ? 'bg-gray-50 border-gray-100 opacity-60' : 'bg-white border-gray-100 hover:border-cyan-200 hover:shadow-sm') + '" id="lib_' + key + '">' +
+          '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + s.color + '15;"><i class="fas ' + s.icon + '" style="color:' + s.color + '; font-size:14px;"></i></div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center gap-1.5"><p class="text-sm font-semibold text-gray-800 truncate">' + s.name + '</p><span class="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 flex-shrink-0">' + (s.category || '') + '</span></div>' +
+            '<p class="text-xs text-gray-400 truncate mt-0.5">' + s.desc + '</p>' +
+          '</div>' +
+          (isAdded
+            ? '<span class="text-xs text-gray-400 flex-shrink-0 px-2 py-1"><i class="fas fa-check"></i> 已添加</span>'
+            : '<button onclick="addSieve(\'' + key + '\')" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-cyan-600 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors"><i class="fas fa-plus mr-1"></i>添加</button>') +
+        '</div>';
+      }).join('');
+    }
+
+    function renderMySieveItems() {
+      if (mySieves.length === 0) {
+        return '<div class="text-center py-8"><div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3"><i class="fas fa-inbox text-gray-300 text-lg"></i></div><p class="text-sm text-gray-400">暂无筛子</p><p class="text-xs text-gray-300 mt-1">从左侧筛子库中添加</p></div>';
+      }
+      return mySieves.map((key, idx) => {
+        const s = SIEVE_LIBRARY[key];
+        if (!s) return '';
+        return '<div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-red-200 group transition-all" id="my_' + key + '">' +
+          '<div class="w-6 h-6 rounded flex items-center justify-center text-xs font-bold text-gray-400 bg-gray-100 flex-shrink-0">' + (idx + 1) + '</div>' +
+          '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + s.color + '15;"><i class="fas ' + s.icon + '" style="color:' + s.color + '; font-size:14px;"></i></div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<p class="text-sm font-semibold text-gray-800 truncate">' + s.name + '</p>' +
+            '<p class="text-xs text-gray-400 truncate">' + (s.category || '') + '</p>' +
+          '</div>' +
+          '<button onclick="removeSieve(\'' + key + '\')" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors opacity-0 group-hover:opacity-100"><i class="fas fa-trash-alt mr-1"></i>移除</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    function addSieve(key) {
+      if (mySieves.includes(key)) return;
+      mySieves.push(key);
+      saveMySieves();
+      refreshSieveManager();
+      renderSieveSelector();
+      showToast('success', '已添加', SIEVE_LIBRARY[key].name + ' 已添加到您的筛子面板');
+    }
+
+    function removeSieve(key) {
+      mySieves = mySieves.filter(k => k !== key);
+      saveMySieves();
+      // 如果移除的是当前选中的筛子，回到全部
+      if (currentSieve === key) {
+        currentSieve = 'all';
+        selectSieve('all');
+      }
+      refreshSieveManager();
+      renderSieveSelector();
+      showToast('info', '已移除', SIEVE_LIBRARY[key].name + ' 已从您的面板移除');
+    }
+
+    function refreshSieveManager() {
+      const libList = document.getElementById('sieveLibraryList');
+      const myList = document.getElementById('mySieveList');
+      const myCount = document.getElementById('mySieveCount');
+      if (libList) libList.innerHTML = renderLibraryItems();
+      if (myList) myList.innerHTML = renderMySieveItems();
+      if (myCount) myCount.textContent = mySieves.length + ' 个已添加';
+    }
+
+    function closeSieveManager() {
+      const modal = document.getElementById('sieveManagerModal');
+      if (modal) { modal.style.opacity = '0'; setTimeout(() => modal.remove(), 200); }
+    }
+
     // ==================== 筛子选择 ====================
     function selectSieve(sieveKey) {
       currentSieve = sieveKey;
@@ -718,8 +941,9 @@ app.get('/', (c) => {
       document.querySelectorAll('#sieveSelector .sieve-chip').forEach(el => {
         el.classList.toggle('active', el.dataset.sieve === sieveKey);
       });
-      // 应用筛子
-      const sieve = SIEVE_MODELS[sieveKey];
+      // 获取当前可用筛子模型
+      const models = getActiveSieveModels();
+      const sieve = models[sieveKey];
       if (sieve) {
         dealsList = sieve.filter(allDeals);
         // 更新筛子说明
@@ -878,10 +1102,11 @@ app.get('/', (c) => {
       const hasMatch = currentDeal.matchScore !== null && currentDeal.matchScore !== undefined;
       const matchColor = hasMatch ? (currentDeal.matchScore >= 80 ? '#10b981' : currentDeal.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#6b7280';
 
-      // 生成各筛子的评估结果
+      // 生成各筛子的评估结果（只评估用户面板中的筛子）
       let sieveResults = '';
-      Object.entries(SIEVE_MODELS).forEach(([key, sieve]) => {
-        if (key === 'all') return;
+      mySieves.forEach(key => {
+        const sieve = SIEVE_LIBRARY[key];
+        if (!sieve) return;
         const testResult = sieve.filter([currentDeal]);
         const passed = testResult.length > 0;
         const score = passed ? testResult[0].matchScore : Math.floor(Math.random() * 35 + 10);
@@ -894,6 +1119,9 @@ app.get('/', (c) => {
             '<p class="text-xs text-gray-400 mt-1">' + score + '% 匹配度</p>' +
           '</div></div>';
       });
+      if (mySieves.length === 0) {
+        sieveResults = '<div class="text-center py-4"><p class="text-sm text-gray-400">暂未添加筛子</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-cyan-600 mt-1 hover:underline">去管理筛子</button></div>';
+      }
 
       document.getElementById('detailRight').innerHTML =
         '<div class="space-y-5">' +
@@ -983,7 +1211,7 @@ app.get('/', (c) => {
       input.value = '';
       setTimeout(() => {
         const responses = [
-          '当前筛子「' + SIEVE_MODELS[currentSieve].name + '」筛选出 ' + dealsList.length + ' 个机会。如需调整标准，可切换其他筛子模型。',
+          '当前筛子「' + (getActiveSieveModels()[currentSieve]?.name || '全部') + '」筛选出 ' + dealsList.length + ' 个机会。如需调整标准，可切换其他筛子模型或在「管理筛子」中添加新筛子。',
           '「风控优先筛子」适合保守型投资者，它要求AI评分>=8.5、金额<=800万。「高回报筛子」则聚焦分成>=12%的高潜力项目。',
           '所有机会均来自发起通，经过平台基础审核。评估通筛子在此基础上做二次精筛，帮您找到最匹配的项目。',
           '建议先用「综合评估筛子」做全面筛选，再针对感兴趣的项目切换「风控优先」做安全性验证。',
