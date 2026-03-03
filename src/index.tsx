@@ -956,7 +956,7 @@ app.get('/', (c) => {
       currentUser = { id: 'guest', username: 'guest', displayName: '游客', email: 'guest@demo.com', role: 'investor' };
       loadDemoData();
       onLoginSuccess();
-      showToast('info', '游客模式', '已加载 ' + allDeals.length.toLocaleString() + ' 张合约（' + PROJECT_TEMPLATES.length + '个项目 · ¥1,000/张） · MCN编号已分配');
+      showToast('info', '游客模式', '已加载 ' + totalVirtualContracts.toLocaleString() + ' 张合约（' + PROJECT_TEMPLATES.length + '个项目 · ¥1,000/张）展示 ' + allDeals.length + ' 张代表性合约');
     }
 
     function onLoginSuccess() {
@@ -1045,85 +1045,127 @@ app.get('/', (c) => {
       { name: '蔚来汽车成都交付中心', industry: '科技', location: '成都', originator: '蔚来汽车科技(安徽)有限公司', issueDate: '2026-02-22', totalAmount: 160, revenueShare: 13, period: 36, aiScore: 8.4, riskGrade: 'A', monthlyRevenue: 220, employeeCount: 65, operatingYears: 5.0, desc: '新能源汽车交付+售后一体化，月均交付300台，NPS行业领先' }
     ];
 
+    // ★ 虚拟合约生成器 — 按需生成合约对象，避免一次性创建数万条记录导致浏览器卡死
+    // 核心思路：只存项目级元数据 + 每个项目生成少量代表性合约用于展示
+    // 全量数字（如 19,110 张）仅用于统计显示，不实际创建对象
+
+    const STATUS_POOL = ['available', 'available', 'available', 'sold', 'available', 'sold', 'available', 'mine', 'available', 'sold'];
+    const HOLDER_NAMES = ['张三', '李四', '王五', '赵六', '陈七', '机构A', '基金B', '投资人C', '信托D', '私募E', '家办F', '资管G'];
+    const MAX_CONTRACTS_PER_PROJECT = 60; // 每项目实际生成的合约上限（用于展示和交互）
+
+    // 项目级汇总缓存（用于快速统计）
+    let projectSummaries = [];
+    let totalVirtualContracts = 0; // 全部项目的虚拟合约总数（真实融资额 × 10）
+
+    function buildContractForProject(proj, pi, ci, globalSeq, totalContracts) {
+      var mcn = generateMCN(proj.industry, proj.location, proj.issueDate, globalSeq);
+      var statusIdx = (pi * 7 + ci * 3 + Math.floor(ci / 10)) % STATUS_POOL.length;
+      var statusRand = STATUS_POOL[statusIdx];
+      var holder = null;
+      var isMine = false;
+      if (statusRand === 'mine') {
+        holder = currentUser ? (currentUser.displayName || currentUser.username) : '游客';
+        isMine = true;
+        statusRand = 'sold';
+      } else if (statusRand === 'sold') {
+        holder = HOLDER_NAMES[(pi * 3 + ci) % HOLDER_NAMES.length];
+      }
+      var scoreVariation = ((ci * 7 + pi * 13) % 7 - 3) * 0.1;
+      var finalScore = Math.max(6.5, Math.min(9.9, proj.aiScore + scoreVariation));
+      var monthsNum = proj.period;
+      var issue = new Date(proj.issueDate);
+      var matDate = new Date(issue); matDate.setMonth(matDate.getMonth() + monthsNum);
+
+      return {
+        id: 'C_' + globalSeq,
+        mcn: mcn,
+        projectId: 'P_' + (pi + 1),
+        name: proj.name,
+        industry: proj.industry,
+        location: proj.location,
+        originator: proj.originator,
+        originateDate: proj.issueDate,
+        issueDate: proj.issueDate,
+        maturityDate: matDate.toISOString().slice(0, 10),
+        faceValue: 1000,
+        status: statusRand,
+        holder: holder,
+        isMine: isMine,
+        revenueShare: proj.revenueShare + '%',
+        period: proj.period + '个月',
+        aiScore: finalScore.toFixed(1),
+        riskGrade: proj.riskGrade,
+        monthlyRevenue: proj.monthlyRevenue + '万',
+        employeeCount: proj.employeeCount,
+        operatingYears: proj.operatingYears.toFixed(1),
+        contractType: 'RSN',
+        currency: 'CNY',
+        seqInProject: ci + 1,
+        totalInProject: totalContracts,
+        projectTotalAmount: proj.totalAmount,
+        projectDesc: proj.desc || '',
+        description: '由「' + proj.originator + '」通过发起通发行的' + proj.industry + '行业标准合约。面值 ¥1,000 · 收益分享合约(RSN)。项目融资总额 ¥' + proj.totalAmount + '万（' + totalContracts + '张合约）。'
+      };
+    }
+
     function loadDemoData() {
-      // ★ 核心概念重构：
-      //   一个项目 = 多张合约，totalAmount(万元) × 10 = 合约张数
-      //   例：80万 = 800张合约，每张¥1,000
-      //   合约看板展示时以项目分组，每组展示部分代表性合约
+      // ★ 性能优化：每个项目只生成 MAX_CONTRACTS_PER_PROJECT 张代表性合约
+      //   项目的真实合约总数 = totalAmount × 10（仅用于统计展示）
+      //   例：星巴克80万 = 虚拟800张，但实际只生成60张供浏览
       allDeals = [];
-      let globalSeq = 1;
-      // 合约状态分布池
-      const statusPool = ['available', 'available', 'available', 'sold', 'available', 'sold', 'available', 'mine', 'available', 'sold'];
-      const holderNames = ['张三', '李四', '王五', '赵六', '陈七', '机构A', '基金B', '投资人C', '信托D', '私募E', '家办F', '资管G'];
+      projectSummaries = [];
+      totalVirtualContracts = 0;
+      var globalSeq = 1;
 
       PROJECT_TEMPLATES.forEach(function(proj, pi) {
-        // 每个项目的合约总数 = totalAmount(万元) × 10
-        // 例：80万 → 800张
-        var totalContracts = proj.totalAmount * 10;
+        var virtualTotal = proj.totalAmount * 10; // 虚拟总数（真实融资额映射）
+        var actualGen = Math.min(virtualTotal, MAX_CONTRACTS_PER_PROJECT); // 实际生成数
+        totalVirtualContracts += virtualTotal;
 
-        // 为每个项目生成所有合约
-        for (var ci = 0; ci < totalContracts; ci++) {
-          var mcn = generateMCN(proj.industry, proj.location, proj.issueDate, globalSeq);
-          // 确定性地分配状态
-          var statusIdx = (pi * 7 + ci * 3 + Math.floor(ci / 10)) % statusPool.length;
-          var statusRand = statusPool[statusIdx];
-          var holder = null;
-          var isMine = false;
-          if (statusRand === 'mine') {
-            holder = currentUser ? (currentUser.displayName || currentUser.username) : '游客';
-            isMine = true;
-            statusRand = 'sold'; // 底层状态：已售
-          } else if (statusRand === 'sold') {
-            holder = holderNames[(pi * 3 + ci) % holderNames.length];
-          }
+        // 统计虚拟总分布（确定性计算，不需要生成全部对象）
+        var vAvail = 0, vSold = 0, vMine = 0;
+        for (var vi = 0; vi < virtualTotal; vi++) {
+          var sIdx = (pi * 7 + vi * 3 + Math.floor(vi / 10)) % STATUS_POOL.length;
+          var sRand = STATUS_POOL[sIdx];
+          if (sRand === 'mine') { vMine++; vSold++; }
+          else if (sRand === 'sold') { vSold++; }
+          else { vAvail++; }
+        }
 
-          // AI评分在项目基础分上微波动 ±0.3
-          var scoreVariation = ((ci * 7 + pi * 13) % 7 - 3) * 0.1;
-          var finalScore = Math.max(6.5, Math.min(9.9, proj.aiScore + scoreVariation));
+        projectSummaries.push({
+          projectId: 'P_' + (pi + 1),
+          name: proj.name,
+          industry: proj.industry,
+          location: proj.location,
+          originator: proj.originator,
+          totalAmount: proj.totalAmount,
+          virtualTotal: virtualTotal,
+          actualGen: actualGen,
+          available: vAvail,
+          sold: vSold,
+          mine: vMine,
+          aiScore: proj.aiScore,
+          riskGrade: proj.riskGrade,
+          revenueShare: proj.revenueShare,
+          period: proj.period,
+          desc: proj.desc || ''
+        });
 
-          allDeals.push({
-            id: 'C_' + globalSeq,
-            mcn: mcn,
-            projectId: 'P_' + (pi + 1),      // ★ 所属项目ID
-            name: proj.name,                   // 所属项目名称
-            industry: proj.industry,
-            location: proj.location,
-            originator: proj.originator,
-            originateDate: proj.issueDate,
-            issueDate: proj.issueDate,
-            maturityDate: null,
-            faceValue: 1000,                   // ★ 面值 ¥1,000 — 不可分割
-            status: statusRand,                // 'available' | 'sold'
-            holder: holder,
-            isMine: isMine,
-            revenueShare: proj.revenueShare + '%',
-            period: proj.period + '个月',
-            aiScore: finalScore.toFixed(1),
-            riskGrade: proj.riskGrade,
-            monthlyRevenue: proj.monthlyRevenue + '万',
-            employeeCount: proj.employeeCount,
-            operatingYears: proj.operatingYears.toFixed(1),
-            contractType: 'RSN',
-            currency: 'CNY',
-            seqInProject: ci + 1,
-            totalInProject: totalContracts,
-            projectTotalAmount: proj.totalAmount, // 项目总额（万元）
-            projectDesc: proj.desc || '',
-            description: '由「' + proj.originator + '」通过发起通发行的' + proj.industry + '行业标准合约。面值 ¥1,000 · 收益分享合约(RSN)。项目融资总额 ¥' + proj.totalAmount + '万（' + totalContracts + '张合约）。'
-          });
+        // 只生成 actualGen 张合约（均匀采样）
+        for (var ci = 0; ci < actualGen; ci++) {
+          // 均匀采样：从虚拟总数中按比例选取序号
+          var sampledIdx = actualGen < virtualTotal
+            ? Math.floor(ci * (virtualTotal / actualGen))
+            : ci;
+          var contract = buildContractForProject(proj, pi, sampledIdx, globalSeq, virtualTotal);
+          // 覆盖 seqInProject 为采样序号+1，保留 totalInProject 为虚拟总数
+          contract.seqInProject = sampledIdx + 1;
+          allDeals.push(contract);
           globalSeq++;
         }
       });
 
-      // 计算到期日
-      allDeals.forEach(function(d) {
-        var monthsNum = parseInt(d.period);
-        var issue = new Date(d.issueDate);
-        issue.setMonth(issue.getMonth() + monthsNum);
-        d.maturityDate = issue.toISOString().slice(0, 10);
-      });
-
-      localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
+      // 不再写入 localStorage（19K+ 对象会超过 5MB 配额导致卡死）
     }
 
     // ==================== 合约多维度评估体系 ====================
@@ -1559,9 +1601,9 @@ app.get('/', (c) => {
         // 更新标签
         const label = document.getElementById('filterLabel');
         if (sieveKey === 'all') {
-          label.textContent = '· 展示全部 ' + allDeals.length + ' 个机会';
+          label.textContent = '· 展示全部 ' + (totalVirtualContracts || allDeals.length).toLocaleString() + ' 个机会';
         } else {
-          label.textContent = '· ' + sieve.name + ' — 通过 ' + dealsList.length + '/' + allDeals.length;
+          label.textContent = '· ' + sieve.name + ' — 通过 ' + dealsList.length + '/' + (totalVirtualContracts || allDeals.length).toLocaleString();
         }
       }
       renderDeals();
@@ -1583,12 +1625,15 @@ app.get('/', (c) => {
         return true;
       });
 
-      // Update stats
-      document.getElementById('statTotal').textContent = allDeals.length;
+      // Update stats — 使用虚拟总数
+      var dashVTotal = totalVirtualContracts || allDeals.length;
+      var dashVMine = 0;
+      projectSummaries.forEach(function(ps) { dashVMine += ps.mine; });
+      if (dashVMine === 0) dashVMine = allDeals.filter(d => d.isMine).length;
+      document.getElementById('statTotal').textContent = dashVTotal.toLocaleString();
       document.getElementById('statFiltered').textContent = dealsList.length;
-      const totalMyContracts = allDeals.filter(d => d.isMine).length;
-      document.getElementById('statMyUnits').textContent = totalMyContracts.toLocaleString();
-      document.getElementById('statMyAmount').textContent = '¥' + (totalMyContracts * 1000).toLocaleString();
+      document.getElementById('statMyUnits').textContent = dashVMine.toLocaleString();
+      document.getElementById('statMyAmount').textContent = '¥' + (dashVMine * 1000).toLocaleString();
 
       if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
       empty.classList.add('hidden');
@@ -1740,7 +1785,9 @@ app.get('/', (c) => {
         original.holder = currentDeal.holder;
         original.isMine = currentDeal.isMine;
       }
-      localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
+      // 更新 projectSummaries 中对应项目的 mine 计数
+      var ps = projectSummaries.find(function(s) { return s.projectId === currentDeal.projectId; });
+      if (ps) { ps.mine++; ps.available = Math.max(0, ps.available - 1); }
 
       // 关闭弹窗
       const modal = document.getElementById('subscribeModal');
@@ -2068,19 +2115,20 @@ app.get('/', (c) => {
         return 0;
       });
 
-      // Update stats
-      var totalAll = allDeals.length;
-      var totalAvailable = allDeals.filter(d => d.status === 'available').length;
-      var totalMine = allDeals.filter(d => d.isMine).length;
+      // Update stats — 使用虚拟总数展示真实融资规模
+      var vTotal = totalVirtualContracts || allDeals.length;
+      var vAvail = 0, vMine = 0;
+      projectSummaries.forEach(function(ps) { vAvail += ps.available; vMine += ps.mine; });
+      if (vTotal === 0) { vTotal = allDeals.length; vAvail = allDeals.filter(d => d.status === 'available').length; vMine = allDeals.filter(d => d.isMine).length; }
       var el1 = document.getElementById('contractStatTotal');
       var el2 = document.getElementById('contractStatActive');
       var el3 = document.getElementById('contractStatMy');
-      if (el1) el1.textContent = totalAll.toLocaleString();
-      if (el2) el2.textContent = totalAvailable.toLocaleString();
-      if (el3) el3.textContent = totalMine.toLocaleString();
+      if (el1) el1.textContent = vTotal.toLocaleString();
+      if (el2) el2.textContent = vAvail.toLocaleString();
+      if (el3) el3.textContent = vMine.toLocaleString();
 
       var label = document.getElementById('contractFilterLabel');
-      if (label) label.textContent = '\u00b7 \u5c55\u793a ' + filtered.length.toLocaleString() + ' / ' + totalAll.toLocaleString() + ' \u5f20\u5408\u7ea6';
+      if (label) label.textContent = '\u00b7 \u5c55\u793a ' + filtered.length.toLocaleString() + ' / ' + vTotal.toLocaleString() + ' \u5f20\u5408\u7ea6\uff08\u4ee3\u8868\u6027\u5408\u7ea6\uff09';
 
       var emptyEl = document.getElementById('contractEmpty');
       var tableView = document.getElementById('contractTableView');
@@ -2181,24 +2229,25 @@ app.get('/', (c) => {
       filtered.forEach(function(d) {
         var pid = d.projectId || d.name;
         if (!groups[pid]) {
-          groups[pid] = { id: pid, name: d.name, industry: d.industry, location: d.location, originator: d.originator, aiScore: d.aiScore, riskGrade: d.riskGrade, revenueShare: d.revenueShare, period: d.period, totalAmount: d.projectTotalAmount, projectDesc: d.projectDesc || '', contracts: [], available: 0, sold: 0, mine: 0 };
+          // 从 projectSummaries 获取虚拟总数
+          var ps = projectSummaries.find(function(s) { return s.projectId === pid; });
+          groups[pid] = { id: pid, name: d.name, industry: d.industry, location: d.location, originator: d.originator, aiScore: d.aiScore, riskGrade: d.riskGrade, revenueShare: d.revenueShare, period: d.period, totalAmount: d.projectTotalAmount, projectDesc: d.projectDesc || '', contracts: [], available: ps ? ps.available : 0, sold: ps ? ps.sold : 0, mine: ps ? ps.mine : 0, virtualTotal: ps ? ps.virtualTotal : 0 };
           order.push(pid);
         }
         groups[pid].contracts.push(d);
-        if (d.isMine) groups[pid].mine++;
-        else if (d.status === 'sold') groups[pid].sold++;
-        else groups[pid].available++;
       });
 
       var cardGrid = document.getElementById('contractCardGrid');
       if (!cardGrid) return;
 
       cardGrid.innerHTML = order.map(function(pid) {
-        var g = groups[pid]; var tc = g.contracts.length;
+        var g = groups[pid];
+        var tc = g.virtualTotal || g.contracts.length; // 使用虚拟总数
+        var tcDisplay = tc; // 用于显示的总数
         var isExp = expandedProjectIds.has(pid);
         var sc = calcRadarScores(g.contracts[0]); var ov = calcOverallScore(sc); var gr = getScoreGrade(ov);
         var avP = Math.round((g.available / tc) * 100);
-        var slP = Math.round((g.sold / tc) * 100);
+        var slP = Math.round(((g.sold - g.mine) / tc) * 100);
         var mnP = Math.round((g.mine / tc) * 100);
         var cId = 'projR_' + pid.replace(/[^a-zA-Z0-9_]/g, '');
         var tAmt = g.totalAmount ? ('\u00a5' + g.totalAmount + '\u4e07') : '';
@@ -2207,7 +2256,7 @@ app.get('/', (c) => {
         var expHtml = '';
         if (isExp) {
           var show = g.contracts.slice(0, 20);
-          var rem = tc - 20;
+          var rem = tcDisplay - show.length;
           expHtml = '<div class="cc-expand-area" style="max-height:3000px;opacity:1;"><div style="padding:0 16px 16px;">' +
             '<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(46,196,182,0.2),transparent);margin-bottom:12px;"></div>' +
             '<div class="grid grid-cols-2 gap-3 mb-3">' +
@@ -2463,9 +2512,8 @@ app.get('/', (c) => {
         bar.style.width = steps[i].p + '%'; status.textContent = steps[i].t; i++;
       }, 400);
 
-      // 尝试从 localStorage 恢复
-      const saved = localStorage.getItem('ec_allDeals');
-      if (saved) { try { allDeals = JSON.parse(saved); } catch(e) {} }
+      // 不再从 localStorage 恢复大量合约数据（避免浏览器卡死）
+      // 合约数据由 loadDemoData() 按需生成
     }
 
     document.addEventListener('DOMContentLoaded', initApp);
