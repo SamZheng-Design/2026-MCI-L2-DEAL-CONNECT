@@ -172,6 +172,59 @@ app.get('/', (c) => {
     .ai-entry-particles::before, .ai-entry-particles::after { content: ''; position: absolute; border-radius: 50%; background: rgba(255,255,255,0.3); animation: aiEntryFloat 4s ease-in-out infinite; }
     .ai-entry-particles::before { width: 6px; height: 6px; top: 20%; right: 15%; animation-delay: -1s; }
     .ai-entry-particles::after { width: 4px; height: 4px; bottom: 25%; right: 30%; animation-delay: -2.5s; }
+    /* AI入口指引提示 */
+    @keyframes aiHintBounce {
+      0%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-8px); }
+      60% { transform: translateY(-4px); }
+    }
+    @keyframes aiHintFadeIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes aiHintPointer {
+      0%, 100% { transform: translateX(0) rotate(-8deg); }
+      50% { transform: translateX(6px) rotate(-8deg); }
+    }
+    .ai-entry-hint {
+      position: absolute;
+      bottom: -52px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      animation: aiHintFadeIn 0.6s cubic-bezier(0.28,0.11,0.32,1) 1.5s both;
+      pointer-events: none;
+    }
+    .ai-entry-hint-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid rgba(93,196,179,0.2);
+      border-radius: 12px;
+      padding: 8px 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 0 0 1px rgba(93,196,179,0.06);
+      white-space: nowrap;
+      animation: aiHintBounce 2.5s ease-in-out 2.2s infinite;
+    }
+    .ai-entry-hint-inner::before {
+      content: '';
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-left: 1px solid rgba(93,196,179,0.2);
+      border-top: 1px solid rgba(93,196,179,0.2);
+      transform: translateX(-50%) rotate(45deg);
+    }
+    .ai-hint-hand {
+      font-size: 16px;
+      animation: aiHintPointer 1.5s ease-in-out 2.5s infinite;
+      display: inline-block;
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -409,30 +462,40 @@ app.get('/', (c) => {
         </div>
 
         <!-- ===== AI 组合构建器入口 ===== -->
-        <div onclick="goToAIBuilder()" class="ai-entry-card rounded-2xl mb-5 p-0 border border-transparent" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%); box-shadow: 0 4px 16px rgba(93,196,179,0.15), 0 2px 6px rgba(0,0,0,0.06);">
-          <div class="ai-entry-particles"></div>
-          <div class="relative z-10 flex items-center justify-between p-5">
-            <div class="flex items-center gap-4">
-              <div class="ai-entry-icon w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.25), rgba(46,196,182,0.15)); border: 1px solid rgba(93,196,179,0.3); backdrop-filter: blur(8px);">
-                <i class="fas fa-magic text-xl text-white"></i>
-              </div>
-              <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <h3 class="text-base font-bold text-white" style="letter-spacing: -0.02em;">AI 智能组合构建器</h3>
-                  <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background: rgba(46,196,182,0.2); color: #5eead4; animation: pulseGlow 2s ease-in-out infinite;">NEW</span>
+        <div class="relative mb-5" id="aiEntryWrapper" style="margin-bottom: 72px;">
+          <div onclick="goToAIBuilder(); dismissAIHint();" class="ai-entry-card rounded-2xl p-0 border border-transparent" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%); box-shadow: 0 4px 16px rgba(93,196,179,0.15), 0 2px 6px rgba(0,0,0,0.06);">
+            <div class="ai-entry-particles"></div>
+            <div class="relative z-10 flex items-center justify-between p-5">
+              <div class="flex items-center gap-4">
+                <div class="ai-entry-icon w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.25), rgba(46,196,182,0.15)); border: 1px solid rgba(93,196,179,0.3); backdrop-filter: blur(8px);">
+                  <i class="fas fa-magic text-xl text-white"></i>
                 </div>
-                <p class="text-sm" style="color: rgba(255,255,255,0.55);">与 AI 对话，智能匹配全平台合约，一键构建个性化投资组合</p>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h3 class="text-base font-bold text-white" style="letter-spacing: -0.02em;">AI 智能组合构建器</h3>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background: rgba(46,196,182,0.2); color: #5eead4; animation: pulseGlow 2s ease-in-out infinite;">NEW</span>
+                  </div>
+                  <p class="text-sm" style="color: rgba(255,255,255,0.55);">与 AI 对话，智能匹配全平台合约，一键构建个性化投资组合</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-4 mr-2">
+                  <div class="text-center"><p class="text-lg font-black" style="color: #5eead4;" id="aiEntryContracts">0</p><p style="font-size:10px; color: rgba(255,255,255,0.35);">可选合约</p></div>
+                  <div class="w-px h-8" style="background: rgba(255,255,255,0.1);"></div>
+                  <div class="text-center"><p class="text-lg font-black" style="color: #fbbf24;" id="aiEntryProjects">0</p><p style="font-size:10px; color: rgba(255,255,255,0.35);">覆盖项目</p></div>
+                </div>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">
+                  <i class="fas fa-arrow-right text-white text-sm"></i>
+                </div>
               </div>
             </div>
-            <div class="flex items-center gap-3">
-              <div class="hidden sm:flex items-center gap-4 mr-2">
-                <div class="text-center"><p class="text-lg font-black" style="color: #5eead4;" id="aiEntryContracts">0</p><p style="font-size:10px; color: rgba(255,255,255,0.35);">可选合约</p></div>
-                <div class="w-px h-8" style="background: rgba(255,255,255,0.1);"></div>
-                <div class="text-center"><p class="text-lg font-black" style="color: #fbbf24;" id="aiEntryProjects">0</p><p style="font-size:10px; color: rgba(255,255,255,0.35);">覆盖项目</p></div>
-              </div>
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">
-                <i class="fas fa-arrow-right text-white text-sm"></i>
-              </div>
+          </div>
+          <!-- 指引提示气泡 -->
+          <div class="ai-entry-hint" id="aiEntryHint">
+            <div class="ai-entry-hint-inner">
+              <span class="ai-hint-hand">👆</span>
+              <span style="font-size: 13px; font-weight: 600; color: #0f766e;">点击体验 AI 构建您的专属组合</span>
+              <i class="fas fa-sparkles text-xs" style="color: #5DC4B3;"></i>
             </div>
           </div>
         </div>
@@ -3035,6 +3098,19 @@ app.get('/', (c) => {
         ]
       }
     ];
+
+    function dismissAIHint() {
+      var hint = document.getElementById('aiEntryHint');
+      if (hint) {
+        hint.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        hint.style.opacity = '0';
+        hint.style.transform = 'translateX(-50%) translateY(8px)';
+        setTimeout(function() { hint.remove(); }, 300);
+        // 调整wrapper的margin
+        var wrapper = document.getElementById('aiEntryWrapper');
+        if (wrapper) { wrapper.style.transition = 'margin-bottom 0.4s ease'; wrapper.style.marginBottom = '20px'; }
+      }
+    }
 
     function goToAIBuilder() {
       if (allDeals.length === 0) {
