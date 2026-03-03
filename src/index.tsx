@@ -84,23 +84,23 @@ app.get('/', (c) => {
     .sieve-chip.active { border-color: #2EC4B6; background: linear-gradient(135deg, rgba(46,196,182,0.15), rgba(40,166,150,0.12)); color: #3DD8CA; box-shadow: 0 2px 8px rgba(46,196,182,0.2), 0 0 0 1px rgba(46,196,182,0.1); }
     .sieve-chip.active i { color: #2EC4B6; }
     /* 匹配度指示条 */
-    .match-bar { height: 3px; border-radius: 2px; background: #e5e7eb; overflow: hidden; }
+    .match-bar { height: 3px; border-radius: 2px; background: rgba(46,196,182,0.15); overflow: hidden; }
     .match-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
     /* 来源标签 */
     .source-tag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.03em; }
-    .source-originate { background: rgba(245,158,11,0.1); color: #b45309; }
+    .source-originate { background: rgba(245,158,11,0.12); color: #fbbf24; }
     /* 筛子标签 */
     .sieve-tag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; }
-    .sieve-pass { background: rgba(16,185,129,0.1); color: #047857; }
-    .sieve-fail { background: rgba(239,68,68,0.1); color: #b91c1c; }
+    .sieve-pass { background: rgba(16,185,129,0.12); color: #34d399; }
+    .sieve-fail { background: rgba(239,68,68,0.12); color: #f87171; }
     /* 用户下拉样式 */
-    .user-dropdown { position: absolute; top: calc(100% + 8px); right: 0; width: 240px; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04); z-index: 100; opacity: 0; transform: translateY(-8px) scale(0.96); pointer-events: none; transition: all 0.2s cubic-bezier(0.28,0.11,0.32,1); }
+    .user-dropdown { position: absolute; top: calc(100% + 8px); right: 0; width: 240px; background: rgba(13,36,34,0.96); backdrop-filter: blur(20px); border-radius: 16px; border: 1px solid rgba(46,196,182,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(46,196,182,0.08); z-index: 100; opacity: 0; transform: translateY(-8px) scale(0.96); pointer-events: none; transition: all 0.2s cubic-bezier(0.28,0.11,0.32,1); }
     .user-dropdown.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
     .user-dropdown-header { padding: 16px; border-bottom: 1px solid rgba(46,196,182,0.1); }
     .user-dropdown-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 16px; font-size: 13px; font-weight: 500; color: #8EBDB5; transition: all 0.15s; cursor: pointer; background: none; border: none; text-align: left; }
     .user-dropdown-item:hover { background: rgba(46,196,182,0.1); color: #2EC4B6; }
     .user-dropdown-item.danger:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
-    .user-dropdown-divider { height: 1px; background: #f1f5f9; margin: 4px 0; }
+    .user-dropdown-divider { height: 1px; background: rgba(46,196,182,0.1); margin: 4px 0; }
 
     /* ===== 合约卡片系统 (Fintech Card) ===== */
     .cc { background: rgba(15,46,43,0.85); border-radius: 16px; border: 1px solid rgba(46,196,182,0.1); overflow: hidden; transition: all 0.35s cubic-bezier(0.28,0.11,0.32,1); position: relative; }
@@ -116,30 +116,30 @@ app.get('/', (c) => {
     .cc-metric { text-align: center; padding: 8px 4px; background: rgba(11,30,28,0.6); border-radius: 10px; border: 1px solid rgba(46,196,182,0.06); }
     .cc-metric-val { font-size: 13px; font-weight: 800; color: #3DD8CA; font-family: 'SF Mono', 'Fira Code', monospace; }
     .cc-metric-lbl { font-size: 9px; color: #5A9A90; margin-top: 2px; letter-spacing: 0.03em; }
-    .cc-progress { height: 5px; border-radius: 3px; background: #e5e7eb; overflow: hidden; }
+    .cc-progress { height: 5px; border-radius: 3px; background: rgba(46,196,182,0.15); overflow: hidden; }
     .cc-progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
     .cc-status { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; }
-    .cc-status-open { background: rgba(245,158,11,0.1); color: #b45309; }
-    .cc-status-interested { background: rgba(46,196,182,0.1); color: #0f766e; }
-    .cc-status-confirmed { background: rgba(16,185,129,0.1); color: #047857; }
-    .cc-status-closed { background: rgba(100,116,139,0.1); color: #475569; }
-    .cc-mcn { font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #0f766e; padding: 3px 8px; background: linear-gradient(135deg, #ecfdf5, #ecfeff); border: 1px solid rgba(46,196,182,0.15); border-radius: 6px; }
+    .cc-status-open { background: rgba(245,158,11,0.12); color: #fbbf24; }
+    .cc-status-interested { background: rgba(46,196,182,0.15); color: #3DD8CA; }
+    .cc-status-confirmed { background: rgba(16,185,129,0.12); color: #34d399; }
+    .cc-status-closed { background: rgba(100,116,139,0.12); color: #94a3b8; }
+    .cc-mcn { font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #3DD8CA; padding: 3px 8px; background: rgba(46,196,182,0.1); border: 1px solid rgba(46,196,182,0.2); border-radius: 6px; }
     .cc-score-ring { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; position: relative; }
-    .cc-score-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2.5px solid rgba(0,0,0,0.06); }
-    .cc-expand-toggle { width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; transition: all 0.3s; border: none; cursor: pointer; }
+    .cc-score-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2.5px solid rgba(46,196,182,0.15); }
+    .cc-expand-toggle { width: 24px; height: 24px; border-radius: 50%; background: rgba(46,196,182,0.08); display: flex; align-items: center; justify-content: center; transition: all 0.3s; border: none; cursor: pointer; color: #5A9A90; }
     .cc-expand-toggle:hover { background: rgba(46,196,182,0.1); }
     .cc.cc-expanded .cc-expand-toggle { transform: rotate(180deg); background: rgba(46,196,182,0.15); }
     .cc-section { padding: 14px; background: rgba(11,30,28,0.5); border-radius: 12px; border: 1px solid rgba(46,196,182,0.06); margin-bottom: 10px; }
     .cc-section-title { font-size: 12px; font-weight: 700; color: #8EBDB5; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
     .cc-timeline { position: relative; padding-left: 20px; }
-    .cc-timeline::before { content: ''; position: absolute; left: 5px; top: 4px; bottom: 4px; width: 2px; background: linear-gradient(180deg, #2EC4B6, #e5e7eb); border-radius: 1px; }
+    .cc-timeline::before { content: ''; position: absolute; left: 5px; top: 4px; bottom: 4px; width: 2px; background: linear-gradient(180deg, #2EC4B6, rgba(46,196,182,0.15)); border-radius: 1px; }
     .cc-timeline-item { position: relative; margin-bottom: 12px; }
     .cc-timeline-item:last-child { margin-bottom: 0; }
-    .cc-timeline-dot { position: absolute; left: -18px; top: 3px; width: 8px; height: 8px; border-radius: 50%; border: 2px solid #2EC4B6; background: white; }
+    .cc-timeline-dot { position: absolute; left: -18px; top: 3px; width: 8px; height: 8px; border-radius: 50%; border: 2px solid #2EC4B6; background: #0B1E1C; }
     .cc-timeline-dot.active { background: #2EC4B6; }
     .cc-grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
     @media (max-width: 768px) { .cc-grid-cards { grid-template-columns: 1fr; } .cc-metrics { grid-template-columns: repeat(2, 1fr); } }
-    /* AI Builder 专属样式 — 白色+青绿色系 */
+    /* AI Builder 专属样式 — 深色终端青绿色系 */
     .ab-quick-btn { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.28,0.11,0.32,1); background: rgba(46,196,182,0.08); border: 1px solid rgba(46,196,182,0.2); color: #2EC4B6; white-space: nowrap; }
     .ab-quick-btn:hover { background: rgba(46,196,182,0.18); border-color: rgba(46,196,182,0.4); color: #3DD8CA; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(46,196,182,0.15); }
     .ab-msg-user { display: flex; justify-content: flex-end; }
@@ -199,11 +199,11 @@ app.get('/', (c) => {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: white;
-      border: 1px solid rgba(93,196,179,0.2);
+      background: rgba(13,36,34,0.95);
+      border: 1px solid rgba(93,196,179,0.25);
       border-radius: 12px;
       padding: 8px 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 0 0 1px rgba(93,196,179,0.06);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(93,196,179,0.1);
       white-space: nowrap;
       animation: aiHintBounce 2.5s ease-in-out 2.2s infinite;
     }
@@ -215,9 +215,9 @@ app.get('/', (c) => {
       transform: translateX(-50%);
       width: 12px;
       height: 12px;
-      background: white;
-      border-left: 1px solid rgba(93,196,179,0.2);
-      border-top: 1px solid rgba(93,196,179,0.2);
+      background: rgba(13,36,34,0.95);
+      border-left: 1px solid rgba(93,196,179,0.25);
+      border-top: 1px solid rgba(93,196,179,0.25);
       transform: translateX(-50%) rotate(45deg);
     }
     .ai-hint-hand {
@@ -315,7 +315,7 @@ app.get('/', (c) => {
     }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="min-h-screen" style="background:#0B1E1C;">
 
   <!-- ===== 聚光灯遮罩层 ===== -->
   <div id="spotlightOverlay" onclick="dismissSpotlight()"></div>
@@ -345,45 +345,45 @@ app.get('/', (c) => {
 
   <!-- ==================== Onboarding Modal ==================== -->
   <div id="onboardingModal" class="hidden fixed inset-0 bg-black/60 onboarding-modal flex items-center justify-center z-[300]">
-    <div class="onboarding-card bg-white rounded-3xl max-w-2xl w-full mx-4 overflow-hidden">
+    <div class="onboarding-card rounded-3xl max-w-2xl w-full mx-4 overflow-hidden" style="background:rgba(13,36,34,0.98); border:1px solid rgba(46,196,182,0.15);">
       <div class="relative h-48 overflow-hidden" style="background: linear-gradient(135deg, #5DC4B3 0%, #49A89A 50%, #32ade6 100%);">
         <div class="absolute inset-0 pattern-bg"></div>
-        <button onclick="closeOnboarding()" class="absolute top-4 right-4 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white transition-all"><i class="fas fa-times"></i></button>
+        <button onclick="closeOnboarding()" class="absolute top-4 right-4 w-8 h-8 bg-[#0F2E2B]/20 hover:bg-[#0F2E2B]/30 rounded-full flex items-center justify-center text-white transition-all"><i class="fas fa-times"></i></button>
         <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          <button onclick="goToOBStep(0)" class="step-dot w-2.5 h-2.5 rounded-full bg-white/50 active" data-step="0"></button>
-          <button onclick="goToOBStep(1)" class="step-dot w-2.5 h-2.5 rounded-full bg-white/50" data-step="1"></button>
-          <button onclick="goToOBStep(2)" class="step-dot w-2.5 h-2.5 rounded-full bg-white/50" data-step="2"></button>
-          <button onclick="goToOBStep(3)" class="step-dot w-2.5 h-2.5 rounded-full bg-white/50" data-step="3"></button>
+          <button onclick="goToOBStep(0)" class="step-dot w-2.5 h-2.5 rounded-full bg-[#0F2E2B]/50 active" data-step="0"></button>
+          <button onclick="goToOBStep(1)" class="step-dot w-2.5 h-2.5 rounded-full bg-[#0F2E2B]/50" data-step="1"></button>
+          <button onclick="goToOBStep(2)" class="step-dot w-2.5 h-2.5 rounded-full bg-[#0F2E2B]/50" data-step="2"></button>
+          <button onclick="goToOBStep(3)" class="step-dot w-2.5 h-2.5 rounded-full bg-[#0F2E2B]/50" data-step="3"></button>
         </div>
         <div class="absolute inset-0 flex items-center justify-center">
-          <div class="animate-float"><div class="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center"><i id="obIcon" class="fas fa-filter text-white text-4xl"></i></div></div>
+          <div class="animate-float"><div class="w-24 h-24 bg-[#0F2E2B]/20 backdrop-blur-sm rounded-3xl flex items-center justify-center"><i id="obIcon" class="fas fa-filter text-white text-4xl"></i></div></div>
         </div>
       </div>
-      <div class="p-8 relative overflow-hidden" style="min-height: 280px;">
+      <div class="p-8 relative overflow-hidden" style="min-height: 280px; background:rgba(11,30,28,0.95);">
         <!-- Step 0: 欢迎 -->
         <div id="obStep0" class="ob-step active text-center">
-          <h2 class="text-2xl font-bold text-gray-900 mb-3">欢迎使用参与通</h2>
-          <p class="text-gray-500 mb-8">投资者的智能机会看板 — 精准匹配，高效参与</p>
+          <h2 class="text-2xl font-bold mb-3" style="color:#E8F5F3;">欢迎使用参与通</h2>
+          <p class="mb-8" style="color:#5A9A90;">投资者的智能机会看板 — 精准匹配，高效参与</p>
           <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="p-4 bg-amber-50 rounded-2xl"><div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-paper-plane text-amber-600 text-xl"></i></div><p class="text-sm font-medium text-gray-700">发起通</p><p class="text-xs text-gray-400 mt-1">机会来源</p></div>
-            <div class="p-4 bg-cyan-50 rounded-2xl"><div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-filter text-cyan-600 text-xl"></i></div><p class="text-sm font-medium text-gray-700">评估通筛子</p><p class="text-xs text-gray-400 mt-1">AI精筛</p></div>
-            <div class="p-4 bg-teal-50 rounded-2xl"><div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-hand-pointer text-teal-600 text-xl"></i></div><p class="text-sm font-medium text-gray-700">参与决策</p><p class="text-xs text-gray-400 mt-1">你的选择</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(245,158,11,0.15);"><i class="fas fa-paper-plane text-xl" style="color:#fbbf24;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">发起通</p><p class="text-xs mt-1" style="color:#5A9A90;">机会来源</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(6,182,212,0.15);"><i class="fas fa-filter text-xl" style="color:#22d3ee;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">评估通筛子</p><p class="text-xs mt-1" style="color:#5A9A90;">AI精筛</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(46,196,182,0.08);border:1px solid rgba(46,196,182,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(46,196,182,0.15);"><i class="fas fa-hand-pointer text-xl" style="color:#3DD8CA;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">参与决策</p><p class="text-xs mt-1" style="color:#5A9A90;">你的选择</p></div>
           </div>
         </div>
         <!-- Step 1: 发起通来源 -->
         <div id="obStep1" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
-            <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-200"><i class="fas fa-paper-plane text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold text-amber-600 uppercase tracking-wide">数据来源</span><h3 class="text-xl font-bold text-gray-900 mt-1 mb-3">机会来自发起通</h3><p class="text-gray-500 mb-4">融资方通过「发起通」上传经营数据、商业计划，生成标准化的投资机会。这些机会经过平台初筛后流入参与通。</p>
-              <div class="flex items-center space-x-4 text-sm"><div class="flex items-center text-gray-400"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>标准化数据</span></div><div class="flex items-center text-gray-400"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>实时更新</span></div></div>
+            <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(245,158,11,0.25);"><i class="fas fa-paper-plane text-white text-2xl"></i></div></div>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#fbbf24;">数据来源</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">机会来自发起通</h3><p class="mb-4" style="color:#5A9A90;">融资方通过「发起通」上传经营数据、商业计划，生成标准化的投资机会。这些机会经过平台初筛后流入参与通。</p>
+              <div class="flex items-center space-x-4 text-sm"><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>标准化数据</span></div><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>实时更新</span></div></div>
             </div>
           </div>
         </div>
         <!-- Step 2: 评估通筛子 -->
         <div id="obStep2" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
-            <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-200"><i class="fas fa-filter text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold text-cyan-600 uppercase tracking-wide">智能筛选</span><h3 class="text-xl font-bold text-gray-900 mt-1 mb-3">评估通提供AI筛子</h3><p class="text-gray-500 mb-4">评估通内置多种AI筛选模型（筛子），每个筛子有不同的评估标准。选择筛子后，只展示通过该筛子的项目；不选则看到全部。</p>
+            <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(6,182,212,0.25);"><i class="fas fa-filter text-white text-2xl"></i></div></div>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#22d3ee;">智能筛选</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">评估通提供AI筛子</h3><p class="mb-4" style="color:#5A9A90;">评估通内置多种AI筛选模型（筛子），每个筛子有不同的评估标准。选择筛子后，只展示通过该筛子的项目；不选则看到全部。</p>
               <div class="flex flex-wrap gap-2">
                 <span class="sieve-chip active"><i class="fas fa-brain"></i>行业偏好</span>
                 <span class="sieve-chip"><i class="fas fa-shield-alt"></i>风控优先</span>
@@ -395,24 +395,24 @@ app.get('/', (c) => {
         <!-- Step 3: 参与决策 -->
         <div id="obStep3" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
-            <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-200"><i class="fas fa-hand-pointer text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold text-teal-600 uppercase tracking-wide">投资参与</span><h3 class="text-xl font-bold text-gray-900 mt-1 mb-3">筛后精准参与</h3><p class="text-gray-500 mb-4">在筛后的高质量机会中，查看详细评估报告、对比项目，对心仪项目表达参与意向。后续流入条款通和合约通。</p>
+            <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(46,196,182,0.25);"><i class="fas fa-hand-pointer text-white text-2xl"></i></div></div>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#3DD8CA;">投资参与</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">筛后精准参与</h3><p class="mb-4" style="color:#5A9A90;">在筛后的高质量机会中，查看详细评估报告、对比项目，对心仪项目表达参与意向。后续流入条款通和合约通。</p>
               <div class="flex items-center space-x-3">
-                <div class="px-3 py-1.5 bg-teal-100 text-teal-700 rounded-lg text-sm font-medium"><i class="fas fa-eye mr-1"></i>浏览筛后</div>
-                <i class="fas fa-arrow-right text-gray-300"></i>
-                <div class="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium"><i class="fas fa-hand-point-up mr-1"></i>表达意向</div>
-                <i class="fas fa-arrow-right text-gray-300"></i>
-                <div class="px-3 py-1.5 bg-cyan-100 text-cyan-700 rounded-lg text-sm font-medium"><i class="fas fa-file-contract mr-1"></i>进入条款</div>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(46,196,182,0.12);color:#3DD8CA;"><i class="fas fa-eye mr-1"></i>浏览筛后</div>
+                <i class="fas fa-arrow-right" style="color:#2A5E58;"></i>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(16,185,129,0.12);color:#34d399;"><i class="fas fa-hand-point-up mr-1"></i>表达意向</div>
+                <i class="fas fa-arrow-right" style="color:#2A5E58;"></i>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(6,182,212,0.12);color:#22d3ee;"><i class="fas fa-file-contract mr-1"></i>进入条款</div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="px-8 pb-8 flex items-center justify-between">
-        <button onclick="closeOnboarding()" class="text-sm text-gray-400 hover:text-gray-600 transition-colors">跳过教程</button>
+        <button onclick="closeOnboarding()" class="text-sm transition-colors" style="color:#5A9A90;">跳过教程</button>
         <div class="flex items-center space-x-3">
-          <button id="obPrev" onclick="obPrev()" class="hidden px-4 py-2 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-all"><i class="fas fa-arrow-left mr-2"></i>上一步</button>
-          <button id="obNext" onclick="obNext()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-200 transition-all font-medium">开始探索<i class="fas fa-arrow-right ml-2"></i></button>
+          <button id="obPrev" onclick="obPrev()" class="hidden px-4 py-2 rounded-xl transition-all" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;"><i class="fas fa-arrow-left mr-2"></i>上一步</button>
+          <button id="obNext" onclick="obNext()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 transition-all font-medium" style="box-shadow:0 8px 24px rgba(46,196,182,0.25);">开始探索<i class="fas fa-arrow-right ml-2"></i></button>
         </div>
       </div>
     </div>
@@ -421,40 +421,40 @@ app.get('/', (c) => {
   <!-- ==================== Page 0: Login / Register ==================== -->
   <div id="pageAuth" class="page active flex-col min-h-screen cyber-bg particles-bg">
     <div class="flex-1 flex items-center justify-center p-4 relative z-10">
-      <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden animate-scale-in" style="box-shadow: 0 24px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.08);">
-        <div class="p-8 text-center" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <div class="rounded-3xl max-w-md w-full overflow-hidden animate-scale-in" style="background:rgba(13,36,34,0.96);backdrop-filter:blur(20px);border:1px solid rgba(46,196,182,0.12);box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(46,196,182,0.08);">
+        <div class="p-8 text-center" style="border-bottom: 1px solid rgba(46,196,182,0.1);">
           <div class="mx-auto mb-5 animate-float" style="width:52px; height:68px; position:relative;">
             <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, #2EC4B6 0%, #3DD8CA 100%); position:absolute; top:0; left:4px; box-shadow: 0 4px 16px rgba(46,196,182,0.35);"></div>
             <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, #28A696 0%, #2EC4B6 100%); position:absolute; bottom:0; left:4px; box-shadow: 0 4px 16px rgba(40,166,150,0.3); opacity:0.85;"></div>
           </div>
-          <h1 style="font-family:'Montserrat',sans-serif; font-weight:900; font-size:22px; letter-spacing:0.04em; color:#1a1a1a; line-height:1.15; margin-bottom:6px;">DEAL<br>CONNECT</h1>
+          <h1 style="font-family:'Montserrat',sans-serif; font-weight:900; font-size:22px; letter-spacing:0.04em; color:#E8F5F3; line-height:1.15; margin-bottom:6px;">DEAL<br>CONNECT</h1>
           <div style="width:120px; height:2.5px; background:#2EC4B6; margin:8px auto 10px; border-radius:2px;"></div>
-          <p style="font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:0.2em; color:#666; font-weight:500;">POWERED BY MICRO CONNECT GROUP</p>
-          <p class="text-lg font-bold mt-3" style="color:#1a1a1a;">参与通</p>
-          <p class="text-xs text-gray-400 mt-1">投资者的智能机会看板</p>
+          <p style="font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:0.2em; color:#5A9A90; font-weight:500;">POWERED BY MICRO CONNECT GROUP</p>
+          <p class="text-lg font-bold mt-3" style="color:#E8F5F3;">参与通</p>
+          <p class="text-xs mt-1" style="color:#5A9A90;">投资者的智能机会看板</p>
         </div>
-        <div class="flex" style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+        <div class="flex" style="border-bottom: 1px solid rgba(46,196,182,0.1);">
           <button onclick="switchAuthTab('login')" id="tabLogin" class="flex-1 py-3 text-center font-semibold" style="color:#2EC4B6; border-bottom: 2px solid #2EC4B6;">登录</button>
-          <button onclick="switchAuthTab('register')" id="tabRegister" class="flex-1 py-3 text-center font-semibold" style="color:#86868b;">注册</button>
+          <button onclick="switchAuthTab('register')" id="tabRegister" class="flex-1 py-3 text-center font-semibold" style="color:#5A9A90;">注册</button>
         </div>
         <!-- Login Form -->
         <div id="formLogin" class="p-6">
           <form onsubmit="event.preventDefault(); handleLogin();" autocomplete="on">
           <div class="space-y-4">
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">用户名 / 邮箱</label><input type="text" id="loginUsername" placeholder="请输入用户名或邮箱" autocomplete="username" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">密码</label><div class="password-wrapper" style="position:relative;"><input type="password" id="loginPassword" placeholder="请输入密码" autocomplete="current-password" class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500"><button type="button" onclick="togglePwdVis('loginPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9ca3af;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">用户名 / 邮箱</label><input type="text" id="loginUsername" placeholder="请输入用户名或邮箱" autocomplete="username" class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">密码</label><div class="password-wrapper" style="position:relative;"><input type="password" id="loginPassword" placeholder="请输入密码" autocomplete="current-password" class="w-full px-4 py-3 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('loginPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
             <div class="flex items-center justify-between text-sm">
-              <label class="flex items-center text-gray-600 cursor-pointer whitespace-nowrap"><input type="checkbox" id="rememberMe" class="mr-2 rounded" style="width:16px;height:16px;flex-shrink:0;"><span>记住我</span></label>
+              <label class="flex items-center cursor-pointer whitespace-nowrap" style="color:#5A9A90;"><input type="checkbox" id="rememberMe" class="mr-2 rounded" style="width:16px;height:16px;flex-shrink:0;"><span>记住我</span></label>
               <a href="#" class="text-teal-600 hover:text-teal-700" onclick="event.preventDefault(); showToast('info','密码重置','此功能即将上线')">忘记密码？</a>
             </div>
             <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-sign-in-alt mr-2"></i>登录</button>
-            <button type="button" onclick="handleGuestLogin()" class="w-full py-3 border border-gray-200 text-gray-600 rounded-xl font-medium hover:bg-gray-50 transition-colors"><i class="fas fa-user-secret mr-2"></i>游客模式（体验功能）</button>
+            <button type="button" onclick="handleGuestLogin()" class="w-full py-3 rounded-xl font-medium transition-colors" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;background:rgba(46,196,182,0.05);"><i class="fas fa-user-secret mr-2"></i>游客模式（体验功能）</button>
           </div>
           <p id="loginError" class="hidden mt-4 text-sm text-red-500 text-center"></p>
           </form>
-          <div class="mt-6 pt-6 border-t border-gray-100">
-            <p class="text-xs text-gray-400 text-center mb-3">企业用户</p>
-            <button onclick="showToast('info','SSO登录即将上线','企业统一认证接口已预留')" class="w-full py-3 bg-gray-100 text-gray-500 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center"><i class="fas fa-building mr-2"></i>公司SSO登录（即将上线）</button>
+          <div class="mt-6 pt-6" style="border-top:1px solid rgba(46,196,182,0.1);">
+            <p class="text-xs text-center mb-3" style="color:#5A9A90;">企业用户</p>
+            <button onclick="showToast('info','SSO登录即将上线','企业统一认证接口已预留')" class="w-full py-3 rounded-xl font-medium transition-colors flex items-center justify-center" style="background:rgba(46,196,182,0.06);color:#5A9A90;"><i class="fas fa-building mr-2"></i>公司SSO登录（即将上线）</button>
           </div>
         </div>
         <!-- Register Form -->
@@ -462,18 +462,18 @@ app.get('/', (c) => {
           <form onsubmit="event.preventDefault(); handleRegister();" autocomplete="on">
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-3">
-              <div><label class="block text-sm font-medium text-gray-700 mb-1">用户名 <span class="text-red-500">*</span></label><input type="text" id="regUsername" placeholder="用于登录" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"></div>
-              <div><label class="block text-sm font-medium text-gray-700 mb-1">姓名</label><input type="text" id="regDisplayName" placeholder="显示名称" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"></div>
+              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">用户名 <span class="text-red-500">*</span></label><input type="text" id="regUsername" placeholder="用于登录" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">姓名</label><input type="text" id="regDisplayName" placeholder="显示名称" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
             </div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">邮箱 <span class="text-red-500">*</span></label><input type="email" id="regEmail" placeholder="your@email.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">手机号</label><input type="tel" id="regPhone" placeholder="13800138000" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"></div>
-            <div><label class="block text-sm font-medium text-gray-700 mb-1">密码 <span class="text-red-500">*</span></label><div class="password-wrapper" style="position:relative;"><input type="password" id="regPassword" placeholder="至少6位" autocomplete="new-password" class="w-full px-4 py-2.5 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"><button type="button" onclick="togglePwdVis('regPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9ca3af;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">邮箱 <span class="text-red-500">*</span></label><input type="email" id="regEmail" placeholder="your@email.com" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">手机号</label><input type="tel" id="regPhone" placeholder="13800138000" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">密码 <span class="text-red-500">*</span></label><div class="password-wrapper" style="position:relative;"><input type="password" id="regPassword" placeholder="至少6位" autocomplete="new-password" class="w-full px-4 py-2.5 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('regPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
             <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-user-plus mr-2"></i>注册</button>
           </div>
           <p id="regError" class="hidden mt-4 text-sm text-red-500 text-center"></p>
           </form>
         </div>
-        <div class="px-6 pb-4 text-center"><p class="text-xs text-gray-400">&copy; 2026 参与通 Deal Connect · Micro Connect Group</p></div>
+        <div class="px-6 pb-4 text-center"><p class="text-xs" style="color:#3D7A70;">&copy; 2026 参与通 Deal Connect · Micro Connect Group</p></div>
       </div>
     </div>
   </div>
@@ -489,24 +489,24 @@ app.get('/', (c) => {
             <div style="width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg, #28A696, #2EC4B6); position:absolute; bottom:0; left:3px; opacity:0.85;"></div>
           </div>
           <div>
-            <h1 class="text-base font-bold tracking-tight" style="color:#1a1a1a;">参与通</h1>
-            <p class="text-xs -mt-0.5" style="color:#86868b; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-weight:600; font-size:9px;">DEAL CONNECT</p>
+            <h1 class="text-base font-bold tracking-tight" style="color:#E8F5F3;">参与通</h1>
+            <p class="text-xs -mt-0.5" style="color:#5A9A90; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-weight:600; font-size:9px;">DEAL CONNECT</p>
           </div>
         </div>
         <div class="flex items-center space-x-1.5">
 
-          <button onclick="showOnboarding()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #6b7280; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.06);" data-tip="新手引导"><i class="fas fa-question-circle text-xs"></i><span>帮助</span></button>
-          <div class="h-5 mx-0.5" style="width: 1px; background: rgba(0,0,0,0.08);"></div>
+          <button onclick="showOnboarding()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #5A9A90; background: rgba(46,196,182,0.06); border: 1px solid rgba(46,196,182,0.12);" data-tip="新手引导"><i class="fas fa-question-circle text-xs"></i><span>帮助</span></button>
+          <div class="h-5 mx-0.5" style="width: 1px; background: rgba(46,196,182,0.12);"></div>
           <button onclick="goToAIBuilder()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #0f766e; background: linear-gradient(135deg, rgba(93,196,179,0.1), rgba(46,196,182,0.08)); border: 1px solid rgba(93,196,179,0.25); box-shadow: 0 2px 8px rgba(93,196,179,0.1);" data-tip="AI组合构建"><i class="fas fa-magic"></i><span>AI组合</span></button>
           <!-- User avatar -->
           <div class="pl-1.5 ml-0.5 relative">
-            <button onclick="toggleUserDD(event)" id="navUserBtn" class="flex items-center space-x-2 px-2 py-1.5 rounded-full transition-all" style="background: rgba(0,0,0,0.02);" onmouseover="this.style.background='rgba(93,196,179,0.08)'" onmouseout="this.style.background='rgba(0,0,0,0.02)'">
+            <button onclick="toggleUserDD(event)" id="navUserBtn" class="flex items-center space-x-2 px-2 py-1.5 rounded-full transition-all" style="background: rgba(46,196,182,0.04);" onmouseover="this.style.background='rgba(93,196,179,0.1)'" onmouseout="this.style.background='rgba(46,196,182,0.04)'">
               <div id="navAvatar" class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 2px 8px rgba(93,196,179,0.3);">U</div>
-              <span id="navName" class="text-xs font-semibold max-w-[70px] truncate" style="color: #374151;">用户</span>
-              <i class="fas fa-chevron-down text-xs" style="color: #9ca3af; font-size: 10px;"></i>
+              <span id="navName" class="text-xs font-semibold max-w-[70px] truncate" style="color: #8EBDB5;">用户</span>
+              <i class="fas fa-chevron-down text-xs" style="color: #5A9A90; font-size: 10px;"></i>
             </button>
             <div id="userDropdown" class="user-dropdown">
-              <div class="user-dropdown-header"><div class="flex items-center space-x-3"><div id="ddAvatar" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83);">U</div><div><div id="ddName" class="font-semibold text-gray-900 text-sm">用户</div><div id="ddRole" class="text-xs text-gray-500">投资者</div></div></div></div>
+              <div class="user-dropdown-header"><div class="flex items-center space-x-3"><div id="ddAvatar" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83);">U</div><div><div id="ddName" class="font-semibold text-sm" style="color:#E8F5F3;">用户</div><div id="ddRole" class="text-xs" style="color:#5A9A90;">投资者</div></div></div></div>
               <div class="py-1">
                 <button class="user-dropdown-item" onclick="showToast('info','个人中心','功能开发中'); closeUserDD();"><i class="fas fa-user-circle"></i>个人中心</button>
                 <button class="user-dropdown-item" onclick="showToast('info','筛子偏好','可在评估通中管理您的筛子模型'); closeUserDD();"><i class="fas fa-sliders-h"></i>筛子偏好设置</button>
@@ -535,7 +535,7 @@ app.get('/', (c) => {
                 <p class="text-xs" style="color:rgba(255,255,255,0.4);">数据来源</p>
                 <p class="text-sm font-semibold text-amber-300"><i class="fas fa-paper-plane mr-1"></i>发起通 Originate</p>
               </div>
-              <div class="w-px h-10 bg-white/10 hidden sm:block"></div>
+              <div class="w-px h-10 bg-[#0F2E2B]/10 hidden sm:block"></div>
               <div class="text-right hidden sm:block">
                 <p class="text-xs" style="color:rgba(255,255,255,0.4);">筛选引擎</p>
                 <p class="text-sm font-semibold text-cyan-300"><i class="fas fa-filter mr-1"></i>评估通 Assess</p>
@@ -547,16 +547,16 @@ app.get('/', (c) => {
         <!-- Stats Grid — 全部合约客观维度总结 -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
           <div class="stat-card animate-fade-in cursor-pointer" onclick="selectSieve('all')">
-            <div class="flex items-center justify-between"><div><p class="stat-label">总合约数量</p><p class="stat-value" id="statTotalContracts">0</p><p class="text-xs text-gray-400 mt-0.5">平台全部合约</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); box-shadow: 0 4px 12px rgba(99,102,241,0.3);"><i class="fas fa-layer-group text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">总合约数量</p><p class="stat-value" id="statTotalContracts">0</p><p class="text-xs mt-0.5" style="color:#5A9A90;">平台全部合约</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); box-shadow: 0 4px 12px rgba(99,102,241,0.3);"><i class="fas fa-layer-group text-white text-sm"></i></div></div>
           </div>
           <div class="stat-card animate-fade-in delay-100 cursor-pointer" onclick="selectSieve('all')">
-            <div class="flex items-center justify-between"><div><p class="stat-label">总交易数量</p><p class="stat-value" id="statTotalTransactions">0</p><p class="text-xs text-gray-400 mt-0.5">已完成交易</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(245,158,11,0.3);"><i class="fas fa-exchange-alt text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">总交易数量</p><p class="stat-value" id="statTotalTransactions">0</p><p class="text-xs mt-0.5" style="color:#5A9A90;">已完成交易</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(245,158,11,0.3);"><i class="fas fa-exchange-alt text-white text-sm"></i></div></div>
           </div>
           <div class="stat-card animate-fade-in delay-200 cursor-pointer" onclick="goToMyContracts()">
-            <div class="flex items-center justify-between"><div><p class="stat-label">我的合约</p><p class="stat-value" id="statMyContracts">0</p><p class="text-xs text-gray-400 mt-0.5">已认购张数</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-file-contract text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">我的合约</p><p class="stat-value" id="statMyContracts">0</p><p class="text-xs mt-0.5" style="color:#5A9A90;">已认购张数</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-file-contract text-white text-sm"></i></div></div>
           </div>
           <div class="stat-card animate-fade-in delay-300 cursor-pointer" onclick="goToMyPortfolios()">
-            <div class="flex items-center justify-between"><div><p class="stat-label">我的组合</p><p class="stat-value" id="statMyPortfolios">0</p><p class="text-xs text-gray-400 mt-0.5">跨项目基金型组合</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-object-group text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">我的组合</p><p class="stat-value" id="statMyPortfolios">0</p><p class="text-xs mt-0.5" style="color:#5A9A90;">跨项目基金型组合</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-object-group text-white text-sm"></i></div></div>
           </div>
         </div>
 
@@ -574,7 +574,7 @@ app.get('/', (c) => {
                     <h3 class="text-base font-bold text-white" style="letter-spacing: -0.02em;">AI 智能组合构建器</h3>
                     <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background: rgba(46,196,182,0.2); color: #5eead4; animation: pulseGlow 2s ease-in-out infinite;">NEW</span>
                   </div>
-                  <p class="text-sm" style="color: #6b7280;">与 AI 对话，智能匹配全平台合约，一键构建个性化投资组合</p>
+                  <p class="text-sm" style="color: #5A9A90;">与 AI 对话，智能匹配全平台合约，一键构建个性化投资组合</p>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -593,29 +593,29 @@ app.get('/', (c) => {
           <div class="ai-entry-hint" id="aiEntryHint">
             <div class="ai-entry-hint-inner">
               <span class="ai-hint-hand">👆</span>
-              <span style="font-size: 13px; font-weight: 600; color: #0f766e;">点击体验 AI 构建您的专属组合</span>
+              <span style="font-size: 13px; font-weight: 600; color: #3DD8CA;">点击体验 AI 构建您的专属组合</span>
               <i class="fas fa-sparkles text-xs" style="color: #5DC4B3;"></i>
             </div>
           </div>
         </div>
 
         <!-- ===== 筛子选择器 (核心新功能) ===== -->
-        <div class="bg-white rounded-2xl p-4 mb-4 border border-gray-100" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <div class="rounded-2xl p-4 mb-4" style="background:rgba(15,46,43,0.85);border:1px solid rgba(46,196,182,0.1);box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center space-x-2">
-              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(14,165,233,0.12));"><i class="fas fa-filter text-cyan-600 text-sm"></i></div>
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(14,165,233,0.15));"><i class="fas fa-filter text-sm" style="color:#22d3ee;"></i></div>
               <div>
-                <h3 class="text-sm font-bold text-gray-800">评估通 · AI筛子</h3>
-                <p class="text-xs text-gray-400">选择筛子模型过滤机会，不选则展示全部</p>
+                <h3 class="text-sm font-bold" style="color:#E8F5F3;">评估通 · AI筛子</h3>
+                <p class="text-xs" style="color:#5A9A90;">选择筛子模型过滤机会，不选则展示全部</p>
               </div>
             </div>
-            <button onclick="showSieveManager()" class="text-xs text-cyan-600 hover:text-cyan-700 font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-cyan-50 transition-colors"><i class="fas fa-cogs mr-1"></i>管理筛子</button>
+            <button onclick="showSieveManager()" class="text-xs font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors" style="color:#22d3ee;"><i class="fas fa-cogs mr-1"></i>管理筛子</button>
           </div>
           <div class="flex flex-wrap gap-2" id="sieveSelector">
             <!-- 动态渲染 by renderSieveSelector() -->
           </div>
           <!-- 筛子说明 -->
-          <div id="sieveDescription" class="mt-3 p-3 bg-gray-50 rounded-xl text-xs text-gray-500 hidden">
+          <div id="sieveDescription" class="mt-3 p-3 rounded-xl text-xs hidden" style="background:rgba(11,30,28,0.6);color:#5A9A90;">
             <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
             <span id="sieveDescText">选择筛子后查看说明</span>
           </div>
@@ -624,12 +624,12 @@ app.get('/', (c) => {
         <!-- Filter Bar -->
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center space-x-2">
-            <h2 class="text-base font-bold text-gray-800"><i class="fas fa-file-contract mr-1.5 text-teal-500"></i>合约看板</h2>
-            <span id="filterLabel" class="text-xs text-gray-400 font-medium">· 展示全部</span>
+            <h2 class="text-base font-bold" style="color:#E8F5F3;"><i class="fas fa-file-contract mr-1.5" style="color:#3DD8CA;"></i>合约看板</h2>
+            <span id="filterLabel" class="text-xs font-medium" style="color:#5A9A90;">· 展示全部</span>
           </div>
           <div class="flex items-center space-x-2">
-            <div class="relative"><input type="text" id="dealSearch" placeholder="搜索项目名称…" class="search-input px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white w-48" oninput="renderDeals()"></div>
-            <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="filterStatus" onchange="renderDeals()">
+            <div class="relative"><input type="text" id="dealSearch" placeholder="搜索项目名称…" class="search-input px-3 py-1.5 rounded-lg text-xs w-48" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" oninput="renderDeals()"></div>
+            <select class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#8EBDB5;" id="filterStatus" onchange="renderDeals()">
               <option value="all">全部状态</option>
               <option value="open">待参与</option>
               <option value="interested">已意向</option>
@@ -647,34 +647,34 @@ app.get('/', (c) => {
           <div class="max-w-3xl mx-auto">
             <div class="text-center mb-6">
               <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-filter"></i></div>
-              <h3 class="text-xl font-bold text-gray-800 mb-2" style="letter-spacing:-0.02em;">等待发起通的投资机会</h3>
-              <p class="text-sm text-gray-500">机会由融资方通过发起通上传，经评估通筛子过滤后展示于此</p>
+              <h3 class="text-xl font-bold mb-2" style="color:#E8F5F3;letter-spacing:-0.02em;">等待发起通的投资机会</h3>
+              <p class="text-sm" style="color:#5A9A90;">机会由融资方通过发起通上传，经评估通筛子过滤后展示于此</p>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
-              <button onclick="loadDemoData()" class="group text-left p-5 rounded-2xl border transition-all" style="background: rgba(255,255,255,0.9); border-color: rgba(0,0,0,0.06);" onmouseover="this.style.borderColor='rgba(52,199,89,0.3)';this.style.boxShadow='0 8px 32px rgba(52,199,89,0.08)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(0,0,0,0.06)';this.style.boxShadow='none';this.style.transform='none'">
+              <button onclick="loadDemoData()" class="group text-left p-5 rounded-2xl border transition-all" style="background: rgba(15,46,43,0.8); border-color: rgba(46,196,182,0.1);" onmouseover="this.style.borderColor='rgba(52,199,89,0.3)';this.style.boxShadow='0 8px 32px rgba(52,199,89,0.08)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.1)';this.style.boxShadow='none';this.style.transform='none'">
                 <div class="w-12 h-12 icon-container icon-container-lg icon-gradient-success mb-4 group-hover:scale-105 transition-transform" style="border-radius:16px;"><i class="fas fa-database text-white text-lg"></i></div>
-                <h4 class="font-bold text-gray-800 mb-1 text-base">加载演示数据</h4>
-                <p class="text-sm text-gray-500 leading-relaxed">体验完整功能，查看模拟的发起通项目经筛子过滤后的效果</p>
+                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;">加载演示数据</h4>
+                <p class="text-sm leading-relaxed" style="color:#5A9A90;">体验完整功能，查看模拟的发起通项目经筛子过滤后的效果</p>
               </button>
-              <div class="text-left p-5 rounded-2xl border" style="background: rgba(255,255,255,0.9); border-color: rgba(0,0,0,0.06);">
-                <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(14,165,233,0.12));"><i class="fas fa-filter text-cyan-600 text-lg"></i></div>
-                <h4 class="font-bold text-gray-800 mb-1 text-base">配置您的筛子</h4>
-                <p class="text-sm text-gray-500 leading-relaxed">在评估通中设置您的AI筛选标准，让参与通自动展示匹配机会</p>
+              <div class="text-left p-5 rounded-2xl border" style="background: rgba(15,46,43,0.8); border-color: rgba(46,196,182,0.1);">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(14,165,233,0.15));"><i class="fas fa-filter text-lg" style="color:#22d3ee;"></i></div>
+                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;">配置您的筛子</h4>
+                <p class="text-sm leading-relaxed" style="color:#5A9A90;">在评估通中设置您的AI筛选标准，让参与通自动展示匹配机会</p>
               </div>
             </div>
-            <div class="rounded-2xl p-5 border" style="background: rgba(255,255,255,0.8); border-color: rgba(0,0,0,0.04);">
-              <h4 class="text-xs font-bold uppercase tracking-wider mb-4" style="color: #86868b;"><i class="fas fa-route mr-1.5" style="color: #5DC4B3;"></i>数据流向</h4>
+            <div class="rounded-2xl p-5 border" style="background: rgba(15,46,43,0.7); border-color: rgba(46,196,182,0.1);">
+              <h4 class="text-xs font-bold uppercase tracking-wider mb-4" style="color: #5A9A90;"><i class="fas fa-route mr-1.5" style="color: #5DC4B3;"></i>数据流向</h4>
               <div class="flex items-center justify-center gap-3 flex-wrap">
-                <div class="flex items-center gap-2 px-4 py-2.5 bg-amber-50 rounded-xl"><i class="fas fa-paper-plane text-amber-500"></i><span class="text-sm font-semibold text-amber-700">发起通</span></div>
-                <i class="fas fa-long-arrow-alt-right text-gray-300"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 bg-cyan-50 rounded-xl"><i class="fas fa-filter text-cyan-500"></i><span class="text-sm font-semibold text-cyan-700">评估通筛子</span></div>
-                <i class="fas fa-long-arrow-alt-right text-gray-300"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 bg-teal-50 rounded-xl border-2 border-teal-200"><i class="fas fa-hand-pointer text-teal-500"></i><span class="text-sm font-bold text-teal-700">参与通（此页）</span></div>
-                <i class="fas fa-long-arrow-alt-right text-gray-300"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-xl"><i class="fas fa-file-contract text-gray-400"></i><span class="text-sm font-semibold text-gray-500">条款通</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><i class="fas fa-paper-plane" style="color:#fbbf24;"></i><span class="text-sm font-semibold" style="color:#fbbf24;">发起通</span></div>
+                <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><i class="fas fa-filter" style="color:#22d3ee;"></i><span class="text-sm font-semibold" style="color:#22d3ee;">评估通筛子</span></div>
+                <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(46,196,182,0.12);border:2px solid rgba(46,196,182,0.3);"><i class="fas fa-hand-pointer" style="color:#3DD8CA;"></i><span class="text-sm font-bold" style="color:#3DD8CA;">参与通（此页）</span></div>
+                <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(100,116,139,0.08);border:1px solid rgba(100,116,139,0.15);"><i class="fas fa-file-contract" style="color:#94a3b8;"></i><span class="text-sm font-semibold" style="color:#94a3b8;">条款通</span></div>
               </div>
             </div>
-            <p class="mt-4 text-xs text-gray-400"><i class="fas fa-question-circle mr-1"></i>首次使用？<button onclick="showOnboarding()" class="text-teal-500 hover:text-teal-600 underline font-medium">查看新手引导</button></p>
+            <p class="mt-4 text-xs" style="color:#3D7A70;"><i class="fas fa-question-circle mr-1"></i>首次使用？<button onclick="showOnboarding()" class="underline font-medium" style="color:#3DD8CA;">查看新手引导</button></p>
           </div>
         </div>
       </div>
@@ -686,39 +686,39 @@ app.get('/', (c) => {
     <nav class="px-4 py-2.5 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goBack()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回</span></button>
-          <div class="border-l border-gray-200 pl-3">
-            <div class="flex items-center space-x-2"><span id="detailMCN" class="font-mono text-xs font-bold tracking-wider px-2 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.15);">MCN-XX-XX-0000-0000</span><h1 class="font-bold text-gray-900 text-sm" id="detailTitle">项目名称</h1><span id="detailStatus" class="badge badge-warning">待参与</span></div>
-            <p class="text-xs text-gray-500"><span class="source-tag source-originate"><i class="fas fa-paper-plane"></i>发起通</span> <span id="detailIndustry">行业</span> · <span id="detailDate">日期</span></p>
+          <button onclick="goBack()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回</span></button>
+          <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
+            <div class="flex items-center space-x-2"><span id="detailMCN" class="font-mono text-xs font-bold tracking-wider px-2 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.15);">MCN-XX-XX-0000-0000</span><h1 class="font-bold text-[#E8F5F3] text-sm" id="detailTitle">项目名称</h1><span id="detailStatus" class="badge badge-warning">待参与</span></div>
+            <p class="text-xs text-[#5A9A90]"><span class="source-tag source-originate"><i class="fas fa-paper-plane"></i>发起通</span> <span id="detailIndustry">行业</span> · <span id="detailDate">日期</span></p>
           </div>
         </div>
         <div class="flex items-center space-x-1.5">
-          <button onclick="showToast('info','分享','分享链接已复制')" class="tooltip p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 text-sm" data-tip="分享"><i class="fas fa-share-alt"></i></button>
-          <button onclick="showToast('info','收藏','已添加到收藏夹')" class="tooltip p-1.5 hover:bg-gray-100 rounded-lg text-gray-500 text-sm" data-tip="收藏"><i class="fas fa-bookmark"></i></button>
-          <div class="w-px h-6 bg-gray-200 mx-1"></div>
+          <button onclick="showToast('info','分享','分享链接已复制')" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="分享"><i class="fas fa-share-alt"></i></button>
+          <button onclick="showToast('info','收藏','已添加到收藏夹')" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="收藏"><i class="fas fa-bookmark"></i></button>
+          <div class="w-px h-6 bg-[rgba(46,196,182,0.1)] mx-1"></div>
           <button onclick="expressIntent()" id="btnExpressIntent" class="btn-primary text-xs py-1.5 px-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);"><i class="fas fa-hand-point-up mr-1"></i>我要参与</button>
         </div>
       </div>
     </nav>
     <div class="flex flex-1 overflow-hidden">
       <!-- Left: Deal Info -->
-      <div class="w-2/5 border-r border-gray-200 flex flex-col bg-white overflow-y-auto">
+      <div class="w-2/5 border-r border-[rgba(46,196,182,0.12)] flex flex-col bg-[#0F2E2B] overflow-y-auto">
         <div class="p-5" id="detailLeft">
-          <div class="text-center py-8 text-gray-400"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">加载中...</p></div>
+          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">加载中...</p></div>
         </div>
       </div>
       <!-- Right: Analysis (筛子评估结果) -->
       <div class="w-3/5 flex flex-col bg-slate-50 overflow-y-auto">
-        <div class="p-3 border-b border-gray-200 bg-white flex items-center justify-between">
-          <div class="flex items-center space-x-2"><span class="text-sm font-semibold text-gray-700"><i class="fas fa-chart-pie mr-1.5 text-teal-500"></i>合约评估</span></div>
-          <div class="flex bg-gray-100 rounded-lg p-0.5">
-            <button onclick="switchDetailView('sieve')" id="btnSieve" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white shadow text-teal-600"><i class="fas fa-crosshairs mr-1"></i>雷达评估</button>
-            <button onclick="switchDetailView('financials')" id="btnFinancials" class="px-2.5 py-1 rounded-md text-xs font-semibold text-gray-600"><i class="fas fa-calculator mr-1"></i>财务</button>
-            <button onclick="switchDetailView('timeline')" id="btnTimeline" class="px-2.5 py-1 rounded-md text-xs font-semibold text-gray-600"><i class="fas fa-stream mr-1"></i>时间线</button>
+        <div class="p-3 border-b border-[rgba(46,196,182,0.12)] bg-[#0F2E2B] flex items-center justify-between">
+          <div class="flex items-center space-x-2"><span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-teal-500"></i>合约评估</span></div>
+          <div class="flex bg-[rgba(46,196,182,0.06)] rounded-lg p-0.5">
+            <button onclick="switchDetailView('sieve')" id="btnSieve" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#0F2E2B] shadow text-teal-600"><i class="fas fa-crosshairs mr-1"></i>雷达评估</button>
+            <button onclick="switchDetailView('financials')" id="btnFinancials" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-calculator mr-1"></i>财务</button>
+            <button onclick="switchDetailView('timeline')" id="btnTimeline" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-stream mr-1"></i>时间线</button>
           </div>
         </div>
         <div class="flex-1 p-5" id="detailRight">
-          <div class="text-center py-16 text-gray-400"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">选择一个项目查看筛子评估报告</p></div>
+          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">选择一个项目查看筛子评估报告</p></div>
         </div>
       </div>
     </div>
@@ -729,18 +729,18 @@ app.get('/', (c) => {
     <nav class="px-5 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
-          <div class="border-l border-gray-200 pl-3">
-            <h1 class="text-base font-bold text-gray-900"><i class="fas fa-file-contract mr-1.5 text-emerald-500"></i>我的合约</h1>
-            <p class="text-xs text-gray-400" id="myContractsSubtitle">已认购 0 张 · 总投入 ¥0</p>
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
+            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-file-contract mr-1.5 text-emerald-500"></i>我的合约</h1>
+            <p class="text-xs text-[#3D7A70]" id="myContractsSubtitle">已认购 0 张 · 总投入 ¥0</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <input type="text" id="mcSearchInput" placeholder="搜索合约名称/MCN…" class="search-input px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white w-52" oninput="renderMyContracts()">
-          <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="mcFilterIndustry" onchange="renderMyContracts()">
+          <input type="text" id="mcSearchInput" placeholder="搜索合约名称/MCN…" class="search-input px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B] w-52" oninput="renderMyContracts()">
+          <select class="px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B]" id="mcFilterIndustry" onchange="renderMyContracts()">
             <option value="all">全部行业</option>
           </select>
-          <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="mcSortBy" onchange="renderMyContracts()">
+          <select class="px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B]" id="mcSortBy" onchange="renderMyContracts()">
             <option value="date">按认购时间</option>
             <option value="score">按AI评分</option>
             <option value="yield">按分成比例</option>
@@ -758,8 +758,8 @@ app.get('/', (c) => {
         <!-- 空状态 -->
         <div id="mcEmpty" class="hidden text-center py-16">
           <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-file-contract"></i></div>
-          <h3 class="text-xl font-bold text-gray-800 mb-2">暂无合约</h3>
-          <p class="text-sm text-gray-500 mb-4">您还没有认购任何合约，去合约看板挑选吧</p>
+          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2">暂无合约</h3>
+          <p class="text-sm text-[#5A9A90] mb-4">您还没有认购任何合约，去合约看板挑选吧</p>
           <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-teal-200"><i class="fas fa-shopping-cart mr-2"></i>去认购</button>
         </div>
       </div>
@@ -771,10 +771,10 @@ app.get('/', (c) => {
     <nav class="px-5 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
-          <div class="border-l border-gray-200 pl-3">
-            <h1 class="text-base font-bold text-gray-900"><i class="fas fa-object-group mr-1.5 text-violet-500"></i>我的组合</h1>
-            <p class="text-xs text-gray-400" id="myPortfoliosSubtitle">共 0 个组合 · 0 张合约 · 总投入 ¥0</p>
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
+            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-object-group mr-1.5 text-violet-500"></i>我的组合</h1>
+            <p class="text-xs text-[#3D7A70]" id="myPortfoliosSubtitle">共 0 个组合 · 0 张合约 · 总投入 ¥0</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
@@ -800,8 +800,8 @@ app.get('/', (c) => {
         <!-- 空状态 -->
         <div id="mpEmpty" class="hidden text-center py-16">
           <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-object-group"></i></div>
-          <h3 class="text-xl font-bold text-gray-800 mb-2">暂无组合</h3>
-          <p class="text-sm text-gray-500 mb-4">认购合约后自动生成投资组合</p>
+          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2">暂无组合</h3>
+          <p class="text-sm text-[#5A9A90] mb-4">认购合约后自动生成投资组合</p>
           <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-teal-200"><i class="fas fa-shopping-cart mr-2"></i>去认购合约</button>
         </div>
       </div>
@@ -813,13 +813,13 @@ app.get('/', (c) => {
     <nav class="px-4 py-2.5 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToMyPortfolios()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回组合</span></button>
-          <div class="border-l border-gray-200 pl-3">
+          <button onclick="goToMyPortfolios()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回组合</span></button>
+          <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
             <div class="flex items-center space-x-2">
               <div class="w-8 h-8 rounded-lg flex items-center justify-center" id="pdIconBox" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm" id="pdIcon"></i></div>
               <div>
-                <div class="flex items-center gap-2"><h1 class="font-bold text-gray-900 text-sm" id="pdTitle">组合名称</h1><span id="pdCategoryBadge" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#ede9fe;color:#7c3aed;">稳健型</span></div>
-                <p class="text-xs text-gray-500" id="pdSubtitle">0 张合约 · 0 个项目 · 总投入 ¥0</p>
+                <div class="flex items-center gap-2"><h1 class="font-bold text-[#E8F5F3] text-sm" id="pdTitle">组合名称</h1><span id="pdCategoryBadge" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#ede9fe;color:#7c3aed;">稳健型</span></div>
+                <p class="text-xs text-[#5A9A90]" id="pdSubtitle">0 张合约 · 0 个项目 · 总投入 ¥0</p>
               </div>
             </div>
           </div>
@@ -831,19 +831,19 @@ app.get('/', (c) => {
     </nav>
     <div class="flex flex-1 overflow-hidden">
       <!-- Left: 组合概览 -->
-      <div class="w-2/5 border-r border-gray-200 flex flex-col bg-white overflow-y-auto">
+      <div class="w-2/5 border-r border-[rgba(46,196,182,0.12)] flex flex-col bg-[#0F2E2B] overflow-y-auto">
         <div class="p-5" id="pdLeft">
-          <div class="text-center py-8 text-gray-400"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">加载中...</p></div>
+          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">加载中...</p></div>
         </div>
       </div>
       <!-- Right: 组合雷达图+合约列表 -->
       <div class="w-3/5 flex flex-col bg-slate-50 overflow-y-auto">
-        <div class="p-3 border-b border-gray-200 bg-white flex items-center justify-between">
-          <span class="text-sm font-semibold text-gray-700"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>组合加权分析</span>
-          <span class="text-xs text-gray-400" id="pdWeightNote">跨项目合约等权重加权</span>
+        <div class="p-3 border-b border-[rgba(46,196,182,0.12)] bg-[#0F2E2B] flex items-center justify-between">
+          <span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>组合加权分析</span>
+          <span class="text-xs text-[#3D7A70]" id="pdWeightNote">跨项目合约等权重加权</span>
         </div>
         <div class="flex-1 p-5" id="pdRight">
-          <div class="text-center py-16 text-gray-400"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">加载组合加权分析...</p></div>
+          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">加载组合加权分析...</p></div>
         </div>
       </div>
     </div>
@@ -855,17 +855,17 @@ app.get('/', (c) => {
     <nav class="px-5 py-2.5 flex-shrink-0" style="background: rgba(255,255,255,0.92); backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(0,0,0,0.06);">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-all text-gray-500 hover:text-teal-600"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
-          <div class="border-l pl-3" style="border-color: rgba(0,0,0,0.08);">
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-all text-[#5A9A90] hover:text-teal-600"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <div class="border-l pl-3" style="border-color: rgba(46,196,182,0.12);">
             <div class="flex items-center gap-2">
               <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.35);"><i class="fas fa-magic text-white text-sm"></i></div>
-              <div><h1 class="text-sm font-bold text-gray-900">AI 组合构建器</h1><p class="text-xs" style="color: #86868b; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-size:9px;">PORTFOLIO ARCHITECT · PILOT</p></div>
+              <div><h1 class="text-sm font-bold text-[#E8F5F3]">AI 组合构建器</h1><p class="text-xs" style="color: #5A9A90; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-size:9px;">PORTFOLIO ARCHITECT · PILOT</p></div>
             </div>
           </div>
         </div>
         <div class="flex items-center gap-2">
           <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(245,158,11,0.1); color: #b45309; border: 1px solid rgba(245,158,11,0.15);"><i class="fas fa-flask mr-1"></i>试点功能</span>
-          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-gray-400 hover:text-red-500 hover:border-red-200" style="border: 1px solid rgba(0,0,0,0.08);"><i class="fas fa-redo mr-1"></i>重新开始</button>
+          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-[#3D7A70] hover:text-red-500 hover:border-red-200" style="border: 1px solid rgba(46,196,182,0.12);"><i class="fas fa-redo mr-1"></i>重新开始</button>
         </div>
       </div>
     </nav>
@@ -873,17 +873,17 @@ app.get('/', (c) => {
     <!-- Main Content: 左对话 + 右组合 -->
     <div class="flex flex-1 overflow-hidden">
       <!-- ===== 左侧: AI 对话区 ===== -->
-      <div class="w-2/5 flex flex-col bg-white" style="border-right: 1px solid rgba(0,0,0,0.06);">
+      <div class="w-2/5 flex flex-col bg-[#0F2E2B]" style="border-right: 1px solid rgba(0,0,0,0.06);">
         <!-- 对话消息区 -->
         <div class="flex-1 overflow-y-auto p-4 space-y-4" id="abMessages" style="scroll-behavior: smooth; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);">
           <!-- 初始欢迎 -->
           <div class="flex items-start gap-3 animate-fade-in" id="abWelcome">
             <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);"><i class="fas fa-robot text-white text-sm"></i></div>
             <div class="flex-1">
-              <div class="p-4 rounded-2xl rounded-tl-md bg-white" style="border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-                <p class="text-sm text-gray-900 leading-relaxed mb-3">您好！我是 <span style="color: #0f766e; font-weight: 700;">参与通 AI 组合构建器</span>。</p>
-                <p class="text-sm leading-relaxed mb-3 text-gray-500">我将通过对话，了解您的投资偏好和目标，从平台全部合约中为您智能构建个性化投资组合。</p>
-                <p class="text-sm leading-relaxed mb-4 text-gray-500">我们先从一个简单的问题开始 —</p>
+              <div class="p-4 rounded-2xl rounded-tl-md bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+                <p class="text-sm text-[#E8F5F3] leading-relaxed mb-3">您好！我是 <span style="color: #0f766e; font-weight: 700;">参与通 AI 组合构建器</span>。</p>
+                <p class="text-sm leading-relaxed mb-3 text-[#5A9A90]">我将通过对话，了解您的投资偏好和目标，从平台全部合约中为您智能构建个性化投资组合。</p>
+                <p class="text-sm leading-relaxed mb-4 text-[#5A9A90]">我们先从一个简单的问题开始 —</p>
                 <div class="p-3 rounded-xl" style="background: linear-gradient(135deg, rgba(93,196,179,0.08), rgba(46,196,182,0.06)); border: 1px solid rgba(93,196,179,0.2);">
                   <p class="text-sm font-semibold" style="color: #0f766e;"><i class="fas fa-compass mr-1.5"></i>您这次投资最看重什么？</p>
                 </div>
@@ -899,14 +899,14 @@ app.get('/', (c) => {
           </div>
         </div>
         <!-- 输入区 -->
-        <div class="flex-shrink-0 p-4 bg-white" style="border-top: 1px solid rgba(0,0,0,0.06);">
+        <div class="flex-shrink-0 p-4 bg-[#0F2E2B]" style="border-top: 1px solid rgba(0,0,0,0.06);">
           <div class="flex items-center gap-2">
             <div class="flex-1 relative">
               <input type="text" id="abInput" placeholder="输入您的投资需求或偏好..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: #f8fafc; border: 1px solid rgba(0,0,0,0.1); color: #1d1d1f;" onkeydown="if(event.key==='Enter')abSendMessage()">
             </div>
             <button onclick="abSendMessage()" class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><i class="fas fa-paper-plane text-white text-sm"></i></button>
           </div>
-          <p class="text-xs mt-2 text-center text-gray-400">AI 实时分析您的需求，从 <span id="abTotalContracts" class="font-semibold text-teal-600">0</span> 张合约中智能配置</p>
+          <p class="text-xs mt-2 text-center text-[#3D7A70]">AI 实时分析您的需求，从 <span id="abTotalContracts" class="font-semibold text-teal-600">0</span> 张合约中智能配置</p>
         </div>
       </div>
 
@@ -918,14 +918,14 @@ app.get('/', (c) => {
             <div class="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 ai-entry-icon" style="background: linear-gradient(135deg, rgba(93,196,179,0.1), rgba(46,196,182,0.06)); border: 1px dashed rgba(93,196,179,0.3);">
               <i class="fas fa-layer-group text-4xl" style="color: rgba(93,196,179,0.5);"></i>
             </div>
-            <h3 class="text-lg font-bold text-gray-800 mb-2" style="letter-spacing: -0.02em;">等待 AI 构建您的专属组合</h3>
-            <p class="text-sm leading-relaxed text-gray-500">在左侧与 AI 对话，描述您的投资偏好。AI 将根据您的需求从全平台合约中实时构建投资组合。</p>
+            <h3 class="text-lg font-bold text-[#E8F5F3] mb-2" style="letter-spacing: -0.02em;">等待 AI 构建您的专属组合</h3>
+            <p class="text-sm leading-relaxed text-[#5A9A90]">在左侧与 AI 对话，描述您的投资偏好。AI 将根据您的需求从全平台合约中实时构建投资组合。</p>
             <div class="flex items-center justify-center gap-4 mt-6">
-              <div class="flex items-center gap-1.5 text-gray-400"><div class="w-2 h-2 rounded-full" style="background: #5DC4B3;"></div><span class="text-xs">风格偏好</span></div>
-              <i class="fas fa-long-arrow-alt-right text-gray-300"></i>
-              <div class="flex items-center gap-1.5 text-gray-400"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs">行业选择</span></div>
-              <i class="fas fa-long-arrow-alt-right text-gray-300"></i>
-              <div class="flex items-center gap-1.5 text-gray-400"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs">组合生成</span></div>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #5DC4B3;"></div><span class="text-xs">风格偏好</span></div>
+              <i class="fas fa-long-arrow-alt-right text-[#2A5E58]"></i>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs">行业选择</span></div>
+              <i class="fas fa-long-arrow-alt-right text-[#2A5E58]"></i>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs">组合生成</span></div>
             </div>
           </div>
         </div>
@@ -970,10 +970,10 @@ app.get('/', (c) => {
           </div>
 
           <!-- 雷达图 -->
-          <div class="rounded-2xl overflow-hidden bg-white" style="border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div class="rounded-2xl overflow-hidden bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
             <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(0,0,0,0.04);">
-              <span class="text-sm font-bold text-gray-800"><i class="fas fa-chart-pie mr-1.5 text-teal-500"></i>组合雷达评估</span>
-              <span class="text-xs text-gray-400">8维度量化</span>
+              <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-teal-500"></i>组合雷达评估</span>
+              <span class="text-xs text-[#3D7A70]">8维度量化</span>
             </div>
             <div class="flex items-center justify-center py-4 px-2">
               <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
@@ -984,16 +984,16 @@ app.get('/', (c) => {
           </div>
 
           <!-- 行业配比 -->
-          <div class="rounded-2xl p-4 bg-white" style="border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-            <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i>行业配比</h3>
+          <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+            <h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i>行业配比</h3>
             <div id="abIndustryDistrib" class="space-y-2"></div>
           </div>
 
           <!-- 合约清单 -->
-          <div class="rounded-2xl p-4 bg-white" style="border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
             <div class="flex items-center justify-between mb-3">
-              <h3 class="text-sm font-bold text-gray-800"><i class="fas fa-list mr-1.5 text-emerald-500"></i>推荐合约清单</h3>
-              <span class="text-xs text-gray-400" id="abContractCount">0 张</span>
+              <h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list mr-1.5 text-emerald-500"></i>推荐合约清单</h3>
+              <span class="text-xs text-[#3D7A70]" id="abContractCount">0 张</span>
             </div>
             <div class="space-y-2" id="abContractList"></div>
           </div>
@@ -1010,11 +1010,11 @@ app.get('/', (c) => {
 
   <!-- ==================== Confirm Dialog ==================== -->
   <div id="confirmModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[200]">
-    <div class="bg-white rounded-2xl max-w-sm w-full mx-4 overflow-hidden animate-scale-in">
+    <div class="bg-[#0F2E2B] rounded-2xl max-w-sm w-full mx-4 overflow-hidden animate-scale-in">
       <div class="confirm-dialog" style="padding:32px; text-align:center;">
         <div id="confirmIcon" class="confirm-icon warning" style="width:56px;height:56px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(245,158,11,0.1);"><i class="fas fa-exclamation-triangle" style="color:#f59e0b;font-size:24px;"></i></div>
-        <h3 id="confirmTitle" class="text-lg font-bold text-gray-900 mb-2">确认操作</h3>
-        <p id="confirmMessage" class="text-sm text-gray-500 mb-6">确定要执行此操作吗？</p>
+        <h3 id="confirmTitle" class="text-lg font-bold text-[#E8F5F3] mb-2">确认操作</h3>
+        <p id="confirmMessage" class="text-sm text-[#5A9A90] mb-6">确定要执行此操作吗？</p>
         <div class="flex gap-3 justify-center"><button onclick="hideConfirm()" class="btn-secondary rounded-xl px-5 py-2">取消</button><button id="confirmAction" onclick="hideConfirm()" class="btn-primary rounded-xl px-5 py-2">确认</button></div>
       </div>
     </div>
@@ -1029,7 +1029,7 @@ app.get('/', (c) => {
     </div>
     <div class="ai-chat-input" style="padding:16px; border-top:1px solid #f1f5f9;">
       <div class="flex items-center gap-2">
-        <input type="text" id="aiInput" placeholder="例如：哪个筛子适合我？" class="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-sm" onkeydown="if(event.key==='Enter')sendAIMsg()">
+        <input type="text" id="aiInput" placeholder="例如：哪个筛子适合我？" class="flex-1 px-3 py-2 border border-[rgba(46,196,182,0.12)] rounded-xl text-sm" onkeydown="if(event.key==='Enter')sendAIMsg()">
         <button onclick="sendAIMsg()" class="btn-primary px-3 py-2 rounded-xl text-sm"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
@@ -1624,13 +1624,13 @@ app.get('/', (c) => {
           else ctx.lineTo(x, y);
         }
         ctx.closePath();
-        ctx.strokeStyle = ring === 5 ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)';
+        ctx.strokeStyle = ring === 5 ? 'rgba(46,196,182,0.2)' : 'rgba(46,196,182,0.08)';
         ctx.lineWidth = ring === 5 ? 1.2 : 0.8;
         ctx.stroke();
 
         // 20/40/60/80/100 标注
         if (ring % 2 === 0 || ring === 1) {
-          ctx.fillStyle = 'rgba(0,0,0,0.2)';
+          ctx.fillStyle = 'rgba(142,189,181,0.4)';
           ctx.font = '9px Inter, sans-serif';
           ctx.textAlign = 'left';
           ctx.fillText((ring * 20).toString(), cx + 3, cy - r + 3);
@@ -1643,7 +1643,7 @@ app.get('/', (c) => {
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx + maxR * Math.cos(angle), cy + maxR * Math.sin(angle));
-        ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+        ctx.strokeStyle = 'rgba(46,196,182,0.12)';
         ctx.lineWidth = 0.8;
         ctx.stroke();
       }
@@ -1685,7 +1685,7 @@ app.get('/', (c) => {
         // 外圈
         ctx.beginPath();
         ctx.arc(x, y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = '#0B1E1C';
         ctx.fill();
         ctx.strokeStyle = dims[i].color;
         ctx.lineWidth = 2.5;
@@ -1715,7 +1715,7 @@ app.get('/', (c) => {
 
         // 标签名
         ctx.font = '9px Inter, sans-serif';
-        ctx.fillStyle = '#6b7280';
+        ctx.fillStyle = '#5A9A90';
         const nameY = i === 0 ? y + 6 : (angle < 0 ? y + 4 : (angle > Math.PI * 0.8 ? y + 4 : y - 4));
         // 对于左右两侧的标签，文字对齐方式调整
         const cosA = Math.cos(angle);
@@ -1754,7 +1754,7 @@ app.get('/', (c) => {
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.closePath();
-      ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+      ctx.strokeStyle = 'rgba(46,196,182,0.12)';
       ctx.lineWidth = 0.5;
       ctx.stroke();
 
@@ -1784,7 +1784,7 @@ app.get('/', (c) => {
       const container = document.getElementById('sieveSelector');
       if (!container) return;
       const models = getActiveSieveModels();
-      let html = '<button onclick="selectSieve(&apos;all&apos;)" class="sieve-chip' + (currentSieve === 'all' ? ' active' : '') + '" data-sieve="all"><i class="fas fa-globe text-gray-400"></i>全部机会</button>';
+      let html = '<button onclick="selectSieve(&apos;all&apos;)" class="sieve-chip' + (currentSieve === 'all' ? ' active' : '') + '" data-sieve="all"><i class="fas fa-globe text-[#3D7A70]"></i>全部机会</button>';
       mySieves.forEach(key => {
         const s = SIEVE_LIBRARY[key];
         if (!s) return;
@@ -1807,34 +1807,34 @@ app.get('/', (c) => {
       modal.style.animation = 'fadeIn 0.2s ease';
       modal.onclick = (e) => { if (e.target === modal) closeSieveManager(); };
 
-      modal.innerHTML = '<div style="animation: scaleIn 0.25s cubic-bezier(0.28,0.11,0.32,1);" class="bg-white rounded-3xl max-w-3xl w-full mx-4 overflow-hidden" style="box-shadow: 0 24px 80px rgba(0,0,0,0.2);">' +
+      modal.innerHTML = '<div style="animation: scaleIn 0.25s cubic-bezier(0.28,0.11,0.32,1);" class="bg-[#0F2E2B] rounded-3xl max-w-3xl w-full mx-4 overflow-hidden" style="box-shadow: 0 24px 80px rgba(0,0,0,0.2);">' +
         // Header
-        '<div class="p-5 border-b border-gray-100" style="background: linear-gradient(135deg, rgba(6,182,212,0.06), rgba(14,165,233,0.04));">' +
+        '<div class="p-5 border-b border-[rgba(46,196,182,0.08)]" style="background: linear-gradient(135deg, rgba(6,182,212,0.06), rgba(14,165,233,0.04));">' +
           '<div class="flex items-center justify-between">' +
-            '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #06b6d4, #0ea5e9); box-shadow: 0 4px 12px rgba(6,182,212,0.3);"><i class="fas fa-cogs text-white"></i></div><div><h2 class="text-lg font-bold text-gray-900">管理我的筛子</h2><p class="text-xs text-gray-400">从筛子库添加，或移除已有筛子</p></div></div>' +
-            '<button onclick="closeSieveManager()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"><i class="fas fa-times"></i></button>' +
+            '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #06b6d4, #0ea5e9); box-shadow: 0 4px 12px rgba(6,182,212,0.3);"><i class="fas fa-cogs text-white"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">管理我的筛子</h2><p class="text-xs text-[#3D7A70]">从筛子库添加，或移除已有筛子</p></div></div>' +
+            '<button onclick="closeSieveManager()" class="w-8 h-8 rounded-full bg-[rgba(46,196,182,0.06)] hover:bg-[rgba(46,196,182,0.1)] flex items-center justify-center text-[#5A9A90] transition-colors"><i class="fas fa-times"></i></button>' +
           '</div>' +
         '</div>' +
         // Body — 双栏
         '<div class="flex" style="min-height: 380px; max-height: 70vh;">' +
           // 左栏：筛子库
-          '<div class="w-1/2 border-r border-gray-100 flex flex-col">' +
-            '<div class="p-4 border-b border-gray-50 flex items-center justify-between"><h3 class="text-sm font-bold text-gray-700"><i class="fas fa-warehouse mr-1.5 text-cyan-500"></i>筛子库</h3><span class="text-xs text-gray-400">' + libraryKeys.length + ' 个可用</span></div>' +
+          '<div class="w-1/2 border-r border-[rgba(46,196,182,0.08)] flex flex-col">' +
+            '<div class="p-4 border-b border-gray-50 flex items-center justify-between"><h3 class="text-sm font-bold text-[#B0D5CF]"><i class="fas fa-warehouse mr-1.5 text-cyan-500"></i>筛子库</h3><span class="text-xs text-[#3D7A70]">' + libraryKeys.length + ' 个可用</span></div>' +
             '<div class="flex-1 overflow-y-auto p-3 space-y-2" id="sieveLibraryList">' +
               renderLibraryItems(libraryKeys) +
             '</div>' +
           '</div>' +
           // 右栏：我的筛子
           '<div class="w-1/2 flex flex-col" style="background: #fafbfc;">' +
-            '<div class="p-4 border-b border-gray-50 flex items-center justify-between"><h3 class="text-sm font-bold text-gray-700"><i class="fas fa-star mr-1.5 text-amber-500"></i>我的筛子</h3><span class="text-xs text-gray-400" id="mySieveCount">' + mySieves.length + ' 个已添加</span></div>' +
+            '<div class="p-4 border-b border-gray-50 flex items-center justify-between"><h3 class="text-sm font-bold text-[#B0D5CF]"><i class="fas fa-star mr-1.5 text-amber-500"></i>我的筛子</h3><span class="text-xs text-[#3D7A70]" id="mySieveCount">' + mySieves.length + ' 个已添加</span></div>' +
             '<div class="flex-1 overflow-y-auto p-3 space-y-2" id="mySieveList">' +
               renderMySieveItems() +
             '</div>' +
           '</div>' +
         '</div>' +
         // Footer
-        '<div class="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50">' +
-          '<p class="text-xs text-gray-400"><i class="fas fa-info-circle mr-1"></i>「全部机会」为内置项，始终可用无需添加</p>' +
+        '<div class="p-4 border-t border-[rgba(46,196,182,0.08)] flex items-center justify-between bg-[#0B2624]">' +
+          '<p class="text-xs text-[#3D7A70]"><i class="fas fa-info-circle mr-1"></i>「全部机会」为内置项，始终可用无需添加</p>' +
           '<button onclick="closeSieveManager()" class="px-5 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-sm font-medium hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-200 transition-all"><i class="fas fa-check mr-1.5"></i>完成</button>' +
         '</div>' +
       '</div>';
@@ -1847,14 +1847,14 @@ app.get('/', (c) => {
       return keys.map(key => {
         const s = SIEVE_LIBRARY[key];
         const isAdded = mySieves.includes(key);
-        return '<div class="flex items-center gap-3 p-3 rounded-xl border transition-all ' + (isAdded ? 'bg-gray-50 border-gray-100 opacity-60' : 'bg-white border-gray-100 hover:border-cyan-200 hover:shadow-sm') + '" id="lib_' + key + '">' +
+        return '<div class="flex items-center gap-3 p-3 rounded-xl border transition-all ' + (isAdded ? 'bg-[#0B2624] border-[rgba(46,196,182,0.08)] opacity-60' : 'bg-[#0F2E2B] border-[rgba(46,196,182,0.08)] hover:border-cyan-200 hover:shadow-sm') + '" id="lib_' + key + '">' +
           '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + s.color + '15;"><i class="fas ' + s.icon + '" style="color:' + s.color + '; font-size:14px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
-            '<div class="flex items-center gap-1.5"><p class="text-sm font-semibold text-gray-800 truncate">' + s.name + '</p><span class="text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 flex-shrink-0">' + (s.category || '') + '</span></div>' +
-            '<p class="text-xs text-gray-400 truncate mt-0.5">' + s.desc + '</p>' +
+            '<div class="flex items-center gap-1.5"><p class="text-sm font-semibold text-[#E8F5F3] truncate">' + s.name + '</p><span class="text-xs px-1.5 py-0.5 rounded bg-[rgba(46,196,182,0.06)] text-[#5A9A90] flex-shrink-0">' + (s.category || '') + '</span></div>' +
+            '<p class="text-xs text-[#3D7A70] truncate mt-0.5">' + s.desc + '</p>' +
           '</div>' +
           (isAdded
-            ? '<span class="text-xs text-gray-400 flex-shrink-0 px-2 py-1"><i class="fas fa-check"></i> 已添加</span>'
+            ? '<span class="text-xs text-[#3D7A70] flex-shrink-0 px-2 py-1"><i class="fas fa-check"></i> 已添加</span>'
             : '<button onclick="addSieve(&apos;' + key + '&apos;)" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-cyan-600 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors"><i class="fas fa-plus mr-1"></i>添加</button>') +
         '</div>';
       }).join('');
@@ -1862,17 +1862,17 @@ app.get('/', (c) => {
 
     function renderMySieveItems() {
       if (mySieves.length === 0) {
-        return '<div class="text-center py-8"><div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3"><i class="fas fa-inbox text-gray-300 text-lg"></i></div><p class="text-sm text-gray-400">暂无筛子</p><p class="text-xs text-gray-300 mt-1">从左侧筛子库中添加</p></div>';
+        return '<div class="text-center py-8"><div class="w-12 h-12 rounded-full bg-[rgba(46,196,182,0.06)] flex items-center justify-center mx-auto mb-3"><i class="fas fa-inbox text-[#2A5E58] text-lg"></i></div><p class="text-sm text-[#3D7A70]">暂无筛子</p><p class="text-xs text-[#2A5E58] mt-1">从左侧筛子库中添加</p></div>';
       }
       return mySieves.map((key, idx) => {
         const s = SIEVE_LIBRARY[key];
         if (!s) return '';
-        return '<div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-red-200 group transition-all" id="my_' + key + '">' +
-          '<div class="w-6 h-6 rounded flex items-center justify-center text-xs font-bold text-gray-400 bg-gray-100 flex-shrink-0">' + (idx + 1) + '</div>' +
+        return '<div class="flex items-center gap-3 p-3 bg-[#0F2E2B] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-red-200 group transition-all" id="my_' + key + '">' +
+          '<div class="w-6 h-6 rounded flex items-center justify-center text-xs font-bold text-[#3D7A70] bg-[rgba(46,196,182,0.06)] flex-shrink-0">' + (idx + 1) + '</div>' +
           '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + s.color + '15;"><i class="fas ' + s.icon + '" style="color:' + s.color + '; font-size:14px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
-            '<p class="text-sm font-semibold text-gray-800 truncate">' + s.name + '</p>' +
-            '<p class="text-xs text-gray-400 truncate">' + (s.category || '') + '</p>' +
+            '<p class="text-sm font-semibold text-[#E8F5F3] truncate">' + s.name + '</p>' +
+            '<p class="text-xs text-[#3D7A70] truncate">' + (s.category || '') + '</p>' +
           '</div>' +
           '<button onclick="removeSieve(&apos;' + key + '&apos;)" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors opacity-0 group-hover:opacity-100"><i class="fas fa-trash-alt mr-1"></i>移除</button>' +
         '</div>';
@@ -2022,7 +2022,7 @@ app.get('/', (c) => {
           '<div class="flex items-center justify-between mb-2">' +
             '<div class="flex items-center space-x-2 min-w-0 flex-1">' +
               '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase" style="color: #5DC4B3;"></i></div>' +
-              '<div class="min-w-0 flex-1"><h3 class="font-bold text-gray-900 text-sm group-hover:text-teal-600 transition-colors truncate">' + d.name + '</h3><p class="text-xs text-gray-500">' + d.industry + ' · ' + d.location + '</p></div>' +
+              '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-teal-600 transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
             '</div>' +
             '<div class="flex items-center gap-2 flex-shrink-0">' +
               '<div class="flex items-center gap-1.5" title="合约综合评分">' +
@@ -2045,26 +2045,26 @@ app.get('/', (c) => {
           // ==== 单张合约信息 ====
           '<div class="mb-2 p-2.5 rounded-xl" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.12);">' +
             '<div class="flex items-center justify-between">' +
-              '<div class="flex items-center gap-1.5"><i class="fas fa-file-contract text-teal-500" style="font-size:10px;"></i><span class="text-lg font-black text-teal-700">¥1,000</span><span class="text-xs text-gray-400">面值</span></div>' +
-              (d.holder ? '<div class="flex items-center gap-1 text-xs"><i class="fas fa-user' + (d.isMine ? '-check text-emerald-500' : ' text-gray-400') + '" style="font-size:9px;"></i><span class="font-semibold ' + (d.isMine ? 'text-emerald-600' : 'text-gray-500') + '">' + d.holder + '</span></div>' : '<span class="text-xs text-amber-600 font-semibold"><i class="fas fa-tag mr-1" style="font-size:9px;"></i>可认购</span>') +
+              '<div class="flex items-center gap-1.5"><i class="fas fa-file-contract text-teal-500" style="font-size:10px;"></i><span class="text-lg font-black text-teal-700">¥1,000</span><span class="text-xs text-[#3D7A70]">面值</span></div>' +
+              (d.holder ? '<div class="flex items-center gap-1 text-xs"><i class="fas fa-user' + (d.isMine ? '-check text-emerald-500' : ' text-[#3D7A70]') + '" style="font-size:9px;"></i><span class="font-semibold ' + (d.isMine ? 'text-emerald-600' : 'text-[#5A9A90]') + '">' + d.holder + '</span></div>' : '<span class="text-xs text-amber-600 font-semibold"><i class="fas fa-tag mr-1" style="font-size:9px;"></i>可认购</span>') +
             '</div>' +
           '</div>' +
           // Metrics
           '<div class="flex items-center justify-between text-xs">' +
             '<div class="flex items-center space-x-3">' +
-              '<span class="text-gray-500"><i class="fas fa-percentage mr-1 text-amber-500"></i>' + d.revenueShare + '</span>' +
-              '<span class="text-gray-500"><i class="fas fa-calendar mr-1 text-cyan-500"></i>' + d.period + '</span>' +
-              '<span class="text-gray-500"><i class="fas fa-shield-alt mr-1 text-emerald-500"></i>' + d.riskGrade + '</span>' +
+              '<span class="text-[#5A9A90]"><i class="fas fa-percentage mr-1 text-amber-500"></i>' + d.revenueShare + '</span>' +
+              '<span class="text-[#5A9A90]"><i class="fas fa-calendar mr-1 text-cyan-500"></i>' + d.period + '</span>' +
+              '<span class="text-[#5A9A90]"><i class="fas fa-shield-alt mr-1 text-emerald-500"></i>' + d.riskGrade + '</span>' +
             '</div>' +
-            '<div class="flex items-center"><i class="fas fa-star text-amber-400 mr-1"></i><span class="font-bold text-gray-700">' + d.aiScore + '</span></div>' +
+            '<div class="flex items-center"><i class="fas fa-star text-amber-400 mr-1"></i><span class="font-bold text-[#B0D5CF]">' + d.aiScore + '</span></div>' +
           '</div>' +
           // Footer
-          '<div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">' +
-            '<span class="text-xs text-gray-400"><i class="fas fa-paper-plane mr-1 text-amber-300"></i>' + d.originateDate + '</span>' +
+          '<div class="mt-3 pt-3 border-t border-[rgba(46,196,182,0.08)] flex items-center justify-between">' +
+            '<span class="text-xs text-[#3D7A70]"><i class="fas fa-paper-plane mr-1 text-amber-300"></i>' + d.originateDate + '</span>' +
             (d.isMine
               ? '<span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>我的合约</span>'
               : d.status === 'sold'
-                ? '<span class="text-xs text-gray-400">已售出</span>'
+                ? '<span class="text-xs text-[#3D7A70]">已售出</span>'
                 : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-medium text-teal-500 hover:text-teal-700 transition-colors"><i class="fas fa-shopping-cart mr-1"></i>认购</button>') +
           '</div>' +
         '</div>';
@@ -2095,26 +2095,26 @@ app.get('/', (c) => {
       modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[300]';
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
 
-      modal.innerHTML = '<div class="bg-white rounded-3xl max-w-md w-full mx-4 overflow-hidden" style="box-shadow: 0 24px 80px rgba(0,0,0,0.2); animation: scaleIn 0.25s cubic-bezier(0.28,0.11,0.32,1);">' +
-        '<div class="p-5 border-b border-gray-100" style="background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04));">' +
-          '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #06b6d4);"><i class="fas fa-file-contract text-white"></i></div><div><h2 class="text-lg font-bold text-gray-900">认购合约</h2><p class="text-xs text-gray-400">' + currentDeal.name + '</p></div></div>' +
+      modal.innerHTML = '<div class="bg-[#0F2E2B] rounded-3xl max-w-md w-full mx-4 overflow-hidden" style="box-shadow: 0 24px 80px rgba(0,0,0,0.2); animation: scaleIn 0.25s cubic-bezier(0.28,0.11,0.32,1);">' +
+        '<div class="p-5 border-b border-[rgba(46,196,182,0.08)]" style="background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04));">' +
+          '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #06b6d4);"><i class="fas fa-file-contract text-white"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">认购合约</h2><p class="text-xs text-[#3D7A70]">' + currentDeal.name + '</p></div></div>' +
         '</div>' +
         '<div class="p-5">' +
           '<div class="p-4 bg-slate-50 rounded-2xl mb-4 text-center">' +
             '<p class="font-mono text-sm font-bold tracking-wider mb-2" style="color:#0f766e;">' + (currentDeal.mcn || '') + '</p>' +
             '<p class="text-3xl font-black text-teal-600 mb-1">¥1,000</p>' +
-            '<p class="text-xs text-gray-400">单张合约面值 · 不可分割</p>' +
+            '<p class="text-xs text-[#3D7A70]">单张合约面值 · 不可分割</p>' +
           '</div>' +
           '<div class="grid grid-cols-2 gap-2 mb-4">' +
-            '<div class="p-3 bg-amber-50 rounded-xl text-center"><p class="text-sm font-bold text-amber-700">' + currentDeal.revenueShare + '</p><p class="text-xs text-gray-400">分成比例</p></div>' +
-            '<div class="p-3 bg-cyan-50 rounded-xl text-center"><p class="text-sm font-bold text-cyan-700">' + currentDeal.period + '</p><p class="text-xs text-gray-400">分成期限</p></div>' +
+            '<div class="p-3 bg-amber-50 rounded-xl text-center"><p class="text-sm font-bold text-amber-700">' + currentDeal.revenueShare + '</p><p class="text-xs text-[#3D7A70]">分成比例</p></div>' +
+            '<div class="p-3 bg-cyan-50 rounded-xl text-center"><p class="text-sm font-bold text-cyan-700">' + currentDeal.period + '</p><p class="text-xs text-[#3D7A70]">分成期限</p></div>' +
           '</div>' +
           '<div class="p-3 bg-emerald-50 rounded-xl mb-4 border border-emerald-100">' +
             '<div class="flex items-center gap-2"><i class="fas fa-info-circle text-emerald-500"></i><p class="text-xs text-emerald-700">认购后这张合约将归您所有，MCN编号永久绑定。在合约期内按约定比例分享收益。</p></div>' +
           '</div>' +
         '</div>' +
         '<div class="px-5 pb-5 flex gap-3">' +
-          '<button onclick="closeSubscribeModal()" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">取消</button>' +
+          '<button onclick="closeSubscribeModal()" class="flex-1 py-2.5 border border-[rgba(46,196,182,0.12)] rounded-xl text-sm font-medium text-[#8EBDB5] hover:bg-[#0B2624] transition-colors">取消</button>' +
           '<button onclick="confirmSubscribe()" class="flex-1 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-sm font-medium hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-200 transition-all"><i class="fas fa-check mr-1.5"></i>确认认购 ¥1,000</button>' +
         '</div>' +
       '</div>';
@@ -2202,34 +2202,34 @@ app.get('/', (c) => {
             '</div>' +
           '</div>' +
           '<div class="p-3 bg-amber-50 rounded-xl border border-amber-100 mb-4 flex items-center gap-2"><i class="fas fa-paper-plane text-amber-500"></i><div><p class="text-xs font-bold text-amber-700">来自发起通</p><p class="text-xs text-amber-600">发起方：' + (currentDeal.originator || '未知') + '</p></div></div>' +
-          '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-gray-900">' + currentDeal.name + '</h2><p class="text-sm text-gray-500">' + currentDeal.industry + ' · ' + currentDeal.location + '</p></div></div>' +
-          '<p class="text-sm text-gray-600 leading-relaxed mb-4">' + currentDeal.description + '</p>' +
+          '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">' + currentDeal.name + '</h2><p class="text-sm text-[#5A9A90]">' + currentDeal.industry + ' · ' + currentDeal.location + '</p></div></div>' +
+          '<p class="text-sm text-[#8EBDB5] leading-relaxed mb-4">' + currentDeal.description + '</p>' +
         '</div>' +
         // ==== 单张合约核心信息 ====
         '<div class="p-4 rounded-2xl mb-5" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); border: 1.5px solid rgba(46,196,182,0.2);">' +
-          '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-teal-500"></i><h3 class="text-sm font-bold text-gray-800">合约信息</h3><span class="font-mono text-xs text-gray-400">' + (currentDeal.mcn || '') + '</span></div>' +
-          '<div class="text-center p-4 bg-white rounded-xl mb-3">' +
+          '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-teal-500"></i><h3 class="text-sm font-bold text-[#E8F5F3]">合约信息</h3><span class="font-mono text-xs text-[#3D7A70]">' + (currentDeal.mcn || '') + '</span></div>' +
+          '<div class="text-center p-4 bg-[#0F2E2B] rounded-xl mb-3">' +
             '<p class="text-3xl font-black text-teal-600 mb-1">¥1,000</p>' +
-            '<p class="text-xs text-gray-400">合约面值 · 不可分割</p>' +
+            '<p class="text-xs text-[#3D7A70]">合约面值 · 不可分割</p>' +
           '</div>' +
           '<div class="grid grid-cols-2 gap-2 mb-3">' +
-            '<div class="p-2 bg-white rounded-xl text-center"><p class="text-xs text-gray-400">状态</p><p class="text-sm font-bold ' + (currentDeal.status === 'available' ? 'text-amber-600' : 'text-emerald-600') + '">' + (currentDeal.status === 'available' ? '待售' : '已售') + '</p></div>' +
-            '<div class="p-2 bg-white rounded-xl text-center"><p class="text-xs text-gray-400">持有人</p><p class="text-sm font-bold ' + (currentDeal.isMine ? 'text-emerald-600' : 'text-gray-700') + '">' + (currentDeal.holder || '无（可认购）') + '</p></div>' +
+            '<div class="p-2 bg-[#0F2E2B] rounded-xl text-center"><p class="text-xs text-[#3D7A70]">状态</p><p class="text-sm font-bold ' + (currentDeal.status === 'available' ? 'text-amber-600' : 'text-emerald-600') + '">' + (currentDeal.status === 'available' ? '待售' : '已售') + '</p></div>' +
+            '<div class="p-2 bg-[#0F2E2B] rounded-xl text-center"><p class="text-xs text-[#3D7A70]">持有人</p><p class="text-sm font-bold ' + (currentDeal.isMine ? 'text-emerald-600' : 'text-[#B0D5CF]') + '">' + (currentDeal.holder || '无（可认购）') + '</p></div>' +
           '</div>' +
           (currentDeal.isMine ? '<div class="p-2 bg-emerald-50 rounded-xl flex items-center gap-2 border border-emerald-100"><i class="fas fa-user-check text-emerald-500"></i><div><p class="text-xs font-bold text-emerald-700">我的合约</p><p class="text-xs text-emerald-600">投入 ¥1,000 · MCN编号永久绑定</p></div></div>' : '') +
         '</div>' +
         '<div class="grid grid-cols-2 gap-3 mb-5">' +
-          '<div class="p-3 bg-teal-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">项目总额</p><p class="text-lg font-bold text-teal-600">¥' + (currentDeal.projectTotalAmount || 0) + '万</p></div>' +
-          '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">分成比例</p><p class="text-lg font-bold text-amber-600">' + currentDeal.revenueShare + '</p></div>' +
-          '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">分成期限</p><p class="text-lg font-bold text-cyan-600">' + currentDeal.period + '</p></div>' +
-          '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">AI评分</p><p class="text-lg font-bold text-emerald-600">' + currentDeal.aiScore + '<span class="text-xs text-gray-400">/10</span></p></div>' +
+          '<div class="p-3 bg-teal-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">项目总额</p><p class="text-lg font-bold text-teal-600">¥' + (currentDeal.projectTotalAmount || 0) + '万</p></div>' +
+          '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">分成比例</p><p class="text-lg font-bold text-amber-600">' + currentDeal.revenueShare + '</p></div>' +
+          '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">分成期限</p><p class="text-lg font-bold text-cyan-600">' + currentDeal.period + '</p></div>' +
+          '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">AI评分</p><p class="text-lg font-bold text-emerald-600">' + currentDeal.aiScore + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
         '</div>' +
-        '<div class="space-y-3"><h3 class="text-sm font-semibold text-gray-700 mb-2"><i class="fas fa-store mr-1.5 text-amber-500"></i>经营数据（发起通提供）</h3>' +
-          '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">月均营收</span><span class="text-xs font-bold text-gray-800">' + (currentDeal.monthlyRevenue || '暂无') + '</span></div></div>' +
-          '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">员工人数</span><span class="text-xs font-bold text-gray-800">' + (currentDeal.employeeCount || '暂无') + '人</span></div></div>' +
-          '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">运营年限</span><span class="text-xs font-bold text-gray-800">' + (currentDeal.operatingYears || '暂无') + '年</span></div></div>' +
-          '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">风控评级</span><span class="text-xs font-bold text-emerald-600">' + (currentDeal.riskGrade || 'N/A') + '</span></div></div>' +
-          '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">到期日</span><span class="text-xs font-bold text-gray-800">' + (currentDeal.maturityDate || '—') + '</span></div></div>' +
+        '<div class="space-y-3"><h3 class="text-sm font-semibold text-[#B0D5CF] mb-2"><i class="fas fa-store mr-1.5 text-amber-500"></i>经营数据（发起通提供）</h3>' +
+          '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">月均营收</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.monthlyRevenue || '暂无') + '</span></div></div>' +
+          '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">员工人数</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.employeeCount || '暂无') + '人</span></div></div>' +
+          '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">运营年限</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.operatingYears || '暂无') + '年</span></div></div>' +
+          '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">风控评级</span><span class="text-xs font-bold text-emerald-600">' + (currentDeal.riskGrade || 'N/A') + '</span></div></div>' +
+          '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">到期日</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.maturityDate || '—') + '</span></div></div>' +
         '</div>';
 
       // Right panel — 雷达图评估 + 筛子结果
@@ -2250,16 +2250,16 @@ app.get('/', (c) => {
         const passed = testResult.length > 0;
         const score = passed ? testResult[0].matchScore : Math.floor(Math.random() * 35 + 10);
         const barColor = passed ? '#10b981' : '#ef4444';
-        sieveResults += '<div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">' +
+        sieveResults += '<div class="flex items-center gap-3 p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]">' +
           '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + (passed ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)') + ';"><i class="fas ' + sieve.icon + '" style="color:' + (passed ? '#10b981' : '#ef4444') + '; font-size:12px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
-            '<div class="flex items-center justify-between mb-1"><span class="text-xs font-semibold text-gray-700">' + sieve.name + '</span><span class="sieve-tag ' + (passed ? 'sieve-pass' : 'sieve-fail') + '">' + (passed ? '<i class="fas fa-check" style="font-size:8px;"></i>通过' : '<i class="fas fa-times" style="font-size:8px;"></i>未通过') + '</span></div>' +
+            '<div class="flex items-center justify-between mb-1"><span class="text-xs font-semibold text-[#B0D5CF]">' + sieve.name + '</span><span class="sieve-tag ' + (passed ? 'sieve-pass' : 'sieve-fail') + '">' + (passed ? '<i class="fas fa-check" style="font-size:8px;"></i>通过' : '<i class="fas fa-times" style="font-size:8px;"></i>未通过') + '</span></div>' +
             '<div class="match-bar"><div class="match-bar-fill" style="width:' + score + '%; background:' + barColor + ';"></div></div>' +
-            '<p class="text-xs text-gray-400 mt-1">' + score + '% 匹配度</p>' +
+            '<p class="text-xs text-[#3D7A70] mt-1">' + score + '% 匹配度</p>' +
           '</div></div>';
       });
       if (mySieves.length === 0) {
-        sieveResults = '<div class="text-center py-4"><p class="text-sm text-gray-400">暂未添加筛子</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-cyan-600 mt-1 hover:underline">去管理筛子</button></div>';
+        sieveResults = '<div class="text-center py-4"><p class="text-sm text-[#3D7A70]">暂未添加筛子</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-cyan-600 mt-1 hover:underline">去管理筛子</button></div>';
       }
 
       // 维度详细列表 HTML
@@ -2268,25 +2268,25 @@ app.get('/', (c) => {
         const score = radarScores[i];
         const dGrade = getScoreGrade(score);
         const barWidth = score;
-        dimensionDetails += '<div class="radar-dim-item p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-200 transition-all cursor-pointer" onclick="toggleDimDetail(this)">' +
+        dimensionDetails += '<div class="radar-dim-item p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-[rgba(46,196,182,0.12)] transition-all cursor-pointer" onclick="toggleDimDetail(this)">' +
           '<div class="flex items-center gap-3">' +
             '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + dim.color + '15;"><i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:13px;"></i></div>' +
             '<div class="flex-1 min-w-0">' +
               '<div class="flex items-center justify-between mb-1">' +
-                '<span class="text-xs font-bold text-gray-700">' + dim.label + '</span>' +
+                '<span class="text-xs font-bold text-[#B0D5CF]">' + dim.label + '</span>' +
                 '<div class="flex items-center gap-2">' +
                   '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + score + '</span>' +
                   '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">' + dGrade.grade + '</span>' +
                 '</div>' +
               '</div>' +
-              '<div class="h-1.5 rounded-full bg-gray-200 overflow-hidden"><div class="h-full rounded-full transition-all" style="width:' + barWidth + '%; background: linear-gradient(90deg, ' + dim.color + ', ' + dim.color + 'cc);"></div></div>' +
+              '<div class="h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden"><div class="h-full rounded-full transition-all" style="width:' + barWidth + '%; background: linear-gradient(90deg, ' + dim.color + ', ' + dim.color + 'cc);"></div></div>' +
             '</div>' +
-            '<i class="fas fa-chevron-down text-gray-300 text-xs flex-shrink-0 dim-arrow transition-transform"></i>' +
+            '<i class="fas fa-chevron-down text-[#2A5E58] text-xs flex-shrink-0 dim-arrow transition-transform"></i>' +
           '</div>' +
-          '<div class="dim-detail hidden mt-3 pt-3 border-t border-gray-100">' +
-            '<p class="text-xs text-gray-500 leading-relaxed mb-2"><i class="fas fa-info-circle mr-1" style="color:' + dim.color + ';"></i>' + dim.desc + '</p>' +
+          '<div class="dim-detail hidden mt-3 pt-3 border-t border-[rgba(46,196,182,0.08)]">' +
+            '<p class="text-xs text-[#5A9A90] leading-relaxed mb-2"><i class="fas fa-info-circle mr-1" style="color:' + dim.color + ';"></i>' + dim.desc + '</p>' +
             '<div class="flex items-center justify-between">' +
-              '<span class="text-xs text-gray-400">评分依据</span>' +
+              '<span class="text-xs text-[#3D7A70]">评分依据</span>' +
               '<span class="text-xs font-medium" style="color:' + dGrade.color + ';">' + dGrade.label + '水平 · ' + (score >= 75 ? '优于' + (85 + Math.floor(Math.random()*10)) + '%同类合约' : score >= 55 ? '处于中位数附近' : '低于' + (55 + Math.floor(Math.random()*15)) + '%同类合约') + '</span>' +
             '</div>' +
           '</div>' +
@@ -2296,16 +2296,16 @@ app.get('/', (c) => {
       document.getElementById('detailRight').innerHTML =
         '<div class="space-y-4">' +
           // ===== 合约雷达图评估 =====
-          '<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">' +
+          '<div class="bg-[#0F2E2B] rounded-2xl border border-[rgba(46,196,182,0.08)] overflow-hidden">' +
             // 头部：综合评分 + 等级
             '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(46,196,182,0.04), rgba(6,182,212,0.03)); border-bottom: 1px solid rgba(0,0,0,0.04);">' +
               '<div class="flex items-center gap-3">' +
                 '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4); box-shadow: 0 4px 12px rgba(46,196,182,0.3);"><i class="fas fa-radar text-white text-sm" style="font-size:16px;">&#x25CE;</i></div>' +
-                '<div><h3 class="text-sm font-bold text-gray-900">合约多维评估</h3><p class="text-xs text-gray-400">8维度量化分析 · 综合评级</p></div>' +
+                '<div><h3 class="text-sm font-bold text-[#E8F5F3]">合约多维评估</h3><p class="text-xs text-[#3D7A70]">8维度量化分析 · 综合评级</p></div>' +
               '</div>' +
               '<div class="flex items-center gap-3">' +
                 '<div class="text-right">' +
-                  '<p class="text-2xl font-black" style="color:' + gradeInfo.color + '; letter-spacing:-0.02em;">' + overallScore + '<span class="text-xs font-medium text-gray-400">/100</span></p>' +
+                  '<p class="text-2xl font-black" style="color:' + gradeInfo.color + '; letter-spacing:-0.02em;">' + overallScore + '<span class="text-xs font-medium text-[#3D7A70]">/100</span></p>' +
                   '<p class="text-xs font-semibold" style="color:' + gradeInfo.color + ';">' + gradeInfo.label + '</p>' +
                 '</div>' +
                 '<div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:' + gradeInfo.bg + '; border: 2px solid ' + gradeInfo.color + '33;">' +
@@ -2326,36 +2326,36 @@ app.get('/', (c) => {
                   return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
                     '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
                     '<p class="text-xs font-bold mt-1" style="color:' + g.color + ';">' + s + '</p>' +
-                    '<p class="text-xs text-gray-400 truncate" style="font-size:9px;">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
+                    '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
                   '</div>';
                 }).join('') +
               '</div>' +
             '</div>' +
           '</div>' +
           // ===== 维度详解（可展开） =====
-          '<div class="bg-white rounded-2xl p-4 border border-gray-100">' +
+          '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
             '<div class="flex items-center justify-between mb-3">' +
-              '<h3 class="text-sm font-bold text-gray-800"><i class="fas fa-list-ul mr-1.5 text-teal-500"></i>维度详解</h3>' +
+              '<h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list-ul mr-1.5 text-teal-500"></i>维度详解</h3>' +
               '<button onclick="toggleAllDims()" class="text-xs text-teal-600 hover:text-teal-700 font-medium"><i class="fas fa-expand-alt mr-1"></i>全部展开</button>' +
             '</div>' +
             '<div class="space-y-2">' + dimensionDetails + '</div>' +
           '</div>' +
           // 筛子匹配概览
-          (hasMatch ? '<div class="bg-white rounded-2xl p-4 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-bullseye mr-1.5" style="color:' + matchColor + ';"></i>当前筛子匹配度</h3><div class="flex items-center gap-4"><div class="w-16 h-16 rounded-full border-4 flex items-center justify-center" style="border-color:' + matchColor + ';"><span class="text-xl font-bold" style="color:' + matchColor + ';">' + currentDeal.matchScore + '%</span></div><div class="flex-1"><p class="text-sm font-semibold text-gray-700">' + (currentDeal.sieveName || '当前筛子') + '</p><p class="text-xs text-gray-500 mt-1">' + (currentDeal.matchScore >= 80 ? '高度匹配，建议重点关注' : currentDeal.matchScore >= 60 ? '中等匹配，可进一步了解' : '匹配度较低') + '</p><div class="match-bar mt-2" style="height:4px;"><div class="match-bar-fill" style="width:' + currentDeal.matchScore + '%; background:' + matchColor + ';"></div></div></div></div></div>' : '') +
+          (hasMatch ? '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-bullseye mr-1.5" style="color:' + matchColor + ';"></i>当前筛子匹配度</h3><div class="flex items-center gap-4"><div class="w-16 h-16 rounded-full border-4 flex items-center justify-center" style="border-color:' + matchColor + ';"><span class="text-xl font-bold" style="color:' + matchColor + ';">' + currentDeal.matchScore + '%</span></div><div class="flex-1"><p class="text-sm font-semibold text-[#B0D5CF]">' + (currentDeal.sieveName || '当前筛子') + '</p><p class="text-xs text-[#5A9A90] mt-1">' + (currentDeal.matchScore >= 80 ? '高度匹配，建议重点关注' : currentDeal.matchScore >= 60 ? '中等匹配，可进一步了解' : '匹配度较低') + '</p><div class="match-bar mt-2" style="height:4px;"><div class="match-bar-fill" style="width:' + currentDeal.matchScore + '%; background:' + matchColor + ';"></div></div></div></div></div>' : '') +
           // 各筛子评估结果
-          '<div class="bg-white rounded-2xl p-4 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-filter mr-1.5 text-cyan-500"></i>筛子评估</h3><div class="space-y-2">' + sieveResults + '</div></div>' +
+          '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-filter mr-1.5 text-cyan-500"></i>筛子评估</h3><div class="space-y-2">' + sieveResults + '</div></div>' +
           // 收入预测
-          '<div class="bg-white rounded-2xl p-4 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-chart-line mr-1.5 text-teal-500"></i>收入预测</h3><div class="h-36 flex items-end justify-around gap-1.5">' +
-          [65,78,82,70,88,92,85,90,95,88,92,98].map((v,i) => '<div class="flex flex-col items-center flex-1"><div class="w-full rounded-t-md" style="height:' + v + '%; background: linear-gradient(180deg, #5DC4B3 0%, #49A89A 100%); opacity:' + (0.5+i*0.04) + ';"></div><span class="text-xs text-gray-400 mt-1" style="font-size:9px;">' + (i+1) + '月</span></div>').join('') +
+          '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-line mr-1.5 text-teal-500"></i>收入预测</h3><div class="h-36 flex items-end justify-around gap-1.5">' +
+          [65,78,82,70,88,92,85,90,95,88,92,98].map((v,i) => '<div class="flex flex-col items-center flex-1"><div class="w-full rounded-t-md" style="height:' + v + '%; background: linear-gradient(180deg, #5DC4B3 0%, #49A89A 100%); opacity:' + (0.5+i*0.04) + ';"></div><span class="text-xs text-[#3D7A70] mt-1" style="font-size:9px;">' + (i+1) + '月</span></div>').join('') +
           '</div></div>' +
           // 项目流向
-          '<div class="bg-white rounded-2xl p-4 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-route mr-1.5 text-amber-500"></i>项目流向</h3><div class="space-y-3">' +
+          '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-route mr-1.5 text-amber-500"></i>项目流向</h3><div class="space-y-3">' +
           [
             { icon: 'fa-paper-plane', color: 'amber', title: '发起通 — 项目提交', desc: currentDeal.originator + ' · ' + currentDeal.originateDate },
             { icon: 'fa-filter', color: 'cyan', title: '评估通 — AI筛选', desc: '通过 ' + (hasMatch ? currentDeal.matchScore + '% 匹配' : '基础审核') },
             { icon: 'fa-hand-pointer', color: 'teal', title: '参与通 — 当前阶段', desc: currentDeal.status === 'available' ? '等待认购' : (currentDeal.isMine ? '您已认购此合约' : '已被认购') },
             { icon: 'fa-file-contract', color: 'gray', title: '条款通 → 合约通', desc: '确认参与后进入条款协商' }
-          ].map(t => '<div class="flex items-start space-x-3"><div class="w-8 h-8 rounded-lg bg-' + t.color + '-100 flex items-center justify-center flex-shrink-0"><i class="fas ' + t.icon + ' text-' + t.color + '-600 text-xs"></i></div><div><p class="text-sm font-medium text-gray-700">' + t.title + '</p><p class="text-xs text-gray-400">' + t.desc + '</p></div></div>').join('') +
+          ].map(t => '<div class="flex items-start space-x-3"><div class="w-8 h-8 rounded-lg bg-' + t.color + '-100 flex items-center justify-center flex-shrink-0"><i class="fas ' + t.icon + ' text-' + t.color + '-600 text-xs"></i></div><div><p class="text-sm font-medium text-[#B0D5CF]">' + t.title + '</p><p class="text-xs text-[#3D7A70]">' + t.desc + '</p></div></div>').join('') +
           '</div></div>' +
         '</div>';
 
@@ -2414,7 +2414,7 @@ app.get('/', (c) => {
     function switchDetailView(view) {
       ['sieve', 'financials', 'timeline'].forEach(v => {
         const btn = document.getElementById('btn' + v.charAt(0).toUpperCase() + v.slice(1));
-        if (btn) { btn.className = v === view ? 'px-2.5 py-1 rounded-md text-xs font-semibold bg-white shadow text-teal-600' : 'px-2.5 py-1 rounded-md text-xs font-semibold text-gray-600'; }
+        if (btn) { btn.className = v === view ? 'px-2.5 py-1 rounded-md text-xs font-semibold bg-[#0F2E2B] shadow text-teal-600' : 'px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]'; }
       });
     }
 
@@ -2544,10 +2544,10 @@ app.get('/', (c) => {
       document.getElementById('myContractsSubtitle').textContent = '已认购 ' + myDeals.length.toLocaleString() + ' 张 · 总投入 ¥' + totalInvest.toLocaleString();
 
       document.getElementById('mcStatsGrid').innerHTML =
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">持有合约</p><p class="stat-value">' + myDeals.length.toLocaleString() + '</p><p class="text-xs text-gray-400 mt-0.5">张</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-file-contract text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">总投入</p><p class="stat-value">¥' + totalInvest.toLocaleString() + '</p><p class="text-xs text-gray-400 mt-0.5">面值合计</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-coins text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">覆盖项目</p><p class="stat-value">' + projectCount + '</p><p class="text-xs text-gray-400 mt-0.5">个不同项目</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-briefcase text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">平均AI评分</p><p class="stat-value">' + avgScore + '</p><p class="text-xs text-gray-400 mt-0.5">加权平均</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"><i class="fas fa-robot text-white text-sm"></i></div></div></div>';
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">持有合约</p><p class="stat-value">' + myDeals.length.toLocaleString() + '</p><p class="text-xs text-[#3D7A70] mt-0.5">张</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-file-contract text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">总投入</p><p class="stat-value">¥' + totalInvest.toLocaleString() + '</p><p class="text-xs text-[#3D7A70] mt-0.5">面值合计</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-coins text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">覆盖项目</p><p class="stat-value">' + projectCount + '</p><p class="text-xs text-[#3D7A70] mt-0.5">个不同项目</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-briefcase text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">平均AI评分</p><p class="stat-value">' + avgScore + '</p><p class="text-xs text-[#3D7A70] mt-0.5">加权平均</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"><i class="fas fa-robot text-white text-sm"></i></div></div></div>';
 
       const grid = document.getElementById('mcGrid');
       const empty = document.getElementById('mcEmpty');
@@ -2567,7 +2567,7 @@ app.get('/', (c) => {
           '<div class="flex items-center justify-between mb-2">' +
             '<div class="flex items-center space-x-2 min-w-0 flex-1">' +
               '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.12));"><i class="fas fa-file-contract" style="color: #10b981;"></i></div>' +
-              '<div class="min-w-0 flex-1"><h3 class="font-bold text-gray-900 text-sm group-hover:text-teal-600 transition-colors truncate">' + d.name + '</h3><p class="text-xs text-gray-500">' + d.industry + ' · ' + d.location + '</p></div>' +
+              '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-teal-600 transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
             '</div>' +
             '<div class="flex items-center gap-1.5">' +
               '<canvas id="' + miniId + '" width="60" height="60" style="width:30px;height:30px;"></canvas>' +
@@ -2575,15 +2575,15 @@ app.get('/', (c) => {
             '</div>' +
           '</div>' +
           '<div class="p-2.5 rounded-xl mb-2" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.12);">' +
-            '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><i class="fas fa-file-contract text-teal-500" style="font-size:10px;"></i><span class="text-lg font-black text-teal-700">¥1,000</span><span class="text-xs text-gray-400">面值</span></div><span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>已认购</span></div>' +
+            '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><i class="fas fa-file-contract text-teal-500" style="font-size:10px;"></i><span class="text-lg font-black text-teal-700">¥1,000</span><span class="text-xs text-[#3D7A70]">面值</span></div><span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>已认购</span></div>' +
           '</div>' +
           '<div class="flex items-center justify-between text-xs">' +
             '<div class="flex items-center space-x-3">' +
-              '<span class="text-gray-500"><i class="fas fa-percentage mr-1 text-amber-500"></i>' + d.revenueShare + '</span>' +
-              '<span class="text-gray-500"><i class="fas fa-calendar mr-1 text-cyan-500"></i>' + d.period + '</span>' +
-              '<span class="text-gray-500"><i class="fas fa-shield-alt mr-1 text-emerald-500"></i>' + d.riskGrade + '</span>' +
+              '<span class="text-[#5A9A90]"><i class="fas fa-percentage mr-1 text-amber-500"></i>' + d.revenueShare + '</span>' +
+              '<span class="text-[#5A9A90]"><i class="fas fa-calendar mr-1 text-cyan-500"></i>' + d.period + '</span>' +
+              '<span class="text-[#5A9A90]"><i class="fas fa-shield-alt mr-1 text-emerald-500"></i>' + d.riskGrade + '</span>' +
             '</div>' +
-            '<span class="font-bold text-gray-700"><i class="fas fa-star text-amber-400 mr-1"></i>' + d.aiScore + '</span>' +
+            '<span class="font-bold text-[#B0D5CF]"><i class="fas fa-star text-amber-400 mr-1"></i>' + d.aiScore + '</span>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -2599,11 +2599,11 @@ app.get('/', (c) => {
 
     // 组合风格色彩映射
     const PORTFOLIO_CATEGORY_STYLES = {
-      '稳健型': { icon: 'fa-shield-alt', gradient: 'linear-gradient(135deg, #10b981, #059669)', color: '#059669', bg: '#ecfdf5', border: '#a7f3d0', label: 'Conservative' },
-      '进取型': { icon: 'fa-rocket', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#d97706', bg: '#fffbeb', border: '#fde68a', label: 'Aggressive' },
-      '平衡型': { icon: 'fa-balance-scale', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: '#4f46e5', bg: '#eef2ff', border: '#c7d2fe', label: 'Balanced' },
-      '主题型': { icon: 'fa-bullseye', gradient: 'linear-gradient(135deg, #ec4899, #db2777)', color: '#db2777', bg: '#fdf2f8', border: '#fbcfe8', label: 'Thematic' },
-      '行业型': { icon: 'fa-industry', gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)', color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc', label: 'Sector' }
+      '稳健型': { icon: 'fa-shield-alt', gradient: 'linear-gradient(135deg, #10b981, #059669)', color: '#34d399', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)', label: 'Conservative' },
+      '进取型': { icon: 'fa-rocket', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#fbbf24', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', label: 'Aggressive' },
+      '平衡型': { icon: 'fa-balance-scale', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: '#818cf8', bg: 'rgba(99,102,241,0.08)', border: 'rgba(99,102,241,0.25)', label: 'Balanced' },
+      '主题型': { icon: 'fa-bullseye', gradient: 'linear-gradient(135deg, #ec4899, #db2777)', color: '#f472b6', bg: 'rgba(236,72,153,0.08)', border: 'rgba(236,72,153,0.25)', label: 'Thematic' },
+      '行业型': { icon: 'fa-industry', gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)', color: '#22d3ee', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.25)', label: 'Sector' }
     };
 
     // ★ 20个预定义的跨项目基金型组合
@@ -2845,10 +2845,10 @@ app.get('/', (c) => {
       allPortfolios.forEach(function(p) { p.industries.forEach(function(ind) { allIndustries[ind] = true; }); });
 
       document.getElementById('mpStatsGrid').innerHTML =
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">组合数量</p><p class="stat-value">' + allPortfolios.length + '</p><p class="text-xs text-gray-400 mt-0.5">' + Object.keys(categoryCount).length + ' 种策略类型</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">去重合约</p><p class="stat-value">' + uniqueCount + '</p><p class="text-xs text-gray-400 mt-0.5">¥' + totalInvest.toLocaleString() + ' 总投入</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-file-contract text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">覆盖行业</p><p class="stat-value">' + Object.keys(allIndustries).length + '</p><p class="text-xs text-gray-400 mt-0.5">' + Object.keys(allIndustries).join('·') + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-th-large text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">平均评分</p><p class="stat-value">' + avgOverall + '</p><p class="text-xs text-gray-400 mt-0.5">组合综合评分</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"><i class="fas fa-chart-line text-white text-sm"></i></div></div></div>';
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">组合数量</p><p class="stat-value">' + allPortfolios.length + '</p><p class="text-xs text-[#3D7A70] mt-0.5">' + Object.keys(categoryCount).length + ' 种策略类型</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">去重合约</p><p class="stat-value">' + uniqueCount + '</p><p class="text-xs text-[#3D7A70] mt-0.5">¥' + totalInvest.toLocaleString() + ' 总投入</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-file-contract text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">覆盖行业</p><p class="stat-value">' + Object.keys(allIndustries).length + '</p><p class="text-xs text-[#3D7A70] mt-0.5">' + Object.keys(allIndustries).join('·') + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-th-large text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">平均评分</p><p class="stat-value">' + avgOverall + '</p><p class="text-xs text-[#3D7A70] mt-0.5">组合综合评分</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"><i class="fas fa-chart-line text-white text-sm"></i></div></div></div>';
 
       const grid = document.getElementById('mpGrid');
       const empty = document.getElementById('mpEmpty');
@@ -2869,7 +2869,7 @@ app.get('/', (c) => {
           '<div class="flex items-center justify-between mb-3">' +
             '<div class="flex items-center gap-2 min-w-0">' +
               '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="' + catStyle.gradient + ';"><i class="fas ' + catStyle.icon + ' text-white text-sm"></i></div>' +
-              '<div class="min-w-0"><h3 class="font-bold text-gray-900 text-sm group-hover:text-violet-600 transition-colors truncate">' + p.name + '</h3><p class="text-xs text-gray-500 flex items-center gap-1"><span class="px-1.5 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.bg + '; color:' + catStyle.color + '; font-size:9px;">' + p.category + '</span><span>' + p.riskLevel + '</span></p></div>' +
+              '<div class="min-w-0"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-violet-600 transition-colors truncate">' + p.name + '</h3><p class="text-xs text-[#5A9A90] flex items-center gap-1"><span class="px-1.5 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.bg + '; color:' + catStyle.color + '; font-size:9px;">' + p.category + '</span><span>' + p.riskLevel + '</span></p></div>' +
             '</div>' +
             '<div class="flex items-center gap-2 flex-shrink-0">' +
               '<canvas id="' + canvasId + '" width="60" height="60" style="width:30px;height:30px;"></canvas>' +
@@ -2877,7 +2877,7 @@ app.get('/', (c) => {
             '</div>' +
           '</div>' +
           // 策略说明
-          '<p class="text-xs text-gray-400 mb-2 leading-relaxed line-clamp-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + p.strategy + '</p>' +
+          '<p class="text-xs text-[#3D7A70] mb-2 leading-relaxed line-clamp-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + p.strategy + '</p>' +
           // 组合配置信息
           '<div class="p-3 rounded-xl mb-2" style="background:' + catStyle.bg + '; border: 1px solid ' + catStyle.border + ';">' +
             '<div class="flex items-center justify-between mb-2">' +
@@ -2885,20 +2885,20 @@ app.get('/', (c) => {
               '<span class="text-sm font-black" style="color:' + catStyle.color + ';">¥' + totalValue.toLocaleString() + '</span>' +
             '</div>' +
             '<div class="flex flex-wrap gap-1">' +
-              p.industries.map(function(ind) { return '<span class="px-1.5 py-0.5 rounded text-xs font-medium bg-white border border-gray-100" style="font-size:9px; color:#6b7280;">' + ind + '</span>'; }).join('') +
-              Object.values(p.projects).slice(0, 3).map(function(name) { return '<span class="px-1.5 py-0.5 rounded text-xs bg-white border border-gray-100" style="font-size:9px; color:#9ca3af;">' + (name.length > 8 ? name.substring(0, 8) + '…' : name) + '</span>'; }).join('') +
-              (p.projectCount > 3 ? '<span class="text-xs text-gray-400 self-center">+' + (p.projectCount - 3) + '</span>' : '') +
+              p.industries.map(function(ind) { return '<span class="px-1.5 py-0.5 rounded text-xs font-medium bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#5A9A90;">' + ind + '</span>'; }).join('') +
+              Object.values(p.projects).slice(0, 3).map(function(name) { return '<span class="px-1.5 py-0.5 rounded text-xs bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#9ca3af;">' + (name.length > 8 ? name.substring(0, 8) + '…' : name) + '</span>'; }).join('') +
+              (p.projectCount > 3 ? '<span class="text-xs text-[#3D7A70] self-center">+' + (p.projectCount - 3) + '</span>' : '') +
             '</div>' +
           '</div>' +
           // 关键指标
           '<div class="grid grid-cols-3 gap-2 mb-2">' +
-            '<div class="text-center p-2 bg-gray-50 rounded-lg"><p class="text-xs font-bold text-amber-600">' + p.targetReturn + '</p><p style="font-size:9px;" class="text-gray-400">目标回报</p></div>' +
-            '<div class="text-center p-2 bg-gray-50 rounded-lg"><p class="text-xs font-bold text-cyan-600">' + p.targetPeriod + '</p><p style="font-size:9px;" class="text-gray-400">目标期限</p></div>' +
-            '<div class="text-center p-2 bg-gray-50 rounded-lg"><p class="text-xs font-bold text-emerald-600">' + avgAI + '</p><p style="font-size:9px;" class="text-gray-400">AI均分</p></div>' +
+            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-amber-600">' + p.targetReturn + '</p><p style="font-size:9px;" class="text-[#3D7A70]">目标回报</p></div>' +
+            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-cyan-600">' + p.targetPeriod + '</p><p style="font-size:9px;" class="text-[#3D7A70]">目标期限</p></div>' +
+            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-emerald-600">' + avgAI + '</p><p style="font-size:9px;" class="text-[#3D7A70]">AI均分</p></div>' +
           '</div>' +
           // Footer
-          '<div class="flex items-center justify-between pt-2 border-t border-gray-100">' +
-            '<span class="text-xs text-gray-400"><i class="fas fa-tags mr-1"></i>' + p.targetIndustries.join(' · ') + '</span>' +
+          '<div class="flex items-center justify-between pt-2 border-t border-[rgba(46,196,182,0.08)]">' +
+            '<span class="text-xs text-[#3D7A70]"><i class="fas fa-tags mr-1"></i>' + p.targetIndustries.join(' · ') + '</span>' +
             '<span class="text-xs font-medium group-hover:text-violet-700 transition-colors" style="color:' + catStyle.color + ';"><i class="fas fa-arrow-right mr-1"></i>查看详情</span>' +
           '</div>' +
         '</div>';
@@ -2973,19 +2973,19 @@ app.get('/', (c) => {
         var pg = projectGroups[pid];
         return '<div class="mb-3">' +
           '<div class="flex items-center gap-2 mb-1.5">' +
-            '<span class="text-xs font-bold text-gray-700"><i class="fas fa-building mr-1 text-gray-400"></i>' + pg.name + '</span>' +
-            '<span class="text-xs text-gray-400">' + pg.industry + ' · ' + pg.location + '</span>' +
+            '<span class="text-xs font-bold text-[#B0D5CF]"><i class="fas fa-building mr-1 text-[#3D7A70]"></i>' + pg.name + '</span>' +
+            '<span class="text-xs text-[#3D7A70]">' + pg.industry + ' · ' + pg.location + '</span>' +
           '</div>' +
           '<div class="space-y-1.5">' +
             pg.contracts.map(function(c) {
               var cs = calcRadarScores(c);
               var co = calcOverallScore(cs);
               var cg = getScoreGrade(co);
-              return '<div class="flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl border border-gray-100 hover:border-violet-200 cursor-pointer transition-all" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
+              return '<div class="flex items-center gap-3 p-2.5 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-violet-200 cursor-pointer transition-all" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
                 '<div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(16,185,129,0.1);"><i class="fas fa-file-contract text-emerald-500" style="font-size:10px;"></i></div>' +
                 '<div class="flex-1 min-w-0">' +
-                  '<p class="font-mono text-xs font-bold text-gray-700 truncate">' + (c.mcn || '') + '</p>' +
-                  '<p class="text-xs text-gray-400">¥1,000 · ' + c.revenueShare + ' · ' + c.riskGrade + '</p>' +
+                  '<p class="font-mono text-xs font-bold text-[#B0D5CF] truncate">' + (c.mcn || '') + '</p>' +
+                  '<p class="text-xs text-[#3D7A70]">¥1,000 · ' + c.revenueShare + ' · ' + c.riskGrade + '</p>' +
                 '</div>' +
                 '<div class="text-right flex-shrink-0">' +
                   '<p class="text-xs font-bold" style="color:' + cg.color + ';">' + co + '</p>' +
@@ -3006,9 +3006,9 @@ app.get('/', (c) => {
         var c = indColors[ind] || '#6b7280';
         return '<div class="flex items-center gap-2">' +
           '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
-          '<span class="text-xs text-gray-600 flex-1">' + ind + '</span>' +
-          '<span class="text-xs font-bold text-gray-700">' + industryDistrib[ind] + '张</span>' +
-          '<span class="text-xs text-gray-400">' + pct + '%</span>' +
+          '<span class="text-xs text-[#8EBDB5] flex-1">' + ind + '</span>' +
+          '<span class="text-xs font-bold text-[#B0D5CF]">' + industryDistrib[ind] + '张</span>' +
+          '<span class="text-xs text-[#3D7A70]">' + pct + '%</span>' +
         '</div>';
       }).join('');
 
@@ -3031,14 +3031,14 @@ app.get('/', (c) => {
           '</div>' +
           // 关键参数
           '<div class="grid grid-cols-2 gap-3 mb-4">' +
-            '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">加权分成比例</p><p class="text-lg font-bold text-amber-600">' + avgShare + '%</p></div>' +
-            '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">目标回报</p><p class="text-lg font-bold text-cyan-600">' + currentPortfolio.targetReturn + '</p></div>' +
-            '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">AI评分均值</p><p class="text-lg font-bold text-emerald-600">' + avgAI + '<span class="text-xs text-gray-400">/10</span></p></div>' +
-            '<div class="p-3 bg-violet-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">目标期限</p><p class="text-lg font-bold text-violet-600">' + currentPortfolio.targetPeriod + '</p></div>' +
+            '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">加权分成比例</p><p class="text-lg font-bold text-amber-600">' + avgShare + '%</p></div>' +
+            '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">目标回报</p><p class="text-lg font-bold text-cyan-600">' + currentPortfolio.targetReturn + '</p></div>' +
+            '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">AI评分均值</p><p class="text-lg font-bold text-emerald-600">' + avgAI + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
+            '<div class="p-3 bg-violet-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">目标期限</p><p class="text-lg font-bold text-violet-600">' + currentPortfolio.targetPeriod + '</p></div>' +
           '</div>' +
           // 行业配比
-          '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100 mb-4">' +
-            '<p class="text-xs font-bold text-gray-700 mb-2"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>行业配比 · ' + currentPortfolio.industryCount + ' 个行业</p>' +
+          '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] mb-4">' +
+            '<p class="text-xs font-bold text-[#B0D5CF] mb-2"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>行业配比 · ' + currentPortfolio.industryCount + ' 个行业</p>' +
             '<div class="space-y-1.5">' + distribHTML + '</div>' +
           '</div>' +
           // 投资策略说明
@@ -3047,7 +3047,7 @@ app.get('/', (c) => {
           '</div>' +
         '</div>' +
         // 按项目分组的合约清单
-        '<div><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-sitemap mr-1.5 text-violet-500"></i>组合持仓明细 · 按项目分组 (' + contracts.length + '张)</h3>' +
+        '<div><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-sitemap mr-1.5 text-violet-500"></i>组合持仓明细 · 按项目分组 (' + contracts.length + '张)</h3>' +
         '<div>' + projectGroupsHTML + '</div>' +
         '</div>';
 
@@ -3060,18 +3060,18 @@ app.get('/', (c) => {
         const contractScoresForDim = contracts.map(c => calcRadarScores(c)[i]);
         const minS = Math.min(...contractScoresForDim);
         const maxS = Math.max(...contractScoresForDim);
-        dimensionDetails += '<div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">' +
+        dimensionDetails += '<div class="flex items-center gap-3 p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]">' +
           '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + dim.color + '15;"><i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:13px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center justify-between mb-1">' +
-              '<span class="text-xs font-bold text-gray-700">' + dim.label + '</span>' +
+              '<span class="text-xs font-bold text-[#B0D5CF]">' + dim.label + '</span>' +
               '<div class="flex items-center gap-2">' +
-                '<span class="text-xs text-gray-400">' + minS + '~' + maxS + '</span>' +
+                '<span class="text-xs text-[#3D7A70]">' + minS + '~' + maxS + '</span>' +
                 '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + score + '</span>' +
                 '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">' + dGrade.grade + '</span>' +
               '</div>' +
             '</div>' +
-            '<div class="h-1.5 rounded-full bg-gray-200 overflow-hidden"><div class="h-full rounded-full" style="width:' + score + '%; background: linear-gradient(90deg, ' + dim.color + ', ' + dim.color + 'cc);"></div></div>' +
+            '<div class="h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden"><div class="h-full rounded-full" style="width:' + score + '%; background: linear-gradient(90deg, ' + dim.color + ', ' + dim.color + 'cc);"></div></div>' +
           '</div>' +
         '</div>';
       });
@@ -3079,15 +3079,15 @@ app.get('/', (c) => {
       document.getElementById('pdRight').innerHTML =
         '<div class="space-y-4">' +
           // 组合雷达图
-          '<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">' +
+          '<div class="bg-[#0F2E2B] rounded-2xl border border-[rgba(46,196,182,0.08)] overflow-hidden">' +
             '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(139,92,246,0.04), rgba(124,58,237,0.03)); border-bottom: 1px solid rgba(0,0,0,0.04);">' +
               '<div class="flex items-center gap-3">' +
                 '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-chart-pie text-white text-sm"></i></div>' +
-                '<div><h3 class="text-sm font-bold text-gray-900">组合加权雷达图</h3><p class="text-xs text-gray-400">跨 ' + currentPortfolio.projectCount + ' 个项目 · ' + contracts.length + ' 张合约等权重加权</p></div>' +
+                '<div><h3 class="text-sm font-bold text-[#E8F5F3]">组合加权雷达图</h3><p class="text-xs text-[#3D7A70]">跨 ' + currentPortfolio.projectCount + ' 个项目 · ' + contracts.length + ' 张合约等权重加权</p></div>' +
               '</div>' +
               '<div class="flex items-center gap-3">' +
                 '<div class="text-right">' +
-                  '<p class="text-2xl font-black" style="color:' + grade.color + ';">' + overall + '<span class="text-xs font-medium text-gray-400">/100</span></p>' +
+                  '<p class="text-2xl font-black" style="color:' + grade.color + ';">' + overall + '<span class="text-xs font-medium text-[#3D7A70]">/100</span></p>' +
                   '<p class="text-xs font-semibold" style="color:' + grade.color + ';">' + grade.label + '</p>' +
                 '</div>' +
                 '<div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:' + grade.bg + '; border: 2px solid ' + grade.color + '33;">' +
@@ -3105,26 +3105,26 @@ app.get('/', (c) => {
                   return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
                     '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
                     '<p class="text-xs font-bold mt-1" style="color:' + g.color + ';">' + s + '</p>' +
-                    '<p class="text-xs text-gray-400 truncate" style="font-size:9px;">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
+                    '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
                   '</div>';
                 }).join('') +
               '</div>' +
             '</div>' +
           '</div>' +
           // 维度详解
-          '<div class="bg-white rounded-2xl p-4 border border-gray-100">' +
-            '<h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-list-ul mr-1.5 text-violet-500"></i>各维度加权详解</h3>' +
+          '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
+            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-list-ul mr-1.5 text-violet-500"></i>各维度加权详解</h3>' +
             '<div class="space-y-2">' + dimensionDetails + '</div>' +
           '</div>' +
           // 合约分布
-          '<div class="bg-white rounded-2xl p-4 border border-gray-100">' +
-            '<h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-chart-bar mr-1.5 text-teal-500"></i>合约评分分布</h3>' +
+          '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
+            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-teal-500"></i>合约评分分布</h3>' +
             '<div class="h-32 flex items-end justify-around gap-1">' +
               contracts.map((c, i) => {
                 const cs = calcRadarScores(c); const co = calcOverallScore(cs); const cg = getScoreGrade(co);
                 return '<div class="flex flex-col items-center flex-1" title="' + (c.mcn || '') + ' — ' + co + '分">' +
                   '<div class="w-full rounded-t-md cursor-pointer hover:opacity-80 transition-opacity" style="height:' + co + '%; background: linear-gradient(180deg, ' + cg.color + ', ' + cg.color + '88); min-height:8px;" onclick="openDetail(&#39;' + c.id + '&#39;)"></div>' +
-                  '<span class="text-xs text-gray-400 mt-1" style="font-size:8px;">#' + (i + 1) + '</span>' +
+                  '<span class="text-xs text-[#3D7A70] mt-1" style="font-size:8px;">#' + (i + 1) + '</span>' +
                 '</div>';
               }).join('') +
             '</div>' +
@@ -3278,8 +3278,8 @@ app.get('/', (c) => {
       if (panelEl) panelEl.classList.add('hidden');
       // 重新生成欢迎消息
       abAddAIMessage(
-        '<p class="text-sm text-gray-800 leading-relaxed mb-3">好的，我们重新开始！</p>' +
-        '<p class="text-sm leading-relaxed mb-4" style="color: #6b7280;">您这次投资最看重什么？</p>',
+        '<p class="text-sm text-[#E8F5F3] leading-relaxed mb-3">好的，我们重新开始！</p>' +
+        '<p class="text-sm leading-relaxed mb-4" style="color: #5A9A90;">您这次投资最看重什么？</p>',
         [
           { text: '稳定收益，安全第一', icon: 'fa-shield-alt', color: 'emerald', action: "abSelectOption('追求稳定收益，安全第一')" },
           { text: '愿承担风险，追高回报', icon: 'fa-rocket', color: 'amber', action: "abSelectOption('愿承担风险，追求高回报')" },
@@ -3372,8 +3372,8 @@ app.get('/', (c) => {
         const styleNames = { conservative: '稳健型', aggressive: '进取型', balanced: '均衡型', sector: '行业聚焦型' };
         const styleEmojis = { conservative: '🛡️', aggressive: '🚀', balanced: '⚖️', sector: '🎯' };
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">收到！您倾向于 <span class="font-bold text-teal-700">' + styleNames[abState.style] + '</span> ' + styleEmojis[abState.style] + ' 投资策略。</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #6b7280;">接下来，' + AB_FLOW[0].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">收到！您倾向于 <span class="font-bold text-teal-700">' + styleNames[abState.style] + '</span> ' + styleEmojis[abState.style] + ' 投资策略。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">接下来，' + AB_FLOW[0].question + '</p>',
           AB_FLOW[0].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.replace('#', '').substring(0,3) === '10b' ? 'emerald' : (opt.color.includes('5cf6') ? 'violet' : (opt.color.includes('f44') ? 'red' : (opt.color.includes('b6d4') ? 'cyan' : (opt.color.includes('4899') ? 'pink' : (opt.color.includes('b308') ? 'yellow' : 'gray'))))),
             action: "abSelectIndustry('" + opt.value + "')"
@@ -3386,8 +3386,8 @@ app.get('/', (c) => {
         abParseIndustryInput(lower);
         abState.step = 2;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">好的，行业方向已明确 ✅ 我正在筛选匹配的合约。</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[1].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">好的，行业方向已明确 ✅ 我正在筛选匹配的合约。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[1].question + '</p>',
           AB_FLOW[1].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
             action: "abSelectRisk('" + opt.value + "')"
@@ -3401,8 +3401,8 @@ app.get('/', (c) => {
         else abState.riskTolerance = 'medium';
         abState.step = 3;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">风险偏好已记录 📊 组合正在优化中...</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[2].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">风险偏好已记录 📊 组合正在优化中...</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[2].question + '</p>',
           AB_FLOW[2].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('eab') ? 'yellow' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
             action: "abSelectPeriod('" + opt.value + "')"
@@ -3416,8 +3416,8 @@ app.get('/', (c) => {
         else abState.period = 'medium';
         abState.step = 4;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">期限偏好已确认 ⏱️</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[3].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">期限偏好已确认 ⏱️</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[3].question + '</p>',
           AB_FLOW[3].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
             action: "abSelectBudget('" + opt.value + "')"
@@ -3432,8 +3432,8 @@ app.get('/', (c) => {
         abState.step = 5;
         abBuildPortfolio();
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2 font-semibold text-gray-900">🎉 您的专属投资组合已构建完成！</p>' +
-          '<p class="text-sm leading-relaxed mb-3" style="color: #6b7280;">右侧面板展示了 AI 根据您的偏好从 ' + (totalVirtualContracts || allDeals.length).toLocaleString() + ' 张全平台合约中精选的组合。</p>' +
+          '<p class="text-sm leading-relaxed mb-2 font-semibold text-[#E8F5F3]">🎉 您的专属投资组合已构建完成！</p>' +
+          '<p class="text-sm leading-relaxed mb-3" style="color: #5A9A90;">右侧面板展示了 AI 根据您的偏好从 ' + (totalVirtualContracts || allDeals.length).toLocaleString() + ' 张全平台合约中精选的组合。</p>' +
           '<div class="p-3 rounded-xl" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);">' +
             '<p class="text-xs" style="color: #34d399;"><i class="fas fa-check-circle mr-1"></i>您可以继续与我对话来微调组合，例如「减少餐饮比例」「加入更多科技合约」「降低风险」等。</p>' +
           '</div>',
@@ -3480,8 +3480,8 @@ app.get('/', (c) => {
         abBuildPortfolio();
         const p = abState.portfolio;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">已根据您的要求重新调整组合 🔄</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #6b7280;">当前组合包含 <span class="font-bold text-teal-700">' + p.length + '</span> 张合约，覆盖 <span class="font-bold text-teal-700">' + [...new Set(p.map(c=>c.industry))].length + '</span> 个行业。右侧面板已更新。</p>' +
+          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">已根据您的要求重新调整组合 🔄</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">当前组合包含 <span class="font-bold text-teal-700">' + p.length + '</span> 张合约，覆盖 <span class="font-bold text-teal-700">' + [...new Set(p.map(c=>c.industry))].length + '</span> 个行业。右侧面板已更新。</p>' +
           '<p class="text-xs mt-2" style="color: #9ca3af;">继续输入可进一步微调，或点击「一键认购」完成。</p>',
           [
             { text: '满意，去认购', icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
@@ -3501,8 +3501,8 @@ app.get('/', (c) => {
         abState.step = 2;
         abBuildPortfolio();
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">全行业配置 🌐 我会从所有行业中均衡筛选。</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[1].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">全行业配置 🌐 我会从所有行业中均衡筛选。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[1].question + '</p>',
           AB_FLOW[1].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
             action: "abSelectRisk('" + opt.value + "')"
@@ -3520,8 +3520,8 @@ app.get('/', (c) => {
       if (abSelectedIndustries.length >= 1) {
         abState.step = 2;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">已选择 <span class="font-bold text-teal-700">' + abSelectedIndustries.join('、') + '</span> ✅</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[1].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">已选择 <span class="font-bold text-teal-700">' + abSelectedIndustries.join('、') + '</span> ✅</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[1].question + '</p>',
           AB_FLOW[1].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
             action: "abSelectRisk('" + opt.value + "')"
@@ -3537,8 +3537,8 @@ app.get('/', (c) => {
       abState.step = 3;
       abBuildPortfolio();
       abAddAIMessage(
-        '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">风险偏好 → <span class="font-bold text-teal-700">' + (labels[value] || value) + '</span> 📊</p>' +
-        '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[2].question + '</p>',
+        '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">风险偏好 → <span class="font-bold text-teal-700">' + (labels[value] || value) + '</span> 📊</p>' +
+        '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[2].question + '</p>',
         AB_FLOW[2].options.map(opt => ({
           text: opt.text, icon: opt.icon, color: opt.color.includes('eab') ? 'yellow' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
           action: "abSelectPeriod('" + opt.value + "')"
@@ -3553,8 +3553,8 @@ app.get('/', (c) => {
       abState.step = 4;
       abBuildPortfolio();
       abAddAIMessage(
-        '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">期限偏好 → <span class="font-bold text-teal-700">' + (labels[value] || value) + '</span> ⏱️</p>' +
-        '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[3].question + '</p>',
+        '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">期限偏好 → <span class="font-bold text-teal-700">' + (labels[value] || value) + '</span> ⏱️</p>' +
+        '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[3].question + '</p>',
         AB_FLOW[3].options.map(opt => ({
           text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
           action: "abSelectBudget('" + opt.value + "')"
@@ -3691,7 +3691,7 @@ app.get('/', (c) => {
           '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
           '<span class="text-xs flex-1" style="color: rgba(255,255,255,0.6);">' + ind + '</span>' +
           '<div class="flex-1 h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);"><div class="h-full rounded-full transition-all" style="width:' + pct + '%; background:' + c + ';"></div></div>' +
-          '<span class="text-xs font-bold" style="color: #374151;">' + count + '张</span>' +
+          '<span class="text-xs font-bold" style="color: #8EBDB5;">' + count + '张</span>' +
           '<span class="text-xs" style="color: #9ca3af;">' + pct + '%</span>' +
         '</div>';
       }).join('');
@@ -3703,15 +3703,15 @@ app.get('/', (c) => {
         return '<div class="flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ab-contract-item" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
           '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + (indColors[c.industry] || '#6b7280') + '18;"><i class="fas fa-file-contract" style="color:' + (indColors[c.industry] || '#6b7280') + '; font-size:10px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
-            '<p class="text-xs font-bold text-gray-800 truncate">' + c.name + '</p>' +
-            '<p class="text-xs text-gray-400"><span class="font-mono">' + (c.mcn || '').substring(0, 16) + '</span> · ' + c.industry + ' · ' + c.revenueShare + '</p>' +
+            '<p class="text-xs font-bold text-[#E8F5F3] truncate">' + c.name + '</p>' +
+            '<p class="text-xs text-[#3D7A70]"><span class="font-mono">' + (c.mcn || '').substring(0, 16) + '</span> · ' + c.industry + ' · ' + c.revenueShare + '</p>' +
           '</div>' +
           '<div class="text-right flex-shrink-0">' +
             '<p class="text-xs font-bold" style="color:' + cg.color + ';">' + co + '</p>' +
             '<p style="font-size:9px; color:' + cg.color + ';">' + cg.grade + '</p>' +
           '</div>' +
         '</div>';
-      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2 text-gray-400">还有 ' + (p.length - 30) + ' 张合约未展示</p>' : '');
+      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2 text-[#3D7A70]">还有 ' + (p.length - 30) + ' 张合约未展示</p>' : '');
     }
 
     function abApplyPortfolio() {
