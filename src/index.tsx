@@ -993,77 +993,82 @@ app.get('/', (c) => {
         </div>
 
         <!-- 组合结果面板（初始隐藏） -->
-        <div id="abPortfolioPanel" class="hidden flex-1 p-5 space-y-4 overflow-y-auto">
-          <!-- 组合 header -->
-          <div class="rounded-2xl overflow-hidden" id="abPortfolioHeader">
-            <div class="p-5 relative" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%);">
-              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(93,196,179,0.35) 0%, transparent 50%);pointer-events:none;"></div>
-              <div class="relative z-10">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);"><i class="fas fa-magic mr-1"></i>AI 构建</span>
-                    <span class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioMeta">实时生成</span>
+        <div id="abPortfolioPanel" class="hidden flex-1 flex flex-col overflow-hidden">
+          <!-- ===== 固定顶部区域：Header + 认购按钮 ===== -->
+          <div class="flex-shrink-0">
+            <!-- 组合 header -->
+            <div class="rounded-2xl overflow-hidden mx-5 mt-5" id="abPortfolioHeader">
+              <div class="p-5 relative" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%);">
+                <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(93,196,179,0.35) 0%, transparent 50%);pointer-events:none;"></div>
+                <div class="relative z-10">
+                  <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);"><i class="fas fa-magic mr-1"></i>AI 构建</span>
+                      <span class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioMeta">实时生成</span>
+                    </div>
+                    <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.2); color: #34d399;">A · 82分</span>
                   </div>
-                  <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.2); color: #34d399;">A · 82分</span>
-                </div>
-                <h2 class="text-xl font-bold text-white mb-1" id="abPortfolioName" style="letter-spacing:-0.02em;">AI 推荐组合</h2>
-                <p class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioDesc">基于您的投资偏好智能生成</p>
-                <!-- 核心数字 -->
-                <div class="grid grid-cols-4 gap-2 mt-4" id="abCoreStats">
-                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
-                    <p class="text-lg font-black text-white" id="abStatContracts">0</p>
-                    <p style="font-size:9px; color: rgba(255,255,255,0.5);">张合约</p>
-                  </div>
-                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
-                    <p class="text-lg font-black text-cyan-200" id="abStatProjects">0</p>
-                    <p style="font-size:9px; color: rgba(255,255,255,0.5);">个项目</p>
-                  </div>
-                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
-                    <p class="text-lg font-black text-amber-200" id="abStatValue">¥0</p>
-                    <p style="font-size:9px; color: rgba(255,255,255,0.5);">总投入</p>
-                  </div>
-                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
-                    <p class="text-lg font-black text-emerald-200" id="abStatReturn">0%</p>
-                    <p style="font-size:9px; color: rgba(255,255,255,0.5);">预期回报</p>
+                  <h2 class="text-xl font-bold text-white mb-1" id="abPortfolioName" style="letter-spacing:-0.02em;">AI 推荐组合</h2>
+                  <p class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioDesc">基于您的投资偏好智能生成</p>
+                  <!-- 核心数字 -->
+                  <div class="grid grid-cols-4 gap-2 mt-4" id="abCoreStats">
+                    <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
+                      <p class="text-lg font-black text-white" id="abStatContracts">0</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">张合约</p>
+                    </div>
+                    <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
+                      <p class="text-lg font-black text-cyan-200" id="abStatProjects">0</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">个项目</p>
+                    </div>
+                    <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
+                      <p class="text-lg font-black text-amber-200" id="abStatValue">¥0</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">总投入</p>
+                    </div>
+                    <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
+                      <p class="text-lg font-black text-emerald-200" id="abStatReturn">0%</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">预期回报</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <!-- 雷达图 -->
-          <div class="rounded-2xl overflow-hidden bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-            <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(46,196,182,0.08);">
-              <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>组合雷达评估</span>
-              <span class="text-xs text-[#3D7A70]">8维度量化</span>
-            </div>
-            <div class="flex items-center justify-center py-4 px-2">
-              <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
-            </div>
-            <div class="px-4 pb-4">
-              <div class="grid grid-cols-4 gap-2" id="abDimGrid"></div>
+            <!-- 操作按钮（固定在Header下方） -->
+            <div class="flex gap-3 px-5 py-3" style="background: rgba(11,30,28,0.98); border-bottom: 1px solid rgba(46,196,182,0.1);">
+              <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i>一键认购此组合</button>
+              <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i>继续调整</button>
             </div>
           </div>
 
-          <!-- 行业配比 -->
-          <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-            <h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i>行业配比</h3>
-            <div id="abIndustryDistrib" class="space-y-2"></div>
-          </div>
-
-          <!-- 合约清单 -->
-          <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list mr-1.5 text-emerald-500"></i>推荐合约清单</h3>
-              <span class="text-xs text-[#3D7A70]" id="abContractCount">0 张</span>
+          <!-- ===== 可滚动区域：雷达图 + 行业配比 + 合约清单 ===== -->
+          <div class="flex-1 overflow-y-auto p-5 space-y-4">
+            <!-- 雷达图 -->
+            <div class="rounded-2xl overflow-hidden bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+              <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(46,196,182,0.08);">
+                <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>组合雷达评估</span>
+                <span class="text-xs text-[#3D7A70]">8维度量化</span>
+              </div>
+              <div class="flex items-center justify-center py-4 px-2">
+                <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
+              </div>
+              <div class="px-4 pb-4">
+                <div class="grid grid-cols-4 gap-2" id="abDimGrid"></div>
+              </div>
             </div>
-            <div class="space-y-2" id="abContractList"></div>
-          </div>
 
-          <!-- 操作按钮 -->
-          <div class="flex gap-3 pt-2 pb-4">
-            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i>一键认购此组合</button>
-            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i>继续调整</button>
+            <!-- 行业配比 -->
+            <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+              <h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i>行业配比</h3>
+              <div id="abIndustryDistrib" class="space-y-2"></div>
+            </div>
+
+            <!-- 合约清单 -->
+            <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list mr-1.5 text-emerald-500"></i>推荐合约清单</h3>
+                <span class="text-xs text-[#3D7A70]" id="abContractCount">0 张</span>
+              </div>
+              <div class="space-y-2" id="abContractList"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1632,6 +1637,99 @@ app.get('/', (c) => {
       return [yieldScore, durationScore, stabilityScore, riskCtrlScore, liquidityScore, teamScore, marketScore, aiScoreVal];
     }
 
+    // 计算单个合约的实际展示值（用于维度卡片 — 让投资者一眼看懂组合长什么样）
+    function calcDealDisplayValues(deal) {
+      if (!deal) return ['—', '—', '—', '—', '—', '—', '—', '—'];
+      const shareNum = parseInt(deal.revenueShare) || 10;
+      const periodNum = parseInt(deal.period) || 24;
+      const annualYield = (shareNum / periodNum) * 12;
+      return [
+        annualYield.toFixed(1) + '%',                // YITO年化收益率
+        (periodNum * 30) + '天',                      // 合约时长（转天数）
+        (parseInt(deal.monthlyRevenue) || 0) + '万/月', // 收入稳定性 → 月营收
+        deal.riskGrade || 'B',                         // 风控评级
+        deal.status === 'sold' ? '已售' : '可购',       // 流动性
+        (parseFloat(deal.operatingYears) || 0).toFixed(1) + '年', // 团队实力 → 运营年限
+        deal.industry || '—',                          // 市场潜力 → 行业
+        parseFloat(deal.aiScore).toFixed(1)            // AI综合评分
+      ];
+    }
+
+    // 计算组合级别的实际展示值（加权汇总 — 投资者一眼看懂组合画像）
+    function calcPortfolioDisplayValues(contracts) {
+      if (!contracts || contracts.length === 0) return ['—', '—', '—', '—', '—', '—', '—', '—'];
+      const n = contracts.length;
+
+      // 1. 加权年化收益率
+      let totalYield = 0;
+      contracts.forEach(c => {
+        const shareNum = parseInt(c.revenueShare) || 10;
+        const periodNum = parseInt(c.period) || 24;
+        totalYield += (shareNum / periodNum) * 12;
+      });
+      const avgYield = totalYield / n;
+
+      // 2. 平均合约时长（月→天）
+      let totalMonths = 0;
+      contracts.forEach(c => { totalMonths += parseInt(c.period) || 24; });
+      const avgMonths = totalMonths / n;
+      const avgDays = Math.round(avgMonths * 30);
+
+      // 3. 平均月营收
+      let totalRevenue = 0;
+      contracts.forEach(c => { totalRevenue += parseInt(c.monthlyRevenue) || 0; });
+      const avgRevenue = (totalRevenue / n).toFixed(0);
+
+      // 4. 风控评级 — 取众数
+      const riskCounts = {};
+      contracts.forEach(c => { const g = c.riskGrade || 'B'; riskCounts[g] = (riskCounts[g] || 0) + 1; });
+      let topRisk = 'B', topCount = 0;
+      Object.keys(riskCounts).forEach(g => { if (riskCounts[g] > topCount) { topRisk = g; topCount = riskCounts[g]; } });
+
+      // 5. 流动性 — 已售比例
+      const soldCount = contracts.filter(c => c.status === 'sold' || c.isMine).length;
+      const soldPct = Math.round(soldCount / n * 100);
+
+      // 6. 平均运营年限
+      let totalYears = 0;
+      contracts.forEach(c => { totalYears += parseFloat(c.operatingYears) || 0; });
+      const avgYears = (totalYears / n).toFixed(1);
+
+      // 7. 行业分布
+      const industries = {};
+      contracts.forEach(c => { industries[c.industry] = (industries[c.industry] || 0) + 1; });
+      const topIndustry = Object.keys(industries).sort((a, b) => industries[b] - industries[a])[0] || '—';
+      const indCount = Object.keys(industries).length;
+
+      // 8. 平均AI评分
+      let totalAI = 0;
+      contracts.forEach(c => { totalAI += parseFloat(c.aiScore) || 0; });
+      const avgAI = (totalAI / n).toFixed(1);
+
+      return [
+        avgYield.toFixed(1) + '%',          // 年化收益
+        avgDays + '天',                      // 合约时长
+        avgRevenue + '万/月',                // 收入（月营收均值）
+        topRisk,                             // 风控评级
+        soldPct + '%已售',                   // 流动性
+        avgYears + '年',                     // 团队（运营年限）
+        indCount > 1 ? topIndustry + '等' + indCount + '业' : topIndustry, // 市场
+        avgAI + '/10'                        // AI评分
+      ];
+    }
+
+    // 维度卡片的副标签（简短描述实际值的含义）
+    const RADAR_DIM_SUBLABELS = [
+      '年化收益',    // yield
+      '合约时长',    // duration
+      '收入稳定',    // stability → 月营收
+      '风控评级',    // riskCtrl
+      '流动性',      // liquidity
+      '团队实力',    // team → 运营年限
+      '市场潜力',    // market
+      'AI综合'       // aiScore
+    ];
+
     // 计算综合得分（加权平均）
     function calcOverallScore(scores) {
       const weights = [0.20, 0.08, 0.15, 0.18, 0.08, 0.10, 0.10, 0.11]; // 权重：收益>风控>稳定性>AI>团队=市场>时长=流动
@@ -1763,17 +1861,19 @@ app.get('/', (c) => {
       // 绘制维度标签
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      const displayLabels = options.displayValues || null; // 实际值标签（如 "12.0%", "540天"）
       for (let i = 0; i < n; i++) {
         const angle = startAngle + i * angleStep;
         const labelR = maxR + 25;
         const x = cx + labelR * Math.cos(angle);
         const y = cy + labelR * Math.sin(angle);
 
-        // 分数
+        // 显示实际值（优先）或分数
         ctx.font = 'bold 11px Inter, sans-serif';
         ctx.fillStyle = dims[i].color;
         const scoreY = angle < 0 ? y - 7 : (angle > Math.PI * 0.8 ? y - 7 : y + 7);
-        ctx.fillText(scores[i].toString(), x, i === 0 ? y - 5 : scoreY);
+        const labelText = displayLabels ? displayLabels[i] : scores[i].toString();
+        ctx.fillText(labelText, x, i === 0 ? y - 5 : scoreY);
 
         // 标签名
         ctx.font = '9px Inter, sans-serif';
@@ -1784,7 +1884,7 @@ app.get('/', (c) => {
         if (cosA < -0.3) ctx.textAlign = 'right';
         else if (cosA > 0.3) ctx.textAlign = 'left';
         else ctx.textAlign = 'center';
-        ctx.fillText(dims[i].label, x, nameY);
+        ctx.fillText(RADAR_DIM_SUBLABELS[i], x, nameY);
         ctx.textAlign = 'center';
       }
     }
@@ -2377,18 +2477,21 @@ app.get('/', (c) => {
             '<div class="flex items-center justify-center py-4 px-2">' +
               '<canvas id="radarCanvas" style="max-width:100%;"></canvas>' +
             '</div>' +
-            // 维度缩略指标条
+            // 维度缩略指标条 — 显示实际值
             '<div class="px-4 pb-4">' +
               '<div class="grid grid-cols-4 gap-2">' +
-                RADAR_DIMENSIONS.map((dim, i) => {
-                  const s = radarScores[i];
-                  const g = getScoreGrade(s);
-                  return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
-                    '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
-                    '<p class="text-xs font-bold mt-1" style="color:' + g.color + ';">' + s + '</p>' +
-                    '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
-                  '</div>';
-                }).join('') +
+                (function() {
+                  var dealDisplayVals = calcDealDisplayValues(currentDeal);
+                  return RADAR_DIMENSIONS.map((dim, i) => {
+                    const s = radarScores[i];
+                    const g = getScoreGrade(s);
+                    return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
+                      '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
+                      '<p class="text-xs font-bold mt-1" style="color:' + dim.color + ';">' + dealDisplayVals[i] + '</p>' +
+                      '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + RADAR_DIM_SUBLABELS[i] + '</p>' +
+                    '</div>';
+                  }).join('');
+                })() +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -2421,7 +2524,7 @@ app.get('/', (c) => {
 
       // 延迟绘制雷达图（等DOM渲染完成）
       setTimeout(() => {
-        drawRadarChart('radarCanvas', radarScores, { size: 320 });
+        drawRadarChart('radarCanvas', radarScores, { size: 320, displayValues: calcDealDisplayValues(currentDeal) });
       }, 50);
 
       switchPage('pageDetail');
@@ -3022,6 +3125,14 @@ app.get('/', (c) => {
       const totalValue = contracts.length * 1000;
       const avgAI = (contracts.reduce(function(s, c) { return s + parseFloat(c.aiScore); }, 0) / contracts.length).toFixed(1);
       const avgShare = (contracts.reduce(function(s, c) { return s + parseInt(c.revenueShare); }, 0) / contracts.length).toFixed(1);
+      // 计算年化收益率
+      let pdTotalYield = 0;
+      contracts.forEach(function(c) { var sn = parseInt(c.revenueShare) || 10; var pn = parseInt(c.period) || 24; pdTotalYield += (sn / pn) * 12; });
+      const pdAvgYield = (pdTotalYield / contracts.length).toFixed(1);
+      // 计算平均合约时长（月→天）
+      let pdTotalMonths = 0;
+      contracts.forEach(function(c) { pdTotalMonths += parseInt(c.period) || 24; });
+      const pdAvgDays = Math.round((pdTotalMonths / contracts.length) * 30);
       const catStyle = PORTFOLIO_CATEGORY_STYLES[currentPortfolio.category] || PORTFOLIO_CATEGORY_STYLES['平衡型'];
 
       document.getElementById('pdTitle').textContent = currentPortfolio.name;
@@ -3103,10 +3214,10 @@ app.get('/', (c) => {
               '</div>' +
             '</div>' +
           '</div>' +
-          // 关键参数
+          // 关键参数 — 显示年化收益率和实际天数
           '<div class="grid grid-cols-2 gap-3 mb-4">' +
-            '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">加权分成比例</p><p class="text-lg font-bold text-[#F59E0B]">' + avgShare + '%</p></div>' +
-            '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">目标回报</p><p class="text-lg font-bold text-[#06B6D4]">' + currentPortfolio.targetReturn + '</p></div>' +
+            '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">年化收益率</p><p class="text-lg font-bold text-[#F59E0B]">' + pdAvgYield + '%</p><p class="text-xs text-[#3D7A70]">加权分成 ' + avgShare + '%</p></div>' +
+            '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">平均合约时长</p><p class="text-lg font-bold text-[#06B6D4]">' + pdAvgDays + '天</p><p class="text-xs text-[#3D7A70]">约 ' + (pdTotalMonths / contracts.length).toFixed(0) + ' 个月</p></div>' +
             '<div class="p-3 bg-[rgba(16,185,129,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">AI评分均值</p><p class="text-lg font-bold text-[#10B981]">' + avgAI + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
             '<div class="p-3 bg-[rgba(139,92,246,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">目标期限</p><p class="text-lg font-bold text-[#8B5CF6]">' + currentPortfolio.targetPeriod + '</p></div>' +
           '</div>' +
@@ -3174,14 +3285,17 @@ app.get('/', (c) => {
             '</div>' +
             '<div class="px-4 pb-4">' +
               '<div class="grid grid-cols-4 gap-2">' +
-                RADAR_DIMENSIONS.map((dim, i) => {
-                  const s = scores[i]; const g = getScoreGrade(s);
-                  return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
-                    '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
-                    '<p class="text-xs font-bold mt-1" style="color:' + g.color + ';">' + s + '</p>' +
-                    '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
-                  '</div>';
-                }).join('') +
+                (function() {
+                  var pdDisplayVals = calcPortfolioDisplayValues(contracts);
+                  return RADAR_DIMENSIONS.map((dim, i) => {
+                    const s = scores[i]; const g = getScoreGrade(s);
+                    return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
+                      '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
+                      '<p class="text-xs font-bold mt-1" style="color:' + dim.color + ';">' + pdDisplayVals[i] + '</p>' +
+                      '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + RADAR_DIM_SUBLABELS[i] + '</p>' +
+                    '</div>';
+                  }).join('');
+                })() +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -3206,7 +3320,7 @@ app.get('/', (c) => {
         '</div>';
 
       setTimeout(() => {
-        drawRadarChart('pdRadarCanvas', scores, { size: 320 });
+        drawRadarChart('pdRadarCanvas', scores, { size: 320, displayValues: calcPortfolioDisplayValues(contracts) });
       }, 50);
 
       switchPage('pagePortfolioDetail');
@@ -3726,6 +3840,10 @@ app.get('/', (c) => {
       const projects = [...new Set(p.map(c => c.projectId))];
       const totalValue = p.length * 1000;
       const avgShare = (p.reduce((s, c) => s + parseInt(c.revenueShare), 0) / p.length).toFixed(1);
+      // 计算年化收益率，与雷达图保持一致
+      let abTotalYield = 0;
+      p.forEach(c => { const sn = parseInt(c.revenueShare) || 10; const pn = parseInt(c.period) || 24; abTotalYield += (sn / pn) * 12; });
+      const abAvgYield = (abTotalYield / p.length).toFixed(1);
 
       // Header
       document.getElementById('abPortfolioName').textContent = abState.portfolioName;
@@ -3738,18 +3856,19 @@ app.get('/', (c) => {
       document.getElementById('abStatContracts').textContent = p.length;
       document.getElementById('abStatProjects').textContent = projects.length;
       document.getElementById('abStatValue').textContent = '¥' + totalValue.toLocaleString();
-      document.getElementById('abStatReturn').textContent = avgShare + '%';
+      document.getElementById('abStatReturn').textContent = abAvgYield + '%';
 
       // 雷达图
-      setTimeout(() => { drawRadarChart('abRadarCanvas', scores, { size: 300 }); }, 100);
+      setTimeout(() => { drawRadarChart('abRadarCanvas', scores, { size: 300, displayValues: calcPortfolioDisplayValues(p) }); }, 100);
 
-      // 维度网格
+      // 维度网格 — 显示实际值而非评分，让投资者一眼看懂组合画像
+      const displayVals = calcPortfolioDisplayValues(p);
       document.getElementById('abDimGrid').innerHTML = RADAR_DIMENSIONS.map((dim, i) => {
         const s = scores[i]; const g = getScoreGrade(s);
         return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '10; border: 1px solid ' + dim.color + '22;">' +
           '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
-          '<p class="text-xs font-bold mt-1" style="color:' + g.color + ';">' + s + '</p>' +
-          '<p class="text-xs truncate" style="font-size:8px; color: rgba(255,255,255,0.35);">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
+          '<p class="text-xs font-bold mt-1" style="color:' + dim.color + ';">' + displayVals[i] + '</p>' +
+          '<p class="text-xs truncate" style="font-size:9px; color: rgba(255,255,255,0.35);">' + RADAR_DIM_SUBLABELS[i] + '</p>' +
         '</div>';
       }).join('');
 
