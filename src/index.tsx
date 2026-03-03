@@ -693,10 +693,9 @@ app.get('/', (c) => {
             <div class="relative"><input type="text" id="dealSearch" placeholder="搜索项目名称…" class="search-input px-3 py-1.5 rounded-lg text-xs w-48" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" oninput="renderDeals()"></div>
             <select class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#8EBDB5;" id="filterStatus" onchange="renderDeals()">
               <option value="all">全部状态</option>
-              <option value="open">待参与</option>
-              <option value="interested">已意向</option>
-              <option value="confirmed">已确认</option>
-              <option value="closed">已关闭</option>
+              <option value="available">可买</option>
+              <option value="sold">已售出</option>
+              <option value="mine">我的</option>
             </select>
           </div>
         </div>
@@ -2137,7 +2136,13 @@ app.get('/', (c) => {
 
       let filtered = dealsList.filter(d => {
         if (searchVal && !d.name.toLowerCase().includes(searchVal) && !d.industry.includes(searchVal)) return false;
-        if (filterVal !== 'all' && d.status !== filterVal) return false;
+        if (filterVal === 'mine') {
+          if (!d.isMine) return false;
+        } else if (filterVal === 'available') {
+          if (d.status !== 'available') return false;
+        } else if (filterVal === 'sold') {
+          if (d.status !== 'sold' || d.isMine) return false;
+        }
         return true;
       });
 
