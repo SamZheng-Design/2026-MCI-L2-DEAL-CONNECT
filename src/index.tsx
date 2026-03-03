@@ -329,11 +329,11 @@ app.get('/', (c) => {
           <div class="stat-card animate-fade-in delay-100 cursor-pointer" onclick="selectSieve('all')">
             <div class="flex items-center justify-between"><div><p class="stat-label">筛后通过</p><p class="stat-value" id="statFiltered">0</p><p class="text-xs text-gray-400 mt-0.5">当前筛子匹配</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); box-shadow: 0 4px 12px rgba(6,182,212,0.3);"><i class="fas fa-filter text-white text-sm"></i></div></div>
           </div>
-          <div class="stat-card animate-fade-in delay-200 cursor-pointer" onclick="filterByStatus('interested')">
-            <div class="flex items-center justify-between"><div><p class="stat-label">已表达意向</p><p class="stat-value" id="statInterested">0</p></div><div class="icon-container icon-container-sm icon-gradient-warning"><i class="fas fa-hand-point-up text-white text-sm"></i></div></div>
+          <div class="stat-card animate-fade-in delay-200 cursor-pointer">
+            <div class="flex items-center justify-between"><div><p class="stat-label">我的认购</p><p class="stat-value" id="statMyUnits">0</p><p class="text-xs text-gray-400 mt-0.5">已认购份数</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-file-contract text-white text-sm"></i></div></div>
           </div>
-          <div class="stat-card animate-fade-in delay-300 cursor-pointer" onclick="filterByStatus('confirmed')">
-            <div class="flex items-center justify-between"><div><p class="stat-label">已确认参与</p><p class="stat-value" id="statConfirmed">0</p></div><div class="icon-container icon-container-sm icon-gradient-success"><i class="fas fa-check-double text-white text-sm"></i></div></div>
+          <div class="stat-card animate-fade-in delay-300 cursor-pointer">
+            <div class="flex items-center justify-between"><div><p class="stat-label">投入金额</p><p class="stat-value" id="statMyAmount">0</p><p class="text-xs text-gray-400 mt-0.5">¥1000/份</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-yen-sign text-white text-sm"></i></div></div>
           </div>
         </div>
 
@@ -777,24 +777,35 @@ app.get('/', (c) => {
       const locations = ['杭州','深圳','全国','北京','上海','北京','成都','北京','上海','广州','天津','北京'];
       const originators = ['杭州星巴克运营方','深圳瑞幸加盟商','演艺经纪公司','新东方教育集团','美年大健康集团','字节跳动投融部','海底捞运营总部','泡泡玛特品牌方','喜茶(深圳)公司','太二餐饮管理','猿辅导科技','和睦家医疗'];
 
-      allDeals = names.map((name, i) => ({
-        id: 'D_' + (1000 + i),
-        name,
-        industry: industries[i],
-        amount: (200 + Math.floor(Math.random() * 800)) * 10000,
-        aiScore: (7.0 + Math.random() * 3.0).toFixed(1),
-        status: 'open',
-        revenueShare: (6 + Math.floor(Math.random() * 16)) + '%',
-        period: (18 + Math.floor(Math.random() * 42)) + '个月',
-        location: locations[i],
-        originator: originators[i],
-        originateDate: new Date(Date.now() - Math.random() * 30 * 86400000).toISOString().slice(0, 10),
-        description: '由「' + originators[i] + '」通过发起通提交的' + industries[i] + '行业投资机会。已通过平台基础审核。',
-        riskGrade: ['A+','A','A','A-','B+','A+','A-','B+','A','B+','A-','A'][i],
-        monthlyRevenue: (50 + Math.floor(Math.random() * 200)) + '万',
-        employeeCount: (20 + Math.floor(Math.random() * 80)),
-        operatingYears: (1 + Math.floor(Math.random() * 8)).toFixed(1)
-      }));
+      allDeals = names.map((name, i) => {
+        const amount = (200 + Math.floor(Math.random() * 800)) * 10000;
+        const unitPrice = 1000; // 每份标准1000元
+        const totalUnits = Math.floor(amount / unitPrice);
+        const soldPercent = Math.random() * 0.7; // 0~70% 已售
+        const soldUnits = Math.floor(totalUnits * soldPercent);
+        return {
+          id: 'D_' + (1000 + i),
+          name,
+          industry: industries[i],
+          amount,
+          unitPrice,
+          totalUnits,
+          soldUnits,
+          myUnits: 0, // 当前用户认购份数
+          aiScore: (7.0 + Math.random() * 3.0).toFixed(1),
+          status: 'open',
+          revenueShare: (6 + Math.floor(Math.random() * 16)) + '%',
+          period: (18 + Math.floor(Math.random() * 42)) + '个月',
+          location: locations[i],
+          originator: originators[i],
+          originateDate: new Date(Date.now() - Math.random() * 30 * 86400000).toISOString().slice(0, 10),
+          description: '由「' + originators[i] + '」通过发起通提交的' + industries[i] + '行业投资机会。已通过平台基础审核。',
+          riskGrade: ['A+','A','A','A-','B+','A+','A-','B+','A','B+','A-','A'][i],
+          monthlyRevenue: (50 + Math.floor(Math.random() * 200)) + '万',
+          employeeCount: (20 + Math.floor(Math.random() * 80)),
+          operatingYears: (1 + Math.floor(Math.random() * 8)).toFixed(1)
+        };
+      });
       localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
     }
 
@@ -985,8 +996,9 @@ app.get('/', (c) => {
       // Update stats
       document.getElementById('statTotal').textContent = allDeals.length;
       document.getElementById('statFiltered').textContent = dealsList.length;
-      document.getElementById('statInterested').textContent = allDeals.filter(d => d.status === 'interested').length;
-      document.getElementById('statConfirmed').textContent = allDeals.filter(d => d.status === 'confirmed').length;
+      const totalMyUnits = allDeals.reduce((s, d) => s + (d.myUnits || 0), 0);
+      document.getElementById('statMyUnits').textContent = totalMyUnits.toLocaleString();
+      document.getElementById('statMyAmount').textContent = '¥' + (totalMyUnits * 1000).toLocaleString();
 
       if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
       empty.classList.add('hidden');
@@ -1002,6 +1014,10 @@ app.get('/', (c) => {
         const st = statusMap[d.status] || statusMap.open;
         const hasMatch = d.matchScore !== null && d.matchScore !== undefined;
         const matchColor = hasMatch ? (d.matchScore >= 80 ? '#10b981' : d.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#6b7280';
+
+        const availUnits = d.totalUnits - d.soldUnits;
+        const soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
+        const soldBarColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
 
         return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openDetail(\\'' + d.id + '\\')">' +
           // Header: name + status
@@ -1020,6 +1036,19 @@ app.get('/', (c) => {
           '</div>' +
           // 匹配度条
           (hasMatch ? '<div class="match-bar mb-2"><div class="match-bar-fill" style="width:' + d.matchScore + '%; background: ' + matchColor + ';"></div></div>' : '') +
+          // ==== 份额信息 ====
+          '<div class="mb-2 p-2.5 rounded-xl" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.12);">' +
+            '<div class="flex items-center justify-between mb-1.5">' +
+              '<div class="flex items-center gap-1"><i class="fas fa-file-contract text-teal-500" style="font-size:10px;"></i><span class="text-xs font-bold text-gray-700">' + d.totalUnits.toLocaleString() + ' 份合约</span></div>' +
+              '<span class="text-xs font-semibold" style="color:' + soldBarColor + ';">' + soldPct + '% 已认购</span>' +
+            '</div>' +
+            '<div class="match-bar" style="height:4px;"><div class="match-bar-fill" style="width:' + soldPct + '%; background:' + soldBarColor + ';"></div></div>' +
+            '<div class="flex items-center justify-between mt-1.5 text-xs">' +
+              '<span class="text-gray-400">¥' + d.unitPrice.toLocaleString() + '/份</span>' +
+              '<span class="text-teal-600 font-semibold">可购 ' + availUnits.toLocaleString() + ' 份</span>' +
+            '</div>' +
+            (d.myUnits > 0 ? '<div class="mt-1.5 flex items-center gap-1 text-xs"><i class="fas fa-user-check text-emerald-500" style="font-size:9px;"></i><span class="text-emerald-600 font-bold">我已认购 ' + d.myUnits + ' 份 (¥' + (d.myUnits * d.unitPrice).toLocaleString() + ')</span></div>' : '') +
+          '</div>' +
           // Metrics
           '<div class="flex items-center justify-between text-xs">' +
             '<div class="flex items-center space-x-3">' +
@@ -1032,7 +1061,9 @@ app.get('/', (c) => {
           // Footer
           '<div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">' +
             '<span class="text-xs text-gray-400"><i class="fas fa-paper-plane mr-1 text-amber-300"></i>' + d.originateDate + '</span>' +
-            '<button onclick="event.stopPropagation(); toggleIntent(\\'' + d.id + '\\')" class="text-xs font-medium ' + (d.status === 'interested' || d.status === 'confirmed' ? 'text-teal-600' : 'text-gray-400 hover:text-teal-600') + ' transition-colors"><i class="fas fa-hand-point-up mr-1"></i>' + (d.status === 'interested' ? '已有意向' : d.status === 'confirmed' ? '已确认' : '表达意向') + '</button>' +
+            (d.myUnits > 0
+              ? '<span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>已认购 ' + d.myUnits + ' 份</span>'
+              : '<button onclick="event.stopPropagation(); openDetail(\\'' + d.id + '\\')" class="text-xs font-medium text-teal-500 hover:text-teal-700 transition-colors"><i class="fas fa-shopping-cart mr-1"></i>认购份额</button>') +
           '</div>' +
         '</div>';
       }).join('');
@@ -1043,14 +1074,124 @@ app.get('/', (c) => {
       if (sel) { sel.value = status; renderDeals(); }
     }
 
-    function toggleIntent(id) {
-      const deal = allDeals.find(d => d.id === id);
-      if (!deal) return;
-      if (deal.status === 'open') { deal.status = 'interested'; showToast('success', '已表达意向', deal.name); }
-      else if (deal.status === 'interested') { deal.status = 'open'; showToast('info', '已取消意向', deal.name); }
+    // ==================== 认购弹窗 ====================
+    function showSubscribeModal() {
+      if (!currentDeal) return;
+      const avail = currentDeal.totalUnits - currentDeal.soldUnits;
+      if (avail <= 0) { showToast('warning', '已售罄', '该项目合约已全部认购'); return; }
+      const maxShow = Math.min(avail, 9999);
+
+      const old = document.getElementById('subscribeModal'); if (old) old.remove();
+      const modal = document.createElement('div');
+      modal.id = 'subscribeModal';
+      modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[300]';
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+
+      modal.innerHTML = '<div class="bg-white rounded-3xl max-w-md w-full mx-4 overflow-hidden" style="box-shadow: 0 24px 80px rgba(0,0,0,0.2); animation: scaleIn 0.25s cubic-bezier(0.28,0.11,0.32,1);">' +
+        '<div class="p-5 border-b border-gray-100" style="background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04));">' +
+          '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #06b6d4);"><i class="fas fa-file-contract text-white"></i></div><div><h2 class="text-lg font-bold text-gray-900">认购合约份额</h2><p class="text-xs text-gray-400">' + currentDeal.name + '</p></div></div>' +
+        '</div>' +
+        '<div class="p-5">' +
+          '<div class="grid grid-cols-3 gap-2 mb-4">' +
+            '<div class="text-center p-2 bg-gray-50 rounded-xl"><p class="text-sm font-bold text-gray-800">' + currentDeal.totalUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">总份数</p></div>' +
+            '<div class="text-center p-2 bg-gray-50 rounded-xl"><p class="text-sm font-bold text-amber-600">' + currentDeal.soldUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">已认购</p></div>' +
+            '<div class="text-center p-2 bg-teal-50 rounded-xl border border-teal-200"><p class="text-sm font-bold text-teal-600">' + avail.toLocaleString() + '</p><p class="text-xs text-gray-400">可认购</p></div>' +
+          '</div>' +
+          '<div class="mb-4">' +
+            '<label class="block text-sm font-semibold text-gray-700 mb-2">认购份数</label>' +
+            '<div class="flex items-center gap-2">' +
+              '<button onclick="adjustUnits(-10)" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-colors">-10</button>' +
+              '<button onclick="adjustUnits(-1)" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-colors">-</button>' +
+              '<input type="number" id="subscribeUnits" value="1" min="1" max="' + maxShow + '" class="flex-1 text-center text-lg font-bold border border-gray-200 rounded-xl py-2 focus:outline-none focus:ring-2 focus:ring-teal-500" oninput="updateSubTotal()">' +
+              '<button onclick="adjustUnits(1)" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-colors">+</button>' +
+              '<button onclick="adjustUnits(10)" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-colors">+10</button>' +
+            '</div>' +
+            '<div class="flex justify-between mt-2"><button onclick="setUnits(1)" class="text-xs text-teal-600 hover:underline">最少1份</button><button onclick="setUnits(100)" class="text-xs text-teal-600 hover:underline">100份</button><button onclick="setUnits(500)" class="text-xs text-teal-600 hover:underline">500份</button><button onclick="setUnits(' + maxShow + ')" class="text-xs text-teal-600 hover:underline">最多' + maxShow.toLocaleString() + '份</button></div>' +
+          '</div>' +
+          '<div class="p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border border-teal-100 mb-4">' +
+            '<div class="flex items-center justify-between mb-1"><span class="text-xs text-gray-500">每份金额</span><span class="text-sm font-semibold text-gray-700">¥' + currentDeal.unitPrice.toLocaleString() + '</span></div>' +
+            '<div class="flex items-center justify-between mb-1"><span class="text-xs text-gray-500">认购份数</span><span class="text-sm font-semibold text-gray-700" id="subUnitsDisplay">1 份</span></div>' +
+            '<div class="border-t border-teal-200 my-2"></div>' +
+            '<div class="flex items-center justify-between"><span class="text-sm font-bold text-gray-800">合计金额</span><span class="text-xl font-bold text-teal-600" id="subTotalDisplay">¥' + currentDeal.unitPrice.toLocaleString() + '</span></div>' +
+            '<p class="text-xs text-gray-400 mt-1" id="subPercentDisplay">占项目总额 ' + (1/currentDeal.totalUnits*100).toFixed(3) + '%</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="px-5 pb-5 flex gap-3">' +
+          '<button onclick="closeSubscribeModal()" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">取消</button>' +
+          '<button onclick="confirmSubscribe()" class="flex-1 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-sm font-medium hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-200 transition-all"><i class="fas fa-check mr-1.5"></i>确认认购</button>' +
+        '</div>' +
+      '</div>';
+
+      document.body.appendChild(modal);
+      updateSubTotal();
+    }
+
+    function closeSubscribeModal() {
+      const m = document.getElementById('subscribeModal'); if (m) m.remove();
+    }
+
+    function adjustUnits(delta) {
+      const inp = document.getElementById('subscribeUnits');
+      if (!inp) return;
+      const max = parseInt(inp.max);
+      let val = parseInt(inp.value) || 1;
+      val = Math.max(1, Math.min(max, val + delta));
+      inp.value = val;
+      updateSubTotal();
+    }
+
+    function setUnits(n) {
+      const inp = document.getElementById('subscribeUnits');
+      if (!inp) return;
+      const max = parseInt(inp.max);
+      inp.value = Math.min(n, max);
+      updateSubTotal();
+    }
+
+    function updateSubTotal() {
+      if (!currentDeal) return;
+      const inp = document.getElementById('subscribeUnits');
+      let units = parseInt(inp?.value) || 1;
+      const max = currentDeal.totalUnits - currentDeal.soldUnits;
+      if (units < 1) units = 1;
+      if (units > max) { units = max; if (inp) inp.value = max; }
+      const total = units * currentDeal.unitPrice;
+      const pct = (units / currentDeal.totalUnits * 100);
+      const ud = document.getElementById('subUnitsDisplay');
+      const td = document.getElementById('subTotalDisplay');
+      const pd = document.getElementById('subPercentDisplay');
+      if (ud) ud.textContent = units.toLocaleString() + ' 份';
+      if (td) td.textContent = '¥' + total.toLocaleString();
+      if (pd) pd.textContent = '占项目总额 ' + pct.toFixed(3) + '%';
+    }
+
+    function confirmSubscribe() {
+      if (!currentDeal) return;
+      const inp = document.getElementById('subscribeUnits');
+      const units = parseInt(inp?.value) || 1;
+      const avail = currentDeal.totalUnits - currentDeal.soldUnits;
+      if (units > avail) { showToast('error', '份额不足', '可认购份数不足'); return; }
+
+      // 更新数据
+      currentDeal.soldUnits += units;
+      currentDeal.myUnits += units;
+      if (currentDeal.status === 'open') currentDeal.status = 'interested';
+
+      // 同步回 allDeals
+      const original = allDeals.find(d => d.id === currentDeal.id);
+      if (original) {
+        original.soldUnits = currentDeal.soldUnits;
+        original.myUnits = currentDeal.myUnits;
+        original.status = currentDeal.status;
+      }
       localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
-      // 重新应用筛子
-      selectSieve(currentSieve);
+
+      // 关闭弹窗
+      const modal = document.getElementById('subscribeModal');
+      if (modal) modal.remove();
+
+      showToast('success', '认购成功', '已认购 ' + units + ' 份 · ¥' + (units * currentDeal.unitPrice).toLocaleString());
+      openDetail(currentDeal.id); // 刷新详情
     }
 
     // ==================== Detail Page ====================
@@ -1067,15 +1208,19 @@ app.get('/', (c) => {
 
       // 更新参与按钮
       const btn = document.getElementById('btnExpressIntent');
-      if (currentDeal.status === 'confirmed') {
-        btn.innerHTML = '<i class="fas fa-check-double mr-1"></i>已确认参与';
-        btn.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
-      } else if (currentDeal.status === 'interested') {
-        btn.innerHTML = '<i class="fas fa-arrow-right mr-1"></i>确认参与';
-        btn.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
-      } else {
-        btn.innerHTML = '<i class="fas fa-hand-point-up mr-1"></i>我要参与';
+      const avail = currentDeal.totalUnits - currentDeal.soldUnits;
+      if (currentDeal.myUnits > 0) {
+        btn.innerHTML = '<i class="fas fa-check-circle mr-1"></i>已认购 ' + currentDeal.myUnits + ' 份';
         btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        btn.onclick = function() { showToast('info', '已认购', '您已认购 ' + currentDeal.myUnits + ' 份，共 ¥' + (currentDeal.myUnits * currentDeal.unitPrice).toLocaleString()); };
+      } else if (avail <= 0) {
+        btn.innerHTML = '<i class="fas fa-lock mr-1"></i>已售罄';
+        btn.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+        btn.onclick = null;
+      } else {
+        btn.innerHTML = '<i class="fas fa-shopping-cart mr-1"></i>认购份额';
+        btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        btn.onclick = function() { showSubscribeModal(); };
       }
 
       // Left panel — 项目信息（来自发起通）
@@ -1085,8 +1230,20 @@ app.get('/', (c) => {
           '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-gray-900">' + currentDeal.name + '</h2><p class="text-sm text-gray-500">' + currentDeal.industry + ' · ' + currentDeal.location + '</p></div></div>' +
           '<p class="text-sm text-gray-600 leading-relaxed mb-4">' + currentDeal.description + '</p>' +
         '</div>' +
+        // ==== 份额核心面板 ====
+        '<div class="p-4 rounded-2xl mb-5" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); border: 1.5px solid rgba(46,196,182,0.2);">' +
+          '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-teal-500"></i><h3 class="text-sm font-bold text-gray-800">合约份额信息</h3><span class="text-xs px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 font-semibold">¥' + currentDeal.unitPrice.toLocaleString() + '/份</span></div>' +
+          '<div class="grid grid-cols-3 gap-2 mb-3">' +
+            '<div class="text-center p-2 bg-white rounded-xl"><p class="text-lg font-bold text-gray-800">' + currentDeal.totalUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">总份数</p></div>' +
+            '<div class="text-center p-2 bg-white rounded-xl"><p class="text-lg font-bold text-amber-600">' + currentDeal.soldUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">已认购</p></div>' +
+            '<div class="text-center p-2 bg-white rounded-xl"><p class="text-lg font-bold text-teal-600">' + (currentDeal.totalUnits - currentDeal.soldUnits).toLocaleString() + '</p><p class="text-xs text-gray-400">可认购</p></div>' +
+          '</div>' +
+          '<div class="match-bar mb-1" style="height:6px;"><div class="match-bar-fill" style="width:' + Math.round(currentDeal.soldUnits/currentDeal.totalUnits*100) + '%; background: linear-gradient(90deg, #10b981, #06b6d4);"></div></div>' +
+          '<div class="flex justify-between text-xs"><span class="text-gray-400">认购进度</span><span class="font-semibold" style="color:#0f766e;">' + Math.round(currentDeal.soldUnits/currentDeal.totalUnits*100) + '%</span></div>' +
+          (currentDeal.myUnits > 0 ? '<div class="mt-3 p-2 bg-emerald-50 rounded-xl flex items-center gap-2 border border-emerald-100"><i class="fas fa-user-check text-emerald-500"></i><div><p class="text-xs font-bold text-emerald-700">我已认购 ' + currentDeal.myUnits + ' 份</p><p class="text-xs text-emerald-600">投入 ¥' + (currentDeal.myUnits * currentDeal.unitPrice).toLocaleString() + ' · 占总额 ' + (currentDeal.myUnits / currentDeal.totalUnits * 100).toFixed(2) + '%</p></div></div>' : '') +
+        '</div>' +
         '<div class="grid grid-cols-2 gap-3 mb-5">' +
-          '<div class="p-3 bg-teal-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">投资金额</p><p class="text-lg font-bold text-teal-600">¥' + (currentDeal.amount/10000).toFixed(0) + '万</p></div>' +
+          '<div class="p-3 bg-teal-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">投资总额</p><p class="text-lg font-bold text-teal-600">¥' + (currentDeal.amount/10000).toFixed(0) + '万</p></div>' +
           '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">分成比例</p><p class="text-lg font-bold text-amber-600">' + currentDeal.revenueShare + '</p></div>' +
           '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">分成期限</p><p class="text-lg font-bold text-cyan-600">' + currentDeal.period + '</p></div>' +
           '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">AI评分</p><p class="text-lg font-bold text-emerald-600">' + currentDeal.aiScore + '<span class="text-xs text-gray-400">/10</span></p></div>' +
@@ -1151,21 +1308,11 @@ app.get('/', (c) => {
 
     function expressIntent() {
       if (!currentDeal) return;
-      if (currentDeal.status === 'open') {
-        currentDeal.status = 'interested';
-        showToast('success', '意向已提交', currentDeal.name + ' — 发起方将收到通知');
-      } else if (currentDeal.status === 'interested') {
-        currentDeal.status = 'confirmed';
-        showToast('success', '参与已确认', currentDeal.name + ' — 即将进入条款通');
+      if (currentDeal.myUnits > 0) {
+        showToast('info', '已认购', '您已认购 ' + currentDeal.myUnits + ' 份');
       } else {
-        showToast('info', '已确认参与', '此项目已在条款通处理中');
-        return;
+        showSubscribeModal();
       }
-      // 同步回 allDeals
-      const original = allDeals.find(d => d.id === currentDeal.id);
-      if (original) original.status = currentDeal.status;
-      localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
-      openDetail(currentDeal.id);
     }
 
     function switchDetailView(view) {
