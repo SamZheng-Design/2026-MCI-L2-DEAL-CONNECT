@@ -371,10 +371,10 @@ app.get('/', (c) => {
             <div class="flex items-center justify-between"><div><p class="stat-label">筛后通过</p><p class="stat-value" id="statFiltered">0</p><p class="text-xs text-gray-400 mt-0.5">当前筛子匹配</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); box-shadow: 0 4px 12px rgba(6,182,212,0.3);"><i class="fas fa-filter text-white text-sm"></i></div></div>
           </div>
           <div class="stat-card animate-fade-in delay-200 cursor-pointer">
-            <div class="flex items-center justify-between"><div><p class="stat-label">我的认购</p><p class="stat-value" id="statMyUnits">0</p><p class="text-xs text-gray-400 mt-0.5">已认购份数</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-file-contract text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">我的合约</p><p class="stat-value" id="statMyUnits">0</p><p class="text-xs text-gray-400 mt-0.5">已认购张数</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-file-contract text-white text-sm"></i></div></div>
           </div>
           <div class="stat-card animate-fade-in delay-300 cursor-pointer">
-            <div class="flex items-center justify-between"><div><p class="stat-label">投入金额</p><p class="stat-value" id="statMyAmount">0</p><p class="text-xs text-gray-400 mt-0.5">¥1000/份</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-yen-sign text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">投入金额</p><p class="stat-value" id="statMyAmount">0</p><p class="text-xs text-gray-400 mt-0.5">¥1,000/张</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-yen-sign text-white text-sm"></i></div></div>
           </div>
         </div>
 
@@ -493,7 +493,7 @@ app.get('/', (c) => {
                 <span class="text-xs" style="color: rgba(255,255,255,0.4);">Micro Connect Note</span>
               </div>
               <h2 class="text-lg font-bold text-white mb-1">合约编号看板</h2>
-              <p class="text-xs" style="color: rgba(255,255,255,0.5);">每张合约拥有唯一MCN编号（身份证），贯穿一级认购、二级转让全生命周期</p>
+              <p class="text-xs" style="color: rgba(255,255,255,0.5);">每张合约面值 ¥1,000 · 拥有唯一MCN编号（身份证） · 不可分割的最小交易单元</p>
             </div>
             <div class="hidden sm:flex items-center gap-4">
               <div class="text-center">
@@ -503,7 +503,7 @@ app.get('/', (c) => {
               <div class="w-px h-10 bg-white/10"></div>
               <div class="text-center">
                 <p class="text-xl font-black text-cyan-300" id="contractStatActive">0</p>
-                <p class="text-xs" style="color: rgba(255,255,255,0.4);">活跃合约</p>
+                <p class="text-xs" style="color: rgba(255,255,255,0.4);">可认购</p>
               </div>
               <div class="w-px h-10 bg-white/10"></div>
               <div class="text-center">
@@ -560,17 +560,15 @@ app.get('/', (c) => {
             </select>
             <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="contractFilterStatus" onchange="renderContractBoard()">
               <option value="all">全部状态</option>
-              <option value="open">待认购</option>
-              <option value="interested">已意向</option>
-              <option value="confirmed">已确认</option>
-              <option value="closed">已关闭</option>
+              <option value="available">待售</option>
+              <option value="sold">已售</option>
+              <option value="mine">我的</option>
             </select>
             <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="contractSortBy" onchange="renderContractBoard()">
               <option value="mcn">按MCN编号</option>
               <option value="aiScore">按AI评分</option>
-              <option value="amount">按金额</option>
               <option value="revenueShare">按分成比例</option>
-              <option value="soldPct">按认购进度</option>
+              <option value="riskGrade">按风控评级</option>
             </select>
             <div class="flex bg-gray-100 rounded-lg p-0.5">
               <button onclick="setContractView('table')" id="btnViewTable" class="px-2.5 py-1 rounded-md text-xs font-semibold text-gray-500"><i class="fas fa-table"></i></button>
@@ -587,16 +585,15 @@ app.get('/', (c) => {
                 <thead>
                   <tr class="border-b border-gray-100" style="background: linear-gradient(135deg, #f8fffe, #f0fdfa);">
                     <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">MCN 编号</th>
-                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">合约名称</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">所属项目</th>
                     <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">行业</th>
                     <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">城市</th>
-                    <th class="px-3 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">总额</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">面值</th>
                     <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">分成</th>
                     <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">期限</th>
                     <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">AI评分</th>
                     <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">风控</th>
-                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">认购进度</th>
-                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">我的持仓</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">持有人</th>
                     <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">状态</th>
                     <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">操作</th>
                   </tr>
@@ -726,7 +723,7 @@ app.get('/', (c) => {
         filter: function(deals) {
           return deals.map(d => {
             const score = parseFloat(d.aiScore);
-            const amt = d.amount / 10000;
+            const amt = d.projectTotalAmount || 0;
             const pass = score >= 8.5 && amt <= 800;
             return { ...d, matchScore: pass ? 80 + Math.floor(Math.random() * 20) : 20 + Math.floor(Math.random() * 25), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
           }).filter(d => d.sieveResult === 'pass');
@@ -786,7 +783,7 @@ app.get('/', (c) => {
         desc: '筛选投资金额>=500万的大体量、高门槛优质项目',
         filter: function(deals) {
           return deals.map(d => {
-            const amt = d.amount / 10000;
+            const amt = d.projectTotalAmount || 0;
             const pass = amt >= 500;
             return { ...d, matchScore: pass ? 72 + Math.floor(Math.random() * 28) : 12 + Math.floor(Math.random() * 25), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
           }).filter(d => d.sieveResult === 'pass');
@@ -821,7 +818,7 @@ app.get('/', (c) => {
         filter: function(deals) {
           return deals.map(d => {
             const score = parseFloat(d.aiScore);
-            const amt = d.amount / 10000;
+            const amt = d.projectTotalAmount || 0;
             const grade = d.riskGrade || '';
             const pass = score >= 9.0 && amt <= 500 && (grade.startsWith('A'));
             return { ...d, matchScore: pass ? 88 + Math.floor(Math.random() * 12) : 8 + Math.floor(Math.random() * 20), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
@@ -954,7 +951,7 @@ app.get('/', (c) => {
       currentUser = { id: 'guest', username: 'guest', displayName: '游客', email: 'guest@demo.com', role: 'investor' };
       loadDemoData();
       onLoginSuccess();
-      showToast('info', '游客模式', '已加载 ' + allDeals.length + ' 张合约 · MCN编号已分配');
+      showToast('info', '游客模式', '已加载 ' + allDeals.length + ' 张合约（¥1,000/张） · MCN编号已分配');
     }
 
     function onLoginSuccess() {
@@ -1009,62 +1006,88 @@ app.get('/', (c) => {
     }
 
     // ==================== Demo Data (模拟发起通数据) ====================
-    function loadDemoData() {
-      const industries = ['餐饮','零售','演艺','教育','健康','科技','餐饮','零售','科技','餐饮','教育','健康'];
-      const names = [
-        '星巴克杭州新店','瑞幸深圳旗舰店','周杰伦2026巡演','新东方AI学堂',
-        '美年健康体检中心','字节跳动AI Lab','海底捞成都总店','泡泡玛特北京旗舰',
-        '喜茶上海概念店','太二酸菜鱼广州店','猿辅导天津中心','和睦家北京诊所'
-      ];
-      const locations = ['杭州','深圳','全国','北京','上海','北京','成都','北京','上海','广州','天津','北京'];
-      const originators = ['杭州星巴克运营方','深圳瑞幸加盟商','演艺经纪公司','新东方教育集团','美年大健康集团','字节跳动投融部','海底捞运营总部','泡泡玛特品牌方','喜茶(深圳)公司','太二餐饮管理','猿辅导科技','和睦家医疗'];
-      // 固定的发行日期 — 确保MCN编号在每次加载时保持一致
-      const issueDates = ['2026-02-01','2026-02-03','2026-01-15','2026-02-10','2026-01-20','2026-02-14','2026-01-25','2026-02-05','2026-02-08','2026-01-28','2026-02-12','2026-02-18'];
-      // 固定金额 — 确保份数不变
-      const amounts = [480, 650, 920, 380, 550, 780, 420, 310, 570, 690, 450, 520]; // 万元
+    // 每张合约 = ¥1,000，独立个体，拥有唯一MCN编号
+    const PROJECT_TEMPLATES = [
+      { name: '星巴克杭州新店', industry: '餐饮', location: '杭州', originator: '杭州星巴克运营方', issueDate: '2026-02-01', totalAmount: 480, revenueShare: 12, period: 24, aiScore: 8.5, riskGrade: 'A+', monthlyRevenue: 120, employeeCount: 45, operatingYears: 3.5 },
+      { name: '瑞幸深圳旗舰店', industry: '零售', location: '深圳', originator: '深圳瑞幸加盟商', issueDate: '2026-02-03', totalAmount: 650, revenueShare: 8, period: 36, aiScore: 7.8, riskGrade: 'A', monthlyRevenue: 85, employeeCount: 38, operatingYears: 2.1 },
+      { name: '周杰伦2026巡演', industry: '演艺', location: '全国', originator: '演艺经纪公司', issueDate: '2026-01-15', totalAmount: 920, revenueShare: 18, period: 18, aiScore: 9.2, riskGrade: 'A', monthlyRevenue: 230, employeeCount: 12, operatingYears: 8.0 },
+      { name: '新东方AI学堂', industry: '教育', location: '北京', originator: '新东方教育集团', issueDate: '2026-02-10', totalAmount: 380, revenueShare: 10, period: 30, aiScore: 7.5, riskGrade: 'A-', monthlyRevenue: 65, employeeCount: 85, operatingYears: 5.2 },
+      { name: '美年健康体检中心', industry: '健康', location: '上海', originator: '美年大健康集团', issueDate: '2026-01-20', totalAmount: 550, revenueShare: 14, period: 24, aiScore: 8.8, riskGrade: 'B+', monthlyRevenue: 150, employeeCount: 62, operatingYears: 4.8 },
+      { name: '字节跳动AI Lab', industry: '科技', location: '北京', originator: '字节跳动投融部', issueDate: '2026-02-14', totalAmount: 780, revenueShare: 15, period: 36, aiScore: 9.0, riskGrade: 'A+', monthlyRevenue: 180, employeeCount: 95, operatingYears: 6.0 },
+      { name: '海底捞成都总店', industry: '餐饮', location: '成都', originator: '海底捞运营总部', issueDate: '2026-01-25', totalAmount: 420, revenueShare: 11, period: 24, aiScore: 8.2, riskGrade: 'A-', monthlyRevenue: 95, employeeCount: 55, operatingYears: 7.5 },
+      { name: '泡泡玛特北京旗舰', industry: '零售', location: '北京', originator: '泡泡玛特品牌方', issueDate: '2026-02-05', totalAmount: 310, revenueShare: 7, period: 30, aiScore: 7.6, riskGrade: 'B+', monthlyRevenue: 60, employeeCount: 28, operatingYears: 1.5 },
+      { name: '喜茶上海概念店', industry: '科技', location: '上海', originator: '喜茶(深圳)公司', issueDate: '2026-02-08', totalAmount: 570, revenueShare: 13, period: 20, aiScore: 8.7, riskGrade: 'A', monthlyRevenue: 140, employeeCount: 42, operatingYears: 2.8 },
+      { name: '太二酸菜鱼广州店', industry: '餐饮', location: '广州', originator: '太二餐饮管理', issueDate: '2026-01-28', totalAmount: 690, revenueShare: 9, period: 28, aiScore: 8.0, riskGrade: 'B+', monthlyRevenue: 110, employeeCount: 35, operatingYears: 3.0 },
+      { name: '猿辅导天津中心', industry: '教育', location: '天津', originator: '猿辅导科技', issueDate: '2026-02-12', totalAmount: 450, revenueShare: 10, period: 36, aiScore: 7.3, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 70, operatingYears: 4.0 },
+      { name: '和睦家北京诊所', industry: '健康', location: '北京', originator: '和睦家医疗', issueDate: '2026-02-18', totalAmount: 520, revenueShare: 16, period: 24, aiScore: 9.1, riskGrade: 'A', monthlyRevenue: 160, employeeCount: 50, operatingYears: 6.5 }
+    ];
 
-      allDeals = names.map((name, i) => {
-        const amount = amounts[i] * 10000;
-        const unitPrice = 1000; // 每份标准1000元
-        const totalUnits = Math.floor(amount / unitPrice);
-        const soldPercent = [0.35, 0.52, 0.68, 0.18, 0.42, 0.61, 0.28, 0.45, 0.55, 0.38, 0.22, 0.48][i];
-        const soldUnits = Math.floor(totalUnits * soldPercent);
-        const mcn = generateMCN(industries[i], locations[i], issueDates[i], i + 1);
-        return {
-          id: 'D_' + (1000 + i),
-          mcn,  // 合约唯一身份编号 — 终身不变
-          name,
-          industry: industries[i],
-          amount,
-          unitPrice,
-          totalUnits,
-          soldUnits,
-          myUnits: 0, // 当前用户认购份数
-          aiScore: [8.5, 7.8, 9.2, 7.5, 8.8, 9.0, 8.2, 7.6, 8.7, 8.0, 7.3, 9.1][i].toFixed(1),
-          status: 'open',
-          revenueShare: [12, 8, 18, 10, 14, 15, 11, 7, 13, 9, 10, 16][i] + '%',
-          period: [24, 36, 18, 30, 24, 36, 24, 30, 20, 28, 36, 24][i] + '个月',
-          location: locations[i],
-          originator: originators[i],
-          originateDate: issueDates[i],
-          issueDate: issueDates[i], // 合约发行日
-          maturityDate: null, // 到期日（根据period计算）
-          description: '由「' + originators[i] + '」通过发起通提交的' + industries[i] + '行业投资机会。已通过平台基础审核。',
-          riskGrade: ['A+','A','A','A-','B+','A+','A-','B+','A','B+','A-','A'][i],
-          monthlyRevenue: [120, 85, 230, 65, 150, 180, 95, 60, 140, 110, 75, 160][i] + '万',
-          employeeCount: [45, 38, 12, 85, 62, 95, 55, 28, 42, 35, 70, 50][i],
-          operatingYears: [3.5, 2.1, 8.0, 5.2, 4.8, 6.0, 7.5, 1.5, 2.8, 3.0, 4.0, 6.5][i].toFixed(1),
-          contractType: 'RSN', // Revenue Sharing Note 收益分享合约
-          currency: 'CNY'
-        };
+    function loadDemoData() {
+      // ★ 核心概念：每张合约 = ¥1,000，独立个体
+      // 每个项目生成若干张代表性合约卡片（3~5张/项目）
+      allDeals = [];
+      let globalSeq = 1;
+      const contractsPerProject = [4, 3, 5, 3, 4, 5, 3, 3, 4, 4, 3, 4]; // 每个项目展示的合约张数
+      // 合约状态分布池
+      const statusPool = ['available', 'sold', 'available', 'sold', 'mine'];
+      const holderNames = ['张三', '李四', '王五', '赵六', '机构A', '基金B', '投资人C'];
+
+      PROJECT_TEMPLATES.forEach(function(proj, pi) {
+        var count = contractsPerProject[pi];
+        for (var ci = 0; ci < count; ci++) {
+          var mcn = generateMCN(proj.industry, proj.location, proj.issueDate, globalSeq);
+          // 确定性地分配状态（每次加载一致）
+          var statusRand = statusPool[(pi * 7 + ci * 3) % statusPool.length];
+          var holder = null;
+          var isMine = false;
+          if (statusRand === 'mine') {
+            holder = currentUser ? (currentUser.displayName || currentUser.username) : '游客';
+            isMine = true;
+            statusRand = 'sold'; // 底层状态：已售
+          } else if (statusRand === 'sold') {
+            holder = holderNames[(pi + ci) % holderNames.length];
+          }
+
+          allDeals.push({
+            id: 'C_' + globalSeq,
+            mcn: mcn,
+            name: proj.name,            // 所属项目名称
+            industry: proj.industry,
+            location: proj.location,
+            originator: proj.originator,
+            originateDate: proj.issueDate,
+            issueDate: proj.issueDate,
+            maturityDate: null,
+            faceValue: 1000,             // ★ 面值 ¥1,000 — 不可分割
+            status: statusRand,          // 'available' | 'sold'
+            holder: holder,              // 持有人（null=无人持有=待售）
+            isMine: isMine,              // 是否当前用户持有
+            revenueShare: proj.revenueShare + '%',
+            period: proj.period + '个月',
+            aiScore: (proj.aiScore + (ci * 0.1 - 0.2)).toFixed(1),
+            riskGrade: proj.riskGrade,
+            monthlyRevenue: proj.monthlyRevenue + '万',
+            employeeCount: proj.employeeCount,
+            operatingYears: proj.operatingYears.toFixed(1),
+            contractType: 'RSN',
+            currency: 'CNY',
+            seqInProject: ci + 1,
+            totalInProject: count,
+            projectTotalAmount: proj.totalAmount, // 项目总额（万元）
+            description: '由「' + proj.originator + '」通过发起通发行的' + proj.industry + '行业标准合约。面值 ¥1,000 · 收益分享合约(RSN)。'
+          });
+          globalSeq++;
+        }
       });
+
       // 计算到期日
-      allDeals.forEach(d => {
-        const monthsNum = parseInt(d.period);
-        const issue = new Date(d.issueDate);
+      allDeals.forEach(function(d) {
+        var monthsNum = parseInt(d.period);
+        var issue = new Date(d.issueDate);
         issue.setMonth(issue.getMonth() + monthsNum);
         d.maturityDate = issue.toISOString().slice(0, 10);
       });
+
       localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
     }
 
@@ -1107,13 +1130,12 @@ app.get('/', (c) => {
       const riskMap = { 'A+': 95, 'A': 82, 'A-': 72, 'B+': 58, 'B': 45, 'B-': 35, 'C': 20 };
       const riskCtrlScore = riskMap[deal.riskGrade] || 50;
 
-      // 5. 流动性 — 认购进度越高说明越受欢迎（但过高也意味着份额紧张）
-      const soldPct = deal.totalUnits > 0 ? deal.soldUnits / deal.totalUnits : 0;
-      const liquidityScore = Math.min(95, Math.max(25, Math.round(
-        soldPct < 0.3 ? 40 + soldPct * 80 :
-        soldPct < 0.7 ? 65 + (soldPct - 0.3) * 50 :
-        85 + (1 - soldPct) * 30
-      )));
+      // 5. 流动性 — 基于合约状态和项目热度
+      var idNum = parseInt((deal.id || '0').replace(/\\D/g, '')) || 0;
+      var liquidityScore;
+      if (deal.status === 'sold' || deal.isMine) liquidityScore = 70 + (idNum % 20);
+      else liquidityScore = 45 + (idNum % 25);
+      liquidityScore = Math.min(95, Math.max(25, liquidityScore));
 
       // 6. 团队实力 — 员工数+运营年限
       const emp = deal.employeeCount || 30;
@@ -1529,28 +1551,22 @@ app.get('/', (c) => {
       // Update stats
       document.getElementById('statTotal').textContent = allDeals.length;
       document.getElementById('statFiltered').textContent = dealsList.length;
-      const totalMyUnits = allDeals.reduce((s, d) => s + (d.myUnits || 0), 0);
-      document.getElementById('statMyUnits').textContent = totalMyUnits.toLocaleString();
-      document.getElementById('statMyAmount').textContent = '¥' + (totalMyUnits * 1000).toLocaleString();
+      const totalMyContracts = allDeals.filter(d => d.isMine).length;
+      document.getElementById('statMyUnits').textContent = totalMyContracts.toLocaleString();
+      document.getElementById('statMyAmount').textContent = '¥' + (totalMyContracts * 1000).toLocaleString();
 
       if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
       empty.classList.add('hidden');
 
       const statusMap = {
-        open: { label: '待参与', cls: 'badge-warning', icon: 'fa-clock' },
-        interested: { label: '已意向', cls: 'badge-primary', icon: 'fa-hand-point-up' },
-        confirmed: { label: '已确认', cls: 'badge-success', icon: 'fa-check-double' },
-        closed: { label: '已关闭', cls: 'badge-danger', icon: 'fa-lock' }
+        available: { label: '待售', cls: 'badge-warning', icon: 'fa-tag' },
+        sold: { label: '已售', cls: 'badge-success', icon: 'fa-check' }
       };
 
       grid.innerHTML = filtered.map((d, idx) => {
-        const st = statusMap[d.status] || statusMap.open;
+        const st = statusMap[d.status] || statusMap.available;
         const hasMatch = d.matchScore !== null && d.matchScore !== undefined;
         const matchColor = hasMatch ? (d.matchScore >= 80 ? '#10b981' : d.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#6b7280';
-
-        const availUnits = d.totalUnits - d.soldUnits;
-        const soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
-        const soldBarColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
 
         // 计算雷达评分用于卡片展示
         const cardScores = calcRadarScores(d);
@@ -1562,9 +1578,9 @@ app.get('/', (c) => {
           // MCN Header
           '<div class="flex items-center justify-between mb-1.5">' +
             '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.12); font-size: 10px;">' + (d.mcn || '') + '</span>' +
-            '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1"></i>' + st.label + '</span>' +
+            '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1"></i>' + st.label + (d.isMine ? '·我' : '') + '</span>' +
           '</div>' +
-          // Header: name + status + mini radar
+          // Header: name + mini radar
           '<div class="flex items-center justify-between mb-2">' +
             '<div class="flex items-center space-x-2 min-w-0 flex-1">' +
               '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase" style="color: #5DC4B3;"></i></div>' +
@@ -1588,34 +1604,30 @@ app.get('/', (c) => {
           '</div>' +
           // 匹配度条
           (hasMatch ? '<div class="match-bar mb-2"><div class="match-bar-fill" style="width:' + d.matchScore + '%; background: ' + matchColor + ';"></div></div>' : '') +
-          // ==== 份额信息 ====
+          // ==== 单张合约信息 ====
           '<div class="mb-2 p-2.5 rounded-xl" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.12);">' +
-            '<div class="flex items-center justify-between mb-1.5">' +
-              '<div class="flex items-center gap-1"><i class="fas fa-file-contract text-teal-500" style="font-size:10px;"></i><span class="text-xs font-bold text-gray-700">' + d.totalUnits.toLocaleString() + ' 份合约</span></div>' +
-              '<span class="text-xs font-semibold" style="color:' + soldBarColor + ';">' + soldPct + '% 已认购</span>' +
+            '<div class="flex items-center justify-between">' +
+              '<div class="flex items-center gap-1.5"><i class="fas fa-file-contract text-teal-500" style="font-size:10px;"></i><span class="text-lg font-black text-teal-700">¥1,000</span><span class="text-xs text-gray-400">面值</span></div>' +
+              (d.holder ? '<div class="flex items-center gap-1 text-xs"><i class="fas fa-user' + (d.isMine ? '-check text-emerald-500' : ' text-gray-400') + '" style="font-size:9px;"></i><span class="font-semibold ' + (d.isMine ? 'text-emerald-600' : 'text-gray-500') + '">' + d.holder + '</span></div>' : '<span class="text-xs text-amber-600 font-semibold"><i class="fas fa-tag mr-1" style="font-size:9px;"></i>可认购</span>') +
             '</div>' +
-            '<div class="match-bar" style="height:4px;"><div class="match-bar-fill" style="width:' + soldPct + '%; background:' + soldBarColor + ';"></div></div>' +
-            '<div class="flex items-center justify-between mt-1.5 text-xs">' +
-              '<span class="text-gray-400">¥' + d.unitPrice.toLocaleString() + '/份</span>' +
-              '<span class="text-teal-600 font-semibold">可购 ' + availUnits.toLocaleString() + ' 份</span>' +
-            '</div>' +
-            (d.myUnits > 0 ? '<div class="mt-1.5 flex items-center gap-1 text-xs"><i class="fas fa-user-check text-emerald-500" style="font-size:9px;"></i><span class="text-emerald-600 font-bold">我已认购 ' + d.myUnits + ' 份 (¥' + (d.myUnits * d.unitPrice).toLocaleString() + ')</span></div>' : '') +
           '</div>' +
           // Metrics
           '<div class="flex items-center justify-between text-xs">' +
             '<div class="flex items-center space-x-3">' +
-              '<span class="text-gray-500"><i class="fas fa-yen-sign mr-1 text-teal-500"></i>' + (d.amount/10000).toFixed(0) + '万</span>' +
               '<span class="text-gray-500"><i class="fas fa-percentage mr-1 text-amber-500"></i>' + d.revenueShare + '</span>' +
               '<span class="text-gray-500"><i class="fas fa-calendar mr-1 text-cyan-500"></i>' + d.period + '</span>' +
+              '<span class="text-gray-500"><i class="fas fa-shield-alt mr-1 text-emerald-500"></i>' + d.riskGrade + '</span>' +
             '</div>' +
             '<div class="flex items-center"><i class="fas fa-star text-amber-400 mr-1"></i><span class="font-bold text-gray-700">' + d.aiScore + '</span></div>' +
           '</div>' +
           // Footer
           '<div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">' +
             '<span class="text-xs text-gray-400"><i class="fas fa-paper-plane mr-1 text-amber-300"></i>' + d.originateDate + '</span>' +
-            (d.myUnits > 0
-              ? '<span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>已认购 ' + d.myUnits + ' 份</span>'
-              : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-medium text-teal-500 hover:text-teal-700 transition-colors"><i class="fas fa-shopping-cart mr-1"></i>认购份额</button>') +
+            (d.isMine
+              ? '<span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>我的合约</span>'
+              : d.status === 'sold'
+                ? '<span class="text-xs text-gray-400">已售出</span>'
+                : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-medium text-teal-500 hover:text-teal-700 transition-colors"><i class="fas fa-shopping-cart mr-1"></i>认购</button>') +
           '</div>' +
         '</div>';
       }).join('');
@@ -1634,12 +1646,10 @@ app.get('/', (c) => {
       if (sel) { sel.value = status; renderDeals(); }
     }
 
-    // ==================== 认购弹窗 ====================
+    // ==================== 认购弹窗 (单张合约) ====================
     function showSubscribeModal() {
       if (!currentDeal) return;
-      const avail = currentDeal.totalUnits - currentDeal.soldUnits;
-      if (avail <= 0) { showToast('warning', '已售罄', '该项目合约已全部认购'); return; }
-      const maxShow = Math.min(avail, 9999);
+      if (currentDeal.status === 'sold') { showToast('warning', '已售出', '该合约已被认购'); return; }
 
       const old = document.getElementById('subscribeModal'); if (old) old.remove();
       const modal = document.createElement('div');
@@ -1649,100 +1659,51 @@ app.get('/', (c) => {
 
       modal.innerHTML = '<div class="bg-white rounded-3xl max-w-md w-full mx-4 overflow-hidden" style="box-shadow: 0 24px 80px rgba(0,0,0,0.2); animation: scaleIn 0.25s cubic-bezier(0.28,0.11,0.32,1);">' +
         '<div class="p-5 border-b border-gray-100" style="background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04));">' +
-          '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #06b6d4);"><i class="fas fa-file-contract text-white"></i></div><div><h2 class="text-lg font-bold text-gray-900">认购合约份额</h2><p class="text-xs text-gray-400">' + currentDeal.name + '</p></div></div>' +
+          '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #06b6d4);"><i class="fas fa-file-contract text-white"></i></div><div><h2 class="text-lg font-bold text-gray-900">认购合约</h2><p class="text-xs text-gray-400">' + currentDeal.name + '</p></div></div>' +
         '</div>' +
         '<div class="p-5">' +
-          '<div class="grid grid-cols-3 gap-2 mb-4">' +
-            '<div class="text-center p-2 bg-gray-50 rounded-xl"><p class="text-sm font-bold text-gray-800">' + currentDeal.totalUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">总份数</p></div>' +
-            '<div class="text-center p-2 bg-gray-50 rounded-xl"><p class="text-sm font-bold text-amber-600">' + currentDeal.soldUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">已认购</p></div>' +
-            '<div class="text-center p-2 bg-teal-50 rounded-xl border border-teal-200"><p class="text-sm font-bold text-teal-600">' + avail.toLocaleString() + '</p><p class="text-xs text-gray-400">可认购</p></div>' +
+          '<div class="p-4 bg-slate-50 rounded-2xl mb-4 text-center">' +
+            '<p class="font-mono text-sm font-bold tracking-wider mb-2" style="color:#0f766e;">' + (currentDeal.mcn || '') + '</p>' +
+            '<p class="text-3xl font-black text-teal-600 mb-1">¥1,000</p>' +
+            '<p class="text-xs text-gray-400">单张合约面值 · 不可分割</p>' +
           '</div>' +
-          '<div class="mb-4">' +
-            '<label class="block text-sm font-semibold text-gray-700 mb-2">认购份数</label>' +
-            '<div class="flex items-center gap-2">' +
-              '<button onclick="adjustUnits(-10)" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-colors">-10</button>' +
-              '<button onclick="adjustUnits(-1)" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-colors">-</button>' +
-              '<input type="number" id="subscribeUnits" value="1" min="1" max="' + maxShow + '" class="flex-1 text-center text-lg font-bold border border-gray-200 rounded-xl py-2 focus:outline-none focus:ring-2 focus:ring-teal-500" oninput="updateSubTotal()">' +
-              '<button onclick="adjustUnits(1)" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-colors">+</button>' +
-              '<button onclick="adjustUnits(10)" class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition-colors">+10</button>' +
-            '</div>' +
-            '<div class="flex justify-between mt-2"><button onclick="setUnits(1)" class="text-xs text-teal-600 hover:underline">最少1份</button><button onclick="setUnits(100)" class="text-xs text-teal-600 hover:underline">100份</button><button onclick="setUnits(500)" class="text-xs text-teal-600 hover:underline">500份</button><button onclick="setUnits(' + maxShow + ')" class="text-xs text-teal-600 hover:underline">最多' + maxShow.toLocaleString() + '份</button></div>' +
+          '<div class="grid grid-cols-2 gap-2 mb-4">' +
+            '<div class="p-3 bg-amber-50 rounded-xl text-center"><p class="text-sm font-bold text-amber-700">' + currentDeal.revenueShare + '</p><p class="text-xs text-gray-400">分成比例</p></div>' +
+            '<div class="p-3 bg-cyan-50 rounded-xl text-center"><p class="text-sm font-bold text-cyan-700">' + currentDeal.period + '</p><p class="text-xs text-gray-400">分成期限</p></div>' +
           '</div>' +
-          '<div class="p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border border-teal-100 mb-4">' +
-            '<div class="flex items-center justify-between mb-1"><span class="text-xs text-gray-500">每份金额</span><span class="text-sm font-semibold text-gray-700">¥' + currentDeal.unitPrice.toLocaleString() + '</span></div>' +
-            '<div class="flex items-center justify-between mb-1"><span class="text-xs text-gray-500">认购份数</span><span class="text-sm font-semibold text-gray-700" id="subUnitsDisplay">1 份</span></div>' +
-            '<div class="border-t border-teal-200 my-2"></div>' +
-            '<div class="flex items-center justify-between"><span class="text-sm font-bold text-gray-800">合计金额</span><span class="text-xl font-bold text-teal-600" id="subTotalDisplay">¥' + currentDeal.unitPrice.toLocaleString() + '</span></div>' +
-            '<p class="text-xs text-gray-400 mt-1" id="subPercentDisplay">占项目总额 ' + (1/currentDeal.totalUnits*100).toFixed(3) + '%</p>' +
+          '<div class="p-3 bg-emerald-50 rounded-xl mb-4 border border-emerald-100">' +
+            '<div class="flex items-center gap-2"><i class="fas fa-info-circle text-emerald-500"></i><p class="text-xs text-emerald-700">认购后这张合约将归您所有，MCN编号永久绑定。在合约期内按约定比例分享收益。</p></div>' +
           '</div>' +
         '</div>' +
         '<div class="px-5 pb-5 flex gap-3">' +
           '<button onclick="closeSubscribeModal()" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">取消</button>' +
-          '<button onclick="confirmSubscribe()" class="flex-1 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-sm font-medium hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-200 transition-all"><i class="fas fa-check mr-1.5"></i>确认认购</button>' +
+          '<button onclick="confirmSubscribe()" class="flex-1 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-sm font-medium hover:from-teal-700 hover:to-cyan-700 shadow-lg shadow-teal-200 transition-all"><i class="fas fa-check mr-1.5"></i>确认认购 ¥1,000</button>' +
         '</div>' +
       '</div>';
 
       document.body.appendChild(modal);
-      updateSubTotal();
     }
 
     function closeSubscribeModal() {
       const m = document.getElementById('subscribeModal'); if (m) m.remove();
     }
 
-    function adjustUnits(delta) {
-      const inp = document.getElementById('subscribeUnits');
-      if (!inp) return;
-      const max = parseInt(inp.max);
-      let val = parseInt(inp.value) || 1;
-      val = Math.max(1, Math.min(max, val + delta));
-      inp.value = val;
-      updateSubTotal();
-    }
-
-    function setUnits(n) {
-      const inp = document.getElementById('subscribeUnits');
-      if (!inp) return;
-      const max = parseInt(inp.max);
-      inp.value = Math.min(n, max);
-      updateSubTotal();
-    }
-
-    function updateSubTotal() {
-      if (!currentDeal) return;
-      const inp = document.getElementById('subscribeUnits');
-      let units = parseInt(inp?.value) || 1;
-      const max = currentDeal.totalUnits - currentDeal.soldUnits;
-      if (units < 1) units = 1;
-      if (units > max) { units = max; if (inp) inp.value = max; }
-      const total = units * currentDeal.unitPrice;
-      const pct = (units / currentDeal.totalUnits * 100);
-      const ud = document.getElementById('subUnitsDisplay');
-      const td = document.getElementById('subTotalDisplay');
-      const pd = document.getElementById('subPercentDisplay');
-      if (ud) ud.textContent = units.toLocaleString() + ' 份';
-      if (td) td.textContent = '¥' + total.toLocaleString();
-      if (pd) pd.textContent = '占项目总额 ' + pct.toFixed(3) + '%';
-    }
-
     function confirmSubscribe() {
       if (!currentDeal) return;
-      const inp = document.getElementById('subscribeUnits');
-      const units = parseInt(inp?.value) || 1;
-      const avail = currentDeal.totalUnits - currentDeal.soldUnits;
-      if (units > avail) { showToast('error', '份额不足', '可认购份数不足'); return; }
+      if (currentDeal.status === 'sold') { showToast('error', '已售出', '该合约已被认购'); return; }
 
-      // 更新数据
-      currentDeal.soldUnits += units;
-      currentDeal.myUnits += units;
-      if (currentDeal.status === 'open') currentDeal.status = 'interested';
+      // 更新数据：这张合约归当前用户
+      const userName = currentUser ? (currentUser.displayName || currentUser.username) : '游客';
+      currentDeal.status = 'sold';
+      currentDeal.holder = userName;
+      currentDeal.isMine = true;
 
       // 同步回 allDeals
       const original = allDeals.find(d => d.id === currentDeal.id);
       if (original) {
-        original.soldUnits = currentDeal.soldUnits;
-        original.myUnits = currentDeal.myUnits;
         original.status = currentDeal.status;
+        original.holder = currentDeal.holder;
+        original.isMine = currentDeal.isMine;
       }
       localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
 
@@ -1750,7 +1711,7 @@ app.get('/', (c) => {
       const modal = document.getElementById('subscribeModal');
       if (modal) modal.remove();
 
-      showToast('success', '认购成功', '已认购 ' + units + ' 份 · ¥' + (units * currentDeal.unitPrice).toLocaleString());
+      showToast('success', '认购成功', '合约 ' + currentDeal.mcn + ' 已归您所有 · ¥1,000');
       openDetail(currentDeal.id); // 刷新详情
     }
 
@@ -1760,26 +1721,25 @@ app.get('/', (c) => {
       if (!currentDeal) return;
       document.getElementById('detailTitle').textContent = currentDeal.name;
       document.getElementById('detailMCN').textContent = currentDeal.mcn || 'MCN-XX-XX-0000-0000';
-      const statusMap = { open: { label: '待参与', cls: 'badge-warning' }, interested: { label: '已意向', cls: 'badge-primary' }, confirmed: { label: '已确认', cls: 'badge-success' }, closed: { label: '已关闭', cls: 'badge-danger' } };
-      const st = statusMap[currentDeal.status] || statusMap.open;
+      const statusMap = { available: { label: '待售', cls: 'badge-warning' }, sold: { label: '已售', cls: 'badge-success' } };
+      const st = statusMap[currentDeal.status] || statusMap.available;
       document.getElementById('detailStatus').className = 'badge ' + st.cls;
-      document.getElementById('detailStatus').textContent = st.label;
+      document.getElementById('detailStatus').textContent = st.label + (currentDeal.isMine ? ' · 我的' : '');
       document.getElementById('detailIndustry').textContent = currentDeal.industry;
       document.getElementById('detailDate').textContent = currentDeal.originateDate;
 
       // 更新参与按钮
       const btn = document.getElementById('btnExpressIntent');
-      const avail = currentDeal.totalUnits - currentDeal.soldUnits;
-      if (currentDeal.myUnits > 0) {
-        btn.innerHTML = '<i class="fas fa-check-circle mr-1"></i>已认购 ' + currentDeal.myUnits + ' 份';
+      if (currentDeal.isMine) {
+        btn.innerHTML = '<i class="fas fa-check-circle mr-1"></i>我的合约';
         btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-        btn.onclick = function() { showToast('info', '已认购', '您已认购 ' + currentDeal.myUnits + ' 份，共 ¥' + (currentDeal.myUnits * currentDeal.unitPrice).toLocaleString()); };
-      } else if (avail <= 0) {
-        btn.innerHTML = '<i class="fas fa-lock mr-1"></i>已售罄';
+        btn.onclick = function() { showToast('info', '我的合约', '您持有此合约 · ' + currentDeal.mcn); };
+      } else if (currentDeal.status === 'sold') {
+        btn.innerHTML = '<i class="fas fa-lock mr-1"></i>已售出';
         btn.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
         btn.onclick = null;
       } else {
-        btn.innerHTML = '<i class="fas fa-shopping-cart mr-1"></i>认购份额';
+        btn.innerHTML = '<i class="fas fa-shopping-cart mr-1"></i>认购此合约 ¥1,000';
         btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
         btn.onclick = function() { showSubscribeModal(); };
       }
@@ -1805,20 +1765,21 @@ app.get('/', (c) => {
           '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-gray-900">' + currentDeal.name + '</h2><p class="text-sm text-gray-500">' + currentDeal.industry + ' · ' + currentDeal.location + '</p></div></div>' +
           '<p class="text-sm text-gray-600 leading-relaxed mb-4">' + currentDeal.description + '</p>' +
         '</div>' +
-        // ==== 份额核心面板 ====
+        // ==== 单张合约核心信息 ====
         '<div class="p-4 rounded-2xl mb-5" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); border: 1.5px solid rgba(46,196,182,0.2);">' +
-          '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-teal-500"></i><h3 class="text-sm font-bold text-gray-800">合约份额信息</h3><span class="text-xs px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 font-semibold">¥' + currentDeal.unitPrice.toLocaleString() + '/份</span><span class="font-mono text-xs text-gray-400">' + (currentDeal.mcn || '') + '</span></div>' +
-          '<div class="grid grid-cols-3 gap-2 mb-3">' +
-            '<div class="text-center p-2 bg-white rounded-xl"><p class="text-lg font-bold text-gray-800">' + currentDeal.totalUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">总份数</p></div>' +
-            '<div class="text-center p-2 bg-white rounded-xl"><p class="text-lg font-bold text-amber-600">' + currentDeal.soldUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">已认购</p></div>' +
-            '<div class="text-center p-2 bg-white rounded-xl"><p class="text-lg font-bold text-teal-600">' + (currentDeal.totalUnits - currentDeal.soldUnits).toLocaleString() + '</p><p class="text-xs text-gray-400">可认购</p></div>' +
+          '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-teal-500"></i><h3 class="text-sm font-bold text-gray-800">合约信息</h3><span class="font-mono text-xs text-gray-400">' + (currentDeal.mcn || '') + '</span></div>' +
+          '<div class="text-center p-4 bg-white rounded-xl mb-3">' +
+            '<p class="text-3xl font-black text-teal-600 mb-1">¥1,000</p>' +
+            '<p class="text-xs text-gray-400">合约面值 · 不可分割</p>' +
           '</div>' +
-          '<div class="match-bar mb-1" style="height:6px;"><div class="match-bar-fill" style="width:' + Math.round(currentDeal.soldUnits/currentDeal.totalUnits*100) + '%; background: linear-gradient(90deg, #10b981, #06b6d4);"></div></div>' +
-          '<div class="flex justify-between text-xs"><span class="text-gray-400">认购进度</span><span class="font-semibold" style="color:#0f766e;">' + Math.round(currentDeal.soldUnits/currentDeal.totalUnits*100) + '%</span></div>' +
-          (currentDeal.myUnits > 0 ? '<div class="mt-3 p-2 bg-emerald-50 rounded-xl flex items-center gap-2 border border-emerald-100"><i class="fas fa-user-check text-emerald-500"></i><div><p class="text-xs font-bold text-emerald-700">我已认购 ' + currentDeal.myUnits + ' 份</p><p class="text-xs text-emerald-600">投入 ¥' + (currentDeal.myUnits * currentDeal.unitPrice).toLocaleString() + ' · 占总额 ' + (currentDeal.myUnits / currentDeal.totalUnits * 100).toFixed(2) + '%</p></div></div>' : '') +
+          '<div class="grid grid-cols-2 gap-2 mb-3">' +
+            '<div class="p-2 bg-white rounded-xl text-center"><p class="text-xs text-gray-400">状态</p><p class="text-sm font-bold ' + (currentDeal.status === 'available' ? 'text-amber-600' : 'text-emerald-600') + '">' + (currentDeal.status === 'available' ? '待售' : '已售') + '</p></div>' +
+            '<div class="p-2 bg-white rounded-xl text-center"><p class="text-xs text-gray-400">持有人</p><p class="text-sm font-bold ' + (currentDeal.isMine ? 'text-emerald-600' : 'text-gray-700') + '">' + (currentDeal.holder || '无（可认购）') + '</p></div>' +
+          '</div>' +
+          (currentDeal.isMine ? '<div class="p-2 bg-emerald-50 rounded-xl flex items-center gap-2 border border-emerald-100"><i class="fas fa-user-check text-emerald-500"></i><div><p class="text-xs font-bold text-emerald-700">我的合约</p><p class="text-xs text-emerald-600">投入 ¥1,000 · MCN编号永久绑定</p></div></div>' : '') +
         '</div>' +
         '<div class="grid grid-cols-2 gap-3 mb-5">' +
-          '<div class="p-3 bg-teal-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">投资总额</p><p class="text-lg font-bold text-teal-600">¥' + (currentDeal.amount/10000).toFixed(0) + '万</p></div>' +
+          '<div class="p-3 bg-teal-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">项目总额</p><p class="text-lg font-bold text-teal-600">¥' + (currentDeal.projectTotalAmount || 0) + '万</p></div>' +
           '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">分成比例</p><p class="text-lg font-bold text-amber-600">' + currentDeal.revenueShare + '</p></div>' +
           '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">分成期限</p><p class="text-lg font-bold text-cyan-600">' + currentDeal.period + '</p></div>' +
           '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">AI评分</p><p class="text-lg font-bold text-emerald-600">' + currentDeal.aiScore + '<span class="text-xs text-gray-400">/10</span></p></div>' +
@@ -1952,7 +1913,7 @@ app.get('/', (c) => {
           [
             { icon: 'fa-paper-plane', color: 'amber', title: '发起通 — 项目提交', desc: currentDeal.originator + ' · ' + currentDeal.originateDate },
             { icon: 'fa-filter', color: 'cyan', title: '评估通 — AI筛选', desc: '通过 ' + (hasMatch ? currentDeal.matchScore + '% 匹配' : '基础审核') },
-            { icon: 'fa-hand-pointer', color: 'teal', title: '参与通 — 当前阶段', desc: currentDeal.status === 'open' ? '等待您的参与决策' : '已表达参与意向' },
+            { icon: 'fa-hand-pointer', color: 'teal', title: '参与通 — 当前阶段', desc: currentDeal.status === 'available' ? '等待认购' : (currentDeal.isMine ? '您已认购此合约' : '已被认购') },
             { icon: 'fa-file-contract', color: 'gray', title: '条款通 → 合约通', desc: '确认参与后进入条款协商' }
           ].map(t => '<div class="flex items-start space-x-3"><div class="w-8 h-8 rounded-lg bg-' + t.color + '-100 flex items-center justify-center flex-shrink-0"><i class="fas ' + t.icon + ' text-' + t.color + '-600 text-xs"></i></div><div><p class="text-sm font-medium text-gray-700">' + t.title + '</p><p class="text-xs text-gray-400">' + t.desc + '</p></div></div>').join('') +
           '</div></div>' +
@@ -1993,22 +1954,18 @@ app.get('/', (c) => {
       renderContractBoard();
     }
 
-    // 生成模拟交易历史
+    // 生成模拟交易历史（单张合约版）
     function generateTxHistory(deal) {
       const events = [];
-      events.push({ date: deal.issueDate, type: 'issue', title: '合约发行', desc: '由 ' + deal.originator + ' 通过发起通发行', icon: 'fa-rocket', color: '#2EC4B6' });
+      events.push({ date: deal.issueDate, type: 'issue', title: '合约发行', desc: '由 ' + deal.originator + ' 通过发起通发行 · 面值 ¥1,000', icon: 'fa-rocket', color: '#2EC4B6' });
       const issueD = new Date(deal.issueDate);
       const d2 = new Date(issueD); d2.setDate(d2.getDate() + 3);
       events.push({ date: d2.toISOString().slice(0,10), type: 'audit', title: '平台审核通过', desc: 'AI风控评级: ' + deal.riskGrade + ' · 综合评分: ' + deal.aiScore, icon: 'fa-shield-alt', color: '#10b981' });
       const d3 = new Date(issueD); d3.setDate(d3.getDate() + 7);
-      events.push({ date: d3.toISOString().slice(0,10), type: 'open', title: '开放认购', desc: '总份额 ' + deal.totalUnits.toLocaleString() + ' 份 · ¥' + deal.unitPrice.toLocaleString() + '/份', icon: 'fa-door-open', color: '#06b6d4' });
-      if (deal.soldUnits > 0) {
+      events.push({ date: d3.toISOString().slice(0,10), type: 'open', title: '开放认购', desc: 'MCN编号分配 · 进入一级市场', icon: 'fa-door-open', color: '#06b6d4' });
+      if (deal.status === 'sold' && deal.holder) {
         const d4 = new Date(issueD); d4.setDate(d4.getDate() + 12);
-        events.push({ date: d4.toISOString().slice(0,10), type: 'trade', title: '认购进行中', desc: '已认购 ' + deal.soldUnits.toLocaleString() + ' 份 (' + Math.round(deal.soldUnits/deal.totalUnits*100) + '%)', icon: 'fa-chart-line', color: '#f59e0b' });
-      }
-      if (deal.myUnits > 0) {
-        const d5 = new Date(issueD); d5.setDate(d5.getDate() + 15);
-        events.push({ date: d5.toISOString().slice(0,10), type: 'my', title: '您的认购', desc: '认购 ' + deal.myUnits + ' 份 · 投入 ¥' + (deal.myUnits * deal.unitPrice).toLocaleString(), icon: 'fa-user-check', color: '#059669' });
+        events.push({ date: d4.toISOString().slice(0,10), type: 'trade', title: '合约认购', desc: '持有人: ' + deal.holder + (deal.isMine ? ' (您)' : ''), icon: 'fa-handshake', color: deal.isMine ? '#059669' : '#f59e0b' });
       }
       events.push({ date: deal.maturityDate || '—', type: 'maturity', title: '合约到期', desc: '预计到期日 · 届时结算收益', icon: 'fa-flag-checkered', color: '#94a3b8' });
       return events;
@@ -2047,7 +2004,9 @@ app.get('/', (c) => {
         if (!d.mcn) return false;
         if (searchVal && !d.mcn.toLowerCase().includes(searchVal) && !d.name.toLowerCase().includes(searchVal) && !d.industry.includes(searchVal)) return false;
         if (filterInd !== 'all' && d.industry !== filterInd) return false;
-        if (filterSt !== 'all' && d.status !== filterSt) return false;
+        if (filterSt === 'available' && d.status !== 'available') return false;
+        if (filterSt === 'sold' && d.status !== 'sold') return false;
+        if (filterSt === 'mine' && !d.isMine) return false;
         return true;
       });
 
@@ -2055,9 +2014,8 @@ app.get('/', (c) => {
       filtered.sort((a, b) => {
         if (sortBy === 'mcn') return a.mcn.localeCompare(b.mcn);
         if (sortBy === 'aiScore') return parseFloat(b.aiScore) - parseFloat(a.aiScore);
-        if (sortBy === 'amount') return b.amount - a.amount;
         if (sortBy === 'revenueShare') return parseInt(b.revenueShare) - parseInt(a.revenueShare);
-        if (sortBy === 'soldPct') return (b.soldUnits / b.totalUnits) - (a.soldUnits / a.totalUnits);
+        if (sortBy === 'riskGrade') return (a.riskGrade || 'Z').localeCompare(b.riskGrade || 'Z');
         return 0;
       });
 
@@ -2066,8 +2024,8 @@ app.get('/', (c) => {
       const el2 = document.getElementById('contractStatActive');
       const el3 = document.getElementById('contractStatMy');
       if (el1) el1.textContent = allDeals.length;
-      if (el2) el2.textContent = allDeals.filter(d => d.status === 'open' || d.status === 'interested').length;
-      if (el3) el3.textContent = allDeals.filter(d => d.myUnits > 0).length;
+      if (el2) el2.textContent = allDeals.filter(d => d.status === 'available').length;
+      if (el3) el3.textContent = allDeals.filter(d => d.isMine).length;
 
       const label = document.getElementById('contractFilterLabel');
       if (label) label.textContent = '· 展示 ' + filtered.length + ' / ' + allDeals.length + ' 张合约';
@@ -2085,10 +2043,8 @@ app.get('/', (c) => {
       if (emptyEl) emptyEl.classList.add('hidden');
 
       const statusMap = {
-        open: { label: '待认购', cls: 'badge-warning', icon: 'fa-clock', color: '#d97706' },
-        interested: { label: '已意向', cls: 'badge-primary', icon: 'fa-hand-point-up', color: '#5DC4B3' },
-        confirmed: { label: '已确认', cls: 'badge-success', icon: 'fa-check-double', color: '#059669' },
-        closed: { label: '已关闭', cls: 'badge-danger', icon: 'fa-lock', color: '#dc2626' }
+        available: { label: '待售', cls: 'badge-warning', icon: 'fa-tag', color: '#d97706' },
+        sold: { label: '已售', cls: 'badge-success', icon: 'fa-check', color: '#059669' }
       };
 
       // ===== 表格视图 =====
@@ -2098,28 +2054,26 @@ app.get('/', (c) => {
 
         const tbody = document.getElementById('contractTableBody');
         if (!tbody) return;
-        tbody.innerHTML = filtered.map((d, idx) => {
-          const st = statusMap[d.status] || statusMap.open;
-          const soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
-          const soldColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
-          const aiColor = parseFloat(d.aiScore) >= 9 ? '#059669' : parseFloat(d.aiScore) >= 8 ? '#0d9488' : '#d97706';
-          const scores = calcRadarScores(d);
-          const overall = calcOverallScore(scores);
-          const grade = getScoreGrade(overall);
+        tbody.innerHTML = filtered.map(function(d, idx) {
+          var st = statusMap[d.status] || statusMap.available;
+          var aiColor = parseFloat(d.aiScore) >= 9 ? '#059669' : parseFloat(d.aiScore) >= 8 ? '#0d9488' : '#d97706';
+          var scores = calcRadarScores(d);
+          var overall = calcOverallScore(scores);
+          var grade = getScoreGrade(overall);
+          var holderText = d.isMine ? '<span class="text-xs font-bold text-emerald-600"><i class="fas fa-user-check mr-0.5"></i>我</span>' : (d.holder ? '<span class="text-xs text-gray-500">' + d.holder + '</span>' : '<span class="text-xs text-gray-300">—</span>');
 
-          return '<tr class="border-b border-gray-50 hover:bg-teal-50/30 cursor-pointer transition-colors" onclick="openDetail(&#39;' + d.id + '&#39;)">' +
-            '<td class="px-4 py-3"><div class="font-mono text-xs font-bold tracking-wide" style="color: #0f766e;">' + d.mcn + '</div><div class="text-xs text-gray-400 mt-0.5 font-medium">' + (d.contractType || 'RSN') + ' · ' + (d.currency || 'CNY') + '</div></td>' +
-            '<td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase text-xs" style="color: #5DC4B3;"></i></div><div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">' + d.name + '</p><p class="text-xs text-gray-400 truncate">' + d.originator + '</p></div></div></td>' +
-            '<td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded text-xs font-semibold" style="background: rgba(245,158,11,0.08); color: #92400e;">' + (INDUSTRY_CODES[d.industry] || 'XX') + '</span><p class="text-xs text-gray-400 mt-0.5">' + d.industry + '</p></td>' +
+          return '<tr class="border-b border-gray-50 hover:bg-teal-50/30 cursor-pointer transition-colors" onclick="toggleCardExpand(&#39;' + d.id + '&#39;)">' +
+            '<td class="px-4 py-3"><div class="font-mono text-xs font-bold tracking-wide" style="color: #0f766e;">' + d.mcn + '</div><div class="text-xs text-gray-400 mt-0.5">' + (d.contractType || 'RSN') + '</div></td>' +
+            '<td class="px-4 py-3"><p class="text-sm font-semibold text-gray-800 truncate">' + d.name + '</p><p class="text-xs text-gray-400">' + d.originator + '</p></td>' +
+            '<td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded text-xs font-semibold" style="background: rgba(245,158,11,0.08); color: #92400e;">' + (INDUSTRY_CODES[d.industry] || 'XX') + '</span></td>' +
             '<td class="px-3 py-3 text-center"><span class="text-xs font-medium text-gray-600">' + d.location + '</span></td>' +
-            '<td class="px-3 py-3 text-right"><span class="text-sm font-bold text-gray-800">¥' + (d.amount/10000).toFixed(0) + '万</span><p class="text-xs text-gray-400">' + d.totalUnits.toLocaleString() + '份</p></td>' +
-            '<td class="px-3 py-3 text-center"><span class="text-sm font-bold" style="color: #0f766e;">' + d.revenueShare + '</span></td>' +
+            '<td class="px-3 py-3 text-center"><span class="text-sm font-bold text-teal-600">¥1,000</span></td>' +
+            '<td class="px-3 py-3 text-center"><span class="text-sm font-bold" style="color:#0f766e;">' + d.revenueShare + '</span></td>' +
             '<td class="px-3 py-3 text-center"><span class="text-xs font-medium text-gray-600">' + d.period + '</span></td>' +
             '<td class="px-3 py-3 text-center"><span class="text-sm font-bold" style="color:' + aiColor + ';">' + d.aiScore + '</span></td>' +
             '<td class="px-3 py-3 text-center"><span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:' + grade.bg + '; color:' + grade.color + ';">' + d.riskGrade + '</span></td>' +
-            '<td class="px-3 py-3"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden" style="min-width:48px;"><div class="h-full rounded-full" style="width:' + soldPct + '%; background:' + soldColor + ';"></div></div><span class="text-xs font-bold flex-shrink-0" style="color:' + soldColor + ';">' + soldPct + '%</span></div></td>' +
-            '<td class="px-3 py-3 text-center">' + (d.myUnits > 0 ? '<div class="text-xs font-bold text-emerald-600">' + d.myUnits + '份</div><div class="text-xs text-gray-400">¥' + (d.myUnits * d.unitPrice).toLocaleString() + '</div>' : '<span class="text-xs text-gray-300">—</span>') + '</td>' +
-            '<td class="px-3 py-3 text-center"><span class="badge ' + st.cls + '"><i class="fas ' + st.icon + ' mr-1" style="font-size:9px;"></i>' + st.label + '</span></td>' +
+            '<td class="px-3 py-3 text-center">' + holderText + '</td>' +
+            '<td class="px-3 py-3 text-center"><span class="badge ' + st.cls + '"><i class="fas ' + st.icon + ' mr-1" style="font-size:9px;"></i>' + st.label + (d.isMine ? '·我' : '') + '</span></td>' +
             '<td class="px-3 py-3 text-center"><button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs text-teal-600 hover:text-teal-800 font-semibold"><i class="fas fa-arrow-right"></i></button></td>' +
           '</tr>';
         }).join('');
@@ -2133,16 +2087,13 @@ app.get('/', (c) => {
         const cardGrid = document.getElementById('contractCardGrid');
         if (!cardGrid) return;
         cardGrid.innerHTML = filtered.map(function(d) {
-          var st = statusMap[d.status] || statusMap.open;
-          var soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
-          var soldColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
+          var st = statusMap[d.status] || statusMap.available;
           var scores = calcRadarScores(d);
           var overall = calcOverallScore(scores);
           var grade = getScoreGrade(overall);
           var isExpanded = expandedCardId === d.id;
           var miniCanvasId = 'ccRadar_' + d.id;
           var bigCanvasId = 'ccRadarBig_' + d.id;
-          var avail = d.totalUnits - d.soldUnits;
           var aiColor = parseFloat(d.aiScore) >= 9 ? '#059669' : parseFloat(d.aiScore) >= 8 ? '#0d9488' : '#d97706';
 
           // 生成交易历史
@@ -2221,24 +2172,23 @@ app.get('/', (c) => {
             '<div class="cc-body">' +
               // 核心指标网格
               '<div class="cc-metrics mb-2.5">' +
-                '<div class="cc-metric"><div class="cc-metric-val" style="color:#0f766e;">¥' + (d.amount/10000).toFixed(0) + '万</div><div class="cc-metric-lbl">总额</div></div>' +
+                '<div class="cc-metric"><div class="cc-metric-val" style="color:#0f766e;">¥1,000</div><div class="cc-metric-lbl">面值</div></div>' +
                 '<div class="cc-metric"><div class="cc-metric-val" style="color:#2EC4B6;">' + d.revenueShare + '</div><div class="cc-metric-lbl">分成</div></div>' +
                 '<div class="cc-metric"><div class="cc-metric-val">' + d.period + '</div><div class="cc-metric-lbl">期限</div></div>' +
                 '<div class="cc-metric"><div class="cc-metric-val" style="color:' + aiColor + ';">' + d.aiScore + '</div><div class="cc-metric-lbl">AI评分</div></div>' +
               '</div>' +
-              // 认购进度
-              '<div class="flex items-center gap-2 mb-1.5">' +
-                '<span class="text-xs font-semibold text-gray-500">' + d.soldUnits.toLocaleString() + '/' + d.totalUnits.toLocaleString() + ' 份</span>' +
-                '<div class="flex-1 cc-progress"><div class="cc-progress-fill" style="width:' + soldPct + '%; background:' + soldColor + ';"></div></div>' +
-                '<span class="text-xs font-bold" style="color:' + soldColor + ';">' + soldPct + '%</span>' +
+              // 持有人/状态信息
+              '<div class="flex items-center justify-between mb-1.5">' +
+                (d.holder
+                  ? '<div class="flex items-center gap-1.5 text-xs"><i class="fas fa-user' + (d.isMine ? '-check text-emerald-500' : ' text-gray-400') + '" style="font-size:10px;"></i><span class="font-semibold ' + (d.isMine ? 'text-emerald-600' : 'text-gray-500') + '">持有: ' + d.holder + '</span></div>'
+                  : '<div class="flex items-center gap-1.5 text-xs"><i class="fas fa-tag text-amber-500" style="font-size:10px;"></i><span class="font-semibold text-amber-600">可认购</span></div>') +
+                '<span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:' + grade.bg + '; color:' + grade.color + ';">' + d.riskGrade + '</span>' +
               '</div>' +
-              (d.myUnits > 0 ? '<div class="flex items-center gap-1 text-xs mb-1"><i class="fas fa-user-check text-emerald-500" style="font-size:9px;"></i><span class="text-emerald-600 font-bold">已认购 ' + d.myUnits + ' 份 · ¥' + (d.myUnits * d.unitPrice).toLocaleString() + '</span></div>' : '') +
               // 底部：日期 + 快速操作
               '<div class="flex items-center justify-between mt-2 pt-2" style="border-top: 1px solid rgba(0,0,0,0.04);">' +
                 '<span class="text-xs text-gray-300 font-mono">' + d.issueDate + ' → ' + (d.maturityDate || '—') + '</span>' +
                 '<div class="flex items-center gap-1.5">' +
-                  '<span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:' + grade.bg + '; color:' + grade.color + ';">' + d.riskGrade + '</span>' +
-                  (avail > 0 ? '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4);"><i class="fas fa-shopping-cart mr-1" style="font-size:9px;"></i>认购</button>' : '<span class="text-xs text-gray-400 font-medium">已售罄</span>') +
+                  (d.status === 'available' ? '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4);"><i class="fas fa-shopping-cart mr-1" style="font-size:9px;"></i>认购</button>' : (d.isMine ? '<span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>我的</span>' : '<span class="text-xs text-gray-400 font-medium">已售出</span>')) +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -2270,13 +2220,14 @@ app.get('/', (c) => {
                       '<div class="flex flex-wrap gap-1.5">' + sieveQuickHtml + '</div>' +
                     '</div>' +
                     '<div class="cc-section" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff);">' +
-                      '<div class="cc-section-title"><i class="fas fa-file-contract text-teal-500"></i>合约操作</div>' +
+                      '<div class="cc-section-title"><i class="fas fa-file-contract text-teal-500"></i>合约信息</div>' +
                       '<div class="grid grid-cols-2 gap-2 mb-2">' +
-                        '<div class="text-center p-2 bg-white rounded-lg"><p class="text-sm font-bold text-gray-800">' + d.totalUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">总份数</p></div>' +
-                        '<div class="text-center p-2 bg-white rounded-lg"><p class="text-sm font-bold text-teal-600">' + avail.toLocaleString() + '</p><p class="text-xs text-gray-400">可认购</p></div>' +
+                        '<div class="text-center p-2 bg-white rounded-lg"><p class="text-lg font-black text-teal-600">¥1,000</p><p class="text-xs text-gray-400">面值</p></div>' +
+                        '<div class="text-center p-2 bg-white rounded-lg"><p class="text-sm font-bold ' + (d.status === 'available' ? 'text-amber-600' : 'text-emerald-600') + '">' + (d.status === 'available' ? '待售' : (d.isMine ? '我的' : '已售')) + '</p><p class="text-xs text-gray-400">状态</p></div>' +
                       '</div>' +
+                      (d.holder ? '<div class="mb-2 p-2 bg-white rounded-lg text-center"><p class="text-xs text-gray-400">持有人</p><p class="text-sm font-bold ' + (d.isMine ? 'text-emerald-600' : 'text-gray-700') + '">' + d.holder + '</p></div>' : '') +
                       '<div class="flex gap-2">' +
-                        '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="flex-1 py-2 text-xs font-semibold text-white rounded-lg" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4);"><i class="fas fa-arrow-right mr-1"></i>查看完整详情</button>' +
+                        '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="flex-1 py-2 text-xs font-semibold text-white rounded-lg" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4);"><i class="fas fa-arrow-right mr-1"></i>查看详情</button>' +
                         '<button onclick="event.stopPropagation(); showToast(&#39;info&#39;,&#39;分享&#39;,&#39;合约链接已复制&#39;)" class="py-2 px-3 text-xs font-semibold text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"><i class="fas fa-share-alt"></i></button>' +
                       '</div>' +
                     '</div>' +
@@ -2302,8 +2253,10 @@ app.get('/', (c) => {
 
     function expressIntent() {
       if (!currentDeal) return;
-      if (currentDeal.myUnits > 0) {
-        showToast('info', '已认购', '您已认购 ' + currentDeal.myUnits + ' 份');
+      if (currentDeal.isMine) {
+        showToast('info', '我的合约', '您已持有此合约 · ' + currentDeal.mcn);
+      } else if (currentDeal.status === 'sold') {
+        showToast('warning', '已售出', '该合约已被他人认购');
       } else {
         showSubscribeModal();
       }
