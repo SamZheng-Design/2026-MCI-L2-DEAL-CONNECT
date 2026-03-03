@@ -361,19 +361,19 @@ app.get('/', (c) => {
           </div>
         </div>
 
-        <!-- Stats Grid -->
+        <!-- Stats Grid — 全部合约客观维度总结 -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
           <div class="stat-card animate-fade-in cursor-pointer" onclick="selectSieve('all')">
-            <div class="flex items-center justify-between"><div><p class="stat-label">全部机会</p><p class="stat-value" id="statTotal">0</p><p class="text-xs text-gray-400 mt-0.5">来自发起通</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(245,158,11,0.3);"><i class="fas fa-paper-plane text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">总合约数量</p><p class="stat-value" id="statTotalContracts">0</p><p class="text-xs text-gray-400 mt-0.5">平台全部合约</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); box-shadow: 0 4px 12px rgba(99,102,241,0.3);"><i class="fas fa-layer-group text-white text-sm"></i></div></div>
           </div>
           <div class="stat-card animate-fade-in delay-100 cursor-pointer" onclick="selectSieve('all')">
-            <div class="flex items-center justify-between"><div><p class="stat-label">筛后通过</p><p class="stat-value" id="statFiltered">0</p><p class="text-xs text-gray-400 mt-0.5">当前筛子匹配</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); box-shadow: 0 4px 12px rgba(6,182,212,0.3);"><i class="fas fa-filter text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">总交易数量</p><p class="stat-value" id="statTotalTransactions">0</p><p class="text-xs text-gray-400 mt-0.5">已完成交易</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(245,158,11,0.3);"><i class="fas fa-exchange-alt text-white text-sm"></i></div></div>
           </div>
           <div class="stat-card animate-fade-in delay-200 cursor-pointer">
-            <div class="flex items-center justify-between"><div><p class="stat-label">我的合约</p><p class="stat-value" id="statMyUnits">0</p><p class="text-xs text-gray-400 mt-0.5">已认购张数</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-file-contract text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">我的合约</p><p class="stat-value" id="statMyContracts">0</p><p class="text-xs text-gray-400 mt-0.5">已认购张数</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-file-contract text-white text-sm"></i></div></div>
           </div>
           <div class="stat-card animate-fade-in delay-300 cursor-pointer">
-            <div class="flex items-center justify-between"><div><p class="stat-label">投入金额</p><p class="stat-value" id="statMyAmount">0</p><p class="text-xs text-gray-400 mt-0.5">¥1,000/张</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-yen-sign text-white text-sm"></i></div></div>
+            <div class="flex items-center justify-between"><div><p class="stat-label">我的组合</p><p class="stat-value" id="statMyPortfolios">0</p><p class="text-xs text-gray-400 mt-0.5">多张合约拼成一个组合</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-object-group text-white text-sm"></i></div></div>
           </div>
         </div>
 
@@ -1455,15 +1455,28 @@ app.get('/', (c) => {
         return true;
       });
 
-      // Update stats — 使用虚拟总数
+      // Update stats — 客观维度总结（不做任何预设判断）
       var dashVTotal = totalVirtualContracts || allDeals.length;
       var dashVMine = 0;
-      projectSummaries.forEach(function(ps) { dashVMine += ps.mine; });
+      var dashVSold = 0; // 总交易（已售出）
+      projectSummaries.forEach(function(ps) {
+        dashVMine += ps.mine;
+        dashVSold += ps.sold;
+      });
       if (dashVMine === 0) dashVMine = allDeals.filter(d => d.isMine).length;
-      document.getElementById('statTotal').textContent = dashVTotal.toLocaleString();
-      document.getElementById('statFiltered').textContent = dealsList.length;
-      document.getElementById('statMyUnits').textContent = dashVMine.toLocaleString();
-      document.getElementById('statMyAmount').textContent = '¥' + (dashVMine * 1000).toLocaleString();
+      if (dashVSold === 0) dashVSold = allDeals.filter(d => d.status === 'sold').length;
+      // 我的组合 = 我持有合约所跨的不同项目数（多张合约可随意拼成一个组合）
+      var myPortfolioProjects = projectSummaries.filter(function(ps) { return ps.mine > 0; });
+      var dashVPortfolios = myPortfolioProjects.length;
+      if (dashVPortfolios === 0) {
+        var myProjectSet = {};
+        allDeals.forEach(function(d) { if (d.isMine && d.projectId) myProjectSet[d.projectId] = true; });
+        dashVPortfolios = Object.keys(myProjectSet).length;
+      }
+      document.getElementById('statTotalContracts').textContent = dashVTotal.toLocaleString();
+      document.getElementById('statTotalTransactions').textContent = dashVSold.toLocaleString();
+      document.getElementById('statMyContracts').textContent = dashVMine.toLocaleString();
+      document.getElementById('statMyPortfolios').textContent = dashVPortfolios.toLocaleString();
 
       if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
       empty.classList.add('hidden');
