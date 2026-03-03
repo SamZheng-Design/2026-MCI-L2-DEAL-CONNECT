@@ -994,10 +994,16 @@ app.get('/', (c) => {
 
         <!-- 组合结果面板（初始隐藏） -->
         <div id="abPortfolioPanel" class="hidden flex-1 flex flex-col overflow-hidden">
-          <!-- ===== 固定顶部区域：Header + 认购按钮 ===== -->
-          <div class="flex-shrink-0">
+          <!-- ===== 固定顶部：仅认购按钮 ===== -->
+          <div class="flex-shrink-0 flex gap-3 px-5 py-3" style="background: rgba(11,30,28,0.98); border-bottom: 1px solid rgba(46,196,182,0.1); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i>一键认购此组合</button>
+            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i>继续调整</button>
+          </div>
+
+          <!-- ===== 可滚动区域：Header + 雷达图 + 行业配比 + 合约清单 ===== -->
+          <div class="flex-1 overflow-y-auto p-5 space-y-4">
             <!-- 组合 header -->
-            <div class="rounded-2xl overflow-hidden mx-5 mt-5" id="abPortfolioHeader">
+            <div class="rounded-2xl overflow-hidden" id="abPortfolioHeader">
               <div class="p-5 relative" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%);">
                 <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(93,196,179,0.35) 0%, transparent 50%);pointer-events:none;"></div>
                 <div class="relative z-10">
@@ -1032,15 +1038,7 @@ app.get('/', (c) => {
                 </div>
               </div>
             </div>
-            <!-- 操作按钮（固定在Header下方） -->
-            <div class="flex gap-3 px-5 py-3" style="background: rgba(11,30,28,0.98); border-bottom: 1px solid rgba(46,196,182,0.1);">
-              <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i>一键认购此组合</button>
-              <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i>继续调整</button>
-            </div>
-          </div>
 
-          <!-- ===== 可滚动区域：雷达图 + 行业配比 + 合约清单 ===== -->
-          <div class="flex-1 overflow-y-auto p-5 space-y-4">
             <!-- 雷达图 -->
             <div class="rounded-2xl overflow-hidden bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
               <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(46,196,182,0.08);">
@@ -1643,10 +1641,13 @@ app.get('/', (c) => {
       const shareNum = parseInt(deal.revenueShare) || 10;
       const periodNum = parseInt(deal.period) || 24;
       const annualYield = (shareNum / periodNum) * 12;
+      // 单张合约面值 ¥1,000 的每月预估收入
+      const dealMonthlyIncome = 1000 * annualYield / 100 / 12;
+      const dealIncomeStr = '¥' + Math.round(dealMonthlyIncome);
       return [
         annualYield.toFixed(1) + '%',                // YITO年化收益率
         (periodNum * 30) + '天',                      // 合约时长（转天数）
-        (parseInt(deal.monthlyRevenue) || 0) + '万/月', // 收入稳定性 → 月营收
+        dealIncomeStr + '/月',                         // 收入 → 每张合约每月预估收入
         deal.riskGrade || 'B',                         // 风控评级
         deal.status === 'sold' ? '已售' : '可购',       // 流动性
         (parseFloat(deal.operatingYears) || 0).toFixed(1) + '年', // 团队实力 → 运营年限
@@ -1675,10 +1676,17 @@ app.get('/', (c) => {
       const avgMonths = totalMonths / n;
       const avgDays = Math.round(avgMonths * 30);
 
-      // 3. 平均月营收
-      let totalRevenue = 0;
-      contracts.forEach(c => { totalRevenue += parseInt(c.monthlyRevenue) || 0; });
-      const avgRevenue = (totalRevenue / n).toFixed(0);
+      // 3. 组合每月预估收入 — 基于合约面值×分成比例（投资者视角）
+      // 每张合约面值 ¥1,000，每月收入 = 1000 × 分成比例(%) / 合约期限(月)
+      let totalMonthlyIncome = 0;
+      contracts.forEach(c => {
+        const shareNum = parseInt(c.revenueShare) || 10;
+        const periodNum = parseInt(c.period) || 24;
+        totalMonthlyIncome += 1000 * (shareNum / 100) / periodNum * 12; // 年化后分摊到月
+      });
+      // 更直观的算法：每月收入 = 总投入 × 年化收益率 / 12
+      const monthlyIncome = (n * 1000 * avgYield / 100 / 12);
+      const incomeDisplay = monthlyIncome >= 1000 ? (monthlyIncome / 10000).toFixed(2) + '万' : '¥' + Math.round(monthlyIncome);
 
       // 4. 风控评级 — 取众数
       const riskCounts = {};
@@ -1709,7 +1717,7 @@ app.get('/', (c) => {
       return [
         avgYield.toFixed(1) + '%',          // 年化收益
         avgDays + '天',                      // 合约时长
-        avgRevenue + '万/月',                // 收入（月营收均值）
+        incomeDisplay + '/月',               // 收入（基于合约面值×分成的每月预估收入）
         topRisk,                             // 风控评级
         soldPct + '%已售',                   // 流动性
         avgYears + '年',                     // 团队（运营年限）
@@ -1722,7 +1730,7 @@ app.get('/', (c) => {
     const RADAR_DIM_SUBLABELS = [
       '年化收益',    // yield
       '合约时长',    // duration
-      '收入稳定',    // stability → 月营收
+      '预估月收',    // stability → 基于合约面值的每月预估收入
       '风控评级',    // riskCtrl
       '流动性',      // liquidity
       '团队实力',    // team → 运营年限
