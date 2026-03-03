@@ -1232,7 +1232,7 @@ app.get('/', (c) => {
 
     // 「全部机会」内置筛子（不可删除）
     const SIEVE_ALL = {
-      name: '全部机会', icon: 'fa-globe', color: '#6b7280',
+      name: '全部机会', icon: 'fa-globe', color: '#3D7A70',
       desc: '不使用筛子，展示发起通的所有投资机会',
       filter: (deals) => deals.map(d => ({ ...d, matchScore: null, sieveResult: 'all' }))
     };
@@ -2071,7 +2071,7 @@ app.get('/', (c) => {
       grid.innerHTML = filtered.map((d, idx) => {
         const st = statusMap[d.status] || statusMap.available;
         const hasMatch = d.matchScore !== null && d.matchScore !== undefined;
-        const matchColor = hasMatch ? (d.matchScore >= 80 ? '#10b981' : d.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#6b7280';
+        const matchColor = hasMatch ? (d.matchScore >= 80 ? '#10b981' : d.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#3D7A70';
 
         // 计算雷达评分用于卡片展示
         const cardScores = calcRadarScores(d);
@@ -2236,7 +2236,7 @@ app.get('/', (c) => {
         btn.onclick = function() { showToast('info', '我的合约', '您持有此合约 · ' + currentDeal.mcn); };
       } else if (currentDeal.status === 'sold') {
         btn.innerHTML = '<i class="fas fa-lock mr-1"></i>已售出';
-        btn.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+        btn.style.background = 'linear-gradient(135deg, #3D7A70 0%, #2A5E58 100%)';
         btn.onclick = null;
       } else {
         btn.innerHTML = '<i class="fas fa-shopping-cart mr-1"></i>认购此合约 ¥1,000';
@@ -2294,7 +2294,7 @@ app.get('/', (c) => {
 
       // Right panel — 雷达图评估 + 筛子结果
       const hasMatch = currentDeal.matchScore !== null && currentDeal.matchScore !== undefined;
-      const matchColor = hasMatch ? (currentDeal.matchScore >= 80 ? '#10b981' : currentDeal.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#6b7280';
+      const matchColor = hasMatch ? (currentDeal.matchScore >= 80 ? '#10b981' : currentDeal.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#3D7A70';
 
       // 计算雷达评分
       const radarScores = calcRadarScores(currentDeal);
@@ -2960,7 +2960,7 @@ app.get('/', (c) => {
             '</div>' +
             '<div class="flex flex-wrap gap-1">' +
               p.industries.map(function(ind) { return '<span class="px-1.5 py-0.5 rounded text-xs font-medium bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#5A9A90;">' + ind + '</span>'; }).join('') +
-              Object.values(p.projects).slice(0, 3).map(function(name) { return '<span class="px-1.5 py-0.5 rounded text-xs bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#9ca3af;">' + (name.length > 8 ? name.substring(0, 8) + '…' : name) + '</span>'; }).join('') +
+              Object.values(p.projects).slice(0, 3).map(function(name) { return '<span class="px-1.5 py-0.5 rounded text-xs bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#5A9A90;">' + (name.length > 8 ? name.substring(0, 8) + '…' : name) + '</span>'; }).join('') +
               (p.projectCount > 3 ? '<span class="text-xs text-[#3D7A70] self-center">+' + (p.projectCount - 3) + '</span>' : '') +
             '</div>' +
           '</div>' +
@@ -3077,7 +3077,7 @@ app.get('/', (c) => {
       var distribHTML = Object.keys(industryDistrib).map(function(ind) {
         var pct = (industryDistrib[ind] / contracts.length * 100).toFixed(1);
         var indColors = { '餐饮': '#f59e0b', '零售': '#06b6d4', '科技': '#8b5cf6', '教育': '#10b981', '健康': '#ef4444', '演艺': '#ec4899' };
-        var c = indColors[ind] || '#6b7280';
+        var c = indColors[ind] || '#3D7A70';
         return '<div class="flex items-center gap-2">' +
           '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
           '<span class="text-xs text-[#8EBDB5] flex-1">' + ind + '</span>' +
@@ -3242,7 +3242,7 @@ app.get('/', (c) => {
           { text: '零售消费', icon: 'fa-shopping-bag', color: '#06b6d4', value: '零售' },
           { text: '教育培训', icon: 'fa-graduation-cap', color: '#10b981', value: '教育' },
           { text: '演艺娱乐', icon: 'fa-music', color: '#ec4899', value: '演艺' },
-          { text: '不限行业，全面配置', icon: 'fa-globe', color: '#6b7280', value: 'all' },
+          { text: '不限行业，全面配置', icon: 'fa-globe', color: '#3D7A70', value: 'all' },
         ]
       },
       // Step 2: 风险与回报参数
@@ -3556,7 +3556,7 @@ app.get('/', (c) => {
         abAddAIMessage(
           '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">已根据您的要求重新调整组合 🔄</p>' +
           '<p class="text-sm leading-relaxed" style="color: #5A9A90;">当前组合包含 <span class="font-bold text-[#2EC4B6]">' + p.length + '</span> 张合约，覆盖 <span class="font-bold text-[#2EC4B6]">' + [...new Set(p.map(c=>c.industry))].length + '</span> 个行业。右侧面板已更新。</p>' +
-          '<p class="text-xs mt-2" style="color: #9ca3af;">继续输入可进一步微调，或点击「一键认购」完成。</p>',
+          '<p class="text-xs mt-2" style="color: #5A9A90;">继续输入可进一步微调，或点击「一键认购」完成。</p>',
           [
             { text: '满意，去认购', icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
             { text: '继续调整', icon: 'fa-sliders-h', color: 'violet', action: "document.getElementById('abInput').focus()" },
@@ -3760,13 +3760,13 @@ app.get('/', (c) => {
       document.getElementById('abIndustryDistrib').innerHTML = Object.keys(industryDistrib).map(ind => {
         const count = industryDistrib[ind];
         const pct = (count / p.length * 100).toFixed(1);
-        const c = indColors[ind] || '#6b7280';
+        const c = indColors[ind] || '#3D7A70';
         return '<div class="flex items-center gap-3">' +
           '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
           '<span class="text-xs flex-1" style="color: rgba(255,255,255,0.6);">' + ind + '</span>' +
           '<div class="flex-1 h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);"><div class="h-full rounded-full transition-all" style="width:' + pct + '%; background:' + c + ';"></div></div>' +
           '<span class="text-xs font-bold" style="color: #8EBDB5;">' + count + '张</span>' +
-          '<span class="text-xs" style="color: #9ca3af;">' + pct + '%</span>' +
+          '<span class="text-xs" style="color: #5A9A90;">' + pct + '%</span>' +
         '</div>';
       }).join('');
 
@@ -3775,7 +3775,7 @@ app.get('/', (c) => {
       document.getElementById('abContractList').innerHTML = p.slice(0, 30).map(c => {
         const cs = calcRadarScores(c); const co = calcOverallScore(cs); const cg = getScoreGrade(co);
         return '<div class="flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ab-contract-item" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
-          '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + (indColors[c.industry] || '#6b7280') + '18;"><i class="fas fa-file-contract" style="color:' + (indColors[c.industry] || '#6b7280') + '; font-size:10px;"></i></div>' +
+          '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + (indColors[c.industry] || '#3D7A70') + '18;"><i class="fas fa-file-contract" style="color:' + (indColors[c.industry] || '#3D7A70') + '; font-size:10px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
             '<p class="text-xs font-bold text-[#E8F5F3] truncate">' + c.name + '</p>' +
             '<p class="text-xs text-[#3D7A70]"><span class="font-mono">' + (c.mcn || '').substring(0, 16) + '</span> · ' + c.industry + ' · ' + c.revenueShare + '</p>' +
