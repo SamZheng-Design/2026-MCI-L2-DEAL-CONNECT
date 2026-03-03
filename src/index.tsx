@@ -835,12 +835,12 @@ app.get('/', (c) => {
         <div class="flex items-center space-x-3">
           <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
-            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-object-group mr-1.5 text-violet-500"></i>我的组合</h1>
+            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-object-group mr-1.5 text-[#8B5CF6]"></i>我的组合</h1>
             <p class="text-xs text-[#3D7A70]" id="myPortfoliosSubtitle">共 0 个组合 · 0 张合约 · 总投入 ¥0</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <div class="px-3 py-1.5 bg-violet-50 rounded-lg border border-violet-100 text-xs text-violet-700 font-medium"><i class="fas fa-info-circle mr-1"></i>跨项目基金型组合 · 按投资理念和主题智能配置</div>
+          <div class="px-3 py-1.5 bg-[rgba(139,92,246,0.06)] rounded-lg border border-[rgba(139,92,246,0.12)] text-xs text-[#A78BFA] font-medium"><i class="fas fa-info-circle mr-1"></i>跨项目基金型组合 · 按投资理念和主题智能配置</div>
         </div>
       </div>
     </nav>
@@ -901,7 +901,7 @@ app.get('/', (c) => {
       <!-- Right: 组合雷达图+合约列表 -->
       <div class="w-3/5 flex flex-col overflow-y-auto" style="background:rgba(11,30,28,0.95);">
         <div class="p-3 border-b border-[rgba(46,196,182,0.12)] bg-[#0F2E2B] flex items-center justify-between">
-          <span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>组合加权分析</span>
+          <span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#8B5CF6]"></i>组合加权分析</span>
           <span class="text-xs text-[#3D7A70]" id="pdWeightNote">跨项目合约等权重加权</span>
         </div>
         <div class="flex-1 p-5" id="pdRight">
@@ -927,7 +927,7 @@ app.get('/', (c) => {
         </div>
         <div class="flex items-center gap-2">
           <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(245,158,11,0.1); color: #b45309; border: 1px solid rgba(245,158,11,0.15);"><i class="fas fa-flask mr-1"></i>试点功能</span>
-          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-[#3D7A70] hover:text-red-500 hover:border-red-200" style="border: 1px solid rgba(46,196,182,0.12);"><i class="fas fa-redo mr-1"></i>重新开始</button>
+          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-[#3D7A70] hover:text-red-500 hover:border-[rgba(239,68,68,0.3)]" style="border: 1px solid rgba(46,196,182,0.12);"><i class="fas fa-redo mr-1"></i>重新开始</button>
         </div>
       </div>
     </nav>
@@ -1909,7 +1909,7 @@ app.get('/', (c) => {
       return keys.map(key => {
         const s = SIEVE_LIBRARY[key];
         const isAdded = mySieves.includes(key);
-        return '<div class="flex items-center gap-3 p-3 rounded-xl border transition-all ' + (isAdded ? 'bg-[#0B2624] border-[rgba(46,196,182,0.08)] opacity-60' : 'bg-[#0F2E2B] border-[rgba(46,196,182,0.08)] hover:border-cyan-200 hover:shadow-sm') + '" id="lib_' + key + '">' +
+        return '<div class="flex items-center gap-3 p-3 rounded-xl border transition-all ' + (isAdded ? 'bg-[#0B2624] border-[rgba(46,196,182,0.08)] opacity-60' : 'bg-[#0F2E2B] border-[rgba(46,196,182,0.08)] hover:border-[rgba(6,182,212,0.3)] hover:shadow-sm') + '" id="lib_' + key + '">' +
           '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + s.color + '15;"><i class="fas ' + s.icon + '" style="color:' + s.color + '; font-size:14px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
             '<div class="flex items-center gap-1.5"><p class="text-sm font-semibold text-[#E8F5F3] truncate">' + s.name + '</p><span class="text-xs px-1.5 py-0.5 rounded bg-[rgba(46,196,182,0.06)] text-[#5A9A90] flex-shrink-0">' + (s.category || '') + '</span></div>' +
@@ -1917,7 +1917,7 @@ app.get('/', (c) => {
           '</div>' +
           (isAdded
             ? '<span class="text-xs text-[#3D7A70] flex-shrink-0 px-2 py-1"><i class="fas fa-check"></i> 已添加</span>'
-            : '<button onclick="addSieve(&apos;' + key + '&apos;)" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-cyan-600 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors"><i class="fas fa-plus mr-1"></i>添加</button>') +
+            : '<button onclick="addSieve(&apos;' + key + '&apos;)" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-[#06B6D4] bg-[rgba(6,182,212,0.06)] hover:bg-[rgba(6,182,212,0.1)] rounded-lg transition-colors"><i class="fas fa-plus mr-1"></i>添加</button>') +
         '</div>';
       }).join('');
     }
@@ -1929,14 +1929,14 @@ app.get('/', (c) => {
       return mySieves.map((key, idx) => {
         const s = SIEVE_LIBRARY[key];
         if (!s) return '';
-        return '<div class="flex items-center gap-3 p-3 bg-[#0F2E2B] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-red-200 group transition-all" id="my_' + key + '">' +
+        return '<div class="flex items-center gap-3 p-3 bg-[#0F2E2B] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-[rgba(239,68,68,0.3)] group transition-all" id="my_' + key + '">' +
           '<div class="w-6 h-6 rounded flex items-center justify-center text-xs font-bold text-[#3D7A70] bg-[rgba(46,196,182,0.06)] flex-shrink-0">' + (idx + 1) + '</div>' +
           '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + s.color + '15;"><i class="fas ' + s.icon + '" style="color:' + s.color + '; font-size:14px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
             '<p class="text-sm font-semibold text-[#E8F5F3] truncate">' + s.name + '</p>' +
             '<p class="text-xs text-[#3D7A70] truncate">' + (s.category || '') + '</p>' +
           '</div>' +
-          '<button onclick="removeSieve(&apos;' + key + '&apos;)" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors opacity-0 group-hover:opacity-100"><i class="fas fa-trash-alt mr-1"></i>移除</button>' +
+          '<button onclick="removeSieve(&apos;' + key + '&apos;)" class="flex-shrink-0 px-3 py-1.5 text-xs font-semibold text-red-500 bg-[rgba(239,68,68,0.08)] hover:bg-[rgba(239,68,68,0.15)] rounded-lg transition-colors opacity-0 group-hover:opacity-100"><i class="fas fa-trash-alt mr-1"></i>移除</button>' +
         '</div>';
       }).join('');
     }
@@ -2080,59 +2080,52 @@ app.get('/', (c) => {
         const miniCanvasId = 'miniRadar_' + d.id;
 
         return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openDetail(&#39;' + d.id + '&#39;)">' +
-          // MCN Header
-          '<div class="flex items-center justify-between mb-1.5">' +
-            '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #3DD8CA; border: 1px solid rgba(46,196,182,0.12); font-size: 10px;">' + (d.mcn || '') + '</span>' +
-            '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1"></i>' + st.label + (d.isMine ? '·我' : '') + '</span>' +
-          '</div>' +
-          // Header: name + mini radar
+          // Terminal Header — MCN + Status + Score
           '<div class="flex items-center justify-between mb-2">' +
-            '<div class="flex items-center space-x-2 min-w-0 flex-1">' +
-              '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase" style="color: #5DC4B3;"></i></div>' +
-              '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: rgba(46,196,182,0.08); color: #3DD8CA; border: 1px solid rgba(46,196,182,0.15); font-size: 10px;">' + (d.mcn || '') + '</span>' +
+              '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1"></i>' + st.label + (d.isMine ? '·我' : '') + '</span>' +
             '</div>' +
-            '<div class="flex items-center gap-2 flex-shrink-0">' +
-              '<div class="flex items-center gap-1.5" title="合约综合评分">' +
-                '<canvas id="' + miniCanvasId + '" width="60" height="60" style="width:30px;height:30px;"></canvas>' +
-                '<div class="text-right">' +
-                  '<p class="text-sm font-black leading-none" style="color:' + cardGrade.color + ';">' + cardOverall + '</p>' +
-                  '<p class="font-bold leading-none" style="font-size:9px; color:' + cardGrade.color + ';">' + cardGrade.grade + '</p>' +
-                '</div>' +
+            '<div class="flex items-center gap-1.5 flex-shrink-0" title="合约综合评分">' +
+              '<canvas id="' + miniCanvasId + '" width="60" height="60" style="width:26px;height:26px;"></canvas>' +
+              '<div class="text-right">' +
+                '<p class="font-mono text-sm font-black leading-none" style="color:' + cardGrade.color + ';">' + cardOverall + '</p>' +
+                '<p class="font-mono font-bold leading-none" style="font-size:8px; color:' + cardGrade.color + '; opacity:0.8;">' + cardGrade.grade + '</p>' +
               '</div>' +
             '</div>' +
           '</div>' +
-          // 来源标签 + 筛子标签
-          '<div class="flex items-center gap-1.5 mb-2">' +
+          // Project Name Row
+          '<div class="flex items-center space-x-2 mb-2">' +
+            '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(93,196,179,0.1);"><i class="fas fa-briefcase" style="color: #5DC4B3; font-size:12px;"></i></div>' +
+            '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
+          '</div>' +
+          // Source + Sieve Tags
+          (hasMatch ? '<div class="flex items-center gap-1.5 mb-2">' +
             '<span class="source-tag source-originate"><i class="fas fa-paper-plane" style="font-size:8px;"></i>发起通</span>' +
-            (hasMatch ? '<span class="sieve-tag sieve-pass"><i class="fas fa-check" style="font-size:8px;"></i>' + (d.sieveName || '筛子') + '</span>' : '') +
-            (hasMatch ? '<span class="text-xs font-bold" style="color:' + matchColor + ';">' + d.matchScore + '%匹配</span>' : '') +
+            '<span class="sieve-tag sieve-pass"><i class="fas fa-check" style="font-size:8px;"></i>' + (d.sieveName || '筛子') + '</span>' +
+            '<span class="font-mono text-xs font-bold" style="color:' + matchColor + ';">' + d.matchScore + '%</span>' +
+            '<div class="flex-1 h-1 rounded-full overflow-hidden" style="background:rgba(46,196,182,0.08);"><div class="h-full rounded-full" style="width:' + d.matchScore + '%;background:' + matchColor + ';"></div></div>' +
+          '</div>' : '<div class="flex items-center gap-1.5 mb-2"><span class="source-tag source-originate"><i class="fas fa-paper-plane" style="font-size:8px;"></i>发起通</span></div>') +
+          // Terminal Data Grid — Contract Core Info
+          '<div class="grid grid-cols-4 gap-1 mb-2">' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(46,196,182,0.05); border:1px solid rgba(46,196,182,0.08);"><p class="font-mono text-sm font-black text-[#3DD8CA]">¥1K</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">FACE</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.08);"><p class="font-mono text-sm font-bold text-[#FBBF24]">' + d.revenueShare + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">YIELD</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + d.period + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">TERM</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.08);"><p class="font-mono text-sm font-bold text-[#34D399]">' + d.riskGrade + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">RISK</p></div>' +
           '</div>' +
-          // 匹配度条
-          (hasMatch ? '<div class="match-bar mb-2"><div class="match-bar-fill" style="width:' + d.matchScore + '%; background: ' + matchColor + ';"></div></div>' : '') +
-          // ==== 单张合约信息 ====
-          '<div class="mb-2 p-2.5 rounded-xl" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.12);">' +
-            '<div class="flex items-center justify-between">' +
-              '<div class="flex items-center gap-1.5"><i class="fas fa-file-contract text-[#2EC4B6]" style="font-size:10px;"></i><span class="text-lg font-black text-[#2EC4B6]">¥1,000</span><span class="text-xs text-[#3D7A70]">面值</span></div>' +
-              (d.holder ? '<div class="flex items-center gap-1 text-xs"><i class="fas fa-user' + (d.isMine ? '-check text-emerald-500' : ' text-[#3D7A70]') + '" style="font-size:9px;"></i><span class="font-semibold ' + (d.isMine ? 'text-emerald-600' : 'text-[#5A9A90]') + '">' + d.holder + '</span></div>' : '<span class="text-xs text-amber-600 font-semibold"><i class="fas fa-tag mr-1" style="font-size:9px;"></i>可认购</span>') +
+          // Footer — Date + AI Score + Action
+          '<div class="flex items-center justify-between pt-2 border-t border-[rgba(46,196,182,0.06)]">' +
+            '<div class="flex items-center gap-3">' +
+              '<span class="text-xs text-[#3D7A70]"><i class="fas fa-clock mr-1" style="font-size:9px;"></i>' + d.originateDate + '</span>' +
+              '<span class="font-mono text-xs font-bold text-[#B0D5CF]"><i class="fas fa-robot mr-1 text-[#2EC4B6]" style="font-size:9px;"></i>' + d.aiScore + '</span>' +
             '</div>' +
-          '</div>' +
-          // Metrics
-          '<div class="flex items-center justify-between text-xs">' +
-            '<div class="flex items-center space-x-3">' +
-              '<span class="text-[#5A9A90]"><i class="fas fa-percentage mr-1 text-amber-500"></i>' + d.revenueShare + '</span>' +
-              '<span class="text-[#5A9A90]"><i class="fas fa-calendar mr-1 text-cyan-500"></i>' + d.period + '</span>' +
-              '<span class="text-[#5A9A90]"><i class="fas fa-shield-alt mr-1 text-emerald-500"></i>' + d.riskGrade + '</span>' +
-            '</div>' +
-            '<div class="flex items-center"><i class="fas fa-star text-amber-400 mr-1"></i><span class="font-bold text-[#B0D5CF]">' + d.aiScore + '</span></div>' +
-          '</div>' +
-          // Footer
-          '<div class="mt-3 pt-3 border-t border-[rgba(46,196,182,0.08)] flex items-center justify-between">' +
-            '<span class="text-xs text-[#3D7A70]"><i class="fas fa-paper-plane mr-1 text-amber-300"></i>' + d.originateDate + '</span>' +
             (d.isMine
-              ? '<span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>我的合约</span>'
+              ? '<span class="text-xs font-semibold text-[#10B981]"><i class="fas fa-check-circle mr-1"></i>MINE</span>'
               : d.status === 'sold'
-                ? '<span class="text-xs text-[#3D7A70]">已售出</span>'
-                : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-medium text-[#2EC4B6] hover:text-[#2EC4B6] transition-colors"><i class="fas fa-shopping-cart mr-1"></i>认购</button>') +
+                ? '<span class="text-xs text-[#3D7A70] font-mono">SOLD</span>'
+                : d.holder
+                  ? '<span class="text-xs text-[#5A9A90]">' + d.holder + '</span>'
+                  : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-mono font-bold text-[#2EC4B6] hover:text-[#3DD8CA] transition-colors"><i class="fas fa-shopping-cart mr-1"></i>BUY</button>') +
           '</div>' +
         '</div>';
       }).join('');
@@ -2173,11 +2166,11 @@ app.get('/', (c) => {
             '<p class="text-xs text-[#3D7A70]">单张合约面值 · 不可分割</p>' +
           '</div>' +
           '<div class="grid grid-cols-2 gap-2 mb-4">' +
-            '<div class="p-3 bg-amber-50 rounded-xl text-center"><p class="text-sm font-bold text-amber-700">' + currentDeal.revenueShare + '</p><p class="text-xs text-[#3D7A70]">分成比例</p></div>' +
-            '<div class="p-3 bg-cyan-50 rounded-xl text-center"><p class="text-sm font-bold text-cyan-700">' + currentDeal.period + '</p><p class="text-xs text-[#3D7A70]">分成期限</p></div>' +
+            '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl text-center"><p class="text-sm font-bold text-[#FBBF24]">' + currentDeal.revenueShare + '</p><p class="text-xs text-[#3D7A70]">分成比例</p></div>' +
+            '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl text-center"><p class="text-sm font-bold text-[#22D3EE]">' + currentDeal.period + '</p><p class="text-xs text-[#3D7A70]">分成期限</p></div>' +
           '</div>' +
-          '<div class="p-3 bg-emerald-50 rounded-xl mb-4 border border-emerald-100">' +
-            '<div class="flex items-center gap-2"><i class="fas fa-info-circle text-emerald-500"></i><p class="text-xs text-emerald-700">认购后这张合约将归您所有，MCN编号永久绑定。在合约期内按约定比例分享收益。</p></div>' +
+          '<div class="p-3 bg-[rgba(16,185,129,0.06)] rounded-xl mb-4 border border-[rgba(16,185,129,0.12)]">' +
+            '<div class="flex items-center gap-2"><i class="fas fa-info-circle text-emerald-500"></i><p class="text-xs text-[#34D399]">认购后这张合约将归您所有，MCN编号永久绑定。在合约期内按约定比例分享收益。</p></div>' +
           '</div>' +
         '</div>' +
         '<div class="px-5 pb-5 flex gap-3">' +
@@ -2268,34 +2261,34 @@ app.get('/', (c) => {
               '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="p-3 bg-amber-50 rounded-xl border border-amber-100 mb-4 flex items-center gap-2"><i class="fas fa-paper-plane text-amber-500"></i><div><p class="text-xs font-bold text-amber-700">来自发起通</p><p class="text-xs text-amber-600">发起方：' + (currentDeal.originator || '未知') + '</p></div></div>' +
+          '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl border border-[rgba(245,158,11,0.12)] mb-4 flex items-center gap-2"><i class="fas fa-paper-plane text-amber-500"></i><div><p class="text-xs font-bold text-[#FBBF24]">来自发起通</p><p class="text-xs text-[#F59E0B]">发起方：' + (currentDeal.originator || '未知') + '</p></div></div>' +
           '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">' + currentDeal.name + '</h2><p class="text-sm text-[#5A9A90]">' + currentDeal.industry + ' · ' + currentDeal.location + '</p></div></div>' +
           '<p class="text-sm text-[#8EBDB5] leading-relaxed mb-4">' + currentDeal.description + '</p>' +
         '</div>' +
         // ==== 单张合约核心信息 ====
-        '<div class="p-4 rounded-2xl mb-5" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); border: 1.5px solid rgba(46,196,182,0.2);">' +
+        '<div class="p-4 rounded-2xl mb-5" style="background: linear-gradient(135deg, rgba(46,196,182,0.06), rgba(6,182,212,0.04)); border: 1.5px solid rgba(46,196,182,0.2);">' +
           '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-[#2EC4B6]"></i><h3 class="text-sm font-bold text-[#E8F5F3]">合约信息</h3><span class="font-mono text-xs text-[#3D7A70]">' + (currentDeal.mcn || '') + '</span></div>' +
           '<div class="text-center p-4 bg-[#0F2E2B] rounded-xl mb-3">' +
             '<p class="text-3xl font-black text-[#3DD8CA] mb-1">¥1,000</p>' +
             '<p class="text-xs text-[#3D7A70]">合约面值 · 不可分割</p>' +
           '</div>' +
           '<div class="grid grid-cols-2 gap-2 mb-3">' +
-            '<div class="p-2 bg-[#0F2E2B] rounded-xl text-center"><p class="text-xs text-[#3D7A70]">状态</p><p class="text-sm font-bold ' + (currentDeal.status === 'available' ? 'text-amber-600' : 'text-emerald-600') + '">' + (currentDeal.status === 'available' ? '待售' : '已售') + '</p></div>' +
-            '<div class="p-2 bg-[#0F2E2B] rounded-xl text-center"><p class="text-xs text-[#3D7A70]">持有人</p><p class="text-sm font-bold ' + (currentDeal.isMine ? 'text-emerald-600' : 'text-[#B0D5CF]') + '">' + (currentDeal.holder || '无（可认购）') + '</p></div>' +
+            '<div class="p-2 bg-[#0F2E2B] rounded-xl text-center"><p class="text-xs text-[#3D7A70]">状态</p><p class="text-sm font-bold ' + (currentDeal.status === 'available' ? 'text-[#F59E0B]' : 'text-[#10B981]') + '">' + (currentDeal.status === 'available' ? '待售' : '已售') + '</p></div>' +
+            '<div class="p-2 bg-[#0F2E2B] rounded-xl text-center"><p class="text-xs text-[#3D7A70]">持有人</p><p class="text-sm font-bold ' + (currentDeal.isMine ? 'text-[#10B981]' : 'text-[#B0D5CF]') + '">' + (currentDeal.holder || '无（可认购）') + '</p></div>' +
           '</div>' +
-          (currentDeal.isMine ? '<div class="p-2 bg-emerald-50 rounded-xl flex items-center gap-2 border border-emerald-100"><i class="fas fa-user-check text-emerald-500"></i><div><p class="text-xs font-bold text-emerald-700">我的合约</p><p class="text-xs text-emerald-600">投入 ¥1,000 · MCN编号永久绑定</p></div></div>' : '') +
+          (currentDeal.isMine ? '<div class="p-2 bg-[rgba(16,185,129,0.06)] rounded-xl flex items-center gap-2 border border-[rgba(16,185,129,0.12)]"><i class="fas fa-user-check text-emerald-500"></i><div><p class="text-xs font-bold text-[#34D399]">我的合约</p><p class="text-xs text-[#10B981]">投入 ¥1,000 · MCN编号永久绑定</p></div></div>' : '') +
         '</div>' +
         '<div class="grid grid-cols-2 gap-3 mb-5">' +
-          '<div class="p-3 bg-teal-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">项目总额</p><p class="text-lg font-bold text-[#3DD8CA]">¥' + (currentDeal.projectTotalAmount || 0) + '万</p></div>' +
-          '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">分成比例</p><p class="text-lg font-bold text-amber-600">' + currentDeal.revenueShare + '</p></div>' +
-          '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">分成期限</p><p class="text-lg font-bold text-cyan-600">' + currentDeal.period + '</p></div>' +
-          '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">AI评分</p><p class="text-lg font-bold text-emerald-600">' + currentDeal.aiScore + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
+          '<div class="p-3 bg-[rgba(20,184,166,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">项目总额</p><p class="text-lg font-bold text-[#3DD8CA]">¥' + (currentDeal.projectTotalAmount || 0) + '万</p></div>' +
+          '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">分成比例</p><p class="text-lg font-bold text-[#F59E0B]">' + currentDeal.revenueShare + '</p></div>' +
+          '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">分成期限</p><p class="text-lg font-bold text-[#06B6D4]">' + currentDeal.period + '</p></div>' +
+          '<div class="p-3 bg-[rgba(16,185,129,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">AI评分</p><p class="text-lg font-bold text-[#10B981]">' + currentDeal.aiScore + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
         '</div>' +
         '<div class="space-y-3"><h3 class="text-sm font-semibold text-[#B0D5CF] mb-2"><i class="fas fa-store mr-1.5 text-amber-500"></i>经营数据（发起通提供）</h3>' +
           '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">月均营收</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.monthlyRevenue || '暂无') + '</span></div></div>' +
           '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">员工人数</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.employeeCount || '暂无') + '人</span></div></div>' +
           '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">运营年限</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.operatingYears || '暂无') + '年</span></div></div>' +
-          '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">风控评级</span><span class="text-xs font-bold text-emerald-600">' + (currentDeal.riskGrade || 'N/A') + '</span></div></div>' +
+          '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">风控评级</span><span class="text-xs font-bold text-[#10B981]">' + (currentDeal.riskGrade || 'N/A') + '</span></div></div>' +
           '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">到期日</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.maturityDate || '—') + '</span></div></div>' +
         '</div>';
 
@@ -2326,7 +2319,7 @@ app.get('/', (c) => {
           '</div></div>';
       });
       if (mySieves.length === 0) {
-        sieveResults = '<div class="text-center py-4"><p class="text-sm text-[#3D7A70]">暂未添加筛子</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-cyan-600 mt-1 hover:underline">去管理筛子</button></div>';
+        sieveResults = '<div class="text-center py-4"><p class="text-sm text-[#3D7A70]">暂未添加筛子</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-[#06B6D4] mt-1 hover:underline">去管理筛子</button></div>';
       }
 
       // 维度详细列表 HTML
@@ -2418,11 +2411,11 @@ app.get('/', (c) => {
           // 项目流向
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-route mr-1.5 text-amber-500"></i>项目流向</h3><div class="space-y-3">' +
           [
-            { icon: 'fa-paper-plane', color: 'amber', title: '发起通 — 项目提交', desc: currentDeal.originator + ' · ' + currentDeal.originateDate },
-            { icon: 'fa-filter', color: 'cyan', title: '评估通 — AI筛选', desc: '通过 ' + (hasMatch ? currentDeal.matchScore + '% 匹配' : '基础审核') },
-            { icon: 'fa-hand-pointer', color: 'teal', title: '参与通 — 当前阶段', desc: currentDeal.status === 'available' ? '等待认购' : (currentDeal.isMine ? '您已认购此合约' : '已被认购') },
-            { icon: 'fa-file-contract', color: 'gray', title: '条款通 → 合约通', desc: '确认参与后进入条款协商' }
-          ].map(t => '<div class="flex items-start space-x-3"><div class="w-8 h-8 rounded-lg bg-' + t.color + '-100 flex items-center justify-center flex-shrink-0"><i class="fas ' + t.icon + ' text-' + t.color + '-600 text-xs"></i></div><div><p class="text-sm font-medium text-[#B0D5CF]">' + t.title + '</p><p class="text-xs text-[#3D7A70]">' + t.desc + '</p></div></div>').join('') +
+            { icon: 'fa-paper-plane', bg: 'rgba(245,158,11,0.1)', ic: '#FBBF24', title: '发起通 — 项目提交', desc: currentDeal.originator + ' · ' + currentDeal.originateDate },
+            { icon: 'fa-filter', bg: 'rgba(6,182,212,0.1)', ic: '#22D3EE', title: '评估通 — AI筛选', desc: '通过 ' + (hasMatch ? currentDeal.matchScore + '% 匹配' : '基础审核') },
+            { icon: 'fa-hand-pointer', bg: 'rgba(46,196,182,0.1)', ic: '#3DD8CA', title: '参与通 — 当前阶段', desc: currentDeal.status === 'available' ? '等待认购' : (currentDeal.isMine ? '您已认购此合约' : '已被认购') },
+            { icon: 'fa-file-contract', bg: 'rgba(100,116,139,0.1)', ic: '#94A3B8', title: '条款通 → 合约通', desc: '确认参与后进入条款协商' }
+          ].map(t => '<div class="flex items-start space-x-3"><div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:' + t.bg + ';"><i class="fas ' + t.icon + ' text-xs" style="color:' + t.ic + ';"></i></div><div><p class="text-sm font-medium text-[#B0D5CF]">' + t.title + '</p><p class="text-xs text-[#3D7A70]">' + t.desc + '</p></div></div>').join('') +
           '</div></div>' +
         '</div>';
 
@@ -2642,30 +2635,29 @@ app.get('/', (c) => {
         const grade = getScoreGrade(overall);
         const miniId = 'mcRadar_' + d.id;
         return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openDetail(&#39;' + d.id + '&#39;)">' +
-          '<div class="flex items-center justify-between mb-1.5">' +
-            '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #3DD8CA; border: 1px solid rgba(46,196,182,0.12); font-size: 10px;">' + (d.mcn || '') + '</span>' +
-            '<span class="badge badge-success flex-shrink-0"><i class="fas fa-user-check mr-1"></i>我的</span>' +
-          '</div>' +
           '<div class="flex items-center justify-between mb-2">' +
-            '<div class="flex items-center space-x-2 min-w-0 flex-1">' +
-              '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.12));"><i class="fas fa-file-contract" style="color: #10b981;"></i></div>' +
-              '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: rgba(46,196,182,0.08); color: #3DD8CA; border: 1px solid rgba(46,196,182,0.15); font-size: 10px;">' + (d.mcn || '') + '</span>' +
+              '<span class="badge badge-success flex-shrink-0"><i class="fas fa-user-check mr-1"></i>MINE</span>' +
             '</div>' +
             '<div class="flex items-center gap-1.5">' +
-              '<canvas id="' + miniId + '" width="60" height="60" style="width:30px;height:30px;"></canvas>' +
-              '<div class="text-right"><p class="text-sm font-black leading-none" style="color:' + grade.color + ';">' + overall + '</p><p class="font-bold leading-none" style="font-size:9px; color:' + grade.color + ';">' + grade.grade + '</p></div>' +
+              '<canvas id="' + miniId + '" width="60" height="60" style="width:26px;height:26px;"></canvas>' +
+              '<div class="text-right"><p class="font-mono text-sm font-black leading-none" style="color:' + grade.color + ';">' + overall + '</p><p class="font-mono font-bold leading-none" style="font-size:8px; color:' + grade.color + '; opacity:0.8;">' + grade.grade + '</p></div>' +
             '</div>' +
           '</div>' +
-          '<div class="p-2.5 rounded-xl mb-2" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.12);">' +
-            '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><i class="fas fa-file-contract text-[#2EC4B6]" style="font-size:10px;"></i><span class="text-lg font-black text-[#2EC4B6]">¥1,000</span><span class="text-xs text-[#3D7A70]">面值</span></div><span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>已认购</span></div>' +
+          '<div class="flex items-center space-x-2 mb-2">' +
+            '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(16,185,129,0.1);"><i class="fas fa-file-contract" style="color: #10b981; font-size:12px;"></i></div>' +
+            '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
           '</div>' +
-          '<div class="flex items-center justify-between text-xs">' +
-            '<div class="flex items-center space-x-3">' +
-              '<span class="text-[#5A9A90]"><i class="fas fa-percentage mr-1 text-amber-500"></i>' + d.revenueShare + '</span>' +
-              '<span class="text-[#5A9A90]"><i class="fas fa-calendar mr-1 text-cyan-500"></i>' + d.period + '</span>' +
-              '<span class="text-[#5A9A90]"><i class="fas fa-shield-alt mr-1 text-emerald-500"></i>' + d.riskGrade + '</span>' +
-            '</div>' +
-            '<span class="font-bold text-[#B0D5CF]"><i class="fas fa-star text-amber-400 mr-1"></i>' + d.aiScore + '</span>' +
+          '<div class="grid grid-cols-4 gap-1 mb-2">' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(46,196,182,0.05); border:1px solid rgba(46,196,182,0.08);"><p class="font-mono text-sm font-black text-[#3DD8CA]">¥1K</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">FACE</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.08);"><p class="font-mono text-sm font-bold text-[#FBBF24]">' + d.revenueShare + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">YIELD</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + d.period + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">TERM</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.08);"><p class="font-mono text-sm font-bold text-[#34D399]">' + d.riskGrade + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">RISK</p></div>' +
+          '</div>' +
+          '<div class="flex items-center justify-between pt-2 border-t border-[rgba(46,196,182,0.06)]">' +
+            '<span class="font-mono text-xs font-bold text-[#B0D5CF]"><i class="fas fa-robot mr-1 text-[#2EC4B6]" style="font-size:9px;"></i>AI ' + d.aiScore + '</span>' +
+            '<span class="text-xs font-semibold text-[#10B981]"><i class="fas fa-check-circle mr-1"></i>已认购 ¥1,000</span>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -2894,9 +2886,9 @@ app.get('/', (c) => {
           activeBtn.style.color = st.color;
           activeBtn.style.borderColor = st.border;
         } else if (cat === 'all') {
-          activeBtn.style.background = '#f5f3ff';
-          activeBtn.style.color = '#7c3aed';
-          activeBtn.style.borderColor = '#c4b5fd';
+          activeBtn.style.background = 'rgba(139,92,246,0.08)';
+          activeBtn.style.color = '#A78BFA';
+          activeBtn.style.borderColor = 'rgba(139,92,246,0.25)';
         }
       }
       renderMyPortfolios();
@@ -2951,7 +2943,7 @@ app.get('/', (c) => {
           '<div class="flex items-center justify-between mb-3">' +
             '<div class="flex items-center gap-2 min-w-0">' +
               '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="' + catStyle.gradient + ';"><i class="fas ' + catStyle.icon + ' text-white text-sm"></i></div>' +
-              '<div class="min-w-0"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-violet-600 transition-colors truncate">' + p.name + '</h3><p class="text-xs text-[#5A9A90] flex items-center gap-1"><span class="px-1.5 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.bg + '; color:' + catStyle.color + '; font-size:9px;">' + p.category + '</span><span>' + p.riskLevel + '</span></p></div>' +
+              '<div class="min-w-0"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#8B5CF6] transition-colors truncate">' + p.name + '</h3><p class="text-xs text-[#5A9A90] flex items-center gap-1"><span class="px-1.5 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.bg + '; color:' + catStyle.color + '; font-size:9px;">' + p.category + '</span><span>' + p.riskLevel + '</span></p></div>' +
             '</div>' +
             '<div class="flex items-center gap-2 flex-shrink-0">' +
               '<canvas id="' + canvasId + '" width="60" height="60" style="width:30px;height:30px;"></canvas>' +
@@ -2974,14 +2966,14 @@ app.get('/', (c) => {
           '</div>' +
           // 关键指标
           '<div class="grid grid-cols-3 gap-2 mb-2">' +
-            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-amber-600">' + p.targetReturn + '</p><p style="font-size:9px;" class="text-[#3D7A70]">目标回报</p></div>' +
-            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-cyan-600">' + p.targetPeriod + '</p><p style="font-size:9px;" class="text-[#3D7A70]">目标期限</p></div>' +
-            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-emerald-600">' + avgAI + '</p><p style="font-size:9px;" class="text-[#3D7A70]">AI均分</p></div>' +
+            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-[#F59E0B]">' + p.targetReturn + '</p><p style="font-size:9px;" class="text-[#3D7A70]">目标回报</p></div>' +
+            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-[#06B6D4]">' + p.targetPeriod + '</p><p style="font-size:9px;" class="text-[#3D7A70]">目标期限</p></div>' +
+            '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-[#10B981]">' + avgAI + '</p><p style="font-size:9px;" class="text-[#3D7A70]">AI均分</p></div>' +
           '</div>' +
           // Footer
           '<div class="flex items-center justify-between pt-2 border-t border-[rgba(46,196,182,0.08)]">' +
             '<span class="text-xs text-[#3D7A70]"><i class="fas fa-tags mr-1"></i>' + p.targetIndustries.join(' · ') + '</span>' +
-            '<span class="text-xs font-medium group-hover:text-violet-700 transition-colors" style="color:' + catStyle.color + ';"><i class="fas fa-arrow-right mr-1"></i>查看详情</span>' +
+            '<span class="text-xs font-medium group-hover:text-[#A78BFA] transition-colors" style="color:' + catStyle.color + ';"><i class="fas fa-arrow-right mr-1"></i>查看详情</span>' +
           '</div>' +
         '</div>';
       }).join('');
@@ -3000,9 +2992,9 @@ app.get('/', (c) => {
         if (btn.getAttribute('data-cat') === currentPortfolioFilter) {
           btn.classList.add('active');
           if (currentPortfolioFilter === 'all') {
-            btn.style.background = '#f5f3ff';
-            btn.style.color = '#7c3aed';
-            btn.style.borderColor = '#c4b5fd';
+            btn.style.background = 'rgba(139,92,246,0.08)';
+            btn.style.color = '#A78BFA';
+            btn.style.borderColor = 'rgba(139,92,246,0.25)';
           } else if (PORTFOLIO_CATEGORY_STYLES[currentPortfolioFilter]) {
             var st = PORTFOLIO_CATEGORY_STYLES[currentPortfolioFilter];
             btn.style.background = st.bg;
@@ -3063,7 +3055,7 @@ app.get('/', (c) => {
               var cs = calcRadarScores(c);
               var co = calcOverallScore(cs);
               var cg = getScoreGrade(co);
-              return '<div class="flex items-center gap-3 p-2.5 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-violet-200 cursor-pointer transition-all" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
+              return '<div class="flex items-center gap-3 p-2.5 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-[rgba(139,92,246,0.2)] cursor-pointer transition-all" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
                 '<div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(16,185,129,0.1);"><i class="fas fa-file-contract text-emerald-500" style="font-size:10px;"></i></div>' +
                 '<div class="flex-1 min-w-0">' +
                   '<p class="font-mono text-xs font-bold text-[#B0D5CF] truncate">' + (c.mcn || '') + '</p>' +
@@ -3100,7 +3092,7 @@ app.get('/', (c) => {
           '<div class="p-4 rounded-2xl mb-4" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%); position: relative; overflow: hidden;">' +
             '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(139,92,246,0.25) 0%, transparent 50%);pointer-events:none;"></div>' +
             '<div class="relative z-10">' +
-              '<div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.color + '33; color: #c4b5fd;">' + currentPortfolio.category + '</span><span class="text-xs" style="color: rgba(255,255,255,0.4);">' + catStyle.label + ' Fund</span><span class="px-2 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);">' + currentPortfolio.riskLevel + '</span></div>' +
+              '<div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.color + '33; color: rgba(167,139,250,0.8);">' + currentPortfolio.category + '</span><span class="text-xs" style="color: rgba(255,255,255,0.4);">' + catStyle.label + ' Fund</span><span class="px-2 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);">' + currentPortfolio.riskLevel + '</span></div>' +
               '<h2 class="text-lg font-bold text-white mb-1">' + currentPortfolio.name + '</h2>' +
               '<p class="text-xs mb-3" style="color: rgba(255,255,255,0.5);">' + currentPortfolio.strategy + '</p>' +
               '<div class="grid grid-cols-4 gap-2">' +
@@ -3113,23 +3105,23 @@ app.get('/', (c) => {
           '</div>' +
           // 关键参数
           '<div class="grid grid-cols-2 gap-3 mb-4">' +
-            '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">加权分成比例</p><p class="text-lg font-bold text-amber-600">' + avgShare + '%</p></div>' +
-            '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">目标回报</p><p class="text-lg font-bold text-cyan-600">' + currentPortfolio.targetReturn + '</p></div>' +
-            '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">AI评分均值</p><p class="text-lg font-bold text-emerald-600">' + avgAI + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
-            '<div class="p-3 bg-violet-50 rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">目标期限</p><p class="text-lg font-bold text-violet-600">' + currentPortfolio.targetPeriod + '</p></div>' +
+            '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">加权分成比例</p><p class="text-lg font-bold text-[#F59E0B]">' + avgShare + '%</p></div>' +
+            '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">目标回报</p><p class="text-lg font-bold text-[#06B6D4]">' + currentPortfolio.targetReturn + '</p></div>' +
+            '<div class="p-3 bg-[rgba(16,185,129,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">AI评分均值</p><p class="text-lg font-bold text-[#10B981]">' + avgAI + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
+            '<div class="p-3 bg-[rgba(139,92,246,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">目标期限</p><p class="text-lg font-bold text-[#8B5CF6]">' + currentPortfolio.targetPeriod + '</p></div>' +
           '</div>' +
           // 行业配比
           '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] mb-4">' +
-            '<p class="text-xs font-bold text-[#B0D5CF] mb-2"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>行业配比 · ' + currentPortfolio.industryCount + ' 个行业</p>' +
+            '<p class="text-xs font-bold text-[#B0D5CF] mb-2"><i class="fas fa-chart-pie mr-1.5 text-[#8B5CF6]"></i>行业配比 · ' + currentPortfolio.industryCount + ' 个行业</p>' +
             '<div class="space-y-1.5">' + distribHTML + '</div>' +
           '</div>' +
           // 投资策略说明
-          '<div class="p-3 bg-violet-50 rounded-xl border border-violet-100 mb-4">' +
-            '<div class="flex items-start gap-2"><i class="fas fa-lightbulb text-violet-500 mt-0.5"></i><div><p class="text-xs font-bold text-violet-700 mb-1">投资策略</p><p class="text-xs text-violet-600 leading-relaxed">' + currentPortfolio.strategy + '</p><p class="text-xs text-violet-400 mt-1">覆盖行业：' + currentPortfolio.targetIndustries.join('、') + ' | 跨 ' + currentPortfolio.projectCount + ' 个项目配置 ' + contracts.length + ' 张合约</p></div></div>' +
+          '<div class="p-3 bg-[rgba(139,92,246,0.06)] rounded-xl border border-[rgba(139,92,246,0.12)] mb-4">' +
+            '<div class="flex items-start gap-2"><i class="fas fa-lightbulb text-[#8B5CF6] mt-0.5"></i><div><p class="text-xs font-bold text-[#A78BFA] mb-1">投资策略</p><p class="text-xs text-[#8B5CF6] leading-relaxed">' + currentPortfolio.strategy + '</p><p class="text-xs text-[#A78BFA] mt-1">覆盖行业：' + currentPortfolio.targetIndustries.join('、') + ' | 跨 ' + currentPortfolio.projectCount + ' 个项目配置 ' + contracts.length + ' 张合约</p></div></div>' +
           '</div>' +
         '</div>' +
         // 按项目分组的合约清单
-        '<div><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-sitemap mr-1.5 text-violet-500"></i>组合持仓明细 · 按项目分组 (' + contracts.length + '张)</h3>' +
+        '<div><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-sitemap mr-1.5 text-[#8B5CF6]"></i>组合持仓明细 · 按项目分组 (' + contracts.length + '张)</h3>' +
         '<div>' + projectGroupsHTML + '</div>' +
         '</div>';
 
@@ -3195,7 +3187,7 @@ app.get('/', (c) => {
           '</div>' +
           // 维度详解
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
-            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-list-ul mr-1.5 text-violet-500"></i>各维度加权详解</h3>' +
+            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-list-ul mr-1.5 text-[#8B5CF6]"></i>各维度加权详解</h3>' +
             '<div class="space-y-2">' + dimensionDetails + '</div>' +
           '</div>' +
           // 合约分布
