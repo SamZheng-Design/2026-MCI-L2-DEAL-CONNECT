@@ -1,69 +1,86 @@
 /* ================================================
-   参与通 Deal Connect - Premium Design System V18
-   2026年2月 - Apple-Inspired Precision Design + Micro-Interactions
+   参与通 Deal Connect - Bloomberg Terminal Fintech Theme V19
+   2026年3月 - Deep Teal Dark Mode + Financial Terminal Aesthetics
    Powered by Micro Connect Group
    ================================================ */
 
-/* ========== 1. 设计令牌系统 ========== */
+/* ========== 1. 设计令牌系统 — 深色金融终端 ========== */
 :root {
-  /* Engage Connect 品牌色彩系统 - Teal */
-  --color-primary: #5DC4B3;
-  --color-primary-light: #7DD4C7;
-  --color-primary-dark: #3D8F83;
-  --color-accent: #49A89A;
-  --color-accent-cyan: #32ade6;
-  --color-accent-emerald: #34c759;
-  --color-accent-amber: #ff9f0a;
-  --color-accent-rose: #ff375f;
+  /* 核心品牌色 — 深青绿终端色系 */
+  --color-primary: #2EC4B6;
+  --color-primary-light: #3DD8CA;
+  --color-primary-dark: #1F9E92;
+  --color-accent: #28A696;
+  --color-accent-cyan: #06b6d4;
+  --color-accent-emerald: #10b981;
+  --color-accent-amber: #f59e0b;
+  --color-accent-rose: #ef4444;
   
-  /* 渐变系统 - 精致柔和 */
-  --gradient-primary: linear-gradient(135deg, #5DC4B3 0%, #49A89A 100%);
-  --gradient-cyber: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 50%, #164e47 100%);
-  --gradient-neon: linear-gradient(135deg, #32ade6 0%, #5DC4B3 40%, #49A89A 70%, #3D8F83 100%);
-  --gradient-aurora: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 25%, #0c3530 50%, #164e47 75%, #1a6b5f 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
-  --gradient-success: linear-gradient(135deg, #30b750 0%, #34c759 100%);
-  --gradient-warning: linear-gradient(135deg, #f0840a 0%, #ff9f0a 100%);
-  --gradient-danger: linear-gradient(135deg, #d62040 0%, #ff375f 100%);
-  --gradient-info: linear-gradient(135deg, #0a84ff 0%, #32ade6 100%);
-  --gradient-surface: linear-gradient(180deg, #ffffff 0%, #f8f9fe 100%);
-  --gradient-mesh: radial-gradient(at 20% 20%, rgba(93, 196, 179, 0.06) 0%, transparent 50%),
-                   radial-gradient(at 80% 80%, rgba(73, 168, 154, 0.04) 0%, transparent 50%),
-                   radial-gradient(at 50% 50%, rgba(50, 173, 230, 0.03) 0%, transparent 50%);
+  /* 深色表面层级系统 — Bloomberg/Wind 风格 */
+  --surface-bg: #0B1E1C;
+  --surface-0: #0D2422;
+  --surface-1: #0F2E2B;
+  --surface-2: #123832;
+  --surface-3: #15443D;
+  --surface-4: #1A5048;
+  --surface-elevated: #183D38;
+  --surface-card: rgba(15, 46, 43, 0.85);
+  --surface-card-hover: rgba(26, 80, 72, 0.65);
   
-  /* 玻璃态效果 - Apple风毛玻璃 */
-  --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-bg-solid: rgba(255, 255, 255, 0.92);
-  --glass-bg-dark: rgba(15, 23, 42, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --glass-border-light: rgba(93, 196, 179, 0.15);
+  /* 文字层级 */
+  --text-primary: #E8F5F3;
+  --text-secondary: #8EBDB5;
+  --text-tertiary: #5A9A90;
+  --text-muted: #3D7A70;
+  
+  /* 渐变系统 — 深色终端渐变 */
+  --gradient-primary: linear-gradient(135deg, #2EC4B6 0%, #1F9E92 100%);
+  --gradient-cyber: linear-gradient(135deg, #0B1E1C 0%, #0F2E2B 50%, #15443D 100%);
+  --gradient-neon: linear-gradient(135deg, #06b6d4 0%, #2EC4B6 40%, #28A696 70%, #1F9E92 100%);
+  --gradient-aurora: linear-gradient(135deg, #0B1E1C 0%, #0D2422 25%, #0F2E2B 50%, #123832 75%, #15443D 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(46,196,182,0.08) 0%, rgba(46,196,182,0.02) 100%);
+  --gradient-success: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  --gradient-warning: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  --gradient-danger: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  --gradient-info: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+  --gradient-surface: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-0) 100%);
+  --gradient-mesh: radial-gradient(at 20% 20%, rgba(46, 196, 182, 0.06) 0%, transparent 50%),
+                   radial-gradient(at 80% 80%, rgba(40, 166, 150, 0.04) 0%, transparent 50%),
+                   radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.03) 0%, transparent 50%);
+  
+  /* 玻璃态 — 深色毛玻璃 */
+  --glass-bg: rgba(15, 46, 43, 0.72);
+  --glass-bg-solid: rgba(13, 36, 34, 0.95);
+  --glass-bg-dark: rgba(11, 30, 28, 0.92);
+  --glass-border: rgba(46, 196, 182, 0.12);
+  --glass-border-light: rgba(46, 196, 182, 0.08);
   --glass-blur: blur(24px) saturate(180%);
   
-  /* 精致阴影 - Apple风分层阴影 */
-  --shadow-neon-primary: 0 0 24px rgba(93, 196, 179, 0.2), 0 0 48px rgba(93, 196, 179, 0.06);
-  --shadow-neon-cyan: 0 0 24px rgba(50, 173, 230, 0.2), 0 0 48px rgba(50, 173, 230, 0.06);
-  --shadow-neon-purple: 0 0 24px rgba(73, 168, 154, 0.2), 0 0 48px rgba(73, 168, 154, 0.06);
-  --shadow-neon-emerald: 0 0 24px rgba(52, 199, 89, 0.2), 0 0 48px rgba(52, 199, 89, 0.06);
+  /* 终端风格阴影 */
+  --shadow-neon-primary: 0 0 20px rgba(46, 196, 182, 0.15), 0 0 40px rgba(46, 196, 182, 0.05);
+  --shadow-neon-cyan: 0 0 20px rgba(6, 182, 212, 0.15), 0 0 40px rgba(6, 182, 212, 0.05);
+  --shadow-neon-purple: 0 0 20px rgba(139, 92, 246, 0.15), 0 0 40px rgba(139, 92, 246, 0.05);
+  --shadow-neon-emerald: 0 0 20px rgba(16, 185, 129, 0.15), 0 0 40px rgba(16, 185, 129, 0.05);
   
-  /* 层次阴影系统 - 更精致的阴影 */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.06), 0 24px 56px rgba(0, 0, 0, 0.1);
-  --shadow-2xl: 0 16px 32px rgba(0, 0, 0, 0.08), 0 32px 72px rgba(0, 0, 0, 0.14);
-  --shadow-inner: inset 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 1px 1px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.03), 0 8px 24px rgba(0, 0, 0, 0.05);
-  --shadow-card-hover: 0 4px 8px rgba(0, 0, 0, 0.04), 0 16px 48px rgba(93, 196, 179, 0.1);
+  /* 深色阴影系统 */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.2), 0 16px 40px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.25), 0 24px 56px rgba(0, 0, 0, 0.2);
+  --shadow-2xl: 0 16px 32px rgba(0, 0, 0, 0.3), 0 32px 72px rgba(0, 0, 0, 0.2);
+  --shadow-inner: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-card-hover: 0 4px 8px rgba(0, 0, 0, 0.2), 0 16px 48px rgba(46, 196, 182, 0.08);
   
-  /* 圆角系统 */
+  /* 圆角 — 终端风格略微收紧 */
   --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 24px;
-  --radius-3xl: 32px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --radius-3xl: 28px;
   --radius-full: 9999px;
   
   /* 动画系统 - Apple风顺滑 */
@@ -84,8 +101,8 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
-  color: #1d1d1f;
-  background: #f5f5f7;
+  color: var(--text-primary);
+  background: var(--surface-bg);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -110,14 +127,14 @@ body {
   pointer-events: none;
 }
 
-/* 网格背景效果 - 更精致的网格 */
+/* 网格背景效果 — 终端矩阵网格 */
 .grid-bg {
-  background-color: #f5f5f7;
+  background-color: var(--surface-bg);
   background-image: 
     var(--gradient-mesh),
-    linear-gradient(rgba(93, 196, 179, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(93, 196, 179, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 48px 48px, 48px 48px;
+    linear-gradient(rgba(46, 196, 182, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 196, 182, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
 }
 
 /* 粒子背景（纯CSS） - 更精致的光点 */
@@ -143,13 +160,13 @@ body {
   50% { transform: translateY(-16px); opacity: 0.85; }
 }
 
-/* ========== 4. 导航栏 - Apple风精致玻璃态 ========== */
+/* ========== 4. 导航栏 — 深色终端顶栏 ========== */
 nav, .navbar {
-  background: var(--glass-bg-solid);
+  background: var(--glass-bg-dark);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid rgba(46, 196, 182, 0.08);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -157,7 +174,7 @@ nav, .navbar {
 }
 
 nav:hover, .navbar:hover {
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .nav-brand {
@@ -276,13 +293,13 @@ nav:hover, .navbar:hover {
   color: var(--color-primary);
 }
 
-/* ========== 6. 卡片系统 - Apple精致玻璃态 ========== */
+/* ========== 6. 卡片系统 — 深色终端卡片 ========== */
 .card, .project-card, .module-card, .stat-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--surface-card);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(46, 196, 182, 0.1);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
   transition: all var(--duration-normal) var(--ease-apple);
@@ -304,42 +321,44 @@ nav:hover, .navbar:hover {
 .card:hover, .project-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
-  border-color: rgba(93, 196, 179, 0.12);
+  border-color: rgba(46, 196, 182, 0.2);
 }
 
 .card:hover::before, .project-card:hover::before {
   opacity: 1;
 }
 
-/* 统计卡片特殊样式 */
+/* 统计卡片 — 终端数据面板 */
 .stat-card {
   padding: 18px 20px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: var(--surface-1);
+  border: 1px solid rgba(46, 196, 182, 0.08);
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
+  border-color: rgba(46, 196, 182, 0.18);
 }
 
 .stat-card .stat-value {
   font-size: 1.6rem;
   font-weight: 800;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
 .stat-card .stat-label {
-  font-size: 0.75rem;
-  color: #86868b;
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   margin-top: 4px;
 }
 
@@ -446,15 +465,15 @@ nav:hover, .navbar:hover {
   flex-shrink: 0;
 }
 
-/* ========== 8. 表单元素 - Apple风精致输入框 ========== */
+/* ========== 8. 表单元素 — 终端输入框 ========== */
 input, textarea, select {
   width: 100%;
   padding: 12px 16px;
   font-size: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(46, 196, 182, 0.15);
   border-radius: var(--radius-md);
-  background: white;
-  color: #1d1d1f;
+  background: var(--surface-0);
+  color: var(--text-primary);
   transition: all var(--duration-fast) var(--ease-apple);
 }
 
@@ -975,7 +994,7 @@ input::placeholder, textarea::placeholder {
 #app-loading {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 25%, #0c3530 50%, #164e47 75%, #1a6b5f 100%);
+  background: linear-gradient(135deg, #0B1E1C 0%, #0D2422 25%, #0F2E2B 50%, #123832 75%, #15443D 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1997,7 +2016,7 @@ body.modal-open {
   align-items: center;
   gap: 12px;
   padding: 14px 20px;
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(15, 46, 43, 0.96);
   border-radius: var(--radius-lg);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
   min-width: 300px;
@@ -2051,13 +2070,13 @@ body.modal-open {
 .toast-title {
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 2px;
 }
 
 .toast-message {
   font-size: 13px;
-  color: #64748b;
+  color: var(--text-secondary);
   line-height: 1.4;
 }
 
@@ -2110,17 +2129,17 @@ body.modal-open {
   to { width: 0%; }
 }
 
-/* ========== 37. 用户下拉菜单 ========== */
+/* ========== 37. 用户下拉菜单 — 深色 ========== */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
   width: 240px;
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(13, 36, 34, 0.96);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(46,196,182,0.1);
   z-index: 100;
   opacity: 0;
   visibility: hidden;
@@ -2137,8 +2156,8 @@ body.modal-open {
 
 .user-dropdown-header {
   padding: 16px;
-  background: linear-gradient(135deg, rgba(93, 196, 179, 0.06) 0%, rgba(73, 168, 154, 0.06) 100%);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  background: linear-gradient(135deg, rgba(46, 196, 182, 0.08) 0%, rgba(40, 166, 150, 0.06) 100%);
+  border-bottom: 1px solid rgba(46, 196, 182, 0.1);
 }
 
 .user-dropdown-item {
@@ -2147,7 +2166,7 @@ body.modal-open {
   gap: 12px;
   padding: 10px 16px;
   font-size: 14px;
-  color: #1d1d1f;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s;
   border: none;
@@ -2157,7 +2176,7 @@ body.modal-open {
 }
 
 .user-dropdown-item:hover {
-  background: rgba(93, 196, 179, 0.06);
+  background: rgba(46, 196, 182, 0.1);
   color: var(--color-primary);
 }
 
@@ -2169,17 +2188,17 @@ body.modal-open {
 
 .user-dropdown-divider {
   height: 1px;
-  background: #f1f5f9;
+  background: rgba(46, 196, 182, 0.08);
   margin: 4px 0;
 }
 
 .user-dropdown-item.danger {
-  color: #dc2626;
+  color: #ef4444;
 }
 
 .user-dropdown-item.danger:hover {
-  background: #fef2f2;
-  color: #dc2626;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 /* ========== 38. 按钮Ripple效果 ========== */
