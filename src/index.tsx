@@ -102,6 +102,45 @@ app.get('/', (c) => {
     .user-dropdown-item:hover { background: #f8fafc; color: #0f766e; }
     .user-dropdown-item.danger:hover { background: #fef2f2; color: #dc2626; }
     .user-dropdown-divider { height: 1px; background: #f1f5f9; margin: 4px 0; }
+
+    /* ===== 合约卡片系统 (Fintech Card) ===== */
+    .cc { background: white; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06); overflow: hidden; transition: all 0.35s cubic-bezier(0.28,0.11,0.32,1); position: relative; }
+    .cc:hover { border-color: rgba(46,196,182,0.25); box-shadow: 0 8px 32px rgba(46,196,182,0.08), 0 2px 8px rgba(0,0,0,0.04); transform: translateY(-2px); }
+    .cc.cc-expanded { border-color: rgba(46,196,182,0.3); box-shadow: 0 12px 48px rgba(46,196,182,0.12), 0 4px 16px rgba(0,0,0,0.06); transform: none; grid-column: 1 / -1; }
+    .cc-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #2EC4B6, #06b6d4, #8b5cf6); opacity: 0; transition: opacity 0.3s; }
+    .cc:hover .cc-accent, .cc.cc-expanded .cc-accent { opacity: 1; }
+    .cc-header { padding: 14px 16px; cursor: pointer; }
+    .cc-body { padding: 0 16px 14px; }
+    .cc-expand-area { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(0.28,0.11,0.32,1), opacity 0.3s; opacity: 0; }
+    .cc.cc-expanded .cc-expand-area { max-height: 1800px; opacity: 1; }
+    .cc-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .cc-metric { text-align: center; padding: 8px 4px; background: #f8fafc; border-radius: 10px; border: 1px solid rgba(0,0,0,0.03); }
+    .cc-metric-val { font-size: 13px; font-weight: 800; color: #1a1a1a; }
+    .cc-metric-lbl { font-size: 9px; color: #94a3b8; margin-top: 2px; letter-spacing: 0.03em; }
+    .cc-progress { height: 5px; border-radius: 3px; background: #e5e7eb; overflow: hidden; }
+    .cc-progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+    .cc-status { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; }
+    .cc-status-open { background: rgba(245,158,11,0.1); color: #b45309; }
+    .cc-status-interested { background: rgba(46,196,182,0.1); color: #0f766e; }
+    .cc-status-confirmed { background: rgba(16,185,129,0.1); color: #047857; }
+    .cc-status-closed { background: rgba(100,116,139,0.1); color: #475569; }
+    .cc-mcn { font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #0f766e; padding: 3px 8px; background: linear-gradient(135deg, #ecfdf5, #ecfeff); border: 1px solid rgba(46,196,182,0.15); border-radius: 6px; }
+    .cc-score-ring { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; position: relative; }
+    .cc-score-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2.5px solid rgba(0,0,0,0.06); }
+    .cc-expand-toggle { width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; transition: all 0.3s; border: none; cursor: pointer; }
+    .cc-expand-toggle:hover { background: rgba(46,196,182,0.1); }
+    .cc.cc-expanded .cc-expand-toggle { transform: rotate(180deg); background: rgba(46,196,182,0.15); }
+    .cc-section { padding: 14px; background: #f8fafc; border-radius: 12px; border: 1px solid rgba(0,0,0,0.04); margin-bottom: 10px; }
+    .cc-section-title { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .cc-timeline { position: relative; padding-left: 20px; }
+    .cc-timeline::before { content: ''; position: absolute; left: 5px; top: 4px; bottom: 4px; width: 2px; background: linear-gradient(180deg, #2EC4B6, #e5e7eb); border-radius: 1px; }
+    .cc-timeline-item { position: relative; margin-bottom: 12px; }
+    .cc-timeline-item:last-child { margin-bottom: 0; }
+    .cc-timeline-dot { position: absolute; left: -18px; top: 3px; width: 8px; height: 8px; border-radius: 50%; border: 2px solid #2EC4B6; background: white; }
+    .cc-timeline-dot.active { background: #2EC4B6; }
+    .cc-grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
+    @media (max-width: 768px) { .cc-grid-cards { grid-template-columns: 1fr; } .cc-metrics { grid-template-columns: repeat(2, 1fr); } }
+    @keyframes ccSlideDown { from { max-height: 0; opacity: 0; } to { max-height: 1800px; opacity: 1; } }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -534,14 +573,14 @@ app.get('/', (c) => {
               <option value="soldPct">按认购进度</option>
             </select>
             <div class="flex bg-gray-100 rounded-lg p-0.5">
-              <button onclick="setContractView('table')" id="btnViewTable" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white shadow text-teal-600"><i class="fas fa-table"></i></button>
-              <button onclick="setContractView('card')" id="btnViewCard" class="px-2.5 py-1 rounded-md text-xs font-semibold text-gray-500"><i class="fas fa-th-large"></i></button>
+              <button onclick="setContractView('table')" id="btnViewTable" class="px-2.5 py-1 rounded-md text-xs font-semibold text-gray-500"><i class="fas fa-table"></i></button>
+              <button onclick="setContractView('card')" id="btnViewCard" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white shadow text-teal-600"><i class="fas fa-th-large"></i></button>
             </div>
           </div>
         </div>
 
         <!-- 合约列表（表格视图） -->
-        <div id="contractTableView">
+        <div id="contractTableView" class="hidden">
           <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
             <div class="overflow-x-auto">
               <table class="w-full text-sm">
@@ -570,8 +609,8 @@ app.get('/', (c) => {
         </div>
 
         <!-- 合约列表（卡片视图） -->
-        <div id="contractCardView" class="hidden">
-          <div id="contractCardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div id="contractCardView">
+          <div id="contractCardGrid" class="cc-grid-cards">
           </div>
         </div>
 
@@ -842,9 +881,14 @@ app.get('/', (c) => {
       const icons = { success: 'fas fa-check-circle', error: 'fas fa-times-circle', warning: 'fas fa-exclamation-triangle', info: 'fas fa-info-circle' };
       duration = duration || (type === 'error' ? 5000 : 3000);
       const toast = document.createElement('div'); toast.className = 'toast toast-' + type;
-      toast.innerHTML = '<div class="toast-icon"><i class="' + (icons[type]||icons.info) + '"></i></div><div class="toast-body"><div class="toast-title">' + title + '</div>' + (message ? '<div class="toast-message">' + message + '</div>' : '') + '</div><button class="toast-close" onclick="this.parentElement.classList.add(\\'toast-exit\\'); setTimeout(() => this.parentElement.remove(), 300);"><i class="fas fa-times"></i></button><div class="toast-progress" style="animation-duration: ' + duration + 'ms;"></div>';
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'toast-close';
+      closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+      closeBtn.onclick = function() { this.parentElement.classList.add('toast-exit'); setTimeout(function() { toast.remove(); }, 300); };
+      toast.innerHTML = '<div class="toast-icon"><i class="' + (icons[type]||icons.info) + '"></i></div><div class="toast-body"><div class="toast-title">' + title + '</div>' + (message ? '<div class="toast-message">' + message + '</div>' : '') + '</div><div class="toast-progress" style="animation-duration: ' + duration + 'ms;"></div>';
+      toast.appendChild(closeBtn);
       container.appendChild(toast);
-      setTimeout(() => { if (toast.parentElement) { toast.classList.add('toast-exit'); setTimeout(() => toast.remove(), 300); } }, duration);
+      setTimeout(function() { if (toast.parentElement) { toast.classList.add('toast-exit'); setTimeout(function() { toast.remove(); }, 300); } }, duration);
     }
 
     // ==================== Utilities ====================
@@ -922,10 +966,11 @@ app.get('/', (c) => {
       document.getElementById('ddName').textContent = name;
       document.getElementById('ddRole').textContent = '投资者';
       document.getElementById('welcomeText').textContent = '欢迎回来，' + name;
-      switchPage('pageDashboard');
       initMySieves();
       renderSieveSelector();
       selectSieve('all');
+      // 登录后直接进入合约看板（首页）
+      goToContracts();
       showToast('success', '登录成功', '欢迎回来，' + name);
       if (!localStorage.getItem('ec_onboarded')) { setTimeout(showOnboarding, 800); }
     }
@@ -1513,7 +1558,7 @@ app.get('/', (c) => {
         const cardGrade = getScoreGrade(cardOverall);
         const miniCanvasId = 'miniRadar_' + d.id;
 
-        return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openDetail(\\'' + d.id + '\\')">' +
+        return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openDetail(&#39;' + d.id + '&#39;)">' +
           // MCN Header
           '<div class="flex items-center justify-between mb-1.5">' +
             '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.12); font-size: 10px;">' + (d.mcn || '') + '</span>' +
@@ -1570,7 +1615,7 @@ app.get('/', (c) => {
             '<span class="text-xs text-gray-400"><i class="fas fa-paper-plane mr-1 text-amber-300"></i>' + d.originateDate + '</span>' +
             (d.myUnits > 0
               ? '<span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>已认购 ' + d.myUnits + ' 份</span>'
-              : '<button onclick="event.stopPropagation(); openDetail(\\'' + d.id + '\\')" class="text-xs font-medium text-teal-500 hover:text-teal-700 transition-colors"><i class="fas fa-shopping-cart mr-1"></i>认购份额</button>') +
+              : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-medium text-teal-500 hover:text-teal-700 transition-colors"><i class="fas fa-shopping-cart mr-1"></i>认购份额</button>') +
           '</div>' +
         '</div>';
       }).join('');
@@ -1930,7 +1975,8 @@ app.get('/', (c) => {
     }
 
     // ==================== 合约看板 ====================
-    let contractView = 'table'; // 'table' or 'card'
+    let contractView = 'card'; // 默认卡片视图
+    let expandedCardId = null; // 当前展开的卡片ID
 
     function goToContracts() {
       switchPage('pageContracts');
@@ -1939,11 +1985,49 @@ app.get('/', (c) => {
 
     function setContractView(view) {
       contractView = view;
+      expandedCardId = null;
       document.getElementById('btnViewTable').className = 'px-2.5 py-1 rounded-md text-xs font-semibold ' + (view === 'table' ? 'bg-white shadow text-teal-600' : 'text-gray-500');
       document.getElementById('btnViewCard').className = 'px-2.5 py-1 rounded-md text-xs font-semibold ' + (view === 'card' ? 'bg-white shadow text-teal-600' : 'text-gray-500');
       document.getElementById('contractTableView').classList.toggle('hidden', view !== 'table');
       document.getElementById('contractCardView').classList.toggle('hidden', view !== 'card');
       renderContractBoard();
+    }
+
+    // 生成模拟交易历史
+    function generateTxHistory(deal) {
+      const events = [];
+      events.push({ date: deal.issueDate, type: 'issue', title: '合约发行', desc: '由 ' + deal.originator + ' 通过发起通发行', icon: 'fa-rocket', color: '#2EC4B6' });
+      const issueD = new Date(deal.issueDate);
+      const d2 = new Date(issueD); d2.setDate(d2.getDate() + 3);
+      events.push({ date: d2.toISOString().slice(0,10), type: 'audit', title: '平台审核通过', desc: 'AI风控评级: ' + deal.riskGrade + ' · 综合评分: ' + deal.aiScore, icon: 'fa-shield-alt', color: '#10b981' });
+      const d3 = new Date(issueD); d3.setDate(d3.getDate() + 7);
+      events.push({ date: d3.toISOString().slice(0,10), type: 'open', title: '开放认购', desc: '总份额 ' + deal.totalUnits.toLocaleString() + ' 份 · ¥' + deal.unitPrice.toLocaleString() + '/份', icon: 'fa-door-open', color: '#06b6d4' });
+      if (deal.soldUnits > 0) {
+        const d4 = new Date(issueD); d4.setDate(d4.getDate() + 12);
+        events.push({ date: d4.toISOString().slice(0,10), type: 'trade', title: '认购进行中', desc: '已认购 ' + deal.soldUnits.toLocaleString() + ' 份 (' + Math.round(deal.soldUnits/deal.totalUnits*100) + '%)', icon: 'fa-chart-line', color: '#f59e0b' });
+      }
+      if (deal.myUnits > 0) {
+        const d5 = new Date(issueD); d5.setDate(d5.getDate() + 15);
+        events.push({ date: d5.toISOString().slice(0,10), type: 'my', title: '您的认购', desc: '认购 ' + deal.myUnits + ' 份 · 投入 ¥' + (deal.myUnits * deal.unitPrice).toLocaleString(), icon: 'fa-user-check', color: '#059669' });
+      }
+      events.push({ date: deal.maturityDate || '—', type: 'maturity', title: '合约到期', desc: '预计到期日 · 届时结算收益', icon: 'fa-flag-checkered', color: '#94a3b8' });
+      return events;
+    }
+
+    // 展开/折叠卡片
+    function toggleCardExpand(dealId, evt) {
+      if (evt) evt.stopPropagation();
+      const wasExpanded = expandedCardId === dealId;
+      expandedCardId = wasExpanded ? null : dealId;
+      // 重新渲染
+      renderContractBoard();
+      // 如果展开，滚动到该卡片
+      if (!wasExpanded) {
+        setTimeout(function() {
+          var el = document.getElementById('cc_' + dealId);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
     }
 
     function toggleMCNExplainer() {
@@ -2023,7 +2107,7 @@ app.get('/', (c) => {
           const overall = calcOverallScore(scores);
           const grade = getScoreGrade(overall);
 
-          return '<tr class="border-b border-gray-50 hover:bg-teal-50/30 cursor-pointer transition-colors" onclick="openDetail(\\'' + d.id + '\\')">' +
+          return '<tr class="border-b border-gray-50 hover:bg-teal-50/30 cursor-pointer transition-colors" onclick="openDetail(&#39;' + d.id + '&#39;)">' +
             '<td class="px-4 py-3"><div class="font-mono text-xs font-bold tracking-wide" style="color: #0f766e;">' + d.mcn + '</div><div class="text-xs text-gray-400 mt-0.5 font-medium">' + (d.contractType || 'RSN') + ' · ' + (d.currency || 'CNY') + '</div></td>' +
             '<td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase text-xs" style="color: #5DC4B3;"></i></div><div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">' + d.name + '</p><p class="text-xs text-gray-400 truncate">' + d.originator + '</p></div></div></td>' +
             '<td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded text-xs font-semibold" style="background: rgba(245,158,11,0.08); color: #92400e;">' + (INDUSTRY_CODES[d.industry] || 'XX') + '</span><p class="text-xs text-gray-400 mt-0.5">' + d.industry + '</p></td>' +
@@ -2036,78 +2120,183 @@ app.get('/', (c) => {
             '<td class="px-3 py-3"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden" style="min-width:48px;"><div class="h-full rounded-full" style="width:' + soldPct + '%; background:' + soldColor + ';"></div></div><span class="text-xs font-bold flex-shrink-0" style="color:' + soldColor + ';">' + soldPct + '%</span></div></td>' +
             '<td class="px-3 py-3 text-center">' + (d.myUnits > 0 ? '<div class="text-xs font-bold text-emerald-600">' + d.myUnits + '份</div><div class="text-xs text-gray-400">¥' + (d.myUnits * d.unitPrice).toLocaleString() + '</div>' : '<span class="text-xs text-gray-300">—</span>') + '</td>' +
             '<td class="px-3 py-3 text-center"><span class="badge ' + st.cls + '"><i class="fas ' + st.icon + ' mr-1" style="font-size:9px;"></i>' + st.label + '</span></td>' +
-            '<td class="px-3 py-3 text-center"><button onclick="event.stopPropagation(); openDetail(\\'' + d.id + '\\')" class="text-xs text-teal-600 hover:text-teal-800 font-semibold"><i class="fas fa-arrow-right"></i></button></td>' +
+            '<td class="px-3 py-3 text-center"><button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs text-teal-600 hover:text-teal-800 font-semibold"><i class="fas fa-arrow-right"></i></button></td>' +
           '</tr>';
         }).join('');
       }
 
-      // ===== 卡片视图 =====
+      // ===== 卡片视图 (Fintech Card - 可展开) =====
       if (contractView === 'card') {
         if (tableView) tableView.classList.add('hidden');
         if (cardView) cardView.classList.remove('hidden');
 
         const cardGrid = document.getElementById('contractCardGrid');
         if (!cardGrid) return;
-        cardGrid.innerHTML = filtered.map(d => {
-          const st = statusMap[d.status] || statusMap.open;
-          const soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
-          const soldColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
-          const scores = calcRadarScores(d);
-          const overall = calcOverallScore(scores);
-          const grade = getScoreGrade(overall);
-          const mcnInfo = parseMCN(d.mcn);
-          const miniCanvasId = 'cMiniRadar_' + d.id;
+        cardGrid.innerHTML = filtered.map(function(d) {
+          var st = statusMap[d.status] || statusMap.open;
+          var soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
+          var soldColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
+          var scores = calcRadarScores(d);
+          var overall = calcOverallScore(scores);
+          var grade = getScoreGrade(overall);
+          var isExpanded = expandedCardId === d.id;
+          var miniCanvasId = 'ccRadar_' + d.id;
+          var bigCanvasId = 'ccRadarBig_' + d.id;
+          var avail = d.totalUnits - d.soldUnits;
+          var aiColor = parseFloat(d.aiScore) >= 9 ? '#059669' : parseFloat(d.aiScore) >= 8 ? '#0d9488' : '#d97706';
 
-          return '<div class="project-card group cursor-pointer" onclick="openDetail(\\'' + d.id + '\\')">' +
-            // MCN 编号头
-            '<div class="flex items-center justify-between mb-2">' +
-              '<div class="flex items-center gap-2">' +
-                '<span class="font-mono text-xs font-black tracking-wider px-2 py-1 rounded-lg" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.15);">' + d.mcn + '</span>' +
+          // 生成交易历史
+          var txHistory = generateTxHistory(d);
+          var txHtml = txHistory.map(function(tx) {
+            var isActive = tx.type !== 'maturity';
+            return '<div class="cc-timeline-item">' +
+              '<div class="cc-timeline-dot' + (isActive ? ' active' : '') + '"></div>' +
+              '<div class="flex items-center justify-between">' +
+                '<div>' +
+                  '<p class="text-xs font-bold text-gray-700"><i class="fas ' + tx.icon + ' mr-1" style="color:' + tx.color + '; font-size:10px;"></i>' + tx.title + '</p>' +
+                  '<p class="text-xs text-gray-400 mt-0.5">' + tx.desc + '</p>' +
+                '</div>' +
+                '<span class="text-xs text-gray-300 flex-shrink-0 ml-2 font-mono">' + tx.date + '</span>' +
               '</div>' +
-              '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1" style="font-size:9px;"></i>' + st.label + '</span>' +
-            '</div>' +
-            // 名称 + 评分
-            '<div class="flex items-center justify-between mb-2">' +
-              '<div class="flex items-center gap-2 min-w-0 flex-1">' +
-                '<div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase text-sm" style="color: #5DC4B3;"></i></div>' +
-                '<div class="min-w-0"><h3 class="font-bold text-gray-900 text-sm truncate group-hover:text-teal-600">' + d.name + '</h3><p class="text-xs text-gray-400">' + d.industry + ' · ' + d.location + '</p></div>' +
+            '</div>';
+          }).join('');
+
+          // 展开区域：维度得分列表
+          var dimHtml = RADAR_DIMENSIONS.map(function(dim, i) {
+            var s = scores[i];
+            var g = getScoreGrade(s);
+            return '<div class="flex items-center gap-2 py-1.5">' +
+              '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:10px; width:14px; text-align:center;"></i>' +
+              '<span class="text-xs text-gray-600 w-20 truncate">' + dim.label.replace('YITO', '').substring(0,6) + '</span>' +
+              '<div class="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden"><div class="h-full rounded-full" style="width:' + s + '%; background:' + dim.color + ';"></div></div>' +
+              '<span class="text-xs font-bold w-6 text-right" style="color:' + g.color + ';">' + s + '</span>' +
+            '</div>';
+          }).join('');
+
+          // 各筛子快速匹配结果
+          var sieveQuickHtml = '';
+          mySieves.slice(0, 3).forEach(function(key) {
+            var sieve = SIEVE_LIBRARY[key];
+            if (!sieve) return;
+            var testResult = sieve.filter([d]);
+            var passed = testResult.length > 0;
+            sieveQuickHtml += '<div class="flex items-center gap-1.5 px-2 py-1 rounded-md ' + (passed ? 'bg-emerald-50' : 'bg-red-50') + '">' +
+              '<i class="fas ' + sieve.icon + '" style="color:' + (passed ? '#059669' : '#dc2626') + '; font-size:9px;"></i>' +
+              '<span class="text-xs font-semibold ' + (passed ? 'text-emerald-700' : 'text-red-600') + '">' + sieve.name.replace('筛子','').substring(0,4) + '</span>' +
+              '<i class="fas ' + (passed ? 'fa-check' : 'fa-times') + '" style="font-size:8px; color:' + (passed ? '#059669' : '#dc2626') + ';"></i>' +
+            '</div>';
+          });
+
+          return '<div class="cc' + (isExpanded ? ' cc-expanded' : '') + '" id="cc_' + d.id + '">' +
+            '<div class="cc-accent"></div>' +
+            // ---- 卡片头部（始终可见）----
+            '<div class="cc-header" onclick="toggleCardExpand(&#39;' + d.id + '&#39;, event)">' +
+              // 第一行：MCN + 状态 + 展开按钮
+              '<div class="flex items-center justify-between mb-2">' +
+                '<div class="flex items-center gap-2">' +
+                  '<span class="cc-mcn">' + d.mcn + '</span>' +
+                  '<span class="cc-status cc-status-' + d.status + '"><i class="fas ' + st.icon + '" style="font-size:8px;"></i>' + st.label + '</span>' +
+                '</div>' +
+                '<button class="cc-expand-toggle" onclick="toggleCardExpand(&#39;' + d.id + '&#39;, event)"><i class="fas fa-chevron-down" style="font-size:10px; color:#94a3b8;"></i></button>' +
               '</div>' +
-              '<div class="flex items-center gap-1.5 flex-shrink-0" title="合约综合评分">' +
-                '<canvas id="' + miniCanvasId + '" width="60" height="60" style="width:28px;height:28px;"></canvas>' +
-                '<div class="text-right"><p class="text-sm font-black leading-none" style="color:' + grade.color + ';">' + overall + '</p><p class="font-bold leading-none" style="font-size:9px; color:' + grade.color + ';">' + grade.grade + '</p></div>' +
+              // 第二行：名称 + 综合评分
+              '<div class="flex items-center justify-between">' +
+                '<div class="flex items-center gap-2.5 min-w-0 flex-1">' +
+                  '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(46,196,182,0.1), rgba(6,182,212,0.08));"><i class="fas fa-briefcase" style="color:#2EC4B6; font-size:14px;"></i></div>' +
+                  '<div class="min-w-0">' +
+                    '<h3 class="font-bold text-gray-900 text-sm truncate">' + d.name + '</h3>' +
+                    '<p class="text-xs text-gray-400">' + d.industry + ' · ' + d.location + ' · ' + d.originator + '</p>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="flex items-center gap-2 flex-shrink-0 ml-3">' +
+                  '<canvas id="' + miniCanvasId + '" width="60" height="60" style="width:28px;height:28px;"></canvas>' +
+                  '<div class="cc-score-ring" style="border-color:' + grade.color + ';">' +
+                    '<span class="text-sm font-black leading-none" style="color:' + grade.color + ';">' + overall + '</span>' +
+                    '<span style="font-size:8px; font-weight:800; color:' + grade.color + ';">' + grade.grade + '</span>' +
+                  '</div>' +
+                '</div>' +
               '</div>' +
             '</div>' +
-            // 核心指标
-            '<div class="grid grid-cols-4 gap-1.5 mb-2">' +
-              '<div class="text-center p-1.5 rounded-lg bg-gray-50"><p class="text-xs font-bold text-gray-700">¥' + (d.amount/10000).toFixed(0) + '万</p><p class="text-xs text-gray-400" style="font-size:9px;">总额</p></div>' +
-              '<div class="text-center p-1.5 rounded-lg bg-gray-50"><p class="text-xs font-bold" style="color:#0f766e;">' + d.revenueShare + '</p><p class="text-xs text-gray-400" style="font-size:9px;">分成</p></div>' +
-              '<div class="text-center p-1.5 rounded-lg bg-gray-50"><p class="text-xs font-bold text-gray-700">' + d.period + '</p><p class="text-xs text-gray-400" style="font-size:9px;">期限</p></div>' +
-              '<div class="text-center p-1.5 rounded-lg bg-gray-50"><p class="text-xs font-bold" style="color:' + (parseFloat(d.aiScore) >= 9 ? '#059669' : '#0d9488') + ';">' + d.aiScore + '</p><p class="text-xs text-gray-400" style="font-size:9px;">AI评分</p></div>' +
-            '</div>' +
-            // 认购进度
-            '<div class="p-2 rounded-xl mb-2" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.1);">' +
-              '<div class="flex items-center justify-between mb-1">' +
-                '<span class="text-xs font-semibold text-gray-600"><i class="fas fa-file-contract text-teal-500 mr-1" style="font-size:10px;"></i>' + d.totalUnits.toLocaleString() + ' 份</span>' +
-                '<span class="text-xs font-bold" style="color:' + soldColor + ';">' + soldPct + '% 已认购</span>' +
+            // ---- 卡片主体（始终可见的核心指标）----
+            '<div class="cc-body">' +
+              // 核心指标网格
+              '<div class="cc-metrics mb-2.5">' +
+                '<div class="cc-metric"><div class="cc-metric-val" style="color:#0f766e;">¥' + (d.amount/10000).toFixed(0) + '万</div><div class="cc-metric-lbl">总额</div></div>' +
+                '<div class="cc-metric"><div class="cc-metric-val" style="color:#2EC4B6;">' + d.revenueShare + '</div><div class="cc-metric-lbl">分成</div></div>' +
+                '<div class="cc-metric"><div class="cc-metric-val">' + d.period + '</div><div class="cc-metric-lbl">期限</div></div>' +
+                '<div class="cc-metric"><div class="cc-metric-val" style="color:' + aiColor + ';">' + d.aiScore + '</div><div class="cc-metric-lbl">AI评分</div></div>' +
               '</div>' +
-              '<div class="h-1.5 rounded-full bg-gray-200 overflow-hidden"><div class="h-full rounded-full" style="width:' + soldPct + '%; background:' + soldColor + ';"></div></div>' +
-              (d.myUnits > 0 ? '<div class="mt-1.5 flex items-center gap-1 text-xs"><i class="fas fa-user-check text-emerald-500" style="font-size:9px;"></i><span class="text-emerald-600 font-bold">我已认购 ' + d.myUnits + ' 份 (¥' + (d.myUnits * d.unitPrice).toLocaleString() + ')</span></div>' : '') +
+              // 认购进度
+              '<div class="flex items-center gap-2 mb-1.5">' +
+                '<span class="text-xs font-semibold text-gray-500">' + d.soldUnits.toLocaleString() + '/' + d.totalUnits.toLocaleString() + ' 份</span>' +
+                '<div class="flex-1 cc-progress"><div class="cc-progress-fill" style="width:' + soldPct + '%; background:' + soldColor + ';"></div></div>' +
+                '<span class="text-xs font-bold" style="color:' + soldColor + ';">' + soldPct + '%</span>' +
+              '</div>' +
+              (d.myUnits > 0 ? '<div class="flex items-center gap-1 text-xs mb-1"><i class="fas fa-user-check text-emerald-500" style="font-size:9px;"></i><span class="text-emerald-600 font-bold">已认购 ' + d.myUnits + ' 份 · ¥' + (d.myUnits * d.unitPrice).toLocaleString() + '</span></div>' : '') +
+              // 底部：日期 + 快速操作
+              '<div class="flex items-center justify-between mt-2 pt-2" style="border-top: 1px solid rgba(0,0,0,0.04);">' +
+                '<span class="text-xs text-gray-300 font-mono">' + d.issueDate + ' → ' + (d.maturityDate || '—') + '</span>' +
+                '<div class="flex items-center gap-1.5">' +
+                  '<span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:' + grade.bg + '; color:' + grade.color + ';">' + d.riskGrade + '</span>' +
+                  (avail > 0 ? '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-semibold px-2.5 py-1 rounded-md text-white" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4);"><i class="fas fa-shopping-cart mr-1" style="font-size:9px;"></i>认购</button>' : '<span class="text-xs text-gray-400 font-medium">已售罄</span>') +
+                '</div>' +
+              '</div>' +
             '</div>' +
-            // 底部
-            '<div class="flex items-center justify-between text-xs">' +
-              '<span class="text-gray-400">发行 ' + d.issueDate + '</span>' +
-              '<span class="text-gray-400">到期 ' + (d.maturityDate || '—') + '</span>' +
+            // ---- 展开区域（点击后显示）----
+            '<div class="cc-expand-area">' +
+              '<div style="padding: 0 16px 16px;">' +
+                '<div style="height:1px; background: linear-gradient(90deg, transparent, rgba(46,196,182,0.2), transparent); margin-bottom: 12px;"></div>' +
+                // 展开内容：三栏布局
+                '<div class="grid gap-3" style="grid-template-columns: 1fr 1fr;">' +
+                  // 左列：雷达图 + 维度详情
+                  '<div>' +
+                    '<div class="cc-section">' +
+                      '<div class="cc-section-title"><i class="fas fa-crosshairs text-teal-500"></i>多维评估雷达</div>' +
+                      '<div class="flex justify-center"><canvas id="' + bigCanvasId + '" style="max-width:100%;"></canvas></div>' +
+                    '</div>' +
+                    '<div class="cc-section">' +
+                      '<div class="cc-section-title"><i class="fas fa-chart-bar text-cyan-500"></i>维度得分</div>' +
+                      dimHtml +
+                    '</div>' +
+                  '</div>' +
+                  // 右列：交易历史 + 筛子匹配 + 认购操作
+                  '<div>' +
+                    '<div class="cc-section">' +
+                      '<div class="cc-section-title"><i class="fas fa-history text-amber-500"></i>交易历史</div>' +
+                      '<div class="cc-timeline">' + txHtml + '</div>' +
+                    '</div>' +
+                    '<div class="cc-section">' +
+                      '<div class="cc-section-title"><i class="fas fa-filter text-purple-500"></i>筛子匹配</div>' +
+                      '<div class="flex flex-wrap gap-1.5">' + sieveQuickHtml + '</div>' +
+                    '</div>' +
+                    '<div class="cc-section" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff);">' +
+                      '<div class="cc-section-title"><i class="fas fa-file-contract text-teal-500"></i>合约操作</div>' +
+                      '<div class="grid grid-cols-2 gap-2 mb-2">' +
+                        '<div class="text-center p-2 bg-white rounded-lg"><p class="text-sm font-bold text-gray-800">' + d.totalUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">总份数</p></div>' +
+                        '<div class="text-center p-2 bg-white rounded-lg"><p class="text-sm font-bold text-teal-600">' + avail.toLocaleString() + '</p><p class="text-xs text-gray-400">可认购</p></div>' +
+                      '</div>' +
+                      '<div class="flex gap-2">' +
+                        '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="flex-1 py-2 text-xs font-semibold text-white rounded-lg" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4);"><i class="fas fa-arrow-right mr-1"></i>查看完整详情</button>' +
+                        '<button onclick="event.stopPropagation(); showToast(&#39;info&#39;,&#39;分享&#39;,&#39;合约链接已复制&#39;)" class="py-2 px-3 text-xs font-semibold text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"><i class="fas fa-share-alt"></i></button>' +
+                      '</div>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
             '</div>' +
           '</div>';
         }).join('');
 
-        // 延迟绘制小雷达
-        setTimeout(() => {
-          filtered.forEach(d => {
-            const scores = calcRadarScores(d);
-            drawMiniRadar('cMiniRadar_' + d.id, scores);
+        // 延迟绘制雷达图
+        setTimeout(function() {
+          filtered.forEach(function(d) {
+            var scores = calcRadarScores(d);
+            drawMiniRadar('ccRadar_' + d.id, scores);
+            if (expandedCardId === d.id) {
+              drawRadarChart('ccRadarBig_' + d.id, scores, { size: 260 });
+            }
           });
-        }, 50);
+        }, 80);
       }
     }
 
