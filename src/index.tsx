@@ -448,9 +448,9 @@ app.get('/', (c) => {
       <!-- Right: Analysis (筛子评估结果) -->
       <div class="w-3/5 flex flex-col bg-slate-50 overflow-y-auto">
         <div class="p-3 border-b border-gray-200 bg-white flex items-center justify-between">
-          <div class="flex items-center space-x-2"><span class="text-sm font-semibold text-gray-700"><i class="fas fa-filter mr-1.5 text-cyan-500"></i>筛子评估报告</span></div>
+          <div class="flex items-center space-x-2"><span class="text-sm font-semibold text-gray-700"><i class="fas fa-chart-pie mr-1.5 text-teal-500"></i>合约评估</span></div>
           <div class="flex bg-gray-100 rounded-lg p-0.5">
-            <button onclick="switchDetailView('sieve')" id="btnSieve" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white shadow text-teal-600"><i class="fas fa-filter mr-1"></i>筛子结果</button>
+            <button onclick="switchDetailView('sieve')" id="btnSieve" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white shadow text-teal-600"><i class="fas fa-crosshairs mr-1"></i>雷达评估</button>
             <button onclick="switchDetailView('financials')" id="btnFinancials" class="px-2.5 py-1 rounded-md text-xs font-semibold text-gray-600"><i class="fas fa-calculator mr-1"></i>财务</button>
             <button onclick="switchDetailView('timeline')" id="btnTimeline" class="px-2.5 py-1 rounded-md text-xs font-semibold text-gray-600"><i class="fas fa-stream mr-1"></i>时间线</button>
           </div>
@@ -809,6 +809,280 @@ app.get('/', (c) => {
       localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
     }
 
+    // ==================== 合约多维度评估体系 ====================
+    // 8个维度：YITO年化收益率、合约时长适配度、收入稳定性、风控评级、流动性、团队实力、市场潜力、AI综合评分
+    const RADAR_DIMENSIONS = [
+      { key: 'yield', label: 'YITO年化收益率', icon: 'fa-percentage', color: '#f59e0b', desc: '基于分成比例和期限折算的年化投资回报率（YITO模型）' },
+      { key: 'duration', label: '合约时长适配度', icon: 'fa-clock', color: '#06b6d4', desc: '合约期限合理性评估，12-30个月为最优区间' },
+      { key: 'stability', label: '收入稳定性', icon: 'fa-wave-square', color: '#8b5cf6', desc: '基于月营收数据推算的收入波动系数，越低越稳' },
+      { key: 'riskCtrl', label: '风控评级', icon: 'fa-shield-alt', color: '#10b981', desc: '综合风控等级评估，含信用风险、运营风险、市场风险' },
+      { key: 'liquidity', label: '流动性', icon: 'fa-exchange-alt', color: '#3b82f6', desc: '份额认购热度及二级市场潜在可转让性' },
+      { key: 'team', label: '团队实力', icon: 'fa-users', color: '#ec4899', desc: '团队规模、运营年限、管理层经验综合评估' },
+      { key: 'market', label: '市场潜力', icon: 'fa-chart-area', color: '#14b8a6', desc: '所在行业景气度与目标城市经济活力加权' },
+      { key: 'aiScore', label: 'AI综合评分', icon: 'fa-robot', color: '#f97316', desc: 'AI大模型对合约多维度因子的综合信用打分' }
+    ];
+
+    // 根据deal数据计算各维度分数 (0-100)
+    function calcRadarScores(deal) {
+      if (!deal) return RADAR_DIMENSIONS.map(() => 50);
+
+      // 1. YITO年化收益率 — 分成比例越高、期限适中 => 年化越高
+      const shareNum = parseInt(deal.revenueShare) || 10;
+      const periodNum = parseInt(deal.period) || 24;
+      const annualYield = (shareNum / periodNum) * 12; // 简化年化
+      const yieldScore = Math.min(100, Math.max(15, Math.round(annualYield * 8 + 10)));
+
+      // 2. 合约时长适配度 — 12-30个月为最优，偏离扣分
+      let durationScore;
+      if (periodNum >= 12 && periodNum <= 30) durationScore = 75 + Math.round((1 - Math.abs(periodNum - 21) / 9) * 25);
+      else if (periodNum < 12) durationScore = Math.max(30, 75 - (12 - periodNum) * 5);
+      else durationScore = Math.max(25, 75 - (periodNum - 30) * 3);
+
+      // 3. 收入稳定性 — 用月营收和行业推算
+      const revenue = parseInt(deal.monthlyRevenue) || 100;
+      const stableIndustries = ['餐饮', '健康', '教育'];
+      const isStable = stableIndustries.includes(deal.industry);
+      const stabilityScore = Math.min(95, Math.max(30, Math.round(50 + (isStable ? 20 : -5) + (revenue > 100 ? 15 : revenue > 50 ? 8 : 0) + Math.random() * 12)));
+
+      // 4. 风控评级 — 直接映射
+      const riskMap = { 'A+': 95, 'A': 82, 'A-': 72, 'B+': 58, 'B': 45, 'B-': 35, 'C': 20 };
+      const riskCtrlScore = riskMap[deal.riskGrade] || 50;
+
+      // 5. 流动性 — 认购进度越高说明越受欢迎（但过高也意味着份额紧张）
+      const soldPct = deal.totalUnits > 0 ? deal.soldUnits / deal.totalUnits : 0;
+      const liquidityScore = Math.min(95, Math.max(25, Math.round(
+        soldPct < 0.3 ? 40 + soldPct * 80 :
+        soldPct < 0.7 ? 65 + (soldPct - 0.3) * 50 :
+        85 + (1 - soldPct) * 30
+      )));
+
+      // 6. 团队实力 — 员工数+运营年限
+      const emp = deal.employeeCount || 30;
+      const years = parseFloat(deal.operatingYears) || 2;
+      const teamScore = Math.min(95, Math.max(20, Math.round(
+        (Math.min(emp, 100) / 100) * 45 + (Math.min(years, 8) / 8) * 45 + 10
+      )));
+
+      // 7. 市场潜力 — 行业+城市
+      const hotIndustries = { '科技': 92, '健康': 85, '教育': 78, '餐饮': 72, '零售': 65, '演艺': 60 };
+      const hotCities = { '北京': 15, '上海': 14, '深圳': 13, '杭州': 12, '广州': 10, '成都': 8, '全国': 11, '天津': 7 };
+      const marketScore = Math.min(98, Math.max(30, (hotIndustries[deal.industry] || 60) + (hotCities[deal.location] || 5)));
+
+      // 8. AI综合评分 — 直接用aiScore*10
+      const aiScoreVal = Math.min(100, Math.max(20, Math.round(parseFloat(deal.aiScore) * 10)));
+
+      return [yieldScore, durationScore, stabilityScore, riskCtrlScore, liquidityScore, teamScore, marketScore, aiScoreVal];
+    }
+
+    // 计算综合得分（加权平均）
+    function calcOverallScore(scores) {
+      const weights = [0.20, 0.08, 0.15, 0.18, 0.08, 0.10, 0.10, 0.11]; // 权重：收益>风控>稳定性>AI>团队=市场>时长=流动
+      let total = 0, wSum = 0;
+      scores.forEach((s, i) => { total += s * weights[i]; wSum += weights[i]; });
+      return Math.round(total / wSum);
+    }
+
+    // 评分等级判定
+    function getScoreGrade(score) {
+      if (score >= 85) return { grade: 'S', label: '卓越', color: '#059669', bg: 'rgba(5,150,105,0.1)' };
+      if (score >= 75) return { grade: 'A', label: '优秀', color: '#0d9488', bg: 'rgba(13,148,136,0.1)' };
+      if (score >= 65) return { grade: 'B+', label: '良好', color: '#2563eb', bg: 'rgba(37,99,235,0.1)' };
+      if (score >= 55) return { grade: 'B', label: '中等', color: '#d97706', bg: 'rgba(217,119,6,0.1)' };
+      if (score >= 40) return { grade: 'C', label: '偏低', color: '#dc2626', bg: 'rgba(220,38,38,0.1)' };
+      return { grade: 'D', label: '风险', color: '#991b1b', bg: 'rgba(153,27,27,0.1)' };
+    }
+
+    // ==================== Canvas 雷达图绘制 ====================
+    function drawRadarChart(canvasId, scores, options = {}) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const size = options.size || 280;
+      canvas.width = size * dpr;
+      canvas.height = size * dpr;
+      canvas.style.width = size + 'px';
+      canvas.style.height = size + 'px';
+      ctx.scale(dpr, dpr);
+
+      const cx = size / 2;
+      const cy = size / 2;
+      const maxR = (size / 2) - 40;
+      const dims = RADAR_DIMENSIONS;
+      const n = dims.length;
+      const angleStep = (Math.PI * 2) / n;
+      const startAngle = -Math.PI / 2; // 从顶部开始
+
+      // 清空
+      ctx.clearRect(0, 0, size, size);
+
+      // 绘制背景网格（5层）
+      for (let ring = 1; ring <= 5; ring++) {
+        const r = maxR * (ring / 5);
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+          const angle = startAngle + i * angleStep;
+          const x = cx + r * Math.cos(angle);
+          const y = cy + r * Math.sin(angle);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = ring === 5 ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.04)';
+        ctx.lineWidth = ring === 5 ? 1.2 : 0.8;
+        ctx.stroke();
+
+        // 20/40/60/80/100 标注
+        if (ring % 2 === 0 || ring === 1) {
+          ctx.fillStyle = 'rgba(0,0,0,0.2)';
+          ctx.font = '9px Inter, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText((ring * 20).toString(), cx + 3, cy - r + 3);
+        }
+      }
+
+      // 绘制轴线
+      for (let i = 0; i < n; i++) {
+        const angle = startAngle + i * angleStep;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + maxR * Math.cos(angle), cy + maxR * Math.sin(angle));
+        ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+
+      // 绘制数据区域（渐变填充）
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) {
+        const idx = i % n;
+        const angle = startAngle + idx * angleStep;
+        const val = (scores[idx] || 0) / 100;
+        const r = maxR * val;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+
+      // 渐变填充
+      const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+      gradient.addColorStop(0, 'rgba(46,196,182,0.35)');
+      gradient.addColorStop(1, 'rgba(46,196,182,0.08)');
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // 描边
+      ctx.strokeStyle = 'rgba(46,196,182,0.8)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // 绘制数据点
+      for (let i = 0; i < n; i++) {
+        const angle = startAngle + i * angleStep;
+        const val = (scores[i] || 0) / 100;
+        const r = maxR * val;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+
+        // 外圈
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+        ctx.strokeStyle = dims[i].color;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // 内点
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = dims[i].color;
+        ctx.fill();
+      }
+
+      // 绘制维度标签
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      for (let i = 0; i < n; i++) {
+        const angle = startAngle + i * angleStep;
+        const labelR = maxR + 25;
+        const x = cx + labelR * Math.cos(angle);
+        const y = cy + labelR * Math.sin(angle);
+
+        // 分数
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillStyle = dims[i].color;
+        const scoreY = angle < 0 ? y - 7 : (angle > Math.PI * 0.8 ? y - 7 : y + 7);
+        ctx.fillText(scores[i].toString(), x, i === 0 ? y - 5 : scoreY);
+
+        // 标签名
+        ctx.font = '9px Inter, sans-serif';
+        ctx.fillStyle = '#6b7280';
+        const nameY = i === 0 ? y + 6 : (angle < 0 ? y + 4 : (angle > Math.PI * 0.8 ? y + 4 : y - 4));
+        // 对于左右两侧的标签，文字对齐方式调整
+        const cosA = Math.cos(angle);
+        if (cosA < -0.3) ctx.textAlign = 'right';
+        else if (cosA > 0.3) ctx.textAlign = 'left';
+        else ctx.textAlign = 'center';
+        ctx.fillText(dims[i].label, x, nameY);
+        ctx.textAlign = 'center';
+      }
+    }
+
+    // 小型雷达图（用于卡片预览）
+    function drawMiniRadar(canvasId, scores) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const size = 60;
+      canvas.width = size * dpr;
+      canvas.height = size * dpr;
+      canvas.style.width = size + 'px';
+      canvas.style.height = size + 'px';
+      ctx.scale(dpr, dpr);
+
+      const cx = size / 2, cy = size / 2, maxR = 24;
+      const n = scores.length;
+      const angleStep = (Math.PI * 2) / n;
+      const startAngle = -Math.PI / 2;
+
+      // 背景网格
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) {
+        const angle = startAngle + (i % n) * angleStep;
+        const x = cx + maxR * Math.cos(angle);
+        const y = cy + maxR * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+
+      // 数据
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) {
+        const idx = i % n;
+        const angle = startAngle + idx * angleStep;
+        const r = maxR * (scores[idx] / 100);
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+      gradient.addColorStop(0, 'rgba(46,196,182,0.4)');
+      gradient.addColorStop(1, 'rgba(46,196,182,0.1)');
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(46,196,182,0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
     // ==================== 动态渲染筛子选择器 ====================
     function renderSieveSelector() {
       const container = document.getElementById('sieveSelector');
@@ -1010,7 +1284,7 @@ app.get('/', (c) => {
         closed: { label: '已关闭', cls: 'badge-danger', icon: 'fa-lock' }
       };
 
-      grid.innerHTML = filtered.map(d => {
+      grid.innerHTML = filtered.map((d, idx) => {
         const st = statusMap[d.status] || statusMap.open;
         const hasMatch = d.matchScore !== null && d.matchScore !== undefined;
         const matchColor = hasMatch ? (d.matchScore >= 80 ? '#10b981' : d.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#6b7280';
@@ -1019,14 +1293,29 @@ app.get('/', (c) => {
         const soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
         const soldBarColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
 
+        // 计算雷达评分用于卡片展示
+        const cardScores = calcRadarScores(d);
+        const cardOverall = calcOverallScore(cardScores);
+        const cardGrade = getScoreGrade(cardOverall);
+        const miniCanvasId = 'miniRadar_' + d.id;
+
         return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openDetail(\\'' + d.id + '\\')">' +
-          // Header: name + status
+          // Header: name + status + mini radar
           '<div class="flex items-center justify-between mb-2">' +
-            '<div class="flex items-center space-x-2 min-w-0">' +
+            '<div class="flex items-center space-x-2 min-w-0 flex-1">' +
               '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase" style="color: #5DC4B3;"></i></div>' +
-              '<div class="min-w-0"><h3 class="font-bold text-gray-900 text-sm group-hover:text-teal-600 transition-colors truncate">' + d.name + '</h3><p class="text-xs text-gray-500">' + d.industry + ' · ' + d.location + '</p></div>' +
+              '<div class="min-w-0 flex-1"><h3 class="font-bold text-gray-900 text-sm group-hover:text-teal-600 transition-colors truncate">' + d.name + '</h3><p class="text-xs text-gray-500">' + d.industry + ' · ' + d.location + '</p></div>' +
             '</div>' +
-            '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1"></i>' + st.label + '</span>' +
+            '<div class="flex items-center gap-2 flex-shrink-0">' +
+              '<div class="flex items-center gap-1.5" title="合约综合评分">' +
+                '<canvas id="' + miniCanvasId + '" width="60" height="60" style="width:30px;height:30px;"></canvas>' +
+                '<div class="text-right">' +
+                  '<p class="text-sm font-black leading-none" style="color:' + cardGrade.color + ';">' + cardOverall + '</p>' +
+                  '<p class="font-bold leading-none" style="font-size:9px; color:' + cardGrade.color + ';">' + cardGrade.grade + '</p>' +
+                '</div>' +
+              '</div>' +
+              '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1"></i>' + st.label + '</span>' +
+            '</div>' +
           '</div>' +
           // 来源标签 + 筛子标签
           '<div class="flex items-center gap-1.5 mb-2">' +
@@ -1067,6 +1356,14 @@ app.get('/', (c) => {
           '</div>' +
         '</div>';
       }).join('');
+
+      // 延迟绘制卡片上的小雷达图
+      setTimeout(() => {
+        filtered.forEach(d => {
+          const scores = calcRadarScores(d);
+          drawMiniRadar('miniRadar_' + d.id, scores);
+        });
+      }, 50);
     }
 
     function filterByStatus(status) {
@@ -1255,11 +1552,16 @@ app.get('/', (c) => {
           '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">风控评级</span><span class="text-xs font-bold text-emerald-600">' + (currentDeal.riskGrade || 'N/A') + '</span></div></div>' +
         '</div>';
 
-      // Right panel — 筛子评估结果
+      // Right panel — 雷达图评估 + 筛子结果
       const hasMatch = currentDeal.matchScore !== null && currentDeal.matchScore !== undefined;
       const matchColor = hasMatch ? (currentDeal.matchScore >= 80 ? '#10b981' : currentDeal.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#6b7280';
 
-      // 生成各筛子的评估结果（只评估用户面板中的筛子）
+      // 计算雷达评分
+      const radarScores = calcRadarScores(currentDeal);
+      const overallScore = calcOverallScore(radarScores);
+      const gradeInfo = getScoreGrade(overallScore);
+
+      // 生成各筛子的评估结果
       let sieveResults = '';
       mySieves.forEach(key => {
         const sieve = SIEVE_LIBRARY[key];
@@ -1280,18 +1582,94 @@ app.get('/', (c) => {
         sieveResults = '<div class="text-center py-4"><p class="text-sm text-gray-400">暂未添加筛子</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-cyan-600 mt-1 hover:underline">去管理筛子</button></div>';
       }
 
+      // 维度详细列表 HTML
+      let dimensionDetails = '';
+      RADAR_DIMENSIONS.forEach((dim, i) => {
+        const score = radarScores[i];
+        const dGrade = getScoreGrade(score);
+        const barWidth = score;
+        dimensionDetails += '<div class="radar-dim-item p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-200 transition-all cursor-pointer" onclick="toggleDimDetail(this)">' +
+          '<div class="flex items-center gap-3">' +
+            '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + dim.color + '15;"><i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:13px;"></i></div>' +
+            '<div class="flex-1 min-w-0">' +
+              '<div class="flex items-center justify-between mb-1">' +
+                '<span class="text-xs font-bold text-gray-700">' + dim.label + '</span>' +
+                '<div class="flex items-center gap-2">' +
+                  '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + score + '</span>' +
+                  '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">' + dGrade.grade + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="h-1.5 rounded-full bg-gray-200 overflow-hidden"><div class="h-full rounded-full transition-all" style="width:' + barWidth + '%; background: linear-gradient(90deg, ' + dim.color + ', ' + dim.color + 'cc);"></div></div>' +
+            '</div>' +
+            '<i class="fas fa-chevron-down text-gray-300 text-xs flex-shrink-0 dim-arrow transition-transform"></i>' +
+          '</div>' +
+          '<div class="dim-detail hidden mt-3 pt-3 border-t border-gray-100">' +
+            '<p class="text-xs text-gray-500 leading-relaxed mb-2"><i class="fas fa-info-circle mr-1" style="color:' + dim.color + ';"></i>' + dim.desc + '</p>' +
+            '<div class="flex items-center justify-between">' +
+              '<span class="text-xs text-gray-400">评分依据</span>' +
+              '<span class="text-xs font-medium" style="color:' + dGrade.color + ';">' + dGrade.label + '水平 · ' + (score >= 75 ? '优于' + (85 + Math.floor(Math.random()*10)) + '%同类合约' : score >= 55 ? '处于中位数附近' : '低于' + (55 + Math.floor(Math.random()*15)) + '%同类合约') + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+
       document.getElementById('detailRight').innerHTML =
-        '<div class="space-y-5">' +
-          // 综合匹配概览
-          (hasMatch ? '<div class="bg-white rounded-2xl p-5 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-bullseye mr-1.5" style="color:' + matchColor + ';"></i>当前筛子匹配度</h3><div class="flex items-center gap-4"><div class="w-20 h-20 rounded-full border-4 flex items-center justify-center" style="border-color:' + matchColor + ';"><span class="text-2xl font-bold" style="color:' + matchColor + ';">' + currentDeal.matchScore + '%</span></div><div class="flex-1"><p class="text-sm font-semibold text-gray-700">' + (currentDeal.sieveName || '当前筛子') + '</p><p class="text-xs text-gray-500 mt-1">' + (currentDeal.matchScore >= 80 ? '高度匹配，建议重点关注' : currentDeal.matchScore >= 60 ? '中等匹配，可进一步了解' : '匹配度较低') + '</p><div class="match-bar mt-2" style="height:5px;"><div class="match-bar-fill" style="width:' + currentDeal.matchScore + '%; background:' + matchColor + ';"></div></div></div></div></div>' : '') +
+        '<div class="space-y-4">' +
+          // ===== 合约雷达图评估 =====
+          '<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">' +
+            // 头部：综合评分 + 等级
+            '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(46,196,182,0.04), rgba(6,182,212,0.03)); border-bottom: 1px solid rgba(0,0,0,0.04);">' +
+              '<div class="flex items-center gap-3">' +
+                '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4); box-shadow: 0 4px 12px rgba(46,196,182,0.3);"><i class="fas fa-radar text-white text-sm" style="font-size:16px;">&#x25CE;</i></div>' +
+                '<div><h3 class="text-sm font-bold text-gray-900">合约多维评估</h3><p class="text-xs text-gray-400">8维度量化分析 · 综合评级</p></div>' +
+              '</div>' +
+              '<div class="flex items-center gap-3">' +
+                '<div class="text-right">' +
+                  '<p class="text-2xl font-black" style="color:' + gradeInfo.color + '; letter-spacing:-0.02em;">' + overallScore + '<span class="text-xs font-medium text-gray-400">/100</span></p>' +
+                  '<p class="text-xs font-semibold" style="color:' + gradeInfo.color + ';">' + gradeInfo.label + '</p>' +
+                '</div>' +
+                '<div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:' + gradeInfo.bg + '; border: 2px solid ' + gradeInfo.color + '33;">' +
+                  '<span class="text-xl font-black" style="color:' + gradeInfo.color + ';">' + gradeInfo.grade + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            // 雷达图
+            '<div class="flex items-center justify-center py-4 px-2">' +
+              '<canvas id="radarCanvas" style="max-width:100%;"></canvas>' +
+            '</div>' +
+            // 维度缩略指标条
+            '<div class="px-4 pb-4">' +
+              '<div class="grid grid-cols-4 gap-2">' +
+                RADAR_DIMENSIONS.map((dim, i) => {
+                  const s = radarScores[i];
+                  const g = getScoreGrade(s);
+                  return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
+                    '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
+                    '<p class="text-xs font-bold mt-1" style="color:' + g.color + ';">' + s + '</p>' +
+                    '<p class="text-xs text-gray-400 truncate" style="font-size:9px;">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
+                  '</div>';
+                }).join('') +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          // ===== 维度详解（可展开） =====
+          '<div class="bg-white rounded-2xl p-4 border border-gray-100">' +
+            '<div class="flex items-center justify-between mb-3">' +
+              '<h3 class="text-sm font-bold text-gray-800"><i class="fas fa-list-ul mr-1.5 text-teal-500"></i>维度详解</h3>' +
+              '<button onclick="toggleAllDims()" class="text-xs text-teal-600 hover:text-teal-700 font-medium"><i class="fas fa-expand-alt mr-1"></i>全部展开</button>' +
+            '</div>' +
+            '<div class="space-y-2">' + dimensionDetails + '</div>' +
+          '</div>' +
+          // 筛子匹配概览
+          (hasMatch ? '<div class="bg-white rounded-2xl p-4 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-bullseye mr-1.5" style="color:' + matchColor + ';"></i>当前筛子匹配度</h3><div class="flex items-center gap-4"><div class="w-16 h-16 rounded-full border-4 flex items-center justify-center" style="border-color:' + matchColor + ';"><span class="text-xl font-bold" style="color:' + matchColor + ';">' + currentDeal.matchScore + '%</span></div><div class="flex-1"><p class="text-sm font-semibold text-gray-700">' + (currentDeal.sieveName || '当前筛子') + '</p><p class="text-xs text-gray-500 mt-1">' + (currentDeal.matchScore >= 80 ? '高度匹配，建议重点关注' : currentDeal.matchScore >= 60 ? '中等匹配，可进一步了解' : '匹配度较低') + '</p><div class="match-bar mt-2" style="height:4px;"><div class="match-bar-fill" style="width:' + currentDeal.matchScore + '%; background:' + matchColor + ';"></div></div></div></div></div>' : '') +
           // 各筛子评估结果
-          '<div class="bg-white rounded-2xl p-5 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-4"><i class="fas fa-filter mr-1.5 text-cyan-500"></i>全部筛子评估结果</h3><div class="space-y-3">' + sieveResults + '</div></div>' +
+          '<div class="bg-white rounded-2xl p-4 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-filter mr-1.5 text-cyan-500"></i>筛子评估</h3><div class="space-y-2">' + sieveResults + '</div></div>' +
           // 收入预测
-          '<div class="bg-white rounded-2xl p-5 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-4"><i class="fas fa-chart-line mr-1.5 text-teal-500"></i>收入预测</h3><div class="h-40 flex items-end justify-around gap-2">' +
-          [65,78,82,70,88,92,85,90,95,88,92,98].map((v,i) => '<div class="flex flex-col items-center flex-1"><div class="w-full rounded-t-md" style="height:' + v + '%; background: linear-gradient(180deg, #5DC4B3 0%, #49A89A 100%); opacity:' + (0.5+i*0.04) + ';"></div><span class="text-xs text-gray-400 mt-1">' + (i+1) + '月</span></div>').join('') +
+          '<div class="bg-white rounded-2xl p-4 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-chart-line mr-1.5 text-teal-500"></i>收入预测</h3><div class="h-36 flex items-end justify-around gap-1.5">' +
+          [65,78,82,70,88,92,85,90,95,88,92,98].map((v,i) => '<div class="flex flex-col items-center flex-1"><div class="w-full rounded-t-md" style="height:' + v + '%; background: linear-gradient(180deg, #5DC4B3 0%, #49A89A 100%); opacity:' + (0.5+i*0.04) + ';"></div><span class="text-xs text-gray-400 mt-1" style="font-size:9px;">' + (i+1) + '月</span></div>').join('') +
           '</div></div>' +
           // 项目流向
-          '<div class="bg-white rounded-2xl p-5 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-4"><i class="fas fa-route mr-1.5 text-amber-500"></i>项目流向</h3><div class="space-y-4">' +
+          '<div class="bg-white rounded-2xl p-4 border border-gray-100"><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-route mr-1.5 text-amber-500"></i>项目流向</h3><div class="space-y-3">' +
           [
             { icon: 'fa-paper-plane', color: 'amber', title: '发起通 — 项目提交', desc: currentDeal.originator + ' · ' + currentDeal.originateDate },
             { icon: 'fa-filter', color: 'cyan', title: '评估通 — AI筛选', desc: '通过 ' + (hasMatch ? currentDeal.matchScore + '% 匹配' : '基础审核') },
@@ -1300,6 +1678,11 @@ app.get('/', (c) => {
           ].map(t => '<div class="flex items-start space-x-3"><div class="w-8 h-8 rounded-lg bg-' + t.color + '-100 flex items-center justify-center flex-shrink-0"><i class="fas ' + t.icon + ' text-' + t.color + '-600 text-xs"></i></div><div><p class="text-sm font-medium text-gray-700">' + t.title + '</p><p class="text-xs text-gray-400">' + t.desc + '</p></div></div>').join('') +
           '</div></div>' +
         '</div>';
+
+      // 延迟绘制雷达图（等DOM渲染完成）
+      setTimeout(() => {
+        drawRadarChart('radarCanvas', radarScores, { size: 320 });
+      }, 50);
 
       switchPage('pageDetail');
     }
@@ -1313,6 +1696,29 @@ app.get('/', (c) => {
       } else {
         showSubscribeModal();
       }
+    }
+
+    // 维度详解展开/折叠
+    function toggleDimDetail(el) {
+      const detail = el.querySelector('.dim-detail');
+      const arrow = el.querySelector('.dim-arrow');
+      if (detail) {
+        detail.classList.toggle('hidden');
+        if (arrow) arrow.style.transform = detail.classList.contains('hidden') ? '' : 'rotate(180deg)';
+      }
+    }
+
+    let allDimsExpanded = false;
+    function toggleAllDims() {
+      allDimsExpanded = !allDimsExpanded;
+      document.querySelectorAll('.radar-dim-item').forEach(el => {
+        const detail = el.querySelector('.dim-detail');
+        const arrow = el.querySelector('.dim-arrow');
+        if (detail) {
+          if (allDimsExpanded) { detail.classList.remove('hidden'); if (arrow) arrow.style.transform = 'rotate(180deg)'; }
+          else { detail.classList.add('hidden'); if (arrow) arrow.style.transform = ''; }
+        }
+      });
     }
 
     function switchDetailView(view) {
