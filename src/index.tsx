@@ -912,9 +912,9 @@ app.get('/', (c) => {
   </div>
 
   <!-- ==================== Page: AI 组合构建器 ==================== -->
-  <div id="pageAIBuilder" class="page flex-col h-screen" style="background: #f5f5f7;">
+  <div id="pageAIBuilder" class="page flex-col h-screen" style="background: #0B1E1C;">
     <!-- Nav -->
-    <nav class="px-5 py-2.5 flex-shrink-0" style="background: rgba(255,255,255,0.92); backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(0,0,0,0.06);">
+    <nav class="px-5 py-2.5 flex-shrink-0" style="background: rgba(13,36,34,0.95); backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(46,196,182,0.1);">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
           <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-all text-[#5A9A90] hover:text-[#3DD8CA]"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
@@ -926,7 +926,7 @@ app.get('/', (c) => {
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(245,158,11,0.1); color: #b45309; border: 1px solid rgba(245,158,11,0.15);"><i class="fas fa-flask mr-1"></i>试点功能</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(245,158,11,0.1); color: #FBBF24; border: 1px solid rgba(245,158,11,0.2);"><i class="fas fa-flask mr-1"></i>试点功能</span>
           <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-[#3D7A70] hover:text-red-500 hover:border-[rgba(239,68,68,0.3)]" style="border: 1px solid rgba(46,196,182,0.12);"><i class="fas fa-redo mr-1"></i>重新开始</button>
         </div>
       </div>
@@ -935,9 +935,9 @@ app.get('/', (c) => {
     <!-- Main Content: 左对话 + 右组合 -->
     <div class="flex flex-1 overflow-hidden">
       <!-- ===== 左侧: AI 对话区 ===== -->
-      <div class="w-2/5 flex flex-col bg-[#0F2E2B]" style="border-right: 1px solid rgba(0,0,0,0.06);">
+      <div class="w-2/5 flex flex-col bg-[#0F2E2B]" style="border-right: 1px solid rgba(46,196,182,0.1);">
         <!-- 对话消息区 -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="abMessages" style="scroll-behavior: smooth; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);">
+        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="abMessages" style="scroll-behavior: smooth; background: linear-gradient(180deg, #0B1E1C 0%, #0D2422 100%);">
           <!-- 初始欢迎 -->
           <div class="flex items-start gap-3 animate-fade-in" id="abWelcome">
             <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);"><i class="fas fa-robot text-white text-sm"></i></div>
@@ -961,10 +961,10 @@ app.get('/', (c) => {
           </div>
         </div>
         <!-- 输入区 -->
-        <div class="flex-shrink-0 p-4 bg-[#0F2E2B]" style="border-top: 1px solid rgba(0,0,0,0.06);">
+        <div class="flex-shrink-0 p-4 bg-[#0F2E2B]" style="border-top: 1px solid rgba(46,196,182,0.1);">
           <div class="flex items-center gap-2">
             <div class="flex-1 relative">
-              <input type="text" id="abInput" placeholder="输入您的投资需求或偏好..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: #f8fafc; border: 1px solid rgba(0,0,0,0.1); color: #1d1d1f;" onkeydown="if(event.key==='Enter')abSendMessage()">
+              <input type="text" id="abInput" placeholder="输入您的投资需求或偏好..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: #0F2E2B; border: 1px solid rgba(46,196,182,0.15); color: #E8F5F3;" onkeydown="if(event.key==='Enter')abSendMessage()">
             </div>
             <button onclick="abSendMessage()" class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><i class="fas fa-paper-plane text-white text-sm"></i></button>
           </div>
@@ -973,7 +973,7 @@ app.get('/', (c) => {
       </div>
 
       <!-- ===== 右侧: 实时组合面板 ===== -->
-      <div class="w-3/5 flex flex-col overflow-y-auto" style="background: #f5f5f7;">
+      <div class="w-3/5 flex flex-col overflow-y-auto" style="background: rgba(11,30,28,0.95);">
         <!-- 组合未生成时的等待状态 -->
         <div id="abWaitingState" class="flex-1 flex items-center justify-center p-8">
           <div class="text-center max-w-md">
@@ -1033,7 +1033,7 @@ app.get('/', (c) => {
 
           <!-- 雷达图 -->
           <div class="rounded-2xl overflow-hidden bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-            <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(0,0,0,0.04);">
+            <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(46,196,182,0.08);">
               <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>组合雷达评估</span>
               <span class="text-xs text-[#3D7A70]">8维度量化</span>
             </div>
@@ -1089,7 +1089,7 @@ app.get('/', (c) => {
     <div class="ai-chat-messages" id="aiMessages">
       <div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content">您好！我是参与通AI助手。您可以问我关于筛子模型、项目评估、参与流程等问题。</div></div>
     </div>
-    <div class="ai-chat-input" style="padding:16px; border-top:1px solid #f1f5f9;">
+    <div class="ai-chat-input" style="padding:16px; border-top:1px solid rgba(46,196,182,0.1); background:#0F2E2B;">
       <div class="flex items-center gap-2">
         <input type="text" id="aiInput" placeholder="例如：哪个筛子适合我？" class="flex-1 px-3 py-2 border border-[rgba(46,196,182,0.12)] rounded-xl text-sm" onkeydown="if(event.key==='Enter')sendAIMsg()">
         <button onclick="sendAIMsg()" class="btn-primary px-3 py-2 rounded-xl text-sm"><i class="fas fa-paper-plane"></i></button>
@@ -2161,7 +2161,7 @@ app.get('/', (c) => {
         '</div>' +
         '<div class="p-5">' +
           '<div class="p-4 bg-[rgba(11,30,28,0.6)] rounded-2xl mb-4 text-center">' +
-            '<p class="font-mono text-sm font-bold tracking-wider mb-2" style="color:#0f766e;">' + (currentDeal.mcn || '') + '</p>' +
+            '<p class="font-mono text-sm font-bold tracking-wider mb-2" style="color:#3DD8CA;">' + (currentDeal.mcn || '') + '</p>' +
             '<p class="text-3xl font-black text-[#3DD8CA] mb-1">¥1,000</p>' +
             '<p class="text-xs text-[#3D7A70]">单张合约面值 · 不可分割</p>' +
           '</div>' +
@@ -2358,7 +2358,7 @@ app.get('/', (c) => {
           // ===== 合约雷达图评估 =====
           '<div class="bg-[#0F2E2B] rounded-2xl border border-[rgba(46,196,182,0.08)] overflow-hidden">' +
             // 头部：综合评分 + 等级
-            '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(46,196,182,0.04), rgba(6,182,212,0.03)); border-bottom: 1px solid rgba(0,0,0,0.04);">' +
+            '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(46,196,182,0.04), rgba(6,182,212,0.03)); border-bottom: 1px solid rgba(46,196,182,0.08);">' +
               '<div class="flex items-center gap-3">' +
                 '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4); box-shadow: 0 4px 12px rgba(46,196,182,0.3);"><i class="fas fa-radar text-white text-sm" style="font-size:16px;">&#x25CE;</i></div>' +
                 '<div><h3 class="text-sm font-bold text-[#E8F5F3]">合约多维评估</h3><p class="text-xs text-[#3D7A70]">8维度量化分析 · 综合评级</p></div>' +
@@ -3154,7 +3154,7 @@ app.get('/', (c) => {
         '<div class="space-y-4">' +
           // 组合雷达图
           '<div class="bg-[#0F2E2B] rounded-2xl border border-[rgba(46,196,182,0.08)] overflow-hidden">' +
-            '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(139,92,246,0.04), rgba(124,58,237,0.03)); border-bottom: 1px solid rgba(0,0,0,0.04);">' +
+            '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(139,92,246,0.04), rgba(124,58,237,0.03)); border-bottom: 1px solid rgba(139,92,246,0.08);">' +
               '<div class="flex items-center gap-3">' +
                 '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-chart-pie text-white text-sm"></i></div>' +
                 '<div><h3 class="text-sm font-bold text-[#E8F5F3]">组合加权雷达图</h3><p class="text-xs text-[#3D7A70]">跨 ' + currentPortfolio.projectCount + ' 个项目 · ' + contracts.length + ' 张合约等权重加权</p></div>' +
