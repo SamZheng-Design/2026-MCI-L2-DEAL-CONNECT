@@ -139,27 +139,39 @@ app.get('/', (c) => {
     .cc-timeline-dot.active { background: #2EC4B6; }
     .cc-grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
     @media (max-width: 768px) { .cc-grid-cards { grid-template-columns: 1fr; } .cc-metrics { grid-template-columns: repeat(2, 1fr); } }
-    /* AI Builder 专属样式 */
-    .ab-quick-btn { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.28,0.11,0.32,1); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); white-space: nowrap; }
-    .ab-quick-btn:hover { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.3); color: #c4b5fd; transform: translateY(-1px); }
+    /* AI Builder 专属样式 — 白色+青绿色系 */
+    .ab-quick-btn { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.28,0.11,0.32,1); background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15); color: #3D8F83; white-space: nowrap; }
+    .ab-quick-btn:hover { background: rgba(93,196,179,0.14); border-color: rgba(93,196,179,0.35); color: #0f766e; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(93,196,179,0.12); }
     .ab-msg-user { display: flex; justify-content: flex-end; }
-    .ab-msg-user > div { max-width: 80%; padding: 12px 16px; border-radius: 16px; border-bottom-right-radius: 4px; font-size: 13px; line-height: 1.6; background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; box-shadow: 0 4px 12px rgba(124,58,237,0.25); }
+    .ab-msg-user > div { max-width: 80%; padding: 12px 16px; border-radius: 16px; border-bottom-right-radius: 4px; font-size: 13px; line-height: 1.6; background: linear-gradient(135deg, #5DC4B3, #49A89A); color: white; box-shadow: 0 4px 12px rgba(93,196,179,0.25); }
     .ab-msg-ai { display: flex; gap: 12px; align-items: flex-start; }
-    .ab-msg-ai .ab-avatar { width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #7c3aed, #6d28d9); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 12px rgba(124,58,237,0.3); }
+    .ab-msg-ai .ab-avatar { width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #5DC4B3, #3D8F83); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 8px rgba(93,196,179,0.3); }
     .ab-msg-ai .ab-avatar i { color: white; font-size: 12px; }
-    .ab-msg-ai .ab-content { flex: 1; padding: 12px 16px; border-radius: 16px; border-top-left-radius: 4px; font-size: 13px; line-height: 1.6; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.75); }
+    .ab-msg-ai .ab-content { flex: 1; padding: 12px 16px; border-radius: 16px; border-top-left-radius: 4px; font-size: 13px; line-height: 1.6; background: white; border: 1px solid rgba(0,0,0,0.06); color: #374151; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     .ab-typing { display: flex; gap: 4px; padding: 6px 0; }
-    .ab-typing span { width: 6px; height: 6px; border-radius: 50%; background: #7c3aed; animation: abTypingBounce 1.4s infinite ease-in-out both; }
+    .ab-typing span { width: 6px; height: 6px; border-radius: 50%; background: #5DC4B3; animation: abTypingBounce 1.4s infinite ease-in-out both; }
     .ab-typing span:nth-child(1) { animation-delay: -0.32s; }
     .ab-typing span:nth-child(2) { animation-delay: -0.16s; }
     @keyframes abTypingBounce { 0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
     .ab-portfolio-evolve { animation: abEvolve 0.6s cubic-bezier(0.28,0.11,0.32,1); }
     @keyframes abEvolve { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    #abInput::placeholder { color: rgba(255,255,255,0.25); }
-    #abInput:focus { border-color: rgba(139,92,246,0.4); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); outline: none; }
+    #abInput::placeholder { color: #aeaeb2; }
+    #abInput:focus { border-color: rgba(93,196,179,0.5); box-shadow: 0 0 0 3px rgba(93,196,179,0.12); outline: none; }
     @keyframes ccSlideDown { from { max-height: 0; opacity: 0; } to { max-height: 1800px; opacity: 1; } }
-    .ab-contract-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
-    .ab-contract-item:hover { border-color: rgba(139,92,246,0.2); background: rgba(139,92,246,0.05); }
+    .ab-contract-item { background: white; border: 1px solid rgba(0,0,0,0.06); }
+    .ab-contract-item:hover { border-color: rgba(93,196,179,0.3); background: rgba(93,196,179,0.03); box-shadow: 0 2px 8px rgba(93,196,179,0.08); }
+    /* AI入口卡片动效 */
+    @keyframes aiEntryShimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+    @keyframes aiEntryPulse { 0%, 100% { box-shadow: 0 4px 16px rgba(93,196,179,0.2), 0 0 0 0 rgba(93,196,179,0.3); } 50% { box-shadow: 0 8px 32px rgba(93,196,179,0.25), 0 0 0 6px rgba(93,196,179,0); } }
+    @keyframes aiEntryFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .ai-entry-card { position: relative; overflow: hidden; cursor: pointer; transition: all 0.4s cubic-bezier(0.28,0.11,0.32,1); animation: aiEntryPulse 3s ease-in-out infinite; }
+    .ai-entry-card:hover { transform: translateY(-3px) scale(1.005); box-shadow: 0 12px 40px rgba(93,196,179,0.2), 0 4px 12px rgba(0,0,0,0.06) !important; }
+    .ai-entry-card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); animation: aiEntryShimmer 4s ease-in-out infinite; pointer-events: none; }
+    .ai-entry-icon { animation: aiEntryFloat 3s ease-in-out infinite; }
+    .ai-entry-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .ai-entry-particles::before, .ai-entry-particles::after { content: ''; position: absolute; border-radius: 50%; background: rgba(255,255,255,0.3); animation: aiEntryFloat 4s ease-in-out infinite; }
+    .ai-entry-particles::before { width: 6px; height: 6px; top: 20%; right: 15%; animation-delay: -1s; }
+    .ai-entry-particles::after { width: 4px; height: 4px; bottom: 25%; right: 30%; animation-delay: -2.5s; }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -333,7 +345,7 @@ app.get('/', (c) => {
 
           <button onclick="showOnboarding()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #6b7280; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.06);" data-tip="新手引导"><i class="fas fa-question-circle text-xs"></i><span>帮助</span></button>
           <div class="h-5 mx-0.5" style="width: 1px; background: rgba(0,0,0,0.08);"></div>
-          <button onclick="goToAIBuilder()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #7c3aed; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.06)); border: 1px solid rgba(139,92,246,0.18);" data-tip="AI组合构建"><i class="fas fa-magic"></i><span>AI组合</span></button>
+          <button onclick="goToAIBuilder()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #0f766e; background: linear-gradient(135deg, rgba(93,196,179,0.1), rgba(46,196,182,0.08)); border: 1px solid rgba(93,196,179,0.25); box-shadow: 0 2px 8px rgba(93,196,179,0.1);" data-tip="AI组合构建"><i class="fas fa-magic"></i><span>AI组合</span></button>
           <!-- User avatar -->
           <div class="pl-1.5 ml-0.5 relative">
             <button onclick="toggleUserDD(event)" id="navUserBtn" class="flex items-center space-x-2 px-2 py-1.5 rounded-full transition-all" style="background: rgba(0,0,0,0.02);" onmouseover="this.style.background='rgba(93,196,179,0.08)'" onmouseout="this.style.background='rgba(0,0,0,0.02)'">
@@ -393,6 +405,35 @@ app.get('/', (c) => {
           </div>
           <div class="stat-card animate-fade-in delay-300 cursor-pointer" onclick="goToMyPortfolios()">
             <div class="flex items-center justify-between"><div><p class="stat-label">我的组合</p><p class="stat-value" id="statMyPortfolios">0</p><p class="text-xs text-gray-400 mt-0.5">跨项目基金型组合</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-object-group text-white text-sm"></i></div></div>
+          </div>
+        </div>
+
+        <!-- ===== AI 组合构建器入口 ===== -->
+        <div onclick="goToAIBuilder()" class="ai-entry-card rounded-2xl mb-5 p-0 border border-transparent" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%); box-shadow: 0 4px 16px rgba(93,196,179,0.15), 0 2px 6px rgba(0,0,0,0.06);">
+          <div class="ai-entry-particles"></div>
+          <div class="relative z-10 flex items-center justify-between p-5">
+            <div class="flex items-center gap-4">
+              <div class="ai-entry-icon w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.25), rgba(46,196,182,0.15)); border: 1px solid rgba(93,196,179,0.3); backdrop-filter: blur(8px);">
+                <i class="fas fa-magic text-xl text-white"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="text-base font-bold text-white" style="letter-spacing: -0.02em;">AI 智能组合构建器</h3>
+                  <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background: rgba(46,196,182,0.2); color: #5eead4; animation: pulseGlow 2s ease-in-out infinite;">NEW</span>
+                </div>
+                <p class="text-sm" style="color: rgba(255,255,255,0.55);">与 AI 对话，智能匹配全平台合约，一键构建个性化投资组合</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="hidden sm:flex items-center gap-4 mr-2">
+                <div class="text-center"><p class="text-lg font-black" style="color: #5eead4;" id="aiEntryContracts">0</p><p style="font-size:10px; color: rgba(255,255,255,0.35);">可选合约</p></div>
+                <div class="w-px h-8" style="background: rgba(255,255,255,0.1);"></div>
+                <div class="text-center"><p class="text-lg font-black" style="color: #fbbf24;" id="aiEntryProjects">0</p><p style="font-size:10px; color: rgba(255,255,255,0.35);">覆盖项目</p></div>
+              </div>
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">
+                <i class="fas fa-arrow-right text-white text-sm"></i>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -647,22 +688,22 @@ app.get('/', (c) => {
   </div>
 
   <!-- ==================== Page: AI 组合构建器 ==================== -->
-  <div id="pageAIBuilder" class="page flex-col h-screen" style="background: #0f0f17;">
+  <div id="pageAIBuilder" class="page flex-col h-screen" style="background: #f5f5f7;">
     <!-- Nav -->
-    <nav class="px-5 py-2.5 flex-shrink-0" style="background: rgba(15,15,23,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(139,92,246,0.12);">
+    <nav class="px-5 py-2.5 flex-shrink-0" style="background: rgba(255,255,255,0.92); backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(0,0,0,0.06);">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-all" style="color: rgba(255,255,255,0.5);" onmouseover="this.style.color='#c4b5fd';this.style.background='rgba(139,92,246,0.1)'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.background='none'"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
-          <div class="border-l pl-3" style="border-color: rgba(255,255,255,0.08);">
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-all text-gray-500 hover:text-teal-600"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <div class="border-l pl-3" style="border-color: rgba(0,0,0,0.08);">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); box-shadow: 0 0 20px rgba(124,58,237,0.4);"><i class="fas fa-magic text-white text-sm"></i></div>
-              <div><h1 class="text-sm font-bold text-white">AI 组合构建器</h1><p class="text-xs" style="color: rgba(255,255,255,0.35); font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-size:9px;">PORTFOLIO ARCHITECT · PILOT</p></div>
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.35);"><i class="fas fa-magic text-white text-sm"></i></div>
+              <div><h1 class="text-sm font-bold text-gray-900">AI 组合构建器</h1><p class="text-xs" style="color: #86868b; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-size:9px;">PORTFOLIO ARCHITECT · PILOT</p></div>
             </div>
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2);"><i class="fas fa-flask mr-1"></i>试点功能</span>
-          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all" style="color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.08);" onmouseover="this.style.color='#f87171';this.style.borderColor='rgba(248,113,113,0.3)'" onmouseout="this.style.color='rgba(255,255,255,0.4)';this.style.borderColor='rgba(255,255,255,0.08)'"><i class="fas fa-redo mr-1"></i>重新开始</button>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(245,158,11,0.1); color: #b45309; border: 1px solid rgba(245,158,11,0.15);"><i class="fas fa-flask mr-1"></i>试点功能</span>
+          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-gray-400 hover:text-red-500 hover:border-red-200" style="border: 1px solid rgba(0,0,0,0.08);"><i class="fas fa-redo mr-1"></i>重新开始</button>
         </div>
       </div>
     </nav>
@@ -670,59 +711,59 @@ app.get('/', (c) => {
     <!-- Main Content: 左对话 + 右组合 -->
     <div class="flex flex-1 overflow-hidden">
       <!-- ===== 左侧: AI 对话区 ===== -->
-      <div class="w-2/5 flex flex-col" style="background: linear-gradient(180deg, #0f0f17 0%, #13131f 100%); border-right: 1px solid rgba(139,92,246,0.1);">
+      <div class="w-2/5 flex flex-col bg-white" style="border-right: 1px solid rgba(0,0,0,0.06);">
         <!-- 对话消息区 -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="abMessages" style="scroll-behavior: smooth;">
+        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="abMessages" style="scroll-behavior: smooth; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);">
           <!-- 初始欢迎 -->
           <div class="flex items-start gap-3 animate-fade-in" id="abWelcome">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); box-shadow: 0 0 16px rgba(124,58,237,0.35);"><i class="fas fa-robot text-white text-sm"></i></div>
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);"><i class="fas fa-robot text-white text-sm"></i></div>
             <div class="flex-1">
-              <div class="p-4 rounded-2xl rounded-tl-md" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06);">
-                <p class="text-sm text-white leading-relaxed mb-3">您好！我是 <span style="color: #c4b5fd; font-weight: 700;">参与通 AI 组合构建器</span>。</p>
-                <p class="text-sm leading-relaxed mb-3" style="color: rgba(255,255,255,0.65);">我将通过对话，了解您的投资偏好和目标，从平台全部合约中为您智能构建个性化投资组合。</p>
-                <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.65);">我们先从一个简单的问题开始 —</p>
-                <div class="p-3 rounded-xl" style="background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.08)); border: 1px solid rgba(139,92,246,0.2);">
-                  <p class="text-sm font-semibold" style="color: #c4b5fd;"><i class="fas fa-compass mr-1.5"></i>您这次投资最看重什么？</p>
+              <div class="p-4 rounded-2xl rounded-tl-md bg-white" style="border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <p class="text-sm text-gray-900 leading-relaxed mb-3">您好！我是 <span style="color: #0f766e; font-weight: 700;">参与通 AI 组合构建器</span>。</p>
+                <p class="text-sm leading-relaxed mb-3 text-gray-500">我将通过对话，了解您的投资偏好和目标，从平台全部合约中为您智能构建个性化投资组合。</p>
+                <p class="text-sm leading-relaxed mb-4 text-gray-500">我们先从一个简单的问题开始 —</p>
+                <div class="p-3 rounded-xl" style="background: linear-gradient(135deg, rgba(93,196,179,0.08), rgba(46,196,182,0.06)); border: 1px solid rgba(93,196,179,0.2);">
+                  <p class="text-sm font-semibold" style="color: #0f766e;"><i class="fas fa-compass mr-1.5"></i>您这次投资最看重什么？</p>
                 </div>
               </div>
               <!-- 快捷选项 -->
               <div class="flex flex-wrap gap-2 mt-3" id="abQuickOptions">
-                <button onclick="abSelectOption('追求稳定收益，安全第一')" class="ab-quick-btn"><i class="fas fa-shield-alt mr-1.5 text-emerald-400"></i>稳定收益，安全第一</button>
-                <button onclick="abSelectOption('愿承担风险，追求高回报')" class="ab-quick-btn"><i class="fas fa-rocket mr-1.5 text-amber-400"></i>愿承担风险，追高回报</button>
-                <button onclick="abSelectOption('攻守兼备，均衡配置')" class="ab-quick-btn"><i class="fas fa-balance-scale mr-1.5 text-blue-400"></i>攻守兼备，均衡配置</button>
-                <button onclick="abSelectOption('看好特定行业，集中布局')" class="ab-quick-btn"><i class="fas fa-bullseye mr-1.5 text-pink-400"></i>看好特定行业，集中布局</button>
+                <button onclick="abSelectOption('追求稳定收益，安全第一')" class="ab-quick-btn"><i class="fas fa-shield-alt mr-1.5 text-emerald-500"></i>稳定收益，安全第一</button>
+                <button onclick="abSelectOption('愿承担风险，追求高回报')" class="ab-quick-btn"><i class="fas fa-rocket mr-1.5 text-amber-500"></i>愿承担风险，追高回报</button>
+                <button onclick="abSelectOption('攻守兼备，均衡配置')" class="ab-quick-btn"><i class="fas fa-balance-scale mr-1.5 text-blue-500"></i>攻守兼备，均衡配置</button>
+                <button onclick="abSelectOption('看好特定行业，集中布局')" class="ab-quick-btn"><i class="fas fa-bullseye mr-1.5 text-pink-500"></i>看好特定行业，集中布局</button>
               </div>
             </div>
           </div>
         </div>
         <!-- 输入区 -->
-        <div class="flex-shrink-0 p-4" style="border-top: 1px solid rgba(255,255,255,0.06); background: rgba(15,15,23,0.9);">
+        <div class="flex-shrink-0 p-4 bg-white" style="border-top: 1px solid rgba(0,0,0,0.06);">
           <div class="flex items-center gap-2">
             <div class="flex-1 relative">
-              <input type="text" id="abInput" placeholder="输入您的投资需求或偏好..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: white;" onkeydown="if(event.key==='Enter')abSendMessage()">
+              <input type="text" id="abInput" placeholder="输入您的投资需求或偏好..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: #f8fafc; border: 1px solid rgba(0,0,0,0.1); color: #1d1d1f;" onkeydown="if(event.key==='Enter')abSendMessage()">
             </div>
-            <button onclick="abSendMessage()" class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); box-shadow: 0 4px 12px rgba(124,58,237,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><i class="fas fa-paper-plane text-white text-sm"></i></button>
+            <button onclick="abSendMessage()" class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><i class="fas fa-paper-plane text-white text-sm"></i></button>
           </div>
-          <p class="text-xs mt-2 text-center" style="color: rgba(255,255,255,0.2);">AI 实时分析您的需求，从 <span id="abTotalContracts">0</span> 张合约中智能配置</p>
+          <p class="text-xs mt-2 text-center text-gray-400">AI 实时分析您的需求，从 <span id="abTotalContracts" class="font-semibold text-teal-600">0</span> 张合约中智能配置</p>
         </div>
       </div>
 
       <!-- ===== 右侧: 实时组合面板 ===== -->
-      <div class="w-3/5 flex flex-col overflow-y-auto" style="background: linear-gradient(180deg, #111118 0%, #0f0f17 100%);">
+      <div class="w-3/5 flex flex-col overflow-y-auto" style="background: #f5f5f7;">
         <!-- 组合未生成时的等待状态 -->
         <div id="abWaitingState" class="flex-1 flex items-center justify-center p-8">
           <div class="text-center max-w-md">
-            <div class="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6" style="background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(139,92,246,0.06)); border: 1px dashed rgba(139,92,246,0.25);">
-              <i class="fas fa-layer-group text-4xl" style="color: rgba(139,92,246,0.4);"></i>
+            <div class="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 ai-entry-icon" style="background: linear-gradient(135deg, rgba(93,196,179,0.1), rgba(46,196,182,0.06)); border: 1px dashed rgba(93,196,179,0.3);">
+              <i class="fas fa-layer-group text-4xl" style="color: rgba(93,196,179,0.5);"></i>
             </div>
-            <h3 class="text-lg font-bold text-white mb-2" style="letter-spacing: -0.02em;">等待 AI 构建您的专属组合</h3>
-            <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.4);">在左侧与 AI 对话，描述您的投资偏好。AI 将根据您的需求从全平台合约中实时构建投资组合。</p>
+            <h3 class="text-lg font-bold text-gray-800 mb-2" style="letter-spacing: -0.02em;">等待 AI 构建您的专属组合</h3>
+            <p class="text-sm leading-relaxed text-gray-500">在左侧与 AI 对话，描述您的投资偏好。AI 将根据您的需求从全平台合约中实时构建投资组合。</p>
             <div class="flex items-center justify-center gap-4 mt-6">
-              <div class="flex items-center gap-1.5" style="color: rgba(255,255,255,0.25);"><div class="w-2 h-2 rounded-full" style="background: #7c3aed;"></div><span class="text-xs">风格偏好</span></div>
-              <i class="fas fa-long-arrow-alt-right" style="color: rgba(255,255,255,0.15);"></i>
-              <div class="flex items-center gap-1.5" style="color: rgba(255,255,255,0.25);"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs">行业选择</span></div>
-              <i class="fas fa-long-arrow-alt-right" style="color: rgba(255,255,255,0.15);"></i>
-              <div class="flex items-center gap-1.5" style="color: rgba(255,255,255,0.25);"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs">组合生成</span></div>
+              <div class="flex items-center gap-1.5 text-gray-400"><div class="w-2 h-2 rounded-full" style="background: #5DC4B3;"></div><span class="text-xs">风格偏好</span></div>
+              <i class="fas fa-long-arrow-alt-right text-gray-300"></i>
+              <div class="flex items-center gap-1.5 text-gray-400"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs">行业选择</span></div>
+              <i class="fas fa-long-arrow-alt-right text-gray-300"></i>
+              <div class="flex items-center gap-1.5 text-gray-400"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs">组合生成</span></div>
             </div>
           </div>
         </div>
@@ -731,35 +772,35 @@ app.get('/', (c) => {
         <div id="abPortfolioPanel" class="hidden flex-1 p-5 space-y-4 overflow-y-auto">
           <!-- 组合 header -->
           <div class="rounded-2xl overflow-hidden" id="abPortfolioHeader">
-            <div class="p-5" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%); position: relative;">
-              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(139,92,246,0.3) 0%, transparent 50%);pointer-events:none;"></div>
+            <div class="p-5 relative" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%);">
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(93,196,179,0.35) 0%, transparent 50%);pointer-events:none;"></div>
               <div class="relative z-10">
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(196,181,253,0.2); color: #c4b5fd;"><i class="fas fa-magic mr-1"></i>AI 构建</span>
-                    <span class="text-xs" style="color: rgba(255,255,255,0.4);" id="abPortfolioMeta">实时生成</span>
+                    <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);"><i class="fas fa-magic mr-1"></i>AI 构建</span>
+                    <span class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioMeta">实时生成</span>
                   </div>
-                  <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.15); color: #34d399;">A · 82分</span>
+                  <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.2); color: #34d399;">A · 82分</span>
                 </div>
                 <h2 class="text-xl font-bold text-white mb-1" id="abPortfolioName" style="letter-spacing:-0.02em;">AI 推荐组合</h2>
-                <p class="text-xs" style="color: rgba(255,255,255,0.45);" id="abPortfolioDesc">基于您的投资偏好智能生成</p>
+                <p class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioDesc">基于您的投资偏好智能生成</p>
                 <!-- 核心数字 -->
                 <div class="grid grid-cols-4 gap-2 mt-4" id="abCoreStats">
-                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.06);">
+                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                     <p class="text-lg font-black text-white" id="abStatContracts">0</p>
-                    <p style="font-size:9px; color: rgba(255,255,255,0.35);">张合约</p>
+                    <p style="font-size:9px; color: rgba(255,255,255,0.5);">张合约</p>
                   </div>
-                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.06);">
-                    <p class="text-lg font-black text-violet-300" id="abStatProjects">0</p>
-                    <p style="font-size:9px; color: rgba(255,255,255,0.35);">个项目</p>
+                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
+                    <p class="text-lg font-black text-cyan-200" id="abStatProjects">0</p>
+                    <p style="font-size:9px; color: rgba(255,255,255,0.5);">个项目</p>
                   </div>
-                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.06);">
-                    <p class="text-lg font-black text-amber-300" id="abStatValue">¥0</p>
-                    <p style="font-size:9px; color: rgba(255,255,255,0.35);">总投入</p>
+                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
+                    <p class="text-lg font-black text-amber-200" id="abStatValue">¥0</p>
+                    <p style="font-size:9px; color: rgba(255,255,255,0.5);">总投入</p>
                   </div>
-                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.06);">
-                    <p class="text-lg font-black text-emerald-300" id="abStatReturn">0%</p>
-                    <p style="font-size:9px; color: rgba(255,255,255,0.35);">预期回报</p>
+                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
+                    <p class="text-lg font-black text-emerald-200" id="abStatReturn">0%</p>
+                    <p style="font-size:9px; color: rgba(255,255,255,0.5);">预期回报</p>
                   </div>
                 </div>
               </div>
@@ -767,10 +808,10 @@ app.get('/', (c) => {
           </div>
 
           <!-- 雷达图 -->
-          <div class="rounded-2xl overflow-hidden" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
-            <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-              <span class="text-sm font-bold text-white"><i class="fas fa-chart-pie mr-1.5" style="color: #a78bfa;"></i>组合雷达评估</span>
-              <span class="text-xs" style="color: rgba(255,255,255,0.3);">8维度量化</span>
+          <div class="rounded-2xl overflow-hidden bg-white" style="border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(0,0,0,0.04);">
+              <span class="text-sm font-bold text-gray-800"><i class="fas fa-chart-pie mr-1.5 text-teal-500"></i>组合雷达评估</span>
+              <span class="text-xs text-gray-400">8维度量化</span>
             </div>
             <div class="flex items-center justify-center py-4 px-2">
               <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
@@ -781,24 +822,24 @@ app.get('/', (c) => {
           </div>
 
           <!-- 行业配比 -->
-          <div class="rounded-2xl p-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
-            <h3 class="text-sm font-bold text-white mb-3"><i class="fas fa-chart-bar mr-1.5" style="color:#06b6d4;"></i>行业配比</h3>
+          <div class="rounded-2xl p-4 bg-white" style="border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i>行业配比</h3>
             <div id="abIndustryDistrib" class="space-y-2"></div>
           </div>
 
           <!-- 合约清单 -->
-          <div class="rounded-2xl p-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+          <div class="rounded-2xl p-4 bg-white" style="border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
             <div class="flex items-center justify-between mb-3">
-              <h3 class="text-sm font-bold text-white"><i class="fas fa-list mr-1.5" style="color:#10b981;"></i>推荐合约清单</h3>
-              <span class="text-xs" style="color: rgba(255,255,255,0.3);" id="abContractCount">0 张</span>
+              <h3 class="text-sm font-bold text-gray-800"><i class="fas fa-list mr-1.5 text-emerald-500"></i>推荐合约清单</h3>
+              <span class="text-xs text-gray-400" id="abContractCount">0 张</span>
             </div>
             <div class="space-y-2" id="abContractList"></div>
           </div>
 
           <!-- 操作按钮 -->
           <div class="flex gap-3 pt-2 pb-4">
-            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; box-shadow: 0 4px 16px rgba(124,58,237,0.35);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'"><i class="fas fa-check-circle mr-2"></i>一键认购此组合</button>
-            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all" style="color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.color='#c4b5fd';this.style.borderColor='rgba(139,92,246,0.3)'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.borderColor='rgba(255,255,255,0.1)'"><i class="fas fa-sliders-h mr-1"></i>继续调整</button>
+            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i>一键认购此组合</button>
+            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i>继续调整</button>
           </div>
         </div>
       </div>
@@ -1784,6 +1825,9 @@ app.get('/', (c) => {
       el = document.getElementById('statTotalTransactions'); if (el) el.textContent = dashVSold.toLocaleString();
       el = document.getElementById('statMyContracts'); if (el) el.textContent = dashVMine.toLocaleString();
       el = document.getElementById('statMyPortfolios'); if (el) el.textContent = dashVPortfolios.toLocaleString();
+      // 更新AI入口卡片统计
+      el = document.getElementById('aiEntryContracts'); if (el) el.textContent = dashVTotal.toLocaleString();
+      el = document.getElementById('aiEntryProjects'); if (el) el.textContent = allDeals.length.toLocaleString();
 
       if (filtered.length === 0) { grid.innerHTML = ''; if (empty) empty.classList.remove('hidden'); return; }
       if (empty) empty.classList.add('hidden');
@@ -3062,7 +3106,7 @@ app.get('/', (c) => {
         if (quickOptions && quickOptions.length > 0) {
           optHTML = '<div class="flex flex-wrap gap-2 mt-3">';
           quickOptions.forEach(opt => {
-            optHTML += '<button onclick="' + (opt.action || '') + '" class="ab-quick-btn"><i class="fas ' + opt.icon + ' mr-1.5 text-' + opt.color + '-400"></i>' + opt.text + '</button>';
+            optHTML += '<button onclick="' + (opt.action || '') + '" class="ab-quick-btn"><i class="fas ' + opt.icon + ' mr-1.5 text-' + opt.color + '-500"></i>' + opt.text + '</button>';
           });
           optHTML += '</div>';
         }
@@ -3446,15 +3490,15 @@ app.get('/', (c) => {
         return '<div class="flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ab-contract-item" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
           '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + (indColors[c.industry] || '#6b7280') + '18;"><i class="fas fa-file-contract" style="color:' + (indColors[c.industry] || '#6b7280') + '; font-size:10px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
-            '<p class="text-xs font-bold text-white truncate">' + c.name + '</p>' +
-            '<p class="text-xs" style="color: rgba(255,255,255,0.35);"><span class="font-mono">' + (c.mcn || '').substring(0, 16) + '</span> · ' + c.industry + ' · ' + c.revenueShare + '</p>' +
+            '<p class="text-xs font-bold text-gray-800 truncate">' + c.name + '</p>' +
+            '<p class="text-xs text-gray-400"><span class="font-mono">' + (c.mcn || '').substring(0, 16) + '</span> · ' + c.industry + ' · ' + c.revenueShare + '</p>' +
           '</div>' +
           '<div class="text-right flex-shrink-0">' +
             '<p class="text-xs font-bold" style="color:' + cg.color + ';">' + co + '</p>' +
             '<p style="font-size:9px; color:' + cg.color + ';">' + cg.grade + '</p>' +
           '</div>' +
         '</div>';
-      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2" style="color: rgba(255,255,255,0.25);">还有 ' + (p.length - 30) + ' 张合约未展示</p>' : '');
+      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2 text-gray-400">还有 ' + (p.length - 30) + ' 张合约未展示</p>' : '');
     }
 
     function abApplyPortfolio() {
