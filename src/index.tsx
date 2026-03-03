@@ -140,6 +140,24 @@ app.get('/', (c) => {
     .cc-timeline-dot.active { background: #2EC4B6; }
     .cc-grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
     @media (max-width: 768px) { .cc-grid-cards { grid-template-columns: 1fr; } .cc-metrics { grid-template-columns: repeat(2, 1fr); } }
+    /* AI Builder 专属样式 */
+    .ab-quick-btn { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.28,0.11,0.32,1); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); white-space: nowrap; }
+    .ab-quick-btn:hover { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.3); color: #c4b5fd; transform: translateY(-1px); }
+    .ab-msg-user { display: flex; justify-content: flex-end; }
+    .ab-msg-user > div { max-width: 80%; padding: 12px 16px; border-radius: 16px; border-bottom-right-radius: 4px; font-size: 13px; line-height: 1.6; background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; box-shadow: 0 4px 12px rgba(124,58,237,0.25); }
+    .ab-msg-ai { display: flex; gap: 12px; align-items: flex-start; }
+    .ab-msg-ai .ab-avatar { width: 32px; height: 32px; border-radius: 10px; background: linear-gradient(135deg, #7c3aed, #6d28d9); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 12px rgba(124,58,237,0.3); }
+    .ab-msg-ai .ab-avatar i { color: white; font-size: 12px; }
+    .ab-msg-ai .ab-content { flex: 1; padding: 12px 16px; border-radius: 16px; border-top-left-radius: 4px; font-size: 13px; line-height: 1.6; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.75); }
+    .ab-typing { display: flex; gap: 4px; padding: 6px 0; }
+    .ab-typing span { width: 6px; height: 6px; border-radius: 50%; background: #7c3aed; animation: abTypingBounce 1.4s infinite ease-in-out both; }
+    .ab-typing span:nth-child(1) { animation-delay: -0.32s; }
+    .ab-typing span:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes abTypingBounce { 0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+    .ab-portfolio-evolve { animation: abEvolve 0.6s cubic-bezier(0.28,0.11,0.32,1); }
+    @keyframes abEvolve { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    #abInput::placeholder { color: rgba(255,255,255,0.25); }
+    #abInput:focus { border-color: rgba(139,92,246,0.4); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); outline: none; }
     @keyframes ccSlideDown { from { max-height: 0; opacity: 0; } to { max-height: 1800px; opacity: 1; } }
   </style>
 </head>
@@ -314,7 +332,7 @@ app.get('/', (c) => {
 
           <button onclick="showOnboarding()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #6b7280; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.06);" data-tip="新手引导"><i class="fas fa-question-circle text-xs"></i><span>帮助</span></button>
           <div class="h-5 mx-0.5" style="width: 1px; background: rgba(0,0,0,0.08);"></div>
-          <button onclick="showToast('info','AI推荐引擎','正在基于您的筛子偏好生成推荐')" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #49A89A; background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.12);" data-tip="AI推荐"><i class="fas fa-robot"></i><span>推荐</span></button>
+          <button onclick="goToAIBuilder()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #7c3aed; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.06)); border: 1px solid rgba(139,92,246,0.18);" data-tip="AI组合构建"><i class="fas fa-magic"></i><span>AI组合</span></button>
           <!-- User avatar -->
           <div class="pl-1.5 ml-0.5 relative">
             <button onclick="toggleUserDD(event)" id="navUserBtn" class="flex items-center space-x-2 px-2 py-1.5 rounded-full transition-all" style="background: rgba(0,0,0,0.02);" onmouseover="this.style.background='rgba(93,196,179,0.08)'" onmouseout="this.style.background='rgba(0,0,0,0.02)'">
@@ -622,6 +640,165 @@ app.get('/', (c) => {
         </div>
         <div class="flex-1 p-5" id="pdRight">
           <div class="text-center py-16 text-gray-400"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">加载组合加权分析...</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Page: AI 组合构建器 ==================== -->
+  <div id="pageAIBuilder" class="page flex-col h-screen" style="background: #0f0f17;">
+    <!-- Nav -->
+    <nav class="px-5 py-2.5 flex-shrink-0" style="background: rgba(15,15,23,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(139,92,246,0.12);">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <button onclick="goToDashboard()" class="flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-all" style="color: rgba(255,255,255,0.5);" onmouseover="this.style.color='#c4b5fd';this.style.background='rgba(139,92,246,0.1)'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.background='none'"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <div class="border-l pl-3" style="border-color: rgba(255,255,255,0.08);">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); box-shadow: 0 0 20px rgba(124,58,237,0.4);"><i class="fas fa-magic text-white text-sm"></i></div>
+              <div><h1 class="text-sm font-bold text-white">AI 组合构建器</h1><p class="text-xs" style="color: rgba(255,255,255,0.35); font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-size:9px;">PORTFOLIO ARCHITECT · PILOT</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2);"><i class="fas fa-flask mr-1"></i>试点功能</span>
+          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all" style="color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.08);" onmouseover="this.style.color='#f87171';this.style.borderColor='rgba(248,113,113,0.3)'" onmouseout="this.style.color='rgba(255,255,255,0.4)';this.style.borderColor='rgba(255,255,255,0.08)'"><i class="fas fa-redo mr-1"></i>重新开始</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content: 左对话 + 右组合 -->
+    <div class="flex flex-1 overflow-hidden">
+      <!-- ===== 左侧: AI 对话区 ===== -->
+      <div class="w-2/5 flex flex-col" style="background: linear-gradient(180deg, #0f0f17 0%, #13131f 100%); border-right: 1px solid rgba(139,92,246,0.1);">
+        <!-- 对话消息区 -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="abMessages" style="scroll-behavior: smooth;">
+          <!-- 初始欢迎 -->
+          <div class="flex items-start gap-3 animate-fade-in" id="abWelcome">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); box-shadow: 0 0 16px rgba(124,58,237,0.35);"><i class="fas fa-robot text-white text-sm"></i></div>
+            <div class="flex-1">
+              <div class="p-4 rounded-2xl rounded-tl-md" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.06);">
+                <p class="text-sm text-white leading-relaxed mb-3">您好！我是 <span style="color: #c4b5fd; font-weight: 700;">参与通 AI 组合构建器</span>。</p>
+                <p class="text-sm leading-relaxed mb-3" style="color: rgba(255,255,255,0.65);">我将通过对话，了解您的投资偏好和目标，从平台全部合约中为您智能构建个性化投资组合。</p>
+                <p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.65);">我们先从一个简单的问题开始 —</p>
+                <div class="p-3 rounded-xl" style="background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(139,92,246,0.08)); border: 1px solid rgba(139,92,246,0.2);">
+                  <p class="text-sm font-semibold" style="color: #c4b5fd;"><i class="fas fa-compass mr-1.5"></i>您这次投资最看重什么？</p>
+                </div>
+              </div>
+              <!-- 快捷选项 -->
+              <div class="flex flex-wrap gap-2 mt-3" id="abQuickOptions">
+                <button onclick="abSelectOption('追求稳定收益，安全第一')" class="ab-quick-btn"><i class="fas fa-shield-alt mr-1.5 text-emerald-400"></i>稳定收益，安全第一</button>
+                <button onclick="abSelectOption('愿承担风险，追求高回报')" class="ab-quick-btn"><i class="fas fa-rocket mr-1.5 text-amber-400"></i>愿承担风险，追高回报</button>
+                <button onclick="abSelectOption('攻守兼备，均衡配置')" class="ab-quick-btn"><i class="fas fa-balance-scale mr-1.5 text-blue-400"></i>攻守兼备，均衡配置</button>
+                <button onclick="abSelectOption('看好特定行业，集中布局')" class="ab-quick-btn"><i class="fas fa-bullseye mr-1.5 text-pink-400"></i>看好特定行业，集中布局</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 输入区 -->
+        <div class="flex-shrink-0 p-4" style="border-top: 1px solid rgba(255,255,255,0.06); background: rgba(15,15,23,0.9);">
+          <div class="flex items-center gap-2">
+            <div class="flex-1 relative">
+              <input type="text" id="abInput" placeholder="输入您的投资需求或偏好..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: white;" onkeydown="if(event.key==='Enter')abSendMessage()">
+            </div>
+            <button onclick="abSendMessage()" class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); box-shadow: 0 4px 12px rgba(124,58,237,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><i class="fas fa-paper-plane text-white text-sm"></i></button>
+          </div>
+          <p class="text-xs mt-2 text-center" style="color: rgba(255,255,255,0.2);">AI 实时分析您的需求，从 <span id="abTotalContracts">0</span> 张合约中智能配置</p>
+        </div>
+      </div>
+
+      <!-- ===== 右侧: 实时组合面板 ===== -->
+      <div class="w-3/5 flex flex-col overflow-y-auto" style="background: linear-gradient(180deg, #111118 0%, #0f0f17 100%);">
+        <!-- 组合未生成时的等待状态 -->
+        <div id="abWaitingState" class="flex-1 flex items-center justify-center p-8">
+          <div class="text-center max-w-md">
+            <div class="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6" style="background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(139,92,246,0.06)); border: 1px dashed rgba(139,92,246,0.25);">
+              <i class="fas fa-layer-group text-4xl" style="color: rgba(139,92,246,0.4);"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2" style="letter-spacing: -0.02em;">等待 AI 构建您的专属组合</h3>
+            <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.4);">在左侧与 AI 对话，描述您的投资偏好。AI 将根据您的需求从全平台合约中实时构建投资组合。</p>
+            <div class="flex items-center justify-center gap-4 mt-6">
+              <div class="flex items-center gap-1.5" style="color: rgba(255,255,255,0.25);"><div class="w-2 h-2 rounded-full" style="background: #7c3aed;"></div><span class="text-xs">风格偏好</span></div>
+              <i class="fas fa-long-arrow-alt-right" style="color: rgba(255,255,255,0.15);"></i>
+              <div class="flex items-center gap-1.5" style="color: rgba(255,255,255,0.25);"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs">行业选择</span></div>
+              <i class="fas fa-long-arrow-alt-right" style="color: rgba(255,255,255,0.15);"></i>
+              <div class="flex items-center gap-1.5" style="color: rgba(255,255,255,0.25);"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs">组合生成</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 组合结果面板（初始隐藏） -->
+        <div id="abPortfolioPanel" class="hidden flex-1 p-5 space-y-4 overflow-y-auto">
+          <!-- 组合 header -->
+          <div class="rounded-2xl overflow-hidden" id="abPortfolioHeader">
+            <div class="p-5" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%); position: relative;">
+              <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(139,92,246,0.3) 0%, transparent 50%);pointer-events:none;"></div>
+              <div class="relative z-10">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(196,181,253,0.2); color: #c4b5fd;"><i class="fas fa-magic mr-1"></i>AI 构建</span>
+                    <span class="text-xs" style="color: rgba(255,255,255,0.4);" id="abPortfolioMeta">实时生成</span>
+                  </div>
+                  <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.15); color: #34d399;">A · 82分</span>
+                </div>
+                <h2 class="text-xl font-bold text-white mb-1" id="abPortfolioName" style="letter-spacing:-0.02em;">AI 推荐组合</h2>
+                <p class="text-xs" style="color: rgba(255,255,255,0.45);" id="abPortfolioDesc">基于您的投资偏好智能生成</p>
+                <!-- 核心数字 -->
+                <div class="grid grid-cols-4 gap-2 mt-4" id="abCoreStats">
+                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.06);">
+                    <p class="text-lg font-black text-white" id="abStatContracts">0</p>
+                    <p style="font-size:9px; color: rgba(255,255,255,0.35);">张合约</p>
+                  </div>
+                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.06);">
+                    <p class="text-lg font-black text-violet-300" id="abStatProjects">0</p>
+                    <p style="font-size:9px; color: rgba(255,255,255,0.35);">个项目</p>
+                  </div>
+                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.06);">
+                    <p class="text-lg font-black text-amber-300" id="abStatValue">¥0</p>
+                    <p style="font-size:9px; color: rgba(255,255,255,0.35);">总投入</p>
+                  </div>
+                  <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.06);">
+                    <p class="text-lg font-black text-emerald-300" id="abStatReturn">0%</p>
+                    <p style="font-size:9px; color: rgba(255,255,255,0.35);">预期回报</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 雷达图 -->
+          <div class="rounded-2xl overflow-hidden" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+            <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+              <span class="text-sm font-bold text-white"><i class="fas fa-chart-pie mr-1.5" style="color: #a78bfa;"></i>组合雷达评估</span>
+              <span class="text-xs" style="color: rgba(255,255,255,0.3);">8维度量化</span>
+            </div>
+            <div class="flex items-center justify-center py-4 px-2">
+              <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
+            </div>
+            <div class="px-4 pb-4">
+              <div class="grid grid-cols-4 gap-2" id="abDimGrid"></div>
+            </div>
+          </div>
+
+          <!-- 行业配比 -->
+          <div class="rounded-2xl p-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+            <h3 class="text-sm font-bold text-white mb-3"><i class="fas fa-chart-bar mr-1.5" style="color:#06b6d4;"></i>行业配比</h3>
+            <div id="abIndustryDistrib" class="space-y-2"></div>
+          </div>
+
+          <!-- 合约清单 -->
+          <div class="rounded-2xl p-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-white"><i class="fas fa-list mr-1.5" style="color:#10b981;"></i>推荐合约清单</h3>
+              <span class="text-xs" style="color: rgba(255,255,255,0.3);" id="abContractCount">0 张</span>
+            </div>
+            <div class="space-y-2" id="abContractList"></div>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="flex gap-3 pt-2 pb-4">
+            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; box-shadow: 0 4px 16px rgba(124,58,237,0.35);" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'"><i class="fas fa-check-circle mr-2"></i>一键认购此组合</button>
+            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all" style="color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1);" onmouseover="this.style.color='#c4b5fd';this.style.borderColor='rgba(139,92,246,0.3)'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.borderColor='rgba(255,255,255,0.1)'"><i class="fas fa-sliders-h mr-1"></i>继续调整</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2732,6 +2909,539 @@ app.get('/', (c) => {
       }, 50);
 
       switchPage('pagePortfolioDetail');
+    }
+
+    // ==================== AI 组合构建器 (Portfolio Architect) ====================
+    // 核心逻辑：通过多轮对话逐步了解投资者需求，从宽泛到具体
+    // 每轮对话后，AI 实时更新右侧推荐组合
+
+    let abState = {
+      step: 0,  // 对话阶段: 0=风格 1=行业 2=参数 3=生成完成 4=调整
+      style: null,       // 投资风格: conservative / aggressive / balanced / sector
+      industries: [],    // 偏好行业列表
+      riskTolerance: null, // low / medium / high
+      targetReturn: null,  // 目标回报
+      budget: null,      // 预算（张数）
+      period: null,      // 期限偏好
+      extraPrefs: [],    // 额外偏好（自然语言记录）
+      portfolio: [],     // 当前推荐的合约列表
+      portfolioName: '', // 组合名称
+    };
+
+    // 对话引导流程
+    const AB_FLOW = [
+      // Step 0: 投资风格（已通过初始快捷选项触发）
+      // Step 1: 行业偏好
+      {
+        question: '有哪些行业是您特别看好的？可以选择多个。',
+        options: [
+          { text: '餐饮美食', icon: 'fa-utensils', color: '#f59e0b', value: '餐饮' },
+          { text: '科技创新', icon: 'fa-microchip', color: '#8b5cf6', value: '科技' },
+          { text: '医疗健康', icon: 'fa-heartbeat', color: '#ef4444', value: '健康' },
+          { text: '零售消费', icon: 'fa-shopping-bag', color: '#06b6d4', value: '零售' },
+          { text: '教育培训', icon: 'fa-graduation-cap', color: '#10b981', value: '教育' },
+          { text: '演艺娱乐', icon: 'fa-music', color: '#ec4899', value: '演艺' },
+          { text: '不限行业，全面配置', icon: 'fa-globe', color: '#6b7280', value: 'all' },
+        ]
+      },
+      // Step 2: 风险与回报参数
+      {
+        question: '您期望的投资回报和风险级别是？',
+        options: [
+          { text: '年化 7-10%，低风险', icon: 'fa-shield-alt', color: '#10b981', value: 'low' },
+          { text: '年化 10-14%，中等风险', icon: 'fa-balance-scale', color: '#3b82f6', value: 'medium' },
+          { text: '年化 14%+，可承受较高风险', icon: 'fa-fire-alt', color: '#f59e0b', value: 'high' },
+        ]
+      },
+      // Step 3: 投资期限
+      {
+        question: '您倾向的投资期限是？',
+        options: [
+          { text: '短期 ≤24个月，快速回收', icon: 'fa-bolt', color: '#eab308', value: 'short' },
+          { text: '中期 24-30个月，主流选择', icon: 'fa-clock', color: '#06b6d4', value: 'medium' },
+          { text: '长期 30个月+，追求长期价值', icon: 'fa-hourglass-half', color: '#8b5cf6', value: 'long' },
+        ]
+      },
+      // Step 4: 预算规模
+      {
+        question: '您计划投入多少资金？（每张合约 ¥1,000）',
+        options: [
+          { text: '¥5,000 - ¥20,000（5-20张）', icon: 'fa-seedling', color: '#10b981', value: '10' },
+          { text: '¥20,000 - ¥50,000（20-50张）', icon: 'fa-tree', color: '#06b6d4', value: '35' },
+          { text: '¥50,000+（50张以上）', icon: 'fa-landmark', color: '#8b5cf6', value: '60' },
+        ]
+      }
+    ];
+
+    function goToAIBuilder() {
+      if (allDeals.length === 0) { loadDemoData(); selectSieve('all'); }
+      const el = document.getElementById('abTotalContracts');
+      if (el) el.textContent = (totalVirtualContracts || allDeals.length).toLocaleString();
+      switchPage('pageAIBuilder');
+    }
+
+    function resetAIBuilder() {
+      abState = { step: 0, style: null, industries: [], riskTolerance: null, targetReturn: null, budget: null, period: null, extraPrefs: [], portfolio: [], portfolioName: '' };
+      // 重置UI
+      const msgs = document.getElementById('abMessages');
+      if (msgs) msgs.innerHTML = '';
+      document.getElementById('abWaitingState').classList.remove('hidden');
+      document.getElementById('abPortfolioPanel').classList.add('hidden');
+      // 重新生成欢迎消息
+      abAddAIMessage(
+        '<p class="text-sm text-white leading-relaxed mb-3">好的，我们重新开始！</p>' +
+        '<p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.65);">您这次投资最看重什么？</p>',
+        [
+          { text: '稳定收益，安全第一', icon: 'fa-shield-alt', color: 'emerald', action: "abSelectOption('追求稳定收益，安全第一')" },
+          { text: '愿承担风险，追高回报', icon: 'fa-rocket', color: 'amber', action: "abSelectOption('愿承担风险，追求高回报')" },
+          { text: '攻守兼备，均衡配置', icon: 'fa-balance-scale', color: 'blue', action: "abSelectOption('攻守兼备，均衡配置')" },
+          { text: '看好特定行业，集中布局', icon: 'fa-bullseye', color: 'pink', action: "abSelectOption('看好特定行业，集中布局')" },
+        ]
+      );
+      showToast('info', '已重置', 'AI 组合构建器已重新开始');
+    }
+
+    function abAddUserMessage(text) {
+      const msgs = document.getElementById('abMessages');
+      if (!msgs) return;
+      const div = document.createElement('div');
+      div.className = 'ab-msg-user animate-fade-in';
+      div.innerHTML = '<div>' + text + '</div>';
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function abAddAIMessage(html, quickOptions) {
+      const msgs = document.getElementById('abMessages');
+      if (!msgs) return;
+
+      // 打字动画
+      const typing = document.createElement('div');
+      typing.className = 'ab-msg-ai';
+      typing.innerHTML = '<div class="ab-avatar"><i class="fas fa-robot"></i></div><div class="ab-content"><div class="ab-typing"><span></span><span></span><span></span></div></div>';
+      msgs.appendChild(typing);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      setTimeout(() => {
+        typing.remove();
+        const div = document.createElement('div');
+        div.className = 'ab-msg-ai animate-fade-in';
+        let optHTML = '';
+        if (quickOptions && quickOptions.length > 0) {
+          optHTML = '<div class="flex flex-wrap gap-2 mt-3">';
+          quickOptions.forEach(opt => {
+            optHTML += '<button onclick="' + (opt.action || '') + '" class="ab-quick-btn"><i class="fas ' + opt.icon + ' mr-1.5 text-' + opt.color + '-400"></i>' + opt.text + '</button>';
+          });
+          optHTML += '</div>';
+        }
+        div.innerHTML = '<div class="ab-avatar"><i class="fas fa-robot"></i></div><div class="flex-1"><div class="ab-content">' + html + '</div>' + optHTML + '</div>';
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 800 + Math.random() * 600);
+    }
+
+    function abSelectOption(text) {
+      abAddUserMessage(text);
+      // 移除当前快捷按钮（已点击）
+      const lastMsg = document.getElementById('abMessages').lastElementChild;
+      // 解析用户选择并推进对话
+      abProcessUserInput(text);
+    }
+
+    function abSendMessage() {
+      const input = document.getElementById('abInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+      abAddUserMessage(msg);
+      abProcessUserInput(msg);
+    }
+
+    function abProcessUserInput(text) {
+      const lower = text.toLowerCase();
+
+      if (abState.step === 0) {
+        // Step 0: 解析投资风格
+        if (lower.includes('稳定') || lower.includes('安全') || lower.includes('保守')) {
+          abState.style = 'conservative';
+          abState.riskTolerance = 'low';
+        } else if (lower.includes('风险') || lower.includes('高回报') || lower.includes('激进') || lower.includes('进取')) {
+          abState.style = 'aggressive';
+          abState.riskTolerance = 'high';
+        } else if (lower.includes('均衡') || lower.includes('攻守') || lower.includes('平衡')) {
+          abState.style = 'balanced';
+          abState.riskTolerance = 'medium';
+        } else if (lower.includes('行业') || lower.includes('集中') || lower.includes('看好')) {
+          abState.style = 'sector';
+          abState.riskTolerance = 'medium';
+        } else {
+          abState.style = 'balanced';
+          abState.riskTolerance = 'medium';
+        }
+        abState.step = 1;
+        // 根据风格给出不同的行业引导
+        const styleNames = { conservative: '稳健型', aggressive: '进取型', balanced: '均衡型', sector: '行业聚焦型' };
+        const styleEmojis = { conservative: '🛡️', aggressive: '🚀', balanced: '⚖️', sector: '🎯' };
+        abAddAIMessage(
+          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">收到！您倾向于 <span class="font-bold text-white">' + styleNames[abState.style] + '</span> ' + styleEmojis[abState.style] + ' 投资策略。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">接下来，' + AB_FLOW[0].question + '</p>',
+          AB_FLOW[0].options.map(opt => ({
+            text: opt.text, icon: opt.icon, color: opt.color.replace('#', '').substring(0,3) === '10b' ? 'emerald' : (opt.color.includes('5cf6') ? 'violet' : (opt.color.includes('f44') ? 'red' : (opt.color.includes('b6d4') ? 'cyan' : (opt.color.includes('4899') ? 'pink' : (opt.color.includes('b308') ? 'yellow' : 'gray'))))),
+            action: "abSelectIndustry('" + opt.value + "')"
+          }))
+        );
+        // 第一次生成初始组合
+        abBuildPortfolio();
+      } else if (abState.step === 1) {
+        // 解析行业（可能是手动输入）
+        abParseIndustryInput(lower);
+        abState.step = 2;
+        abAddAIMessage(
+          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">好的，行业方向已明确 ✅ 我正在筛选匹配的合约。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[1].question + '</p>',
+          AB_FLOW[1].options.map(opt => ({
+            text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
+            action: "abSelectRisk('" + opt.value + "')"
+          }))
+        );
+        abBuildPortfolio();
+      } else if (abState.step === 2) {
+        // 解析风险等级
+        if (lower.includes('低') || lower.includes('7') || lower.includes('安全')) abState.riskTolerance = 'low';
+        else if (lower.includes('高') || lower.includes('14') || lower.includes('承受')) abState.riskTolerance = 'high';
+        else abState.riskTolerance = 'medium';
+        abState.step = 3;
+        abAddAIMessage(
+          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">风险偏好已记录 📊 组合正在优化中...</p>' +
+          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[2].question + '</p>',
+          AB_FLOW[2].options.map(opt => ({
+            text: opt.text, icon: opt.icon, color: opt.color.includes('eab') ? 'yellow' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
+            action: "abSelectPeriod('" + opt.value + "')"
+          }))
+        );
+        abBuildPortfolio();
+      } else if (abState.step === 3) {
+        // 解析期限
+        if (lower.includes('短') || lower.includes('快') || lower.includes('24')) abState.period = 'short';
+        else if (lower.includes('长') || lower.includes('30')) abState.period = 'long';
+        else abState.period = 'medium';
+        abState.step = 4;
+        abAddAIMessage(
+          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">期限偏好已确认 ⏱️</p>' +
+          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[3].question + '</p>',
+          AB_FLOW[3].options.map(opt => ({
+            text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
+            action: "abSelectBudget('" + opt.value + "')"
+          }))
+        );
+        abBuildPortfolio();
+      } else if (abState.step === 4) {
+        // 解析预算
+        if (lower.includes('5') && !lower.includes('50')) abState.budget = 10;
+        else if (lower.includes('50') || lower.includes('以上') || lower.includes('大')) abState.budget = 60;
+        else abState.budget = 35;
+        abState.step = 5;
+        abBuildPortfolio();
+        abAddAIMessage(
+          '<p class="text-sm leading-relaxed mb-2 font-semibold text-white">🎉 您的专属投资组合已构建完成！</p>' +
+          '<p class="text-sm leading-relaxed mb-3" style="color: rgba(255,255,255,0.55);">右侧面板展示了 AI 根据您的偏好从 ' + (totalVirtualContracts || allDeals.length).toLocaleString() + ' 张全平台合约中精选的组合。</p>' +
+          '<div class="p-3 rounded-xl" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);">' +
+            '<p class="text-xs" style="color: #34d399;"><i class="fas fa-check-circle mr-1"></i>您可以继续与我对话来微调组合，例如「减少餐饮比例」「加入更多科技合约」「降低风险」等。</p>' +
+          '</div>',
+          [
+            { text: '满意，去认购', icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
+            { text: '减少风险', icon: 'fa-shield-alt', color: 'blue', action: "abSelectOption('帮我降低组合风险')" },
+            { text: '加入更多科技', icon: 'fa-microchip', color: 'violet', action: "abSelectOption('我想加入更多科技类合约')" },
+          ]
+        );
+      } else {
+        // Step 5+: 自由调整阶段
+        abState.extraPrefs.push(text);
+        // 解析自由文本微调
+        if (lower.includes('科技') || lower.includes('ai') || lower.includes('人工智能')) {
+          if (!abState.industries.includes('科技')) abState.industries.push('科技');
+        }
+        if (lower.includes('餐饮') || lower.includes('美食')) {
+          if (!abState.industries.includes('餐饮')) abState.industries.push('餐饮');
+        }
+        if (lower.includes('减少风险') || lower.includes('降低风险') || lower.includes('更安全')) {
+          abState.riskTolerance = 'low';
+        }
+        if (lower.includes('提高回报') || lower.includes('更激进') || lower.includes('更高')) {
+          abState.riskTolerance = 'high';
+        }
+        if (lower.includes('减少') && lower.includes('餐饮')) {
+          abState.industries = abState.industries.filter(i => i !== '餐饮');
+          if (abState.industries.length === 0) abState.industries = ['all'];
+        }
+        if (lower.includes('短期') || lower.includes('快速')) abState.period = 'short';
+        if (lower.includes('健康') || lower.includes('医疗')) {
+          if (!abState.industries.includes('健康')) abState.industries.push('健康');
+        }
+        if (lower.includes('演艺') || lower.includes('娱乐')) {
+          if (!abState.industries.includes('演艺')) abState.industries.push('演艺');
+        }
+        if (lower.includes('教育')) {
+          if (!abState.industries.includes('教育')) abState.industries.push('教育');
+        }
+        if (lower.includes('零售')) {
+          if (!abState.industries.includes('零售')) abState.industries.push('零售');
+        }
+
+        abBuildPortfolio();
+        const p = abState.portfolio;
+        abAddAIMessage(
+          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">已根据您的要求重新调整组合 🔄</p>' +
+          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">当前组合包含 <span class="font-bold text-white">' + p.length + '</span> 张合约，覆盖 <span class="font-bold text-white">' + [...new Set(p.map(c=>c.industry))].length + '</span> 个行业。右侧面板已更新。</p>' +
+          '<p class="text-xs mt-2" style="color: rgba(255,255,255,0.3);">继续输入可进一步微调，或点击「一键认购」完成。</p>',
+          [
+            { text: '满意，去认购', icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
+            { text: '继续调整', icon: 'fa-sliders-h', color: 'violet', action: "document.getElementById('abInput').focus()" },
+          ]
+        );
+      }
+    }
+
+    // 行业选择（支持多选）
+    let abSelectedIndustries = [];
+    function abSelectIndustry(value) {
+      if (value === 'all') {
+        abSelectedIndustries = ['all'];
+        abAddUserMessage('不限行业，全面配置');
+        abState.industries = ['all'];
+        abState.step = 2;
+        abBuildPortfolio();
+        abAddAIMessage(
+          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">全行业配置 🌐 我会从所有行业中均衡筛选。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[1].question + '</p>',
+          AB_FLOW[1].options.map(opt => ({
+            text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
+            action: "abSelectRisk('" + opt.value + "')"
+          }))
+        );
+        return;
+      }
+      if (abSelectedIndustries.includes(value)) return;
+      abSelectedIndustries.push(value);
+      abState.industries = [...abSelectedIndustries];
+      abAddUserMessage('选择了: ' + abSelectedIndustries.join('、'));
+      abBuildPortfolio();
+
+      // 还可以继续选，或者进入下一步
+      if (abSelectedIndustries.length >= 1) {
+        abState.step = 2;
+        abAddAIMessage(
+          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">已选择 <span class="font-bold text-white">' + abSelectedIndustries.join('、') + '</span> ✅</p>' +
+          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[1].question + '</p>',
+          AB_FLOW[1].options.map(opt => ({
+            text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
+            action: "abSelectRisk('" + opt.value + "')"
+          }))
+        );
+      }
+    }
+
+    function abSelectRisk(value) {
+      abState.riskTolerance = value;
+      const labels = { low: '低风险 · 年化 7-10%', medium: '中等风险 · 年化 10-14%', high: '较高风险 · 年化 14%+' };
+      abAddUserMessage(labels[value] || value);
+      abState.step = 3;
+      abBuildPortfolio();
+      abAddAIMessage(
+        '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">风险偏好 → <span class="font-bold text-white">' + (labels[value] || value) + '</span> 📊</p>' +
+        '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[2].question + '</p>',
+        AB_FLOW[2].options.map(opt => ({
+          text: opt.text, icon: opt.icon, color: opt.color.includes('eab') ? 'yellow' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
+          action: "abSelectPeriod('" + opt.value + "')"
+        }))
+      );
+    }
+
+    function abSelectPeriod(value) {
+      abState.period = value;
+      const labels = { short: '短期 ≤24个月', medium: '中期 24-30个月', long: '长期 30个月+' };
+      abAddUserMessage(labels[value] || value);
+      abState.step = 4;
+      abBuildPortfolio();
+      abAddAIMessage(
+        '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">期限偏好 → <span class="font-bold text-white">' + (labels[value] || value) + '</span> ⏱️</p>' +
+        '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[3].question + '</p>',
+        AB_FLOW[3].options.map(opt => ({
+          text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
+          action: "abSelectBudget('" + opt.value + "')"
+        }))
+      );
+    }
+
+    function abSelectBudget(value) {
+      abState.budget = parseInt(value);
+      const labels = { '10': '¥5,000 - ¥20,000', '35': '¥20,000 - ¥50,000', '60': '¥50,000+' };
+      abAddUserMessage(labels[value] || '¥' + (parseInt(value) * 1000).toLocaleString());
+      abProcessUserInput(labels[value] || value);
+    }
+
+    function abParseIndustryInput(text) {
+      const mapping = { '餐饮': '餐饮', '美食': '餐饮', '科技': '科技', 'ai': '科技', '健康': '健康', '医疗': '健康', '零售': '零售', '消费': '零售', '教育': '教育', '演艺': '演艺', '娱乐': '演艺' };
+      Object.keys(mapping).forEach(key => {
+        if (text.includes(key) && !abState.industries.includes(mapping[key])) {
+          abState.industries.push(mapping[key]);
+        }
+      });
+      if (abState.industries.length === 0) abState.industries = ['all'];
+    }
+
+    // ★ 核心：根据当前状态从全部合约中构建组合
+    function abBuildPortfolio() {
+      let pool = allDeals.filter(d => d.status === 'available' || d.isMine);
+
+      // 1. 行业筛选
+      if (abState.industries.length > 0 && !abState.industries.includes('all')) {
+        pool = pool.filter(c => abState.industries.includes(c.industry));
+      }
+
+      // 2. 风险筛选
+      if (abState.riskTolerance === 'low') {
+        pool = pool.filter(c => parseFloat(c.aiScore) >= 8.0 && (c.riskGrade === 'A+' || c.riskGrade === 'A'));
+      } else if (abState.riskTolerance === 'high') {
+        pool = pool.filter(c => parseInt(c.revenueShare) >= 11);
+      } else {
+        pool = pool.filter(c => parseFloat(c.aiScore) >= 7.0);
+      }
+
+      // 3. 期限筛选
+      if (abState.period === 'short') {
+        pool = pool.filter(c => parseInt(c.period) <= 24);
+      } else if (abState.period === 'long') {
+        pool = pool.filter(c => parseInt(c.period) >= 30);
+      }
+
+      // 4. 排序（按 AI 评分降序 + 多样性）
+      pool.sort((a, b) => parseFloat(b.aiScore) - parseFloat(a.aiScore));
+
+      // 5. 预算限制 & 多样性选择
+      const budget = abState.budget || 25;
+      const selected = [];
+      const projectSeen = {};
+      for (const c of pool) {
+        if (selected.length >= budget) break;
+        // 每个项目最多选 N 张，保证多样性
+        const maxPerProject = Math.max(3, Math.ceil(budget / 5));
+        if (!projectSeen[c.projectId]) projectSeen[c.projectId] = 0;
+        if (projectSeen[c.projectId] >= maxPerProject) continue;
+        projectSeen[c.projectId]++;
+        selected.push(c);
+      }
+
+      abState.portfolio = selected;
+
+      // 生成组合名称
+      const styleNames = { conservative: '稳健守护', aggressive: '进取猎手', balanced: '均衡优选', sector: '行业先锋' };
+      abState.portfolioName = (styleNames[abState.style] || 'AI智选') + ' · ' + (abState.industries.includes('all') ? '全行业' : abState.industries.join('+')) + ' S26';
+
+      // 更新右侧面板
+      abRenderPortfolio();
+    }
+
+    function abRenderPortfolio() {
+      const p = abState.portfolio;
+      if (p.length === 0) return;
+
+      // 显示面板
+      document.getElementById('abWaitingState').classList.add('hidden');
+      document.getElementById('abPortfolioPanel').classList.remove('hidden');
+      document.getElementById('abPortfolioPanel').classList.add('ab-portfolio-evolve');
+      setTimeout(() => document.getElementById('abPortfolioPanel').classList.remove('ab-portfolio-evolve'), 600);
+
+      // 计算统计
+      const scores = calcPortfolioRadarScores(p);
+      const overall = calcOverallScore(scores);
+      const grade = getScoreGrade(overall);
+      const projects = [...new Set(p.map(c => c.projectId))];
+      const totalValue = p.length * 1000;
+      const avgShare = (p.reduce((s, c) => s + parseInt(c.revenueShare), 0) / p.length).toFixed(1);
+
+      // Header
+      document.getElementById('abPortfolioName').textContent = abState.portfolioName;
+      document.getElementById('abPortfolioDesc').textContent = '基于您的投资偏好从 ' + allDeals.length + ' 张合约中智能生成';
+      document.getElementById('abPortfolioMeta').textContent = 'Step ' + Math.min(abState.step, 5) + '/5 · 实时演进';
+      document.getElementById('abGradeBadge').textContent = grade.grade + ' · ' + overall + '分';
+      document.getElementById('abGradeBadge').style.cssText = 'background:' + grade.bg + '; color:' + grade.color + '; padding:4px 14px; border-radius:12px; font-size:13px; font-weight:700;';
+
+      // 核心数字
+      document.getElementById('abStatContracts').textContent = p.length;
+      document.getElementById('abStatProjects').textContent = projects.length;
+      document.getElementById('abStatValue').textContent = '¥' + totalValue.toLocaleString();
+      document.getElementById('abStatReturn').textContent = avgShare + '%';
+
+      // 雷达图
+      setTimeout(() => { drawRadarChart('abRadarCanvas', scores, { size: 300 }); }, 100);
+
+      // 维度网格
+      document.getElementById('abDimGrid').innerHTML = RADAR_DIMENSIONS.map((dim, i) => {
+        const s = scores[i]; const g = getScoreGrade(s);
+        return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '10; border: 1px solid ' + dim.color + '22;">' +
+          '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
+          '<p class="text-xs font-bold mt-1" style="color:' + g.color + ';">' + s + '</p>' +
+          '<p class="text-xs truncate" style="font-size:8px; color: rgba(255,255,255,0.35);">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
+        '</div>';
+      }).join('');
+
+      // 行业配比
+      const industryDistrib = {};
+      p.forEach(c => { industryDistrib[c.industry] = (industryDistrib[c.industry] || 0) + 1; });
+      const indColors = { '餐饮': '#f59e0b', '零售': '#06b6d4', '科技': '#8b5cf6', '教育': '#10b981', '健康': '#ef4444', '演艺': '#ec4899' };
+      document.getElementById('abIndustryDistrib').innerHTML = Object.keys(industryDistrib).map(ind => {
+        const count = industryDistrib[ind];
+        const pct = (count / p.length * 100).toFixed(1);
+        const c = indColors[ind] || '#6b7280';
+        return '<div class="flex items-center gap-3">' +
+          '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
+          '<span class="text-xs flex-1" style="color: rgba(255,255,255,0.6);">' + ind + '</span>' +
+          '<div class="flex-1 h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);"><div class="h-full rounded-full transition-all" style="width:' + pct + '%; background:' + c + ';"></div></div>' +
+          '<span class="text-xs font-bold" style="color: rgba(255,255,255,0.7);">' + count + '张</span>' +
+          '<span class="text-xs" style="color: rgba(255,255,255,0.3);">' + pct + '%</span>' +
+        '</div>';
+      }).join('');
+
+      // 合约清单
+      document.getElementById('abContractCount').textContent = p.length + ' 张';
+      document.getElementById('abContractList').innerHTML = p.slice(0, 30).map(c => {
+        const cs = calcRadarScores(c); const co = calcOverallScore(cs); const cg = getScoreGrade(co);
+        return '<div class="flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);" onmouseover="this.style.borderColor=\'rgba(139,92,246,0.2)\';this.style.background=\'rgba(139,92,246,0.05)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.05)\';this.style.background=\'rgba(255,255,255,0.03)\'" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
+          '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + (indColors[c.industry] || '#6b7280') + '18;"><i class="fas fa-file-contract" style="color:' + (indColors[c.industry] || '#6b7280') + '; font-size:10px;"></i></div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<p class="text-xs font-bold text-white truncate">' + c.name + '</p>' +
+            '<p class="text-xs" style="color: rgba(255,255,255,0.35);"><span class="font-mono">' + (c.mcn || '').substring(0, 16) + '</span> · ' + c.industry + ' · ' + c.revenueShare + '</p>' +
+          '</div>' +
+          '<div class="text-right flex-shrink-0">' +
+            '<p class="text-xs font-bold" style="color:' + cg.color + ';">' + co + '</p>' +
+            '<p style="font-size:9px; color:' + cg.color + ';">' + cg.grade + '</p>' +
+          '</div>' +
+        '</div>';
+      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2" style="color: rgba(255,255,255,0.25);">还有 ' + (p.length - 30) + ' 张合约未展示</p>' : '');
+    }
+
+    function abApplyPortfolio() {
+      if (abState.portfolio.length === 0) { showToast('warning', '组合为空', '请先通过对话构建组合'); return; }
+      const userName = currentUser ? (currentUser.displayName || currentUser.username) : '游客';
+      let count = 0;
+      abState.portfolio.forEach(c => {
+        if (c.status === 'available' && !c.isMine) {
+          c.status = 'sold'; c.holder = userName; c.isMine = true;
+          const orig = allDeals.find(d => d.id === c.id);
+          if (orig) { orig.status = 'sold'; orig.holder = userName; orig.isMine = true; }
+          const ps = projectSummaries.find(s => s.projectId === c.projectId);
+          if (ps) { ps.mine++; ps.available = Math.max(0, ps.available - 1); }
+          count++;
+        }
+      });
+      showToast('success', '一键认购成功！', '已认购 ' + count + ' 张合约 · 总投入 ¥' + (count * 1000).toLocaleString());
+      abBuildPortfolio(); // 刷新面板
+    }
+
+    function abRefine() {
+      document.getElementById('abInput').focus();
+      showToast('info', '继续调整', '在输入框中描述您的调整需求');
     }
 
     document.addEventListener('DOMContentLoaded', initApp);
