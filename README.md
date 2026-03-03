@@ -1,140 +1,135 @@
-# 滴灌通超级Agent产品Demo
+# L2 - Deal Connect 参与通
 
-## 项目概述
-- **项目名称**: 滴灌通超级Agent产品Demo
-- **目标**: 展示滴灌通RBF超级Agent产品架构的Y型业务流程设计思路，提供统一入口访问所有9个"通"的产品模块
-- **技术栈**: Hono + TypeScript + Tailwind CSS (CDN) + Cloudflare Pages
-- **GitHub**: https://github.com/SamZheng-Design/L1 (branch: v20)
+## Project Overview
+- **Name**: 参与通 Deal Connect
+- **Layer**: L2 (参与层)
+- **Goal**: 投资者智能机会看板 — 基于评估通AI筛子，精准匹配发起通项目
+- **Brand**: DEAL CONNECT / Powered by Micro Connect Group
 
-## 在线访问
-- **预览URL**: https://3000-ixims42i7je8tv9mypq1h-b32ec7bb.sandbox.novita.ai
-
-## 首页设计
-
-### 核心设计
-1. **Splash 启屏动画** — 首次进入展示品牌动画 Connect Worldwide Opportunities
-2. **Welcome 滑块弹窗** — 4页产品设计精华介绍（操作系统→Y型架构→AI筛子→全流程闭环）
-3. **全屏 Hero** — 深色科技感背景 + 品牌Logo + 身份通CTA
-4. **叙事式产品旅程** — 5个阶段按故事线展开，每个阶段含产品链接和可视化插图
-5. **双通道价值主张** — 投资者 vs 融资企业各自工具链
-6. **统一底座展示** — Account + Data + AI 三层基础设施
-
-### 首页布局
-```
-┌─────────────────────────────────────┐
-│  Splash Screen (品牌启屏, 首次进入)   │
-├─────────────────────────────────────┤
-│  Welcome Modal (4页滑块弹窗)         │
-│  操作系统 → Y型架构 → AI筛子 → 闭环  │
-├─────────────────────────────────────┤
-│  Full-screen Hero (aurora背景)       │
-│  • 品牌Logo + 标语                   │
-│  • 身份通CTA + 探索旅程CTA           │
-│  • 数据指标 (5阶段·9Agent·AI·∞行业)  │
-├─────────────────────────────────────┤
-│  Flow Overview (5阶段导航)           │
-├─────────────────────────────────────┤
-│  5个叙事区块 (每个含插图+产品链接)    │
-│  STEP 01: 身份通 (入口分流)          │
-│  STEP 02: 发起通 (融资者上传)        │
-│  STEP 03: 评估通+风控通+参与通       │
-│  STEP 04: 条款通+合约通 (交易达成)   │
-│  STEP 05: 结算通+履约通 (投后管理)   │
-├─────────────────────────────────────┤
-│  Dual Channel (投资者 vs 融资企业)   │
-├─────────────────────────────────────┤
-│  Foundation (统一底座)               │
-├─────────────────────────────────────┤
-│  Final CTA — 身份通注册号召          │
-└─────────────────────────────────────┘
-```
-
-## 核心业务逻辑（Y型流程）
+## Core Workflow
 
 ```
-                    ┌──────────┐
-                    │  身份通   │  ← 统一入口
-                    │ Identity │
-                    └────┬─────┘
-                         │
-                    ┌────┴────┐
-                    │  Y分流   │
-                    └─┬─────┬─┘
-            ┌───────┘       └───────┐
-            ▼                       ▼
-    ┌──────────────┐      ┌──────────────────┐
-    │   融资者路径   │      │    投资者路径      │
-    │   发起通      │      │  评估通(筛子①)    │
-    │  Originate   │      │  风控通(筛子②)    │
-    └──────┬───────┘      │  参与通(看板)      │
-           │              └─────────┬────────┘
-           └──── 数据穿越管道 ──────┤
-                                    ▼
-                          ┌──────────────┐
-                          │  条款通→合约通  │  ← Y型汇合
-                          │  结算通→履约通  │
-                          └──────────────┘
+发起通(Originate) → 评估通(Assess) AI筛子 → 参与通(Deal) 投资者看板 → 条款通(Terms)
 ```
 
-### 关键设计要点
-1. **身份通是统一入口**：所有用户通过身份通认证后，按角色（投资者/融资者）分流
-2. **发起通**：融资者专属——整理、上传经营数据，生成Pitch Deck，主动发起融资
-3. **评估通+风控通是投资者的AI筛子**：每个投资者可自定义投资标准和核验方式
-4. **参与通是投资者统一看板**：展示筛后项目，不设筛子=看到全部项目，主动参与投资
-5. **条款通是Y型汇合点**：投融资双方开始协同
+1. **发起通** — 融资方上传经营数据，生成标准化投资机会
+2. **评估通** — 提供多种AI筛子模型（筛子库10+），用户按需选取
+3. **参与通（本项目）** — 投资者看板：筛后展示 + 参与决策
+4. **条款通** — 确认参与后进入条款协商
 
-## 页面路由
+## Features
 
-### 主页面
-| 路径 | 页面 | 说明 |
-|------|------|------|
-| `/` | 官网首页 | Splash + Welcome弹窗 + Hero + 叙事旅程 + 双通道 + CTA |
-| `/design` | 产品设计思路 | Y型业务流程图、架构总览、设计思路手风琴详解 |
-| `/portal` | 产品统一入口 | Tab切换5阶段、阶段化产品卡片 |
-| `/about` | 关于我们 | 公司使命、愿景、里程碑、价值观 |
-| `/team` | 核心团队 | 管理团队 + 顾问团队 |
-| `/news` | 新闻动态 | 新闻列表4篇 |
-| `/contact` | 联系我们 | 投资者/融资企业/一般查询 + 办公地址 |
+### Completed
+- 登录/注册/游客模式 认证系统
+- 筛子驱动的投资机会看板（筛后展示来自发起通的项目）
+- **筛子管理系统**：从筛子库添加/删除筛子到个人面板
+- 筛子库（10个AI筛子模型）：行业偏好、风控优先、高回报、区域聚焦、综合评估、高成长、大额项目、团队实力、短周期、稳健保守
+- 动态筛子选择器（基于用户面板实时渲染）
+- 项目详情页（筛子评估报告 + 财务数据 + 项目流向）
+- 参与意向表达 + 状态追踪（待参与 → 已意向 → 已确认）
+- 统计面板（全部机会/筛后通过/已意向/已确认）
+- AI助手聊天窗口
+- 新手引导 Onboarding
+- 响应式设计
 
-### 产品占位页面（9个"通"）
-| 路径 | 中文名 | 英文名 | 角色归属 | 阶段 |
-|------|--------|--------|---------|------|
-| `/identity` | 身份通 | Identity Connect | 统一入口 | 入口 |
-| `/application` | 发起通 | Originate Connect | 融资者 | 数据上传 |
-| `/assess` | 评估通 | Assess Connect | 投资者 | AI筛子 |
-| `/risk` | 风控通 | Risk Connect | 投资者 | AI筛子 |
-| `/opportunity` | 参与通 | Deal Connect | 投资者 | 看板展示 |
-| `/terms` | 条款通 | Terms Connect | 双方协同 | 交易达成 |
-| `/contract` | 合约通 | Contract Connect | 双方协同 | 交易达成 |
-| `/settlement` | 结算通 | Settlement Connect | 双方协同 | 投后管理 |
-| `/performance` | 履约通 | Performance Connect | 双方协同 | 投后管理 |
+### Sieve Library (筛子库)
+| Sieve | Category | Logic |
+|-------|----------|-------|
+| 行业偏好筛子 | 行业 | 餐饮/零售/科技行业过滤 |
+| 风控优先筛子 | 风控 | AI评分>=8.5 且 金额<=800万 |
+| 高回报筛子 | 收益 | 分成>=12% 且 AI评分>=8.0 |
+| 区域聚焦筛子 | 区域 | 一线城市项目 |
+| 综合评估筛子 | 综合 | 多维加权评估 |
+| 高成长筛子 | 成长 | 运营<=3年 早期项目 |
+| 大额项目筛子 | 规模 | 金额>=500万 |
+| 团队实力筛子 | 团队 | 员工>=50 且 运营>=3年 |
+| 短周期筛子 | 周期 | 分成期限<=24个月 |
+| 稳健保守筛子 | 风控 | A级评级 + AI>=9.0 + <=500万 |
 
-> **注**: 合约通(`/contract`)已对接外部 Genspark 全栈模式独立应用，点击直接跳转外部URL
+## Tech Stack
+- **Backend**: Hono (Cloudflare Workers framework)
+- **Frontend**: Tailwind CSS (CDN) + Font Awesome + Vanilla JS
+- **Runtime**: Cloudflare Workers / Wrangler
+- **Build**: Vite + @hono/vite-cloudflare-pages
 
-## 已完成功能
-- ✅ Splash 启屏动画（sessionStorage控制不重复）
-- ✅ Welcome 滑块弹窗（4页 + 键盘/触摸支持）
-- ✅ 全屏 Hero（aurora 背景 + 品牌Logo + 双CTA）
-- ✅ 叙事式5阶段产品旅程（插图 + 产品链接 + 状态标签）
-- ✅ 双通道价值主张（投资者 vs 融资企业）
-- ✅ 统一底座展示（Account + Data + AI）
-- ✅ /design 页：完整Y型流程图 + 数据管道可视化 + 架构总览 + 设计思路手风琴
-- ✅ /portal 页：Tab切换5阶段 + 产品卡片详情
-- ✅ 9个产品占位页面（上下产品导航 + 状态/角色标签）
-- ✅ 全站中英双语（?lang=en 切换）
-- ✅ 全局导航栏（Products下拉菜单）+ 页脚
-- ✅ 响应式设计 + CSS动画（reveal/fade）
-- ✅ 产品改名：申请通→发起通(Originate)、机会通→参与通(Deal)
+## Project Structure
+```
+├── src/
+│   └── index.tsx          # Main Hono app (backend + SPA HTML)
+├── public/
+│   └── static/
+│       └── style.css      # Custom CSS styles
+├── ecosystem.config.cjs   # PM2 config (local dev)
+├── wrangler.jsonc          # Cloudflare Workers config
+├── vite.config.ts          # Vite build config
+├── tsconfig.json           # TypeScript config
+├── package.json            # Dependencies & scripts
+└── README.md
+```
 
-## 数据架构
-- **数据源**: 静态TypeScript数据层 (`src/data.ts`)
-- **i18n**: 全量中英双语 (`src/i18n.ts`)
-- **产品角色**: shared / borrower / investor / collaborative
-- **产品阶段**: entry / borrower-upload / investor-filter / investor-view / deal / post-investment
-- **底座**: Account（角色分流）、Data（数据标准化）、AI（筛子编排）
+## Local Development
 
-## 部署
-- **平台**: Cloudflare Pages
-- **状态**: ✅ 开发中
-- **分支**: v20
-- **最后更新**: 2026-02-26
+### Prerequisites
+- Node.js >= 18
+- npm >= 9
+
+### Quick Start
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Build the project
+npm run build
+
+# 3. Start local dev server
+npx wrangler pages dev dist --ip 0.0.0.0 --port 3000
+
+# Open http://localhost:3000
+```
+
+### Using PM2 (recommended for persistent dev)
+```bash
+npm run build
+pm2 start ecosystem.config.cjs
+# Visit http://localhost:3000
+```
+
+### Available Scripts
+```bash
+npm run build          # Build with Vite
+npm run dev            # Vite dev server
+npm run preview        # Wrangler local preview
+```
+
+## Deploy to Cloudflare Pages
+
+```bash
+# 1. Login to Cloudflare
+npx wrangler login
+
+# 2. Build
+npm run build
+
+# 3. Create project (first time only)
+npx wrangler pages project create l2-deal-connect --production-branch main
+
+# 4. Deploy
+npx wrangler pages deploy dist --project-name l2-deal-connect
+```
+
+## API Endpoints
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | /api/auth/register | User registration |
+| POST | /api/auth/login | User login |
+| POST | /api/auth/logout | User logout |
+| GET | /api/auth/me | Current user info |
+| GET | /api/deals | Get deals list |
+| GET | / | Main SPA page |
+
+## Data Storage
+- **Current**: In-memory (demo mode) + localStorage (client-side persistence)
+- **Production-ready**: Cloudflare D1 (migration-ready)
+
+---
+*L2 Deal Connect - Micro Connect Group - 2026*
