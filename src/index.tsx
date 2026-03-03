@@ -475,7 +475,7 @@ app.get('/', (c) => {
                     <h3 class="text-base font-bold text-white" style="letter-spacing: -0.02em;">AI 智能组合构建器</h3>
                     <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background: rgba(46,196,182,0.2); color: #5eead4; animation: pulseGlow 2s ease-in-out infinite;">NEW</span>
                   </div>
-                  <p class="text-sm" style="color: rgba(255,255,255,0.55);">与 AI 对话，智能匹配全平台合约，一键构建个性化投资组合</p>
+                  <p class="text-sm" style="color: #6b7280;">与 AI 对话，智能匹配全平台合约，一键构建个性化投资组合</p>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -3141,8 +3141,8 @@ app.get('/', (c) => {
       if (panelEl) panelEl.classList.add('hidden');
       // 重新生成欢迎消息
       abAddAIMessage(
-        '<p class="text-sm text-white leading-relaxed mb-3">好的，我们重新开始！</p>' +
-        '<p class="text-sm leading-relaxed mb-4" style="color: rgba(255,255,255,0.65);">您这次投资最看重什么？</p>',
+        '<p class="text-sm text-gray-800 leading-relaxed mb-3">好的，我们重新开始！</p>' +
+        '<p class="text-sm leading-relaxed mb-4" style="color: #6b7280;">您这次投资最看重什么？</p>',
         [
           { text: '稳定收益，安全第一', icon: 'fa-shield-alt', color: 'emerald', action: "abSelectOption('追求稳定收益，安全第一')" },
           { text: '愿承担风险，追高回报', icon: 'fa-rocket', color: 'amber', action: "abSelectOption('愿承担风险，追求高回报')" },
@@ -3235,8 +3235,8 @@ app.get('/', (c) => {
         const styleNames = { conservative: '稳健型', aggressive: '进取型', balanced: '均衡型', sector: '行业聚焦型' };
         const styleEmojis = { conservative: '🛡️', aggressive: '🚀', balanced: '⚖️', sector: '🎯' };
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">收到！您倾向于 <span class="font-bold text-white">' + styleNames[abState.style] + '</span> ' + styleEmojis[abState.style] + ' 投资策略。</p>' +
-          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">接下来，' + AB_FLOW[0].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">收到！您倾向于 <span class="font-bold text-teal-700">' + styleNames[abState.style] + '</span> ' + styleEmojis[abState.style] + ' 投资策略。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #6b7280;">接下来，' + AB_FLOW[0].question + '</p>',
           AB_FLOW[0].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.replace('#', '').substring(0,3) === '10b' ? 'emerald' : (opt.color.includes('5cf6') ? 'violet' : (opt.color.includes('f44') ? 'red' : (opt.color.includes('b6d4') ? 'cyan' : (opt.color.includes('4899') ? 'pink' : (opt.color.includes('b308') ? 'yellow' : 'gray'))))),
             action: "abSelectIndustry('" + opt.value + "')"
@@ -3249,8 +3249,8 @@ app.get('/', (c) => {
         abParseIndustryInput(lower);
         abState.step = 2;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">好的，行业方向已明确 ✅ 我正在筛选匹配的合约。</p>' +
-          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[1].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">好的，行业方向已明确 ✅ 我正在筛选匹配的合约。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[1].question + '</p>',
           AB_FLOW[1].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
             action: "abSelectRisk('" + opt.value + "')"
@@ -3264,8 +3264,8 @@ app.get('/', (c) => {
         else abState.riskTolerance = 'medium';
         abState.step = 3;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">风险偏好已记录 📊 组合正在优化中...</p>' +
-          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[2].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">风险偏好已记录 📊 组合正在优化中...</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[2].question + '</p>',
           AB_FLOW[2].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('eab') ? 'yellow' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
             action: "abSelectPeriod('" + opt.value + "')"
@@ -3279,8 +3279,8 @@ app.get('/', (c) => {
         else abState.period = 'medium';
         abState.step = 4;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">期限偏好已确认 ⏱️</p>' +
-          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[3].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">期限偏好已确认 ⏱️</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[3].question + '</p>',
           AB_FLOW[3].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
             action: "abSelectBudget('" + opt.value + "')"
@@ -3295,8 +3295,8 @@ app.get('/', (c) => {
         abState.step = 5;
         abBuildPortfolio();
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2 font-semibold text-white">🎉 您的专属投资组合已构建完成！</p>' +
-          '<p class="text-sm leading-relaxed mb-3" style="color: rgba(255,255,255,0.55);">右侧面板展示了 AI 根据您的偏好从 ' + (totalVirtualContracts || allDeals.length).toLocaleString() + ' 张全平台合约中精选的组合。</p>' +
+          '<p class="text-sm leading-relaxed mb-2 font-semibold text-gray-900">🎉 您的专属投资组合已构建完成！</p>' +
+          '<p class="text-sm leading-relaxed mb-3" style="color: #6b7280;">右侧面板展示了 AI 根据您的偏好从 ' + (totalVirtualContracts || allDeals.length).toLocaleString() + ' 张全平台合约中精选的组合。</p>' +
           '<div class="p-3 rounded-xl" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);">' +
             '<p class="text-xs" style="color: #34d399;"><i class="fas fa-check-circle mr-1"></i>您可以继续与我对话来微调组合，例如「减少餐饮比例」「加入更多科技合约」「降低风险」等。</p>' +
           '</div>',
@@ -3343,9 +3343,9 @@ app.get('/', (c) => {
         abBuildPortfolio();
         const p = abState.portfolio;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">已根据您的要求重新调整组合 🔄</p>' +
-          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">当前组合包含 <span class="font-bold text-white">' + p.length + '</span> 张合约，覆盖 <span class="font-bold text-white">' + [...new Set(p.map(c=>c.industry))].length + '</span> 个行业。右侧面板已更新。</p>' +
-          '<p class="text-xs mt-2" style="color: rgba(255,255,255,0.3);">继续输入可进一步微调，或点击「一键认购」完成。</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">已根据您的要求重新调整组合 🔄</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #6b7280;">当前组合包含 <span class="font-bold text-teal-700">' + p.length + '</span> 张合约，覆盖 <span class="font-bold text-teal-700">' + [...new Set(p.map(c=>c.industry))].length + '</span> 个行业。右侧面板已更新。</p>' +
+          '<p class="text-xs mt-2" style="color: #9ca3af;">继续输入可进一步微调，或点击「一键认购」完成。</p>',
           [
             { text: '满意，去认购', icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
             { text: '继续调整', icon: 'fa-sliders-h', color: 'violet', action: "document.getElementById('abInput').focus()" },
@@ -3364,8 +3364,8 @@ app.get('/', (c) => {
         abState.step = 2;
         abBuildPortfolio();
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">全行业配置 🌐 我会从所有行业中均衡筛选。</p>' +
-          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[1].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">全行业配置 🌐 我会从所有行业中均衡筛选。</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[1].question + '</p>',
           AB_FLOW[1].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
             action: "abSelectRisk('" + opt.value + "')"
@@ -3383,8 +3383,8 @@ app.get('/', (c) => {
       if (abSelectedIndustries.length >= 1) {
         abState.step = 2;
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">已选择 <span class="font-bold text-white">' + abSelectedIndustries.join('、') + '</span> ✅</p>' +
-          '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[1].question + '</p>',
+          '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">已选择 <span class="font-bold text-teal-700">' + abSelectedIndustries.join('、') + '</span> ✅</p>' +
+          '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[1].question + '</p>',
           AB_FLOW[1].options.map(opt => ({
             text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
             action: "abSelectRisk('" + opt.value + "')"
@@ -3400,8 +3400,8 @@ app.get('/', (c) => {
       abState.step = 3;
       abBuildPortfolio();
       abAddAIMessage(
-        '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">风险偏好 → <span class="font-bold text-white">' + (labels[value] || value) + '</span> 📊</p>' +
-        '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[2].question + '</p>',
+        '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">风险偏好 → <span class="font-bold text-teal-700">' + (labels[value] || value) + '</span> 📊</p>' +
+        '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[2].question + '</p>',
         AB_FLOW[2].options.map(opt => ({
           text: opt.text, icon: opt.icon, color: opt.color.includes('eab') ? 'yellow' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
           action: "abSelectPeriod('" + opt.value + "')"
@@ -3416,8 +3416,8 @@ app.get('/', (c) => {
       abState.step = 4;
       abBuildPortfolio();
       abAddAIMessage(
-        '<p class="text-sm leading-relaxed mb-2" style="color: rgba(255,255,255,0.7);">期限偏好 → <span class="font-bold text-white">' + (labels[value] || value) + '</span> ⏱️</p>' +
-        '<p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.55);">' + AB_FLOW[3].question + '</p>',
+        '<p class="text-sm leading-relaxed mb-2" style="color: #374151;">期限偏好 → <span class="font-bold text-teal-700">' + (labels[value] || value) + '</span> ⏱️</p>' +
+        '<p class="text-sm leading-relaxed" style="color: #6b7280;">' + AB_FLOW[3].question + '</p>',
         AB_FLOW[3].options.map(opt => ({
           text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
           action: "abSelectBudget('" + opt.value + "')"
@@ -3554,8 +3554,8 @@ app.get('/', (c) => {
           '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
           '<span class="text-xs flex-1" style="color: rgba(255,255,255,0.6);">' + ind + '</span>' +
           '<div class="flex-1 h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);"><div class="h-full rounded-full transition-all" style="width:' + pct + '%; background:' + c + ';"></div></div>' +
-          '<span class="text-xs font-bold" style="color: rgba(255,255,255,0.7);">' + count + '张</span>' +
-          '<span class="text-xs" style="color: rgba(255,255,255,0.3);">' + pct + '%</span>' +
+          '<span class="text-xs font-bold" style="color: #374151;">' + count + '张</span>' +
+          '<span class="text-xs" style="color: #9ca3af;">' + pct + '%</span>' +
         '</div>';
       }).join('');
 
