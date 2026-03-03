@@ -158,6 +158,8 @@ app.get('/', (c) => {
     #abInput::placeholder { color: rgba(255,255,255,0.25); }
     #abInput:focus { border-color: rgba(139,92,246,0.4); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); outline: none; }
     @keyframes ccSlideDown { from { max-height: 0; opacity: 0; } to { max-height: 1800px; opacity: 1; } }
+    .ab-contract-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+    .ab-contract-item:hover { border-color: rgba(139,92,246,0.2); background: rgba(139,92,246,0.05); }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -634,8 +636,8 @@ app.get('/', (c) => {
       <!-- Right: 组合雷达图+合约列表 -->
       <div class="w-3/5 flex flex-col bg-slate-50 overflow-y-auto">
         <div class="p-3 border-b border-gray-200 bg-white flex items-center justify-between">
-          '<span class="text-sm font-semibold text-gray-700"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>组合加权分析</span>
-          '<span class="text-xs text-gray-400" id="pdWeightNote">跨项目合约等权重加权</span>
+          <span class="text-sm font-semibold text-gray-700"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>组合加权分析</span>
+          <span class="text-xs text-gray-400" id="pdWeightNote">跨项目合约等权重加权</span>
         </div>
         <div class="flex-1 p-5" id="pdRight">
           <div class="text-center py-16 text-gray-400"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">加载组合加权分析...</p></div>
@@ -3441,7 +3443,7 @@ app.get('/', (c) => {
       document.getElementById('abContractCount').textContent = p.length + ' 张';
       document.getElementById('abContractList').innerHTML = p.slice(0, 30).map(c => {
         const cs = calcRadarScores(c); const co = calcOverallScore(cs); const cg = getScoreGrade(co);
-        return '<div class="flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);" onmouseover="this.style.borderColor=\'rgba(139,92,246,0.2)\';this.style.background=\'rgba(139,92,246,0.05)\'" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.05)\';this.style.background=\'rgba(255,255,255,0.03)\'" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
+        return '<div class="flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ab-contract-item" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
           '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + (indColors[c.industry] || '#6b7280') + '18;"><i class="fas fa-file-contract" style="color:' + (indColors[c.industry] || '#6b7280') + '; font-size:10px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
             '<p class="text-xs font-bold text-white truncate">' + c.name + '</p>' +
