@@ -369,10 +369,10 @@ app.get('/', (c) => {
           <div class="stat-card animate-fade-in delay-100 cursor-pointer" onclick="selectSieve('all')">
             <div class="flex items-center justify-between"><div><p class="stat-label">总交易数量</p><p class="stat-value" id="statTotalTransactions">0</p><p class="text-xs text-gray-400 mt-0.5">已完成交易</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 4px 12px rgba(245,158,11,0.3);"><i class="fas fa-exchange-alt text-white text-sm"></i></div></div>
           </div>
-          <div class="stat-card animate-fade-in delay-200 cursor-pointer">
+          <div class="stat-card animate-fade-in delay-200 cursor-pointer" onclick="goToMyContracts()">
             <div class="flex items-center justify-between"><div><p class="stat-label">我的合约</p><p class="stat-value" id="statMyContracts">0</p><p class="text-xs text-gray-400 mt-0.5">已认购张数</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-file-contract text-white text-sm"></i></div></div>
           </div>
-          <div class="stat-card animate-fade-in delay-300 cursor-pointer">
+          <div class="stat-card animate-fade-in delay-300 cursor-pointer" onclick="goToMyPortfolios()">
             <div class="flex items-center justify-between"><div><p class="stat-label">我的组合</p><p class="stat-value" id="statMyPortfolios">0</p><p class="text-xs text-gray-400 mt-0.5">多张合约拼成一个组合</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); box-shadow: 0 4px 12px rgba(139,92,246,0.3);"><i class="fas fa-object-group text-white text-sm"></i></div></div>
           </div>
         </div>
@@ -497,6 +497,122 @@ app.get('/', (c) => {
         </div>
         <div class="flex-1 p-5" id="detailRight">
           <div class="text-center py-16 text-gray-400"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">选择一个项目查看筛子评估报告</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Page: 我的合约 ==================== -->
+  <div id="pageMyContracts" class="page flex-col min-h-screen grid-bg">
+    <nav class="px-5 py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <div class="border-l border-gray-200 pl-3">
+            <h1 class="text-base font-bold text-gray-900"><i class="fas fa-file-contract mr-1.5 text-emerald-500"></i>我的合约</h1>
+            <p class="text-xs text-gray-400" id="myContractsSubtitle">已认购 0 张 · 总投入 ¥0</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="mcSearchInput" placeholder="搜索合约名称/MCN…" class="search-input px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white w-52" oninput="renderMyContracts()">
+          <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="mcFilterIndustry" onchange="renderMyContracts()">
+            <option value="all">全部行业</option>
+          </select>
+          <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="mcSortBy" onchange="renderMyContracts()">
+            <option value="date">按认购时间</option>
+            <option value="score">按AI评分</option>
+            <option value="yield">按分成比例</option>
+            <option value="project">按项目分组</option>
+          </select>
+        </div>
+      </div>
+    </nav>
+    <div class="flex-1 p-4">
+      <div class="max-w-7xl mx-auto">
+        <!-- 统计概览 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="mcStatsGrid"></div>
+        <!-- 合约列表 -->
+        <div id="mcGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        <!-- 空状态 -->
+        <div id="mcEmpty" class="hidden text-center py-16">
+          <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-file-contract"></i></div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">暂无合约</h3>
+          <p class="text-sm text-gray-500 mb-4">您还没有认购任何合约，去合约看板挑选吧</p>
+          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-teal-200"><i class="fas fa-shopping-cart mr-2"></i>去认购</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Page: 我的组合 ==================== -->
+  <div id="pageMyPortfolios" class="page flex-col min-h-screen grid-bg">
+    <nav class="px-5 py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <div class="border-l border-gray-200 pl-3">
+            <h1 class="text-base font-bold text-gray-900"><i class="fas fa-object-group mr-1.5 text-violet-500"></i>我的组合</h1>
+            <p class="text-xs text-gray-400" id="myPortfoliosSubtitle">共 0 个组合 · 多张合约拼成一个组合</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="px-3 py-1.5 bg-violet-50 rounded-lg border border-violet-100 text-xs text-violet-700 font-medium"><i class="fas fa-info-circle mr-1"></i>每个组合 = 同一项目下您持有的多张合约</div>
+        </div>
+      </div>
+    </nav>
+    <div class="flex-1 p-4">
+      <div class="max-w-7xl mx-auto">
+        <!-- 组合统计 -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="mpStatsGrid"></div>
+        <!-- 组合列表 -->
+        <div id="mpGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        <!-- 空状态 -->
+        <div id="mpEmpty" class="hidden text-center py-16">
+          <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-object-group"></i></div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">暂无组合</h3>
+          <p class="text-sm text-gray-500 mb-4">认购合约后自动生成项目组合</p>
+          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-teal-200"><i class="fas fa-shopping-cart mr-2"></i>去认购合约</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Page: 组合详情 ==================== -->
+  <div id="pagePortfolioDetail" class="page flex-col h-screen grid-bg">
+    <nav class="px-4 py-2.5 flex-shrink-0">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <button onclick="goToMyPortfolios()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回组合</span></button>
+          <div class="border-l border-gray-200 pl-3">
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm"></i></div>
+              <div>
+                <h1 class="font-bold text-gray-900 text-sm" id="pdTitle">组合名称</h1>
+                <p class="text-xs text-gray-500" id="pdSubtitle">0 张合约 · 总投入 ¥0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span id="pdGradeBadge" class="px-3 py-1 rounded-xl text-sm font-bold"></span>
+        </div>
+      </div>
+    </nav>
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Left: 组合概览 -->
+      <div class="w-2/5 border-r border-gray-200 flex flex-col bg-white overflow-y-auto">
+        <div class="p-5" id="pdLeft">
+          <div class="text-center py-8 text-gray-400"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">加载中...</p></div>
+        </div>
+      </div>
+      <!-- Right: 组合雷达图+合约列表 -->
+      <div class="w-3/5 flex flex-col bg-slate-50 overflow-y-auto">
+        <div class="p-3 border-b border-gray-200 bg-white flex items-center justify-between">
+          <span class="text-sm font-semibold text-gray-700"><i class="fas fa-chart-pie mr-1.5 text-violet-500"></i>组合加权分析</span>
+          <span class="text-xs text-gray-400" id="pdWeightNote">各合约等权重加权</span>
+        </div>
+        <div class="flex-1 p-5" id="pdRight">
+          <div class="text-center py-16 text-gray-400"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">加载组合分析...</p></div>
         </div>
       </div>
     </div>
@@ -1855,7 +1971,10 @@ app.get('/', (c) => {
     function goToDashboard() { switchPage('pageDashboard'); renderDeals(); }
 
     function goBack() {
-      goToDashboard();
+      const lastPage = window._lastPage || 'pageDashboard';
+      if (lastPage === 'pageMyContracts') goToMyContracts();
+      else if (lastPage === 'pageMyPortfolios') goToMyPortfolios();
+      else goToDashboard();
     }
 
 
@@ -1972,6 +2091,365 @@ app.get('/', (c) => {
 
       // 不再从 localStorage 恢复大量合约数据（避免浏览器卡死）
       // 合约数据由 loadDemoData() 按需生成
+    }
+
+    // ==================== 「我的合约」页面 ====================
+    function getMyContracts() {
+      return allDeals.filter(d => d.isMine);
+    }
+
+    function goToMyContracts() {
+      renderMyContracts();
+      switchPage('pageMyContracts');
+    }
+
+    function renderMyContracts() {
+      const myDeals = getMyContracts();
+      const search = (document.getElementById('mcSearchInput')?.value || '').toLowerCase();
+      const industry = document.getElementById('mcFilterIndustry')?.value || 'all';
+      const sortBy = document.getElementById('mcSortBy')?.value || 'date';
+
+      // 填充行业筛选
+      const indSelect = document.getElementById('mcFilterIndustry');
+      if (indSelect && indSelect.options.length <= 1) {
+        const inds = [...new Set(myDeals.map(d => d.industry))];
+        inds.forEach(ind => { const o = document.createElement('option'); o.value = ind; o.textContent = ind; indSelect.appendChild(o); });
+      }
+
+      let filtered = myDeals.filter(d => {
+        if (search && !d.name.toLowerCase().includes(search) && !(d.mcn || '').toLowerCase().includes(search)) return false;
+        if (industry !== 'all' && d.industry !== industry) return false;
+        return true;
+      });
+
+      // 排序
+      if (sortBy === 'score') filtered.sort((a, b) => parseFloat(b.aiScore) - parseFloat(a.aiScore));
+      else if (sortBy === 'yield') filtered.sort((a, b) => parseInt(b.revenueShare) - parseInt(a.revenueShare));
+      else if (sortBy === 'project') filtered.sort((a, b) => a.projectId.localeCompare(b.projectId) || a.seqInProject - b.seqInProject);
+
+      // 统计
+      const totalInvest = myDeals.length * 1000;
+      const avgScore = myDeals.length > 0 ? (myDeals.reduce((s, d) => s + parseFloat(d.aiScore), 0) / myDeals.length).toFixed(1) : '0';
+      const projectCount = [...new Set(myDeals.map(d => d.projectId))].length;
+      const industryCount = [...new Set(myDeals.map(d => d.industry))].length;
+
+      document.getElementById('myContractsSubtitle').textContent = '已认购 ' + myDeals.length.toLocaleString() + ' 张 · 总投入 ¥' + totalInvest.toLocaleString();
+
+      document.getElementById('mcStatsGrid').innerHTML =
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">持有合约</p><p class="stat-value">' + myDeals.length.toLocaleString() + '</p><p class="text-xs text-gray-400 mt-0.5">张</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-file-contract text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">总投入</p><p class="stat-value">¥' + totalInvest.toLocaleString() + '</p><p class="text-xs text-gray-400 mt-0.5">面值合计</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-coins text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">覆盖项目</p><p class="stat-value">' + projectCount + '</p><p class="text-xs text-gray-400 mt-0.5">个不同项目</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-briefcase text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">平均AI评分</p><p class="stat-value">' + avgScore + '</p><p class="text-xs text-gray-400 mt-0.5">加权平均</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"><i class="fas fa-robot text-white text-sm"></i></div></div></div>';
+
+      const grid = document.getElementById('mcGrid');
+      const empty = document.getElementById('mcEmpty');
+      if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+      empty.classList.add('hidden');
+
+      grid.innerHTML = filtered.map(d => {
+        const scores = calcRadarScores(d);
+        const overall = calcOverallScore(scores);
+        const grade = getScoreGrade(overall);
+        const miniId = 'mcRadar_' + d.id;
+        return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openDetail(&#39;' + d.id + '&#39;)">' +
+          '<div class="flex items-center justify-between mb-1.5">' +
+            '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.12); font-size: 10px;">' + (d.mcn || '') + '</span>' +
+            '<span class="badge badge-success flex-shrink-0"><i class="fas fa-user-check mr-1"></i>我的</span>' +
+          '</div>' +
+          '<div class="flex items-center justify-between mb-2">' +
+            '<div class="flex items-center space-x-2 min-w-0 flex-1">' +
+              '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.12));"><i class="fas fa-file-contract" style="color: #10b981;"></i></div>' +
+              '<div class="min-w-0 flex-1"><h3 class="font-bold text-gray-900 text-sm group-hover:text-teal-600 transition-colors truncate">' + d.name + '</h3><p class="text-xs text-gray-500">' + d.industry + ' · ' + d.location + '</p></div>' +
+            '</div>' +
+            '<div class="flex items-center gap-1.5">' +
+              '<canvas id="' + miniId + '" width="60" height="60" style="width:30px;height:30px;"></canvas>' +
+              '<div class="text-right"><p class="text-sm font-black leading-none" style="color:' + grade.color + ';">' + overall + '</p><p class="font-bold leading-none" style="font-size:9px; color:' + grade.color + ';">' + grade.grade + '</p></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="p-2.5 rounded-xl mb-2" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.12);">' +
+            '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5"><i class="fas fa-file-contract text-teal-500" style="font-size:10px;"></i><span class="text-lg font-black text-teal-700">¥1,000</span><span class="text-xs text-gray-400">面值</span></div><span class="text-xs font-semibold text-emerald-600"><i class="fas fa-check-circle mr-1"></i>已认购</span></div>' +
+          '</div>' +
+          '<div class="flex items-center justify-between text-xs">' +
+            '<div class="flex items-center space-x-3">' +
+              '<span class="text-gray-500"><i class="fas fa-percentage mr-1 text-amber-500"></i>' + d.revenueShare + '</span>' +
+              '<span class="text-gray-500"><i class="fas fa-calendar mr-1 text-cyan-500"></i>' + d.period + '</span>' +
+              '<span class="text-gray-500"><i class="fas fa-shield-alt mr-1 text-emerald-500"></i>' + d.riskGrade + '</span>' +
+            '</div>' +
+            '<span class="font-bold text-gray-700"><i class="fas fa-star text-amber-400 mr-1"></i>' + d.aiScore + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      setTimeout(() => {
+        filtered.forEach(d => { drawMiniRadar('mcRadar_' + d.id, calcRadarScores(d)); });
+      }, 50);
+    }
+
+    // ==================== 「我的组合」页面 ====================
+    // 组合 = 同一项目下用户持有的所有合约
+    function getMyPortfolios() {
+      const myDeals = getMyContracts();
+      const grouped = {};
+      myDeals.forEach(d => {
+        if (!grouped[d.projectId]) {
+          grouped[d.projectId] = { projectId: d.projectId, name: d.name, industry: d.industry, location: d.location, originator: d.originator, contracts: [], revenueShare: d.revenueShare, period: d.period, riskGrade: d.riskGrade };
+        }
+        grouped[d.projectId].contracts.push(d);
+      });
+      return Object.values(grouped);
+    }
+
+    // 计算组合的加权平均雷达评分
+    function calcPortfolioRadarScores(contracts) {
+      if (!contracts || contracts.length === 0) return RADAR_DIMENSIONS.map(() => 50);
+      const allScores = contracts.map(c => calcRadarScores(c));
+      const n = RADAR_DIMENSIONS.length;
+      const avg = [];
+      for (let i = 0; i < n; i++) {
+        let sum = 0;
+        allScores.forEach(s => { sum += s[i]; });
+        avg.push(Math.round(sum / allScores.length));
+      }
+      return avg;
+    }
+
+    function goToMyPortfolios() {
+      renderMyPortfolios();
+      switchPage('pageMyPortfolios');
+    }
+
+    function renderMyPortfolios() {
+      const portfolios = getMyPortfolios();
+      const totalContracts = portfolios.reduce((s, p) => s + p.contracts.length, 0);
+      const totalInvest = totalContracts * 1000;
+      const industries = [...new Set(portfolios.map(p => p.industry))];
+
+      document.getElementById('myPortfoliosSubtitle').textContent = '共 ' + portfolios.length + ' 个组合 · ' + totalContracts + ' 张合约 · 总投入 ¥' + totalInvest.toLocaleString();
+
+      // 组合统计
+      const avgContracts = portfolios.length > 0 ? (totalContracts / portfolios.length).toFixed(1) : '0';
+      const allPortScores = portfolios.map(p => { const s = calcPortfolioRadarScores(p.contracts); return calcOverallScore(s); });
+      const avgOverall = allPortScores.length > 0 ? Math.round(allPortScores.reduce((a, b) => a + b, 0) / allPortScores.length) : 0;
+
+      document.getElementById('mpStatsGrid').innerHTML =
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">组合数量</p><p class="stat-value">' + portfolios.length + '</p><p class="text-xs text-gray-400 mt-0.5">个投资组合</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">合约总数</p><p class="stat-value">' + totalContracts + '</p><p class="text-xs text-gray-400 mt-0.5">张合约</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-file-contract text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">覆盖行业</p><p class="stat-value">' + industries.length + '</p><p class="text-xs text-gray-400 mt-0.5">个行业</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-th-large text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">平均评分</p><p class="stat-value">' + avgOverall + '</p><p class="text-xs text-gray-400 mt-0.5">组合综合评分</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"><i class="fas fa-chart-radar text-white text-sm"></i></div></div></div>';
+
+      const grid = document.getElementById('mpGrid');
+      const empty = document.getElementById('mpEmpty');
+      if (portfolios.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+      empty.classList.add('hidden');
+
+      grid.innerHTML = portfolios.map((p, idx) => {
+        const scores = calcPortfolioRadarScores(p.contracts);
+        const overall = calcOverallScore(scores);
+        const grade = getScoreGrade(overall);
+        const totalValue = p.contracts.length * 1000;
+        const avgAI = (p.contracts.reduce((s, c) => s + parseFloat(c.aiScore), 0) / p.contracts.length).toFixed(1);
+        const canvasId = 'mpRadar_' + idx;
+
+        return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openPortfolioDetail(&#39;' + p.projectId + '&#39;)">' +
+          // Header
+          '<div class="flex items-center justify-between mb-3">' +
+            '<div class="flex items-center gap-2">' +
+              '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.12));"><i class="fas fa-object-group" style="color: #8b5cf6;"></i></div>' +
+              '<div><h3 class="font-bold text-gray-900 text-sm group-hover:text-violet-600 transition-colors truncate">' + p.name + '</h3><p class="text-xs text-gray-500">' + p.industry + ' · ' + p.location + '</p></div>' +
+            '</div>' +
+            '<div class="flex items-center gap-2">' +
+              '<canvas id="' + canvasId + '" width="60" height="60" style="width:30px;height:30px;"></canvas>' +
+              '<div class="text-right"><p class="text-sm font-black leading-none" style="color:' + grade.color + ';">' + overall + '</p><p class="font-bold leading-none" style="font-size:9px; color:' + grade.color + ';">' + grade.grade + '</p></div>' +
+            '</div>' +
+          '</div>' +
+          // 组合信息
+          '<div class="p-3 rounded-xl mb-2" style="background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(124,58,237,0.04)); border: 1px solid rgba(139,92,246,0.12);">' +
+            '<div class="flex items-center justify-between mb-2">' +
+              '<span class="text-xs font-bold text-violet-700"><i class="fas fa-layer-group mr-1"></i>' + p.contracts.length + ' 张合约</span>' +
+              '<span class="text-sm font-black text-violet-700">¥' + totalValue.toLocaleString() + '</span>' +
+            '</div>' +
+            '<div class="flex flex-wrap gap-1">' +
+              p.contracts.slice(0, 5).map(c => '<span class="font-mono px-1.5 py-0.5 rounded text-xs bg-white border border-gray-100" style="font-size:9px; color:#6b7280;">' + (c.mcn || '').split('-').slice(-1)[0] + '</span>').join('') +
+              (p.contracts.length > 5 ? '<span class="text-xs text-gray-400 self-center">+' + (p.contracts.length - 5) + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+          // 关键指标
+          '<div class="grid grid-cols-3 gap-2 mb-2">' +
+            '<div class="text-center p-2 bg-gray-50 rounded-lg"><p class="text-xs font-bold text-amber-600">' + p.revenueShare + '</p><p style="font-size:9px;" class="text-gray-400">分成比例</p></div>' +
+            '<div class="text-center p-2 bg-gray-50 rounded-lg"><p class="text-xs font-bold text-cyan-600">' + p.period + '</p><p style="font-size:9px;" class="text-gray-400">分成期限</p></div>' +
+            '<div class="text-center p-2 bg-gray-50 rounded-lg"><p class="text-xs font-bold text-emerald-600">' + avgAI + '</p><p style="font-size:9px;" class="text-gray-400">AI评分</p></div>' +
+          '</div>' +
+          // Footer
+          '<div class="flex items-center justify-between pt-2 border-t border-gray-100">' +
+            '<span class="text-xs text-gray-400"><i class="fas fa-building mr-1"></i>' + (p.originator || '').substring(0, 12) + '…</span>' +
+            '<span class="text-xs text-violet-500 font-medium group-hover:text-violet-700"><i class="fas fa-arrow-right mr-1"></i>查看详情</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      setTimeout(() => {
+        portfolios.forEach((p, idx) => {
+          drawMiniRadar('mpRadar_' + idx, calcPortfolioRadarScores(p.contracts));
+        });
+      }, 50);
+    }
+
+    // ==================== 组合详情页 ====================
+    let currentPortfolio = null;
+
+    function openPortfolioDetail(projectId) {
+      const portfolios = getMyPortfolios();
+      currentPortfolio = portfolios.find(p => p.projectId === projectId);
+      if (!currentPortfolio) return;
+
+      const contracts = currentPortfolio.contracts;
+      const scores = calcPortfolioRadarScores(contracts);
+      const overall = calcOverallScore(scores);
+      const grade = getScoreGrade(overall);
+      const totalValue = contracts.length * 1000;
+      const avgAI = (contracts.reduce((s, c) => s + parseFloat(c.aiScore), 0) / contracts.length).toFixed(1);
+      const avgShare = (contracts.reduce((s, c) => s + parseInt(c.revenueShare), 0) / contracts.length).toFixed(1);
+
+      document.getElementById('pdTitle').textContent = currentPortfolio.name + ' 组合';
+      document.getElementById('pdSubtitle').textContent = contracts.length + ' 张合约 · 总投入 ¥' + totalValue.toLocaleString();
+      document.getElementById('pdGradeBadge').textContent = grade.grade + ' · ' + overall + '分';
+      document.getElementById('pdGradeBadge').style.cssText = 'background:' + grade.bg + '; color:' + grade.color + '; padding:4px 14px; border-radius:12px; font-size:13px; font-weight:700;';
+
+      // Left panel — 组合概览
+      document.getElementById('pdLeft').innerHTML =
+        '<div class="mb-5">' +
+          // 组合基本信息
+          '<div class="p-4 rounded-2xl mb-4" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%); position: relative; overflow: hidden;">' +
+            '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(139,92,246,0.25) 0%, transparent 50%);pointer-events:none;"></div>' +
+            '<div class="relative z-10">' +
+              '<div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(139,92,246,0.3); color: #c4b5fd;">组合</span><span class="text-xs" style="color: rgba(255,255,255,0.4);">Portfolio</span></div>' +
+              '<h2 class="text-lg font-bold text-white mb-1">' + currentPortfolio.name + '</h2>' +
+              '<p class="text-xs mb-3" style="color: rgba(255,255,255,0.5);">' + currentPortfolio.industry + ' · ' + currentPortfolio.location + ' · ' + (currentPortfolio.originator || '') + '</p>' +
+              '<div class="grid grid-cols-3 gap-2">' +
+                '<div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.08);"><p class="text-lg font-black text-white">' + contracts.length + '</p><p style="font-size:9px; color: rgba(255,255,255,0.4);">张合约</p></div>' +
+                '<div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.08);"><p class="text-lg font-black text-violet-300">¥' + totalValue.toLocaleString() + '</p><p style="font-size:9px; color: rgba(255,255,255,0.4);">总投入</p></div>' +
+                '<div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.08);"><p class="text-lg font-black" style="color:' + grade.color + ';">' + overall + '</p><p style="font-size:9px; color: rgba(255,255,255,0.4);">综合评分</p></div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          // 关键参数
+          '<div class="grid grid-cols-2 gap-3 mb-4">' +
+            '<div class="p-3 bg-amber-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">加权分成比例</p><p class="text-lg font-bold text-amber-600">' + avgShare + '%</p></div>' +
+            '<div class="p-3 bg-cyan-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">合约期限</p><p class="text-lg font-bold text-cyan-600">' + currentPortfolio.period + '</p></div>' +
+            '<div class="p-3 bg-emerald-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">AI评分均值</p><p class="text-lg font-bold text-emerald-600">' + avgAI + '<span class="text-xs text-gray-400">/10</span></p></div>' +
+            '<div class="p-3 bg-violet-50 rounded-xl"><p class="text-xs text-gray-500 mb-1">风控评级</p><p class="text-lg font-bold text-violet-600">' + currentPortfolio.riskGrade + '</p></div>' +
+          '</div>' +
+          // 组合说明
+          '<div class="p-3 bg-violet-50 rounded-xl border border-violet-100 mb-4">' +
+            '<div class="flex items-start gap-2"><i class="fas fa-info-circle text-violet-500 mt-0.5"></i><div><p class="text-xs font-bold text-violet-700 mb-1">组合构成说明</p><p class="text-xs text-violet-600 leading-relaxed">此组合由您在「' + currentPortfolio.name + '」项目下认购的 ' + contracts.length + ' 张合约拼成。组合的雷达图评分和综合分析均为各合约的等权重加权平均，反映您在该项目上的整体投资表现。</p></div></div>' +
+          '</div>' +
+        '</div>' +
+        // 合约清单
+        '<div><h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-list mr-1.5 text-violet-500"></i>组合内合约明细 (' + contracts.length + '张)</h3>' +
+        '<div class="space-y-2">' +
+          contracts.map(c => {
+            const cs = calcRadarScores(c);
+            const co = calcOverallScore(cs);
+            const cg = getScoreGrade(co);
+            return '<div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-violet-200 cursor-pointer transition-all" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
+              '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(16,185,129,0.1);"><i class="fas fa-file-contract text-emerald-500" style="font-size:12px;"></i></div>' +
+              '<div class="flex-1 min-w-0">' +
+                '<p class="font-mono text-xs font-bold text-gray-700 truncate">' + (c.mcn || '') + '</p>' +
+                '<p class="text-xs text-gray-400">¥1,000 · ' + c.revenueShare + ' · ' + c.riskGrade + '</p>' +
+              '</div>' +
+              '<div class="text-right flex-shrink-0">' +
+                '<p class="text-xs font-bold" style="color:' + cg.color + ';">' + co + '</p>' +
+                '<p style="font-size:9px; color:' + cg.color + ';">' + cg.grade + '</p>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div></div>';
+
+      // Right panel — 加权雷达图 + 维度分析
+      let dimensionDetails = '';
+      RADAR_DIMENSIONS.forEach((dim, i) => {
+        const score = scores[i];
+        const dGrade = getScoreGrade(score);
+        // 各合约在此维度的分数
+        const contractScoresForDim = contracts.map(c => calcRadarScores(c)[i]);
+        const minS = Math.min(...contractScoresForDim);
+        const maxS = Math.max(...contractScoresForDim);
+        dimensionDetails += '<div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">' +
+          '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + dim.color + '15;"><i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:13px;"></i></div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center justify-between mb-1">' +
+              '<span class="text-xs font-bold text-gray-700">' + dim.label + '</span>' +
+              '<div class="flex items-center gap-2">' +
+                '<span class="text-xs text-gray-400">' + minS + '~' + maxS + '</span>' +
+                '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + score + '</span>' +
+                '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">' + dGrade.grade + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="h-1.5 rounded-full bg-gray-200 overflow-hidden"><div class="h-full rounded-full" style="width:' + score + '%; background: linear-gradient(90deg, ' + dim.color + ', ' + dim.color + 'cc);"></div></div>' +
+          '</div>' +
+        '</div>';
+      });
+
+      document.getElementById('pdRight').innerHTML =
+        '<div class="space-y-4">' +
+          // 组合雷达图
+          '<div class="bg-white rounded-2xl border border-gray-100 overflow-hidden">' +
+            '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(139,92,246,0.04), rgba(124,58,237,0.03)); border-bottom: 1px solid rgba(0,0,0,0.04);">' +
+              '<div class="flex items-center gap-3">' +
+                '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-chart-pie text-white text-sm"></i></div>' +
+                '<div><h3 class="text-sm font-bold text-gray-900">组合加权雷达图</h3><p class="text-xs text-gray-400">' + contracts.length + ' 张合约的等权重加权平均</p></div>' +
+              '</div>' +
+              '<div class="flex items-center gap-3">' +
+                '<div class="text-right">' +
+                  '<p class="text-2xl font-black" style="color:' + grade.color + ';">' + overall + '<span class="text-xs font-medium text-gray-400">/100</span></p>' +
+                  '<p class="text-xs font-semibold" style="color:' + grade.color + ';">' + grade.label + '</p>' +
+                '</div>' +
+                '<div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:' + grade.bg + '; border: 2px solid ' + grade.color + '33;">' +
+                  '<span class="text-xl font-black" style="color:' + grade.color + ';">' + grade.grade + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex items-center justify-center py-4 px-2">' +
+              '<canvas id="pdRadarCanvas" style="max-width:100%;"></canvas>' +
+            '</div>' +
+            '<div class="px-4 pb-4">' +
+              '<div class="grid grid-cols-4 gap-2">' +
+                RADAR_DIMENSIONS.map((dim, i) => {
+                  const s = scores[i]; const g = getScoreGrade(s);
+                  return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
+                    '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
+                    '<p class="text-xs font-bold mt-1" style="color:' + g.color + ';">' + s + '</p>' +
+                    '<p class="text-xs text-gray-400 truncate" style="font-size:9px;">' + dim.label.replace(/YITO/, '').substring(0, 4) + '</p>' +
+                  '</div>';
+                }).join('') +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          // 维度详解
+          '<div class="bg-white rounded-2xl p-4 border border-gray-100">' +
+            '<h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-list-ul mr-1.5 text-violet-500"></i>各维度加权详解</h3>' +
+            '<div class="space-y-2">' + dimensionDetails + '</div>' +
+          '</div>' +
+          // 合约分布
+          '<div class="bg-white rounded-2xl p-4 border border-gray-100">' +
+            '<h3 class="text-sm font-bold text-gray-800 mb-3"><i class="fas fa-chart-bar mr-1.5 text-teal-500"></i>合约评分分布</h3>' +
+            '<div class="h-32 flex items-end justify-around gap-1">' +
+              contracts.map((c, i) => {
+                const cs = calcRadarScores(c); const co = calcOverallScore(cs); const cg = getScoreGrade(co);
+                return '<div class="flex flex-col items-center flex-1" title="' + (c.mcn || '') + ' — ' + co + '分">' +
+                  '<div class="w-full rounded-t-md cursor-pointer hover:opacity-80 transition-opacity" style="height:' + co + '%; background: linear-gradient(180deg, ' + cg.color + ', ' + cg.color + '88); min-height:8px;" onclick="openDetail(&#39;' + c.id + '&#39;)"></div>' +
+                  '<span class="text-xs text-gray-400 mt-1" style="font-size:8px;">#' + (i + 1) + '</span>' +
+                '</div>';
+              }).join('') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      setTimeout(() => {
+        drawRadarChart('pdRadarCanvas', scores, { size: 320 });
+      }, 50);
+
+      switchPage('pagePortfolioDetail');
     }
 
     document.addEventListener('DOMContentLoaded', initApp);
