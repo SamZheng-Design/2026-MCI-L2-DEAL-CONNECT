@@ -225,9 +225,108 @@ app.get('/', (c) => {
       animation: aiHintPointer 1.5s ease-in-out 2.5s infinite;
       display: inline-block;
     }
+    /* ===== 聚光灯效果：AI入口点亮 ===== */
+    @keyframes spotlightFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes spotlightGlow {
+      0%, 100% { box-shadow: 0 0 30px rgba(93,196,179,0.4), 0 0 60px rgba(93,196,179,0.15), 0 4px 16px rgba(93,196,179,0.15); }
+      50% { box-shadow: 0 0 40px rgba(93,196,179,0.5), 0 0 80px rgba(93,196,179,0.2), 0 8px 32px rgba(93,196,179,0.25); }
+    }
+    @keyframes spotlightLabelPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(1.03); }
+    }
+    #spotlightOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s cubic-bezier(0.28,0.11,0.32,1);
+    }
+    #spotlightOverlay.active {
+      opacity: 1;
+      pointer-events: auto;
+      animation: spotlightFadeIn 0.5s cubic-bezier(0.28,0.11,0.32,1);
+    }
+    .spotlight-active .ai-entry-card {
+      position: relative;
+      z-index: 1001 !important;
+      animation: spotlightGlow 2s ease-in-out infinite !important;
+      transform: scale(1.02);
+      border: 1.5px solid rgba(93,196,179,0.5) !important;
+    }
+    .spotlight-active #aiEntryWrapper {
+      position: relative;
+      z-index: 1001;
+    }
+    .spotlight-active .ai-entry-hint {
+      z-index: 1002;
+    }
+    #spotlightLabel {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1003;
+      background: linear-gradient(135deg, #0a2e2a, #164e47);
+      border: 1px solid rgba(93,196,179,0.35);
+      border-radius: 0 0 16px 16px;
+      padding: 10px 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease 0.2s;
+      animation: spotlightLabelPulse 3s ease-in-out infinite;
+    }
+    #spotlightLabel.active {
+      opacity: 1;
+    }
+    #spotlightLabel .spotlight-label-text {
+      color: #5eead4;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    #spotlightLabel .spotlight-label-sub {
+      color: rgba(255,255,255,0.5);
+      font-size: 11px;
+    }
+    #spotlightDismissHint {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1003;
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease 0.6s;
+    }
+    #spotlightDismissHint.active {
+      opacity: 1;
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
+
+  <!-- ===== 聚光灯遮罩层 ===== -->
+  <div id="spotlightOverlay" onclick="dismissSpotlight()"></div>
+  <div id="spotlightLabel">
+    <i class="fas fa-magic" style="color: #5eead4; font-size: 16px;"></i>
+    <div>
+      <div class="spotlight-label-text">✨ 试试 AI 智能组合构建器</div>
+      <div class="spotlight-label-sub">与 AI 对话，快速构建您的专属投资组合</div>
+    </div>
+  </div>
+  <div id="spotlightDismissHint"><i class="fas fa-hand-pointer" style="margin-right: 4px;"></i>点击任意空白处继续浏览</div>
 
   <!-- ==================== Loading Screen ==================== -->
   <div id="app-loading">
@@ -463,7 +562,7 @@ app.get('/', (c) => {
 
         <!-- ===== AI 组合构建器入口 ===== -->
         <div class="relative mb-5" id="aiEntryWrapper" style="margin-bottom: 72px;">
-          <div onclick="goToAIBuilder(); dismissAIHint();" class="ai-entry-card rounded-2xl p-0 border border-transparent" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%); box-shadow: 0 4px 16px rgba(93,196,179,0.15), 0 2px 6px rgba(0,0,0,0.06);">
+          <div onclick="dismissSpotlight(); goToAIBuilder(); dismissAIHint();" class="ai-entry-card rounded-2xl p-0 border border-transparent" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%); box-shadow: 0 4px 16px rgba(93,196,179,0.15), 0 2px 6px rgba(0,0,0,0.06);">
             <div class="ai-entry-particles"></div>
             <div class="relative z-10 flex items-center justify-between p-5">
               <div class="flex items-center gap-4">
@@ -1211,6 +1310,8 @@ app.get('/', (c) => {
       // 登录后直接进入合约看板（首页）
       goToDashboard();
       showToast('success', '登录成功', '欢迎回来，' + name);
+      // 延迟1.2秒后触发聚光灯引导效果
+      setTimeout(function() { showSpotlight(); }, 1200);
       if (!localStorage.getItem('ec_onboarded')) { setTimeout(showOnboarding, 800); }
     }
 
@@ -3110,6 +3211,42 @@ app.get('/', (c) => {
         var wrapper = document.getElementById('aiEntryWrapper');
         if (wrapper) { wrapper.style.transition = 'margin-bottom 0.4s ease'; wrapper.style.marginBottom = '20px'; }
       }
+    }
+
+    // ===== 聚光灯效果 =====
+    var _spotlightShown = false;
+
+    function showSpotlight() {
+      if (_spotlightShown) return;
+      _spotlightShown = true;
+      // 给 dashboard 加标记让 AI卡片z-index提高
+      var dashboard = document.getElementById('pageDashboard');
+      if (dashboard) dashboard.classList.add('spotlight-active');
+      // 激活遮罩
+      var overlay = document.getElementById('spotlightOverlay');
+      if (overlay) overlay.classList.add('active');
+      // 显示顶部提示标签
+      var label = document.getElementById('spotlightLabel');
+      if (label) setTimeout(function() { label.classList.add('active'); }, 100);
+      // 显示底部 dismiss 提示
+      var dismiss = document.getElementById('spotlightDismissHint');
+      if (dismiss) setTimeout(function() { dismiss.classList.add('active'); }, 100);
+      // 5秒后自动关闭（如果用户没手动关）
+      setTimeout(function() { dismissSpotlight(); }, 6000);
+    }
+
+    function dismissSpotlight() {
+      var overlay = document.getElementById('spotlightOverlay');
+      var label = document.getElementById('spotlightLabel');
+      var dismiss = document.getElementById('spotlightDismissHint');
+      var dashboard = document.getElementById('pageDashboard');
+      if (overlay) { overlay.classList.remove('active'); }
+      if (label) { label.classList.remove('active'); }
+      if (dismiss) { dismiss.classList.remove('active'); }
+      // 延迟移除 class，让过渡动画完成
+      setTimeout(function() {
+        if (dashboard) dashboard.classList.remove('spotlight-active');
+      }, 500);
     }
 
     function goToAIBuilder() {
