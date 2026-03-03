@@ -272,6 +272,8 @@ app.get('/', (c) => {
           </div>
         </div>
         <div class="flex items-center space-x-1.5">
+          <button onclick="goToContracts()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #0f766e; background: rgba(46,196,182,0.08); border: 1px solid rgba(46,196,182,0.2);" data-tip="合约看板"><i class="fas fa-file-contract"></i><span>合约看板</span></button>
+          <div class="h-5 mx-0.5" style="width: 1px; background: rgba(0,0,0,0.08);"></div>
           <button onclick="showOnboarding()" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #6b7280; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.06);" data-tip="新手引导"><i class="fas fa-question-circle text-xs"></i><span>帮助</span></button>
           <div class="h-5 mx-0.5" style="width: 1px; background: rgba(0,0,0,0.08);"></div>
           <button onclick="showToast('info','AI推荐引擎','正在基于您的筛子偏好生成推荐')" class="tooltip flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #49A89A; background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.12);" data-tip="AI推荐"><i class="fas fa-robot"></i><span>推荐</span></button>
@@ -419,14 +421,181 @@ app.get('/', (c) => {
     </div>
   </div>
 
-  <!-- ==================== Page 2: Deal Detail ==================== -->
+  <!-- ==================== Page 2: Contract Board (合约看板) ==================== -->
+  <div id="pageContracts" class="page flex-col min-h-screen grid-bg">
+    <nav class="px-5 py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div style="width:32px; height:36px; position:relative; flex-shrink:0;">
+            <div style="width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg, #2EC4B6, #3DD8CA); position:absolute; top:0; left:3px;"></div>
+            <div style="width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg, #28A696, #2EC4B6); position:absolute; bottom:0; left:3px; opacity:0.85;"></div>
+          </div>
+          <div>
+            <h1 class="text-base font-bold tracking-tight" style="color:#1a1a1a;">合约看板</h1>
+            <p class="text-xs -mt-0.5" style="color:#86868b; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-weight:600; font-size:9px;">CONTRACT BOARD · MCN</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="goToDashboard()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: #6b7280; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.06);"><i class="fas fa-th-large"></i><span>项目看板</span></button>
+          <button onclick="goToContracts()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all" style="color: white; background: linear-gradient(135deg, #2EC4B6, #06b6d4); border: 1px solid transparent;"><i class="fas fa-file-contract"></i><span>合约看板</span></button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="flex-1 p-4">
+      <div class="max-w-7xl mx-auto">
+        <!-- MCN 编号体系说明 Banner -->
+        <div class="relative overflow-hidden rounded-2xl mb-5 p-5" style="background: linear-gradient(135deg, #0c2d4a 0%, #0f3d36 40%, #164e47 100%);">
+          <div class="absolute inset-0" style="background: radial-gradient(ellipse at 70% 30%, rgba(6,182,212,0.3) 0%, transparent 50%), radial-gradient(ellipse at 20% 80%, rgba(46,196,182,0.2) 0%, transparent 50%); pointer-events:none;"></div>
+          <div class="relative z-10 flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(46,196,182,0.2); color: #5DC4B3; letter-spacing: 0.05em;">MCN SYSTEM</span>
+                <span class="text-xs" style="color: rgba(255,255,255,0.4);">Micro Connect Note</span>
+              </div>
+              <h2 class="text-lg font-bold text-white mb-1">合约编号看板</h2>
+              <p class="text-xs" style="color: rgba(255,255,255,0.5);">每张合约拥有唯一MCN编号（身份证），贯穿一级认购、二级转让全生命周期</p>
+            </div>
+            <div class="hidden sm:flex items-center gap-4">
+              <div class="text-center">
+                <p class="text-xl font-black text-white" id="contractStatTotal">0</p>
+                <p class="text-xs" style="color: rgba(255,255,255,0.4);">合约总数</p>
+              </div>
+              <div class="w-px h-10 bg-white/10"></div>
+              <div class="text-center">
+                <p class="text-xl font-black text-cyan-300" id="contractStatActive">0</p>
+                <p class="text-xs" style="color: rgba(255,255,255,0.4);">活跃合约</p>
+              </div>
+              <div class="w-px h-10 bg-white/10"></div>
+              <div class="text-center">
+                <p class="text-xl font-black text-amber-300" id="contractStatMy">0</p>
+                <p class="text-xs" style="color: rgba(255,255,255,0.4);">我的持仓</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MCN 编号说明卡片（可折叠） -->
+        <div class="bg-white rounded-2xl border border-gray-100 mb-4 overflow-hidden" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <button onclick="toggleMCNExplainer()" class="w-full p-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, rgba(6,182,212,0.12), rgba(14,165,233,0.12));"><i class="fas fa-info-circle text-cyan-600 text-xs"></i></div>
+              <span class="text-sm font-bold text-gray-700">MCN编号规则</span>
+              <span class="px-2 py-0.5 bg-cyan-50 text-cyan-600 rounded text-xs font-medium">合约身份证</span>
+            </div>
+            <i id="mcnExplainerArrow" class="fas fa-chevron-down text-gray-300 text-xs transition-transform"></i>
+          </button>
+          <div id="mcnExplainer" class="hidden border-t border-gray-100 p-4">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="flex-1 p-3 bg-slate-50 rounded-xl font-mono text-center">
+                <p class="text-lg font-black tracking-wider" style="color: #0f766e;">MCN-FB-HZ-2602-0001</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-5 gap-2 text-center">
+              <div class="p-2 bg-teal-50 rounded-lg"><p class="text-xs font-bold text-teal-700">MCN</p><p class="text-xs text-gray-400 mt-0.5">前缀</p><p class="text-xs text-gray-500">Micro Connect Note</p></div>
+              <div class="p-2 bg-amber-50 rounded-lg"><p class="text-xs font-bold text-amber-700">FB</p><p class="text-xs text-gray-400 mt-0.5">行业</p><p class="text-xs text-gray-500">餐饮 F&B</p></div>
+              <div class="p-2 bg-blue-50 rounded-lg"><p class="text-xs font-bold text-blue-700">HZ</p><p class="text-xs text-gray-400 mt-0.5">城市</p><p class="text-xs text-gray-500">杭州</p></div>
+              <div class="p-2 bg-purple-50 rounded-lg"><p class="text-xs font-bold text-purple-700">2602</p><p class="text-xs text-gray-400 mt-0.5">年月</p><p class="text-xs text-gray-500">2026年2月</p></div>
+              <div class="p-2 bg-rose-50 rounded-lg"><p class="text-xs font-bold text-rose-700">0001</p><p class="text-xs text-gray-400 mt-0.5">序号</p><p class="text-xs text-gray-500">批次唯一编号</p></div>
+            </div>
+            <p class="text-xs text-gray-400 mt-3"><i class="fas fa-shield-alt text-teal-500 mr-1"></i>MCN编号在合约生命周期内保持不变 — 无论一级认购还是二级市场转让，编号就是这张合约的「身份证」</p>
+          </div>
+        </div>
+
+        <!-- 筛选工具栏 -->
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <div class="flex items-center space-x-2">
+            <h2 class="text-base font-bold text-gray-800"><i class="fas fa-file-contract mr-1.5 text-teal-500"></i>全部合约</h2>
+            <span id="contractFilterLabel" class="text-xs text-gray-400 font-medium">· 展示全部</span>
+          </div>
+          <div class="flex items-center space-x-2 flex-wrap">
+            <div class="relative"><input type="text" id="contractSearch" placeholder="搜索MCN编号/项目名…" class="search-input px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white w-52" oninput="renderContractBoard()"></div>
+            <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="contractFilterIndustry" onchange="renderContractBoard()">
+              <option value="all">全部行业</option>
+              <option value="餐饮">餐饮 FB</option>
+              <option value="零售">零售 RT</option>
+              <option value="演艺">演艺 EN</option>
+              <option value="教育">教育 ED</option>
+              <option value="健康">健康 HC</option>
+              <option value="科技">科技 TC</option>
+            </select>
+            <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="contractFilterStatus" onchange="renderContractBoard()">
+              <option value="all">全部状态</option>
+              <option value="open">待认购</option>
+              <option value="interested">已意向</option>
+              <option value="confirmed">已确认</option>
+              <option value="closed">已关闭</option>
+            </select>
+            <select class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white" id="contractSortBy" onchange="renderContractBoard()">
+              <option value="mcn">按MCN编号</option>
+              <option value="aiScore">按AI评分</option>
+              <option value="amount">按金额</option>
+              <option value="revenueShare">按分成比例</option>
+              <option value="soldPct">按认购进度</option>
+            </select>
+            <div class="flex bg-gray-100 rounded-lg p-0.5">
+              <button onclick="setContractView('table')" id="btnViewTable" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white shadow text-teal-600"><i class="fas fa-table"></i></button>
+              <button onclick="setContractView('card')" id="btnViewCard" class="px-2.5 py-1 rounded-md text-xs font-semibold text-gray-500"><i class="fas fa-th-large"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 合约列表（表格视图） -->
+        <div id="contractTableView">
+          <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-gray-100" style="background: linear-gradient(135deg, #f8fffe, #f0fdfa);">
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">MCN 编号</th>
+                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">合约名称</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">行业</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">城市</th>
+                    <th class="px-3 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">总额</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">分成</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">期限</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">AI评分</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">风控</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">认购进度</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">我的持仓</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">状态</th>
+                    <th class="px-3 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="contractTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 合约列表（卡片视图） -->
+        <div id="contractCardView" class="hidden">
+          <div id="contractCardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          </div>
+        </div>
+
+        <!-- 合约空状态 -->
+        <div id="contractEmpty" class="hidden py-8">
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(46,196,182,0.1));"><i class="fas fa-file-contract text-2xl text-teal-400"></i></div>
+            <h3 class="text-lg font-bold text-gray-700 mb-1">暂无合约数据</h3>
+            <p class="text-sm text-gray-400 mb-4">请先加载演示数据或等待发起通提交新合约</p>
+            <button onclick="loadDemoData(); goToContracts(); renderContractBoard();" class="px-5 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-sm font-medium"><i class="fas fa-database mr-1.5"></i>加载演示数据</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Page 3: Deal Detail ==================== -->
   <div id="pageDetail" class="page flex-col h-screen grid-bg">
     <nav class="px-4 py-2.5 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <button onclick="goBack()" class="back-btn flex items-center px-2.5 py-1.5 text-gray-600 hover:text-teal-600 rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回</span></button>
           <div class="border-l border-gray-200 pl-3">
-            <div class="flex items-center space-x-2"><h1 class="font-bold text-gray-900 text-sm" id="detailTitle">项目名称</h1><span id="detailStatus" class="badge badge-warning">待参与</span></div>
+            <div class="flex items-center space-x-2"><span id="detailMCN" class="font-mono text-xs font-bold tracking-wider px-2 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.15);">MCN-XX-XX-0000-0000</span><h1 class="font-bold text-gray-900 text-sm" id="detailTitle">项目名称</h1><span id="detailStatus" class="badge badge-warning">待参与</span></div>
             <p class="text-xs text-gray-500"><span class="source-tag source-originate"><i class="fas fa-paper-plane"></i>发起通</span> <span id="detailIndustry">行业</span> · <span id="detailDate">日期</span></p>
           </div>
         </div>
@@ -690,6 +859,8 @@ app.get('/', (c) => {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const page = document.getElementById(pageId); if (page) page.classList.add('active');
       const fab = document.getElementById('aiFab'); if (fab) fab.classList.toggle('hidden', pageId === 'pageAuth');
+      // 记住上一页用于返回
+      if (pageId !== 'pageDetail') window._lastPage = pageId;
     }
 
     // ==================== Auth ====================
@@ -739,7 +910,7 @@ app.get('/', (c) => {
       currentUser = { id: 'guest', username: 'guest', displayName: '游客', email: 'guest@demo.com', role: 'investor' };
       loadDemoData();
       onLoginSuccess();
-      showToast('info', '游客模式', '已加载 ' + allDeals.length + ' 个发起通项目');
+      showToast('info', '游客模式', '已加载 ' + allDeals.length + ' 张合约 · MCN编号已分配');
     }
 
     function onLoginSuccess() {
@@ -766,6 +937,32 @@ app.get('/', (c) => {
     function closeUserDD() { document.getElementById('userDropdown').classList.remove('show'); }
     document.addEventListener('click', (e) => { if (!e.target.closest('#navUserBtn') && !e.target.closest('#userDropdown')) closeUserDD(); });
 
+    // ==================== MCN 合约编号体系 ====================
+    // MCN = Micro Connect Note
+    // 格式: MCN-{行业2位}-{城市2位}-{年月4位}-{序号4位}
+    // 例: MCN-FB-HZ-2602-0001
+    const INDUSTRY_CODES = { '餐饮': 'FB', '零售': 'RT', '演艺': 'EN', '教育': 'ED', '健康': 'HC', '科技': 'TC', '金融': 'FI', '地产': 'RE', '物流': 'LG', '农业': 'AG' };
+    const CITY_CODES = { '杭州': 'HZ', '深圳': 'SZ', '北京': 'BJ', '上海': 'SH', '成都': 'CD', '广州': 'GZ', '天津': 'TJ', '全国': 'CN', '香港': 'HK', '澳门': 'MO' };
+
+    function generateMCN(industry, city, dateStr, seqNum) {
+      const indCode = INDUSTRY_CODES[industry] || 'XX';
+      const cityCode = CITY_CODES[city] || 'XX';
+      const d = new Date(dateStr);
+      const yearMonth = String(d.getFullYear()).slice(-2) + String(d.getMonth() + 1).padStart(2, '0');
+      const seq = String(seqNum).padStart(4, '0');
+      return 'MCN-' + indCode + '-' + cityCode + '-' + yearMonth + '-' + seq;
+    }
+
+    // 从MCN编号解析信息
+    function parseMCN(mcn) {
+      const parts = mcn.split('-');
+      if (parts.length !== 5 || parts[0] !== 'MCN') return null;
+      const indName = Object.keys(INDUSTRY_CODES).find(k => INDUSTRY_CODES[k] === parts[1]) || '未知';
+      const cityName = Object.keys(CITY_CODES).find(k => CITY_CODES[k] === parts[2]) || '未知';
+      const ym = parts[3];
+      return { prefix: 'MCN', industryCode: parts[1], cityCode: parts[2], yearMonth: ym, year: '20' + ym.slice(0,2), month: ym.slice(2), seq: parts[4], industryName: indName, cityName: cityName };
+    }
+
     // ==================== Demo Data (模拟发起通数据) ====================
     function loadDemoData() {
       const industries = ['餐饮','零售','演艺','教育','健康','科技','餐饮','零售','科技','餐饮','教育','健康'];
@@ -776,15 +973,21 @@ app.get('/', (c) => {
       ];
       const locations = ['杭州','深圳','全国','北京','上海','北京','成都','北京','上海','广州','天津','北京'];
       const originators = ['杭州星巴克运营方','深圳瑞幸加盟商','演艺经纪公司','新东方教育集团','美年大健康集团','字节跳动投融部','海底捞运营总部','泡泡玛特品牌方','喜茶(深圳)公司','太二餐饮管理','猿辅导科技','和睦家医疗'];
+      // 固定的发行日期 — 确保MCN编号在每次加载时保持一致
+      const issueDates = ['2026-02-01','2026-02-03','2026-01-15','2026-02-10','2026-01-20','2026-02-14','2026-01-25','2026-02-05','2026-02-08','2026-01-28','2026-02-12','2026-02-18'];
+      // 固定金额 — 确保份数不变
+      const amounts = [480, 650, 920, 380, 550, 780, 420, 310, 570, 690, 450, 520]; // 万元
 
       allDeals = names.map((name, i) => {
-        const amount = (200 + Math.floor(Math.random() * 800)) * 10000;
+        const amount = amounts[i] * 10000;
         const unitPrice = 1000; // 每份标准1000元
         const totalUnits = Math.floor(amount / unitPrice);
-        const soldPercent = Math.random() * 0.7; // 0~70% 已售
+        const soldPercent = [0.35, 0.52, 0.68, 0.18, 0.42, 0.61, 0.28, 0.45, 0.55, 0.38, 0.22, 0.48][i];
         const soldUnits = Math.floor(totalUnits * soldPercent);
+        const mcn = generateMCN(industries[i], locations[i], issueDates[i], i + 1);
         return {
           id: 'D_' + (1000 + i),
+          mcn,  // 合约唯一身份编号 — 终身不变
           name,
           industry: industries[i],
           amount,
@@ -792,19 +995,30 @@ app.get('/', (c) => {
           totalUnits,
           soldUnits,
           myUnits: 0, // 当前用户认购份数
-          aiScore: (7.0 + Math.random() * 3.0).toFixed(1),
+          aiScore: [8.5, 7.8, 9.2, 7.5, 8.8, 9.0, 8.2, 7.6, 8.7, 8.0, 7.3, 9.1][i].toFixed(1),
           status: 'open',
-          revenueShare: (6 + Math.floor(Math.random() * 16)) + '%',
-          period: (18 + Math.floor(Math.random() * 42)) + '个月',
+          revenueShare: [12, 8, 18, 10, 14, 15, 11, 7, 13, 9, 10, 16][i] + '%',
+          period: [24, 36, 18, 30, 24, 36, 24, 30, 20, 28, 36, 24][i] + '个月',
           location: locations[i],
           originator: originators[i],
-          originateDate: new Date(Date.now() - Math.random() * 30 * 86400000).toISOString().slice(0, 10),
+          originateDate: issueDates[i],
+          issueDate: issueDates[i], // 合约发行日
+          maturityDate: null, // 到期日（根据period计算）
           description: '由「' + originators[i] + '」通过发起通提交的' + industries[i] + '行业投资机会。已通过平台基础审核。',
           riskGrade: ['A+','A','A','A-','B+','A+','A-','B+','A','B+','A-','A'][i],
-          monthlyRevenue: (50 + Math.floor(Math.random() * 200)) + '万',
-          employeeCount: (20 + Math.floor(Math.random() * 80)),
-          operatingYears: (1 + Math.floor(Math.random() * 8)).toFixed(1)
+          monthlyRevenue: [120, 85, 230, 65, 150, 180, 95, 60, 140, 110, 75, 160][i] + '万',
+          employeeCount: [45, 38, 12, 85, 62, 95, 55, 28, 42, 35, 70, 50][i],
+          operatingYears: [3.5, 2.1, 8.0, 5.2, 4.8, 6.0, 7.5, 1.5, 2.8, 3.0, 4.0, 6.5][i].toFixed(1),
+          contractType: 'RSN', // Revenue Sharing Note 收益分享合约
+          currency: 'CNY'
         };
+      });
+      // 计算到期日
+      allDeals.forEach(d => {
+        const monthsNum = parseInt(d.period);
+        const issue = new Date(d.issueDate);
+        issue.setMonth(issue.getMonth() + monthsNum);
+        d.maturityDate = issue.toISOString().slice(0, 10);
       });
       localStorage.setItem('ec_allDeals', JSON.stringify(allDeals));
     }
@@ -1300,6 +1514,11 @@ app.get('/', (c) => {
         const miniCanvasId = 'miniRadar_' + d.id;
 
         return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openDetail(\\'' + d.id + '\\')">' +
+          // MCN Header
+          '<div class="flex items-center justify-between mb-1.5">' +
+            '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.12); font-size: 10px;">' + (d.mcn || '') + '</span>' +
+            '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1"></i>' + st.label + '</span>' +
+          '</div>' +
           // Header: name + status + mini radar
           '<div class="flex items-center justify-between mb-2">' +
             '<div class="flex items-center space-x-2 min-w-0 flex-1">' +
@@ -1314,7 +1533,6 @@ app.get('/', (c) => {
                   '<p class="font-bold leading-none" style="font-size:9px; color:' + cardGrade.color + ';">' + cardGrade.grade + '</p>' +
                 '</div>' +
               '</div>' +
-              '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1"></i>' + st.label + '</span>' +
             '</div>' +
           '</div>' +
           // 来源标签 + 筛子标签
@@ -1496,6 +1714,7 @@ app.get('/', (c) => {
       currentDeal = dealsList.find(d => d.id === id) || allDeals.find(d => d.id === id);
       if (!currentDeal) return;
       document.getElementById('detailTitle').textContent = currentDeal.name;
+      document.getElementById('detailMCN').textContent = currentDeal.mcn || 'MCN-XX-XX-0000-0000';
       const statusMap = { open: { label: '待参与', cls: 'badge-warning' }, interested: { label: '已意向', cls: 'badge-primary' }, confirmed: { label: '已确认', cls: 'badge-success' }, closed: { label: '已关闭', cls: 'badge-danger' } };
       const st = statusMap[currentDeal.status] || statusMap.open;
       document.getElementById('detailStatus').className = 'badge ' + st.cls;
@@ -1523,13 +1742,27 @@ app.get('/', (c) => {
       // Left panel — 项目信息（来自发起通）
       document.getElementById('detailLeft').innerHTML =
         '<div class="mb-5">' +
+          // MCN 编号卡片
+          '<div class="p-4 rounded-2xl mb-4" style="background: linear-gradient(135deg, #0c2d4a 0%, #0f3d36 40%, #164e47 100%); position: relative; overflow: hidden;">' +
+            '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(6,182,212,0.25) 0%, transparent 50%);pointer-events:none;"></div>' +
+            '<div class="relative z-10">' +
+              '<div class="flex items-center gap-2 mb-2"><span class="px-1.5 py-0.5 rounded text-xs font-bold" style="background: rgba(46,196,182,0.2); color: #5DC4B3; letter-spacing: 0.03em;">MCN</span><span class="text-xs" style="color: rgba(255,255,255,0.4);">合约身份编号</span></div>' +
+              '<p class="font-mono text-lg font-black tracking-wider text-white mb-2">' + (currentDeal.mcn || '') + '</p>' +
+              '<div class="grid grid-cols-4 gap-1.5">' +
+                '<div class="text-center p-1.5 rounded-lg" style="background: rgba(255,255,255,0.06);"><p class="text-xs font-bold text-cyan-300">' + (INDUSTRY_CODES[currentDeal.industry] || 'XX') + '</p><p style="font-size:9px; color: rgba(255,255,255,0.4);">行业</p></div>' +
+                '<div class="text-center p-1.5 rounded-lg" style="background: rgba(255,255,255,0.06);"><p class="text-xs font-bold text-cyan-300">' + (CITY_CODES[currentDeal.location] || 'XX') + '</p><p style="font-size:9px; color: rgba(255,255,255,0.4);">城市</p></div>' +
+                '<div class="text-center p-1.5 rounded-lg" style="background: rgba(255,255,255,0.06);"><p class="text-xs font-bold text-cyan-300">' + (currentDeal.issueDate || '').slice(0,7) + '</p><p style="font-size:9px; color: rgba(255,255,255,0.4);">发行</p></div>' +
+                '<div class="text-center p-1.5 rounded-lg" style="background: rgba(255,255,255,0.06);"><p class="text-xs font-bold text-amber-300">' + (currentDeal.contractType || 'RSN') + '</p><p style="font-size:9px; color: rgba(255,255,255,0.4);">类型</p></div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
           '<div class="p-3 bg-amber-50 rounded-xl border border-amber-100 mb-4 flex items-center gap-2"><i class="fas fa-paper-plane text-amber-500"></i><div><p class="text-xs font-bold text-amber-700">来自发起通</p><p class="text-xs text-amber-600">发起方：' + (currentDeal.originator || '未知') + '</p></div></div>' +
           '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-gray-900">' + currentDeal.name + '</h2><p class="text-sm text-gray-500">' + currentDeal.industry + ' · ' + currentDeal.location + '</p></div></div>' +
           '<p class="text-sm text-gray-600 leading-relaxed mb-4">' + currentDeal.description + '</p>' +
         '</div>' +
         // ==== 份额核心面板 ====
         '<div class="p-4 rounded-2xl mb-5" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); border: 1.5px solid rgba(46,196,182,0.2);">' +
-          '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-teal-500"></i><h3 class="text-sm font-bold text-gray-800">合约份额信息</h3><span class="text-xs px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 font-semibold">¥' + currentDeal.unitPrice.toLocaleString() + '/份</span></div>' +
+          '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-teal-500"></i><h3 class="text-sm font-bold text-gray-800">合约份额信息</h3><span class="text-xs px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 font-semibold">¥' + currentDeal.unitPrice.toLocaleString() + '/份</span><span class="font-mono text-xs text-gray-400">' + (currentDeal.mcn || '') + '</span></div>' +
           '<div class="grid grid-cols-3 gap-2 mb-3">' +
             '<div class="text-center p-2 bg-white rounded-xl"><p class="text-lg font-bold text-gray-800">' + currentDeal.totalUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">总份数</p></div>' +
             '<div class="text-center p-2 bg-white rounded-xl"><p class="text-lg font-bold text-amber-600">' + currentDeal.soldUnits.toLocaleString() + '</p><p class="text-xs text-gray-400">已认购</p></div>' +
@@ -1550,6 +1783,7 @@ app.get('/', (c) => {
           '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">员工人数</span><span class="text-xs font-bold text-gray-800">' + (currentDeal.employeeCount || '暂无') + '人</span></div></div>' +
           '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">运营年限</span><span class="text-xs font-bold text-gray-800">' + (currentDeal.operatingYears || '暂无') + '年</span></div></div>' +
           '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">风控评级</span><span class="text-xs font-bold text-emerald-600">' + (currentDeal.riskGrade || 'N/A') + '</span></div></div>' +
+          '<div class="p-3 bg-gray-50 rounded-xl border border-gray-100"><div class="flex items-center justify-between"><span class="text-xs font-medium text-gray-600">到期日</span><span class="text-xs font-bold text-gray-800">' + (currentDeal.maturityDate || '—') + '</span></div></div>' +
         '</div>';
 
       // Right panel — 雷达图评估 + 筛子结果
@@ -1688,6 +1922,194 @@ app.get('/', (c) => {
     }
 
     function goToDashboard() { switchPage('pageDashboard'); renderDeals(); }
+
+    function goBack() {
+      const lastPage = window._lastPage || 'pageDashboard';
+      if (lastPage === 'pageContracts') { goToContracts(); }
+      else { goToDashboard(); }
+    }
+
+    // ==================== 合约看板 ====================
+    let contractView = 'table'; // 'table' or 'card'
+
+    function goToContracts() {
+      switchPage('pageContracts');
+      renderContractBoard();
+    }
+
+    function setContractView(view) {
+      contractView = view;
+      document.getElementById('btnViewTable').className = 'px-2.5 py-1 rounded-md text-xs font-semibold ' + (view === 'table' ? 'bg-white shadow text-teal-600' : 'text-gray-500');
+      document.getElementById('btnViewCard').className = 'px-2.5 py-1 rounded-md text-xs font-semibold ' + (view === 'card' ? 'bg-white shadow text-teal-600' : 'text-gray-500');
+      document.getElementById('contractTableView').classList.toggle('hidden', view !== 'table');
+      document.getElementById('contractCardView').classList.toggle('hidden', view !== 'card');
+      renderContractBoard();
+    }
+
+    function toggleMCNExplainer() {
+      const el = document.getElementById('mcnExplainer');
+      const arrow = document.getElementById('mcnExplainerArrow');
+      el.classList.toggle('hidden');
+      arrow.style.transform = el.classList.contains('hidden') ? '' : 'rotate(180deg)';
+    }
+
+    function renderContractBoard() {
+      const searchVal = (document.getElementById('contractSearch')?.value || '').toLowerCase();
+      const filterInd = document.getElementById('contractFilterIndustry')?.value || 'all';
+      const filterSt = document.getElementById('contractFilterStatus')?.value || 'all';
+      const sortBy = document.getElementById('contractSortBy')?.value || 'mcn';
+
+      let filtered = allDeals.filter(d => {
+        if (!d.mcn) return false;
+        if (searchVal && !d.mcn.toLowerCase().includes(searchVal) && !d.name.toLowerCase().includes(searchVal) && !d.industry.includes(searchVal)) return false;
+        if (filterInd !== 'all' && d.industry !== filterInd) return false;
+        if (filterSt !== 'all' && d.status !== filterSt) return false;
+        return true;
+      });
+
+      // 排序
+      filtered.sort((a, b) => {
+        if (sortBy === 'mcn') return a.mcn.localeCompare(b.mcn);
+        if (sortBy === 'aiScore') return parseFloat(b.aiScore) - parseFloat(a.aiScore);
+        if (sortBy === 'amount') return b.amount - a.amount;
+        if (sortBy === 'revenueShare') return parseInt(b.revenueShare) - parseInt(a.revenueShare);
+        if (sortBy === 'soldPct') return (b.soldUnits / b.totalUnits) - (a.soldUnits / a.totalUnits);
+        return 0;
+      });
+
+      // 更新统计
+      const el1 = document.getElementById('contractStatTotal');
+      const el2 = document.getElementById('contractStatActive');
+      const el3 = document.getElementById('contractStatMy');
+      if (el1) el1.textContent = allDeals.length;
+      if (el2) el2.textContent = allDeals.filter(d => d.status === 'open' || d.status === 'interested').length;
+      if (el3) el3.textContent = allDeals.filter(d => d.myUnits > 0).length;
+
+      const label = document.getElementById('contractFilterLabel');
+      if (label) label.textContent = '· 展示 ' + filtered.length + ' / ' + allDeals.length + ' 张合约';
+
+      // 空状态
+      const emptyEl = document.getElementById('contractEmpty');
+      const tableView = document.getElementById('contractTableView');
+      const cardView = document.getElementById('contractCardView');
+      if (filtered.length === 0) {
+        if (emptyEl) emptyEl.classList.remove('hidden');
+        if (tableView) tableView.classList.add('hidden');
+        if (cardView) cardView.classList.add('hidden');
+        return;
+      }
+      if (emptyEl) emptyEl.classList.add('hidden');
+
+      const statusMap = {
+        open: { label: '待认购', cls: 'badge-warning', icon: 'fa-clock', color: '#d97706' },
+        interested: { label: '已意向', cls: 'badge-primary', icon: 'fa-hand-point-up', color: '#5DC4B3' },
+        confirmed: { label: '已确认', cls: 'badge-success', icon: 'fa-check-double', color: '#059669' },
+        closed: { label: '已关闭', cls: 'badge-danger', icon: 'fa-lock', color: '#dc2626' }
+      };
+
+      // ===== 表格视图 =====
+      if (contractView === 'table') {
+        if (tableView) tableView.classList.remove('hidden');
+        if (cardView) cardView.classList.add('hidden');
+
+        const tbody = document.getElementById('contractTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = filtered.map((d, idx) => {
+          const st = statusMap[d.status] || statusMap.open;
+          const soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
+          const soldColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
+          const aiColor = parseFloat(d.aiScore) >= 9 ? '#059669' : parseFloat(d.aiScore) >= 8 ? '#0d9488' : '#d97706';
+          const scores = calcRadarScores(d);
+          const overall = calcOverallScore(scores);
+          const grade = getScoreGrade(overall);
+
+          return '<tr class="border-b border-gray-50 hover:bg-teal-50/30 cursor-pointer transition-colors" onclick="openDetail(\\'' + d.id + '\\')">' +
+            '<td class="px-4 py-3"><div class="font-mono text-xs font-bold tracking-wide" style="color: #0f766e;">' + d.mcn + '</div><div class="text-xs text-gray-400 mt-0.5 font-medium">' + (d.contractType || 'RSN') + ' · ' + (d.currency || 'CNY') + '</div></td>' +
+            '<td class="px-4 py-3"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase text-xs" style="color: #5DC4B3;"></i></div><div class="min-w-0"><p class="text-sm font-semibold text-gray-800 truncate">' + d.name + '</p><p class="text-xs text-gray-400 truncate">' + d.originator + '</p></div></div></td>' +
+            '<td class="px-3 py-3 text-center"><span class="px-2 py-0.5 rounded text-xs font-semibold" style="background: rgba(245,158,11,0.08); color: #92400e;">' + (INDUSTRY_CODES[d.industry] || 'XX') + '</span><p class="text-xs text-gray-400 mt-0.5">' + d.industry + '</p></td>' +
+            '<td class="px-3 py-3 text-center"><span class="text-xs font-medium text-gray-600">' + d.location + '</span></td>' +
+            '<td class="px-3 py-3 text-right"><span class="text-sm font-bold text-gray-800">¥' + (d.amount/10000).toFixed(0) + '万</span><p class="text-xs text-gray-400">' + d.totalUnits.toLocaleString() + '份</p></td>' +
+            '<td class="px-3 py-3 text-center"><span class="text-sm font-bold" style="color: #0f766e;">' + d.revenueShare + '</span></td>' +
+            '<td class="px-3 py-3 text-center"><span class="text-xs font-medium text-gray-600">' + d.period + '</span></td>' +
+            '<td class="px-3 py-3 text-center"><span class="text-sm font-bold" style="color:' + aiColor + ';">' + d.aiScore + '</span></td>' +
+            '<td class="px-3 py-3 text-center"><span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:' + grade.bg + '; color:' + grade.color + ';">' + d.riskGrade + '</span></td>' +
+            '<td class="px-3 py-3"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden" style="min-width:48px;"><div class="h-full rounded-full" style="width:' + soldPct + '%; background:' + soldColor + ';"></div></div><span class="text-xs font-bold flex-shrink-0" style="color:' + soldColor + ';">' + soldPct + '%</span></div></td>' +
+            '<td class="px-3 py-3 text-center">' + (d.myUnits > 0 ? '<div class="text-xs font-bold text-emerald-600">' + d.myUnits + '份</div><div class="text-xs text-gray-400">¥' + (d.myUnits * d.unitPrice).toLocaleString() + '</div>' : '<span class="text-xs text-gray-300">—</span>') + '</td>' +
+            '<td class="px-3 py-3 text-center"><span class="badge ' + st.cls + '"><i class="fas ' + st.icon + ' mr-1" style="font-size:9px;"></i>' + st.label + '</span></td>' +
+            '<td class="px-3 py-3 text-center"><button onclick="event.stopPropagation(); openDetail(\\'' + d.id + '\\')" class="text-xs text-teal-600 hover:text-teal-800 font-semibold"><i class="fas fa-arrow-right"></i></button></td>' +
+          '</tr>';
+        }).join('');
+      }
+
+      // ===== 卡片视图 =====
+      if (contractView === 'card') {
+        if (tableView) tableView.classList.add('hidden');
+        if (cardView) cardView.classList.remove('hidden');
+
+        const cardGrid = document.getElementById('contractCardGrid');
+        if (!cardGrid) return;
+        cardGrid.innerHTML = filtered.map(d => {
+          const st = statusMap[d.status] || statusMap.open;
+          const soldPct = d.totalUnits > 0 ? Math.round(d.soldUnits / d.totalUnits * 100) : 0;
+          const soldColor = soldPct >= 80 ? '#ef4444' : soldPct >= 50 ? '#f59e0b' : '#10b981';
+          const scores = calcRadarScores(d);
+          const overall = calcOverallScore(scores);
+          const grade = getScoreGrade(overall);
+          const mcnInfo = parseMCN(d.mcn);
+          const miniCanvasId = 'cMiniRadar_' + d.id;
+
+          return '<div class="project-card group cursor-pointer" onclick="openDetail(\\'' + d.id + '\\')">' +
+            // MCN 编号头
+            '<div class="flex items-center justify-between mb-2">' +
+              '<div class="flex items-center gap-2">' +
+                '<span class="font-mono text-xs font-black tracking-wider px-2 py-1 rounded-lg" style="background: linear-gradient(135deg, #ecfdf5, #ecfeff); color: #0f766e; border: 1px solid rgba(46,196,182,0.15);">' + d.mcn + '</span>' +
+              '</div>' +
+              '<span class="badge ' + st.cls + ' flex-shrink-0"><i class="fas ' + st.icon + ' mr-1" style="font-size:9px;"></i>' + st.label + '</span>' +
+            '</div>' +
+            // 名称 + 评分
+            '<div class="flex items-center justify-between mb-2">' +
+              '<div class="flex items-center gap-2 min-w-0 flex-1">' +
+                '<div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.12), rgba(73,168,154,0.12));"><i class="fas fa-briefcase text-sm" style="color: #5DC4B3;"></i></div>' +
+                '<div class="min-w-0"><h3 class="font-bold text-gray-900 text-sm truncate group-hover:text-teal-600">' + d.name + '</h3><p class="text-xs text-gray-400">' + d.industry + ' · ' + d.location + '</p></div>' +
+              '</div>' +
+              '<div class="flex items-center gap-1.5 flex-shrink-0" title="合约综合评分">' +
+                '<canvas id="' + miniCanvasId + '" width="60" height="60" style="width:28px;height:28px;"></canvas>' +
+                '<div class="text-right"><p class="text-sm font-black leading-none" style="color:' + grade.color + ';">' + overall + '</p><p class="font-bold leading-none" style="font-size:9px; color:' + grade.color + ';">' + grade.grade + '</p></div>' +
+              '</div>' +
+            '</div>' +
+            // 核心指标
+            '<div class="grid grid-cols-4 gap-1.5 mb-2">' +
+              '<div class="text-center p-1.5 rounded-lg bg-gray-50"><p class="text-xs font-bold text-gray-700">¥' + (d.amount/10000).toFixed(0) + '万</p><p class="text-xs text-gray-400" style="font-size:9px;">总额</p></div>' +
+              '<div class="text-center p-1.5 rounded-lg bg-gray-50"><p class="text-xs font-bold" style="color:#0f766e;">' + d.revenueShare + '</p><p class="text-xs text-gray-400" style="font-size:9px;">分成</p></div>' +
+              '<div class="text-center p-1.5 rounded-lg bg-gray-50"><p class="text-xs font-bold text-gray-700">' + d.period + '</p><p class="text-xs text-gray-400" style="font-size:9px;">期限</p></div>' +
+              '<div class="text-center p-1.5 rounded-lg bg-gray-50"><p class="text-xs font-bold" style="color:' + (parseFloat(d.aiScore) >= 9 ? '#059669' : '#0d9488') + ';">' + d.aiScore + '</p><p class="text-xs text-gray-400" style="font-size:9px;">AI评分</p></div>' +
+            '</div>' +
+            // 认购进度
+            '<div class="p-2 rounded-xl mb-2" style="background: linear-gradient(135deg, #f0fdf9, #ecfeff); border: 1px solid rgba(46,196,182,0.1);">' +
+              '<div class="flex items-center justify-between mb-1">' +
+                '<span class="text-xs font-semibold text-gray-600"><i class="fas fa-file-contract text-teal-500 mr-1" style="font-size:10px;"></i>' + d.totalUnits.toLocaleString() + ' 份</span>' +
+                '<span class="text-xs font-bold" style="color:' + soldColor + ';">' + soldPct + '% 已认购</span>' +
+              '</div>' +
+              '<div class="h-1.5 rounded-full bg-gray-200 overflow-hidden"><div class="h-full rounded-full" style="width:' + soldPct + '%; background:' + soldColor + ';"></div></div>' +
+              (d.myUnits > 0 ? '<div class="mt-1.5 flex items-center gap-1 text-xs"><i class="fas fa-user-check text-emerald-500" style="font-size:9px;"></i><span class="text-emerald-600 font-bold">我已认购 ' + d.myUnits + ' 份 (¥' + (d.myUnits * d.unitPrice).toLocaleString() + ')</span></div>' : '') +
+            '</div>' +
+            // 底部
+            '<div class="flex items-center justify-between text-xs">' +
+              '<span class="text-gray-400">发行 ' + d.issueDate + '</span>' +
+              '<span class="text-gray-400">到期 ' + (d.maturityDate || '—') + '</span>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        // 延迟绘制小雷达
+        setTimeout(() => {
+          filtered.forEach(d => {
+            const scores = calcRadarScores(d);
+            drawMiniRadar('cMiniRadar_' + d.id, scores);
+          });
+        }, 50);
+      }
+    }
 
     function expressIntent() {
       if (!currentDeal) return;
