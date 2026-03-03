@@ -66,7 +66,6 @@ app.get('/', (c) => {
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1712,7 +1711,7 @@ app.get('/', (c) => {
     // ==================== 筛子选择 ====================
     function selectSieve(sieveKey) {
       currentSieve = sieveKey;
-      // 更新UI
+      // 更新UI（安全处理，因为可能从非 dashboard 页面调用）
       document.querySelectorAll('#sieveSelector .sieve-chip').forEach(el => {
         el.classList.toggle('active', el.dataset.sieve === sieveKey);
       });
@@ -1721,25 +1720,32 @@ app.get('/', (c) => {
       const sieve = models[sieveKey];
       if (sieve) {
         dealsList = sieve.filter(allDeals);
-        // 更新筛子说明
+        // 更新筛子说明（安全null检查）
         const descEl = document.getElementById('sieveDescription');
         const descText = document.getElementById('sieveDescText');
-        if (sieveKey === 'all') {
-          descEl.classList.add('hidden');
-        } else {
-          descEl.classList.remove('hidden');
-          descText.textContent = sieve.desc;
+        if (descEl) {
+          if (sieveKey === 'all') {
+            descEl.classList.add('hidden');
+          } else {
+            descEl.classList.remove('hidden');
+            if (descText) descText.textContent = sieve.desc;
+          }
         }
         // 更新标签
         const label = document.getElementById('filterLabel');
-        if (sieveKey === 'all') {
-          label.textContent = '· 展示全部 ' + (totalVirtualContracts || allDeals.length).toLocaleString() + ' 个机会';
-        } else {
-          label.textContent = '· ' + sieve.name + ' — 通过 ' + dealsList.length + '/' + (totalVirtualContracts || allDeals.length).toLocaleString();
+        if (label) {
+          if (sieveKey === 'all') {
+            label.textContent = '· 展示全部 ' + (totalVirtualContracts || allDeals.length).toLocaleString() + ' 个机会';
+          } else {
+            label.textContent = '· ' + sieve.name + ' — 通过 ' + dealsList.length + '/' + (totalVirtualContracts || allDeals.length).toLocaleString();
+          }
         }
+      } else {
+        // sieve not found (e.g. 'all' before mySieves init)
+        dealsList = allDeals.map(d => ({ ...d, matchScore: null, sieveResult: 'all' }));
       }
       renderDeals();
-      if (sieveKey !== 'all' && dealsList.length > 0) {
+      if (sieveKey !== 'all' && sieve && dealsList.length > 0) {
         showToast('success', sieve.name, '筛选出 ' + dealsList.length + ' 个匹配机会');
       }
     }
@@ -1748,6 +1754,7 @@ app.get('/', (c) => {
     function renderDeals() {
       const grid = document.getElementById('dealGrid');
       const empty = document.getElementById('emptyState');
+      if (!grid) return; // 安全检查：非 dashboard 页面时不渲染
       const searchVal = (document.getElementById('dealSearch')?.value || '').toLowerCase();
       const filterVal = document.getElementById('filterStatus')?.value || 'all';
 
@@ -1770,13 +1777,14 @@ app.get('/', (c) => {
       // 我的组合 = 基金型跨项目组合数量
       var fundPortfolios = getMyPortfolios();
       var dashVPortfolios = fundPortfolios.length;
-      document.getElementById('statTotalContracts').textContent = dashVTotal.toLocaleString();
-      document.getElementById('statTotalTransactions').textContent = dashVSold.toLocaleString();
-      document.getElementById('statMyContracts').textContent = dashVMine.toLocaleString();
-      document.getElementById('statMyPortfolios').textContent = dashVPortfolios.toLocaleString();
+      var el;
+      el = document.getElementById('statTotalContracts'); if (el) el.textContent = dashVTotal.toLocaleString();
+      el = document.getElementById('statTotalTransactions'); if (el) el.textContent = dashVSold.toLocaleString();
+      el = document.getElementById('statMyContracts'); if (el) el.textContent = dashVMine.toLocaleString();
+      el = document.getElementById('statMyPortfolios'); if (el) el.textContent = dashVPortfolios.toLocaleString();
 
-      if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
-      empty.classList.add('hidden');
+      if (filtered.length === 0) { grid.innerHTML = ''; if (empty) empty.classList.remove('hidden'); return; }
+      if (empty) empty.classList.add('hidden');
 
       const statusMap = {
         available: { label: '待售', cls: 'badge-warning', icon: 'fa-tag' },
@@ -2249,29 +2257,38 @@ app.get('/', (c) => {
 
     // ==================== Init ====================
     function initApp() {
-      const bar = document.getElementById('loadingBar');
-      const status = document.getElementById('loadingStatus');
-      const steps = [
+      var bar = document.getElementById('loadingBar');
+      var status = document.getElementById('loadingStatus');
+      if (!bar || !status) {
+        // DOM 未就绪时延迟重试
+        setTimeout(initApp, 50);
+        return;
+      }
+      var steps = [
         { p: 25, t: '连接发起通数据...' },
         { p: 50, t: '加载评估通筛子...' },
         { p: 75, t: '初始化参与通看板...' },
         { p: 100, t: '准备就绪' }
       ];
-      let i = 0;
-      const tick = setInterval(() => {
-        if (i >= steps.length) {
+      var stepIdx = 0;
+      var tick = setInterval(function() {
+        if (stepIdx >= steps.length) {
           clearInterval(tick);
-          setTimeout(() => {
-            document.getElementById('app-loading').classList.add('fade-out');
-            setTimeout(() => document.getElementById('app-loading').style.display = 'none', 500);
+          setTimeout(function() {
+            var loadEl = document.getElementById('app-loading');
+            if (loadEl) {
+              loadEl.classList.add('fade-out');
+              setTimeout(function() { loadEl.style.display = 'none'; }, 500);
+            }
           }, 300);
           return;
         }
-        bar.style.width = steps[i].p + '%'; status.textContent = steps[i].t; i++;
-      }, 400);
+        bar.style.width = steps[stepIdx].p + '%';
+        status.textContent = steps[stepIdx].t;
+        stepIdx++;
+      }, 350);
 
-      // 不再从 localStorage 恢复大量合约数据（避免浏览器卡死）
-      // 合约数据由 loadDemoData() 按需生成
+      // 合约数据由 loadDemoData() 按需生成（游客登录时调用）
     }
 
     // ==================== 「我的合约」页面 ====================
@@ -2974,19 +2991,32 @@ app.get('/', (c) => {
     ];
 
     function goToAIBuilder() {
-      if (allDeals.length === 0) { loadDemoData(); selectSieve('all'); }
-      const el = document.getElementById('abTotalContracts');
+      if (allDeals.length === 0) {
+        // 确保筛子已初始化
+        if (mySieves.length === 0) initMySieves();
+        loadDemoData();
+        // 只设置 dealsList，不渲染 dashboard（避免 null 引用）
+        var models = getActiveSieveModels();
+        var sieve = models['all'];
+        if (sieve) dealsList = sieve.filter(allDeals);
+        else dealsList = allDeals.map(function(d) { return Object.assign({}, d, { matchScore: null, sieveResult: 'all' }); });
+        currentSieve = 'all';
+      }
+      var el = document.getElementById('abTotalContracts');
       if (el) el.textContent = (totalVirtualContracts || allDeals.length).toLocaleString();
       switchPage('pageAIBuilder');
     }
 
     function resetAIBuilder() {
       abState = { step: 0, style: null, industries: [], riskTolerance: null, targetReturn: null, budget: null, period: null, extraPrefs: [], portfolio: [], portfolioName: '' };
+      abSelectedIndustries = [];
       // 重置UI
-      const msgs = document.getElementById('abMessages');
+      var msgs = document.getElementById('abMessages');
       if (msgs) msgs.innerHTML = '';
-      document.getElementById('abWaitingState').classList.remove('hidden');
-      document.getElementById('abPortfolioPanel').classList.add('hidden');
+      var waitEl = document.getElementById('abWaitingState');
+      if (waitEl) waitEl.classList.remove('hidden');
+      var panelEl = document.getElementById('abPortfolioPanel');
+      if (panelEl) panelEl.classList.add('hidden');
       // 重新生成欢迎消息
       abAddAIMessage(
         '<p class="text-sm text-white leading-relaxed mb-3">好的，我们重新开始！</p>' +
@@ -3346,11 +3376,15 @@ app.get('/', (c) => {
       const p = abState.portfolio;
       if (p.length === 0) return;
 
-      // 显示面板
-      document.getElementById('abWaitingState').classList.add('hidden');
-      document.getElementById('abPortfolioPanel').classList.remove('hidden');
-      document.getElementById('abPortfolioPanel').classList.add('ab-portfolio-evolve');
-      setTimeout(() => document.getElementById('abPortfolioPanel').classList.remove('ab-portfolio-evolve'), 600);
+      // 显示面板（安全检查）
+      var waitEl = document.getElementById('abWaitingState');
+      var panelEl = document.getElementById('abPortfolioPanel');
+      if (waitEl) waitEl.classList.add('hidden');
+      if (panelEl) {
+        panelEl.classList.remove('hidden');
+        panelEl.classList.add('ab-portfolio-evolve');
+        setTimeout(function() { panelEl.classList.remove('ab-portfolio-evolve'); }, 600);
+      }
 
       // 计算统计
       const scores = calcPortfolioRadarScores(p);
@@ -3444,8 +3478,12 @@ app.get('/', (c) => {
       showToast('info', '继续调整', '在输入框中描述您的调整需求');
     }
 
-    document.addEventListener('DOMContentLoaded', initApp);
+    // ==================== 初始化入口 ====================
+    // 立即启动初始化（不等待 DOMContentLoaded，因为 script 在 body 末尾）
+    initApp();
   </script>
+  <!-- Tailwind CSS CDN 放在最后异步加载，不阻塞页面渲染和JS执行 -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </body>
 </html>`)
 })
