@@ -1587,11 +1587,11 @@ app.get('/', (c) => {
     function calcRadarScores(deal) {
       if (!deal) return RADAR_DIMENSIONS.map(() => 50);
 
-      // 1. YITO年化收益率 — 分成比例越高、期限适中 => 年化越高
+      // 1. YITO年化收益率 — revenueShare 直接就是年化收益率(%)
       const shareNum = parseInt(deal.revenueShare) || 10;
       const periodNum = parseInt(deal.period) || 24;
-      const annualYield = (shareNum / periodNum) * 12; // 简化年化
-      const yieldScore = Math.min(100, Math.max(15, Math.round(annualYield * 8 + 10)));
+      const annualYield = shareNum; // revenueShare 本身就是年化收益率
+      const yieldScore = Math.min(100, Math.max(15, Math.round(annualYield * 5 + 15)));
 
       // 2. 合约时长适配度 — 12-30个月为最优，偏离扣分
       let durationScore;
@@ -1639,7 +1639,7 @@ app.get('/', (c) => {
       if (!deal) return ['—', '—', '—', '—', '—', '—', '—', '—'];
       const shareNum = parseInt(deal.revenueShare) || 10;
       const periodNum = parseInt(deal.period) || 24;
-      const annualYield = (shareNum / periodNum) * 12;
+      const annualYield = shareNum; // revenueShare 本身就是年化收益率(%)
       // 单张合约面值 ¥1,000 的每月预估收入
       const dealMonthlyIncome = 1000 * annualYield / 100 / 12;
       const dealIncomeStr = '¥' + Math.round(dealMonthlyIncome);
@@ -1660,31 +1660,28 @@ app.get('/', (c) => {
       if (!contracts || contracts.length === 0) return ['—', '—', '—', '—', '—', '—', '—', '—'];
       const n = contracts.length;
 
-      // 1. 加权年化收益率
+      // 1. 年化收益率（加权平均，面值相同故等于简单平均）
+      // revenueShare 本身就是年化收益率(%)
       let totalYield = 0;
       contracts.forEach(c => {
         const shareNum = parseInt(c.revenueShare) || 10;
-        const periodNum = parseInt(c.period) || 24;
-        totalYield += (shareNum / periodNum) * 12;
+        totalYield += shareNum;
       });
       const avgYield = totalYield / n;
 
-      // 2. 平均合约时长（月→天）
+      // 2. 平均合约时长（月→天，加权平均）
       let totalMonths = 0;
       contracts.forEach(c => { totalMonths += parseInt(c.period) || 24; });
       const avgMonths = totalMonths / n;
       const avgDays = Math.round(avgMonths * 30);
 
-      // 3. 组合每月预估收入 — 基于合约面值×分成比例（投资者视角）
-      // 每张合约面值 ¥1,000，每月收入 = 1000 × 分成比例(%) / 合约期限(月)
-      let totalMonthlyIncome = 0;
+      // 3. 组合每月预估收入 — 所有底层合约预估月收的加总
+      // 每张合约面值 ¥1,000，每月收入 = 1000 × 年化收益率(%) / 100 / 12
+      let monthlyIncome = 0;
       contracts.forEach(c => {
         const shareNum = parseInt(c.revenueShare) || 10;
-        const periodNum = parseInt(c.period) || 24;
-        totalMonthlyIncome += 1000 * (shareNum / 100) / periodNum * 12; // 年化后分摊到月
+        monthlyIncome += 1000 * shareNum / 100 / 12;
       });
-      // 更直观的算法：每月收入 = 总投入 × 年化收益率 / 12
-      const monthlyIncome = (n * 1000 * avgYield / 100 / 12);
       const incomeDisplay = monthlyIncome >= 1000 ? (monthlyIncome / 10000).toFixed(2) + '万' : '¥' + Math.round(monthlyIncome);
 
       // 4. 风控评级 — 取众数
@@ -3138,9 +3135,9 @@ app.get('/', (c) => {
       const totalValue = contracts.length * 1000;
       const avgAI = (contracts.reduce(function(s, c) { return s + parseFloat(c.aiScore); }, 0) / contracts.length).toFixed(1);
       const avgShare = (contracts.reduce(function(s, c) { return s + parseInt(c.revenueShare); }, 0) / contracts.length).toFixed(1);
-      // 计算年化收益率
+      // 计算年化收益率（revenueShare 本身就是年化%，加权平均）
       let pdTotalYield = 0;
-      contracts.forEach(function(c) { var sn = parseInt(c.revenueShare) || 10; var pn = parseInt(c.period) || 24; pdTotalYield += (sn / pn) * 12; });
+      contracts.forEach(function(c) { var sn = parseInt(c.revenueShare) || 10; pdTotalYield += sn; });
       const pdAvgYield = (pdTotalYield / contracts.length).toFixed(1);
       // 计算平均合约时长（月→天）
       let pdTotalMonths = 0;
@@ -3853,9 +3850,9 @@ app.get('/', (c) => {
       const projects = [...new Set(p.map(c => c.projectId))];
       const totalValue = p.length * 1000;
       const avgShare = (p.reduce((s, c) => s + parseInt(c.revenueShare), 0) / p.length).toFixed(1);
-      // 计算年化收益率，与雷达图保持一致
+      // 计算年化收益率（revenueShare 本身就是年化%，加权平均）
       let abTotalYield = 0;
-      p.forEach(c => { const sn = parseInt(c.revenueShare) || 10; const pn = parseInt(c.period) || 24; abTotalYield += (sn / pn) * 12; });
+      p.forEach(c => { const sn = parseInt(c.revenueShare) || 10; abTotalYield += sn; });
       const abAvgYield = (abTotalYield / p.length).toFixed(1);
 
       // Header
