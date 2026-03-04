@@ -400,11 +400,11 @@ app.get('/', (c) => {
   <div id="spotlightLabel">
     <i class="fas fa-magic" style="color: #5eead4; font-size: 16px;"></i>
     <div>
-      <div class="spotlight-label-text">✨ Try the AI Portfolio Builder</div>
-      <div class="spotlight-label-sub">Chat with AI · Smart Matching · One-Click Portfolio Building</div>
+      <div class="spotlight-label-text" data-i18n="spotlightTitle">✨ Try the AI Portfolio Builder</div>
+      <div class="spotlight-label-sub" data-i18n="spotlightSub">Chat with AI · Smart Matching · One-Click Portfolio Building</div>
     </div>
   </div>
-  <div id="spotlightDismissHint"><i class="fas fa-hand-pointer" style="margin-right: 4px;"></i>Click anywhere to continue browsing</div>
+  <div id="spotlightDismissHint"><i class="fas fa-hand-pointer" style="margin-right: 4px;"></i><span data-i18n="spotlightDismiss">Click anywhere to continue browsing</span></div>
 
   <!-- ==================== Loading Screen ==================== -->
   <div id="app-loading">
@@ -440,20 +440,20 @@ app.get('/', (c) => {
       <div class="p-8 relative overflow-hidden" style="min-height: 280px; background:rgba(11,30,28,0.95);">
         <!-- Step 0: Welcome -->
         <div id="obStep0" class="ob-step active text-center">
-          <h2 class="text-2xl font-bold mb-3" style="color:#E8F5F3;">Welcome to Deal Connect</h2>
-          <p class="mb-8" style="color:#5A9A90;">Intelligent opportunity board for investors — Precise matching, efficient participation</p>
+          <h2 class="text-2xl font-bold mb-3" style="color:#E8F5F3;" data-i18n="obWelcomeTitle">Welcome to Deal Connect</h2>
+          <p class="mb-8" style="color:#5A9A90;" data-i18n="obWelcomeDesc">Intelligent opportunity board for investors — Precise matching, efficient participation</p>
           <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="p-4 rounded-2xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(245,158,11,0.15);"><i class="fas fa-paper-plane text-xl" style="color:#fbbf24;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">Originate</p><p class="text-xs mt-1" style="color:#5A9A90;">Deal Source</p></div>
-            <div class="p-4 rounded-2xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(6,182,212,0.15);"><i class="fas fa-filter text-xl" style="color:#22d3ee;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">Assess Sieves</p><p class="text-xs mt-1" style="color:#5A9A90;">AI Filtering</p></div>
-            <div class="p-4 rounded-2xl" style="background:rgba(46,196,182,0.08);border:1px solid rgba(46,196,182,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(46,196,182,0.15);"><i class="fas fa-hand-pointer text-xl" style="color:#3DD8CA;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">Deal Decision</p><p class="text-xs mt-1" style="color:#5A9A90;">Your Choice</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(245,158,11,0.15);"><i class="fas fa-paper-plane text-xl" style="color:#fbbf24;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;" data-i18n="obOriginate">Originate</p><p class="text-xs mt-1" style="color:#5A9A90;" data-i18n="obOriginateDesc">Deal Source</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(6,182,212,0.15);"><i class="fas fa-filter text-xl" style="color:#22d3ee;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;" data-i18n="obAssess">Assess Sieves</p><p class="text-xs mt-1" style="color:#5A9A90;" data-i18n="obAssessDesc">AI Filtering</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(46,196,182,0.08);border:1px solid rgba(46,196,182,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(46,196,182,0.15);"><i class="fas fa-hand-pointer text-xl" style="color:#3DD8CA;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;" data-i18n="obDeal">Deal Decision</p><p class="text-xs mt-1" style="color:#5A9A90;" data-i18n="obDealDesc">Your Choice</p></div>
           </div>
         </div>
         <!-- Step 1: Originate Source -->
         <div id="obStep1" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
             <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(245,158,11,0.25);"><i class="fas fa-paper-plane text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#fbbf24;">DATA SOURCE</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">Opportunities from Originate</h3><p class="mb-4" style="color:#5A9A90;">Fundraisers upload business data and plans through Originate, generating standardized investment opportunities. These are pre-screened before flowing into Deal Connect.</p>
-              <div class="flex items-center space-x-4 text-sm"><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>Standardized Data</span></div><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>Real-time Updates</span></div></div>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#fbbf24;" data-i18n="obStep1Tag">DATA SOURCE</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;" data-i18n="obStep1Title">Opportunities from Originate</h3><p class="mb-4" style="color:#5A9A90;" data-i18n="obStep1Desc">Fundraisers upload business data and plans through Originate, generating standardized investment opportunities. These are pre-screened before flowing into Deal Connect.</p>
+              <div class="flex items-center space-x-4 text-sm"><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span data-i18n="obStep1Check1">Standardized Data</span></div><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span data-i18n="obStep1Check2">Real-time Updates</span></div></div>
             </div>
           </div>
         </div>
@@ -461,11 +461,11 @@ app.get('/', (c) => {
         <div id="obStep2" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
             <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(6,182,212,0.25);"><i class="fas fa-filter text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#22d3ee;">SMART FILTERING</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">AI Sieves from Assess</h3><p class="mb-4" style="color:#5A9A90;">Assess provides multiple AI filtering models (sieves), each with different evaluation criteria. Select a sieve to show only passing opportunities; select none to view all.</p>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#22d3ee;" data-i18n="obStep2Tag">SMART FILTERING</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;" data-i18n="obStep2Title">AI Sieves from Assess</h3><p class="mb-4" style="color:#5A9A90;" data-i18n="obStep2Desc">Assess provides multiple AI filtering models (sieves), each with different evaluation criteria. Select a sieve to show only passing opportunities; select none to view all.</p>
               <div class="flex flex-wrap gap-2">
-                <span class="sieve-chip active"><i class="fas fa-brain"></i>Industry Pref.</span>
-                <span class="sieve-chip"><i class="fas fa-shield-alt"></i>Risk-First</span>
-                <span class="sieve-chip"><i class="fas fa-chart-line"></i>High Return</span>
+                <span class="sieve-chip active"><i class="fas fa-brain"></i><span data-i18n="obStep2Chip1">Industry Pref.</span></span>
+                <span class="sieve-chip"><i class="fas fa-shield-alt"></i><span data-i18n="obStep2Chip2">Risk-First</span></span>
+                <span class="sieve-chip"><i class="fas fa-chart-line"></i><span data-i18n="obStep2Chip3">High Return</span></span>
               </div>
             </div>
           </div>
@@ -474,23 +474,23 @@ app.get('/', (c) => {
         <div id="obStep3" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
             <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(46,196,182,0.25);"><i class="fas fa-hand-pointer text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#3DD8CA;">DEAL PARTICIPATION</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">Precise Participation After Filtering</h3><p class="mb-4" style="color:#5A9A90;">Among filtered high-quality opportunities, review detailed assessment reports, compare deals, and express interest. Next steps flow into Terms and Contracts.</p>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#3DD8CA;" data-i18n="obStep3Tag">DEAL PARTICIPATION</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;" data-i18n="obStep3Title">Precise Participation After Filtering</h3><p class="mb-4" style="color:#5A9A90;" data-i18n="obStep3Desc">Among filtered high-quality opportunities, review detailed assessment reports, compare deals, and express interest. Next steps flow into Terms and Contracts.</p>
               <div class="flex items-center space-x-3">
-                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(46,196,182,0.12);color:#3DD8CA;"><i class="fas fa-eye mr-1"></i>Browse Filtered</div>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(46,196,182,0.12);color:#3DD8CA;"><i class="fas fa-eye mr-1"></i><span data-i18n="obStep3Flow1">Browse Filtered</span></div>
                 <i class="fas fa-arrow-right" style="color:#2A5E58;"></i>
-                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(16,185,129,0.12);color:#34d399;"><i class="fas fa-hand-point-up mr-1"></i>Express Interest</div>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(16,185,129,0.12);color:#34d399;"><i class="fas fa-hand-point-up mr-1"></i><span data-i18n="obStep3Flow2">Express Interest</span></div>
                 <i class="fas fa-arrow-right" style="color:#2A5E58;"></i>
-                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(6,182,212,0.12);color:#22d3ee;"><i class="fas fa-file-contract mr-1"></i>Enter Terms</div>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(6,182,212,0.12);color:#22d3ee;"><i class="fas fa-file-contract mr-1"></i><span data-i18n="obStep3Flow3">Enter Terms</span></div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="px-8 pb-8 flex items-center justify-between">
-        <button onclick="closeOnboarding()" class="text-sm transition-colors" style="color:#5A9A90;">Skip Tutorial</button>
+        <button onclick="closeOnboarding()" class="text-sm transition-colors" style="color:#5A9A90;" data-i18n="obSkipBtn">Skip Tutorial</button>
         <div class="flex items-center space-x-3">
-          <button id="obPrev" onclick="obPrev()" class="hidden px-4 py-2 rounded-xl transition-all" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;"><i class="fas fa-arrow-left mr-2"></i>Previous</button>
-          <button id="obNext" onclick="obNext()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-600 hover:to-cyan-600 transition-all font-medium" style="box-shadow:0 8px 24px rgba(46,196,182,0.25);">Start Exploring<i class="fas fa-arrow-right ml-2"></i></button>
+          <button id="obPrev" onclick="obPrev()" class="hidden px-4 py-2 rounded-xl transition-all" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;"><i class="fas fa-arrow-left mr-2"></i><span data-i18n="obPrevBtn">Previous</span></button>
+          <button id="obNext" onclick="obNext()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-600 hover:to-cyan-600 transition-all font-medium" style="box-shadow:0 8px 24px rgba(46,196,182,0.25);"><span data-i18n="obStartBtn">Start Exploring</span><i class="fas fa-arrow-right ml-2"></i></button>
         </div>
       </div>
     </div>
@@ -604,9 +604,9 @@ app.get('/', (c) => {
               <div class="py-1">
                 <button class="user-dropdown-item" onclick="showToast('info', t('navProfile'), t('toastFeatureWIP')); closeUserDD();"><i class="fas fa-user-circle"></i>Profile</button>
                 <button class="user-dropdown-item" onclick="showToast('info', t('navSievePrefs'), t('toastSieveHint')); closeUserDD();"><i class="fas fa-sliders-h"></i>Sieve Preferences</button>
-                <button class="user-dropdown-item" onclick="showOnboarding(); closeUserDD();"><i class="fas fa-graduation-cap"></i>User Guide</button>
+                <button class="user-dropdown-item" onclick="showOnboarding(); closeUserDD();"><i class="fas fa-graduation-cap"></i><span data-i18n="navOnboarding">User Guide</span></button>
                 <div class="user-dropdown-divider"></div>
-                <button class="user-dropdown-item danger" onclick="closeUserDD(); handleLogout();"><i class="fas fa-sign-out-alt"></i>Sign Out</button>
+                <button class="user-dropdown-item danger" onclick="closeUserDD(); handleLogout();"><i class="fas fa-sign-out-alt"></i><span data-i18n="navLogout">Sign Out</span></button>
               </div>
             </div>
           </div>
@@ -832,18 +832,18 @@ app.get('/', (c) => {
               </div>
             </div>
             <div class="rounded-2xl p-5 border" style="background: rgba(15,46,43,0.7); border-color: rgba(46,196,182,0.1);">
-              <h4 class="text-xs font-bold uppercase tracking-wider mb-4" style="color: #5A9A90;"><i class="fas fa-route mr-1.5" style="color: #5DC4B3;"></i>Data Flow</h4>
+              <h4 class="text-xs font-bold uppercase tracking-wider mb-4" style="color: #5A9A90;"><i class="fas fa-route mr-1.5" style="color: #5DC4B3;"></i><span data-i18n="detDataFlow">Data Flow</span></h4>
               <div class="flex items-center justify-center gap-3 flex-wrap">
-                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><i class="fas fa-paper-plane" style="color:#fbbf24;"></i><span class="text-sm font-semibold" style="color:#fbbf24;">Originate</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><i class="fas fa-paper-plane" style="color:#fbbf24;"></i><span class="text-sm font-semibold" style="color:#fbbf24;" data-i18n="detOriginateLabel">Originate</span></div>
                 <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><i class="fas fa-filter" style="color:#22d3ee;"></i><span class="text-sm font-semibold" style="color:#22d3ee;">Assess Sieves</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><i class="fas fa-filter" style="color:#22d3ee;"></i><span class="text-sm font-semibold" style="color:#22d3ee;" data-i18n="detAssessLabel">Assess Sieves</span></div>
                 <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(46,196,182,0.12);border:2px solid rgba(46,196,182,0.3);"><i class="fas fa-hand-pointer" style="color:#3DD8CA;"></i><span class="text-sm font-bold" style="color:#3DD8CA;">Deal Connect (This Page)</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(46,196,182,0.12);border:2px solid rgba(46,196,182,0.3);"><i class="fas fa-hand-pointer" style="color:#3DD8CA;"></i><span class="text-sm font-bold" style="color:#3DD8CA;" data-i18n="detDealLabel">Deal Connect (This Page)</span></div>
                 <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(100,116,139,0.08);border:1px solid rgba(100,116,139,0.15);"><i class="fas fa-file-contract" style="color:#94a3b8;"></i><span class="text-sm font-semibold" style="color:#94a3b8;">Terms Connect</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(100,116,139,0.08);border:1px solid rgba(100,116,139,0.15);"><i class="fas fa-file-contract" style="color:#94a3b8;"></i><span class="text-sm font-semibold" style="color:#94a3b8;" data-i18n="detTermsLabel">Terms Connect</span></div>
               </div>
             </div>
-            <p class="mt-4 text-xs" style="color:#3D7A70;"><i class="fas fa-question-circle mr-1"></i>First time? <button onclick="showOnboarding()" class="underline font-medium" style="color:#3DD8CA;">View user guide</button></p>
+            <p class="mt-4 text-xs" style="color:#3D7A70;"><i class="fas fa-question-circle mr-1"></i><span data-i18n="detFirstTime">First time?</span> <button onclick="showOnboarding()" class="underline font-medium" style="color:#3DD8CA;" data-i18n="detViewGuide">View user guide</button></p>
           </div>
         </div>
       </div>
@@ -855,7 +855,7 @@ app.get('/', (c) => {
     <nav class="px-4 py-2.5 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goBack()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">Back</span></button>
+          <button onclick="goBack()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium" data-i18n="navBack">Back</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
             <div class="flex items-center space-x-2"><span id="detailMCN" class="font-mono text-xs font-bold tracking-wider px-2 py-0.5 rounded" style="background: rgba(46,196,182,0.1); color: #3DD8CA; border: 1px solid rgba(46,196,182,0.2);">MCN-XX-XX-0000-0000</span><h1 class="font-bold text-[#E8F5F3] text-sm" id="detailTitle">Project Name</h1><span id="detailStatus" class="badge badge-warning">Pending</span></div>
             <p class="text-xs text-[#5A9A90]"><span class="source-tag source-originate"><i class="fas fa-paper-plane"></i>Originate</span> <span id="detailIndustry">Industry</span> · <span id="detailDate">Date</span></p>
@@ -865,7 +865,7 @@ app.get('/', (c) => {
           <button onclick="showToast('info',t('toastShare'),t('toastShareMsg'))" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="Share"><i class="fas fa-share-alt"></i></button>
           <button onclick="showToast('info',t('toastBookmark'),t('toastBookmarkMsg'))" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="Bookmark"><i class="fas fa-bookmark"></i></button>
           <div class="w-px h-6 bg-[rgba(46,196,182,0.1)] mx-1"></div>
-          <button onclick="expressIntent()" id="btnExpressIntent" class="btn-primary text-xs py-1.5 px-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);"><i class="fas fa-hand-point-up mr-1"></i>Express Interest</button>
+          <button onclick="expressIntent()" id="btnExpressIntent" class="btn-primary text-xs py-1.5 px-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);"><i class="fas fa-hand-point-up mr-1"></i><span data-i18n="btnSubscribe">Express Interest</span></button>
         </div>
       </div>
     </nav>
@@ -887,7 +887,7 @@ app.get('/', (c) => {
           </div>
         </div>
         <div class="flex-1 p-5" id="detailRight">
-          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">Select a contract to view sieve assessment report</p></div>
+          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm" data-i18n="detRightEmpty">Select a contract to view sieve assessment report</p></div>
         </div>
       </div>
     </div>
@@ -898,7 +898,7 @@ app.get('/', (c) => {
     <nav class="px-5 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">Back to Board</span></button>
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium" data-i18n="navBackBoard">Back to Board</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
             <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-file-contract mr-1.5 text-emerald-500"></i>My Contracts</h1>
             <p class="text-xs text-[#3D7A70]" id="myContractsSubtitle">Subscribed 0 contracts · Total investment ¥0</p>
@@ -927,9 +927,9 @@ app.get('/', (c) => {
         <!-- Empty State -->
         <div id="mcEmpty" class="hidden text-center py-16">
           <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-file-contract"></i></div>
-          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2">No Contracts Yet</h3>
-          <p class="text-sm text-[#5A9A90] mb-4">You have not subscribed to any contracts yet. Browse the contract board to find opportunities.</p>
-          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-[rgba(46,196,182,0.15)]"><i class="fas fa-shopping-cart mr-2"></i>Subscribe Now</button>
+          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2" data-i18n="mcEmptyTitle">No Contracts Yet</h3>
+          <p class="text-sm text-[#5A9A90] mb-4" data-i18n="mcEmptyDesc">You have not subscribed to any contracts yet. Browse the contract board to find opportunities.</p>
+          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-[rgba(46,196,182,0.15)]"><i class="fas fa-shopping-cart mr-2"></i><span data-i18n="mcEmptyBtn">Subscribe Now</span></button>
         </div>
       </div>
     </div>
@@ -940,7 +940,7 @@ app.get('/', (c) => {
     <nav class="px-5 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">Back to Board</span></button>
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium" data-i18n="navBackBoard">Back to Board</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
             <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-object-group mr-1.5 text-[#8B5CF6]"></i>My Portfolios</h1>
             <p class="text-xs text-[#3D7A70]" id="myPortfoliosSubtitle">0 portfolios · 0 contracts · Total investment ¥0</p>
@@ -969,9 +969,9 @@ app.get('/', (c) => {
         <!-- Empty State -->
         <div id="mpEmpty" class="hidden text-center py-16">
           <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-object-group"></i></div>
-          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2">No Portfolios Yet</h3>
-          <p class="text-sm text-[#5A9A90] mb-4">Portfolios are automatically generated after subscribing to contracts</p>
-          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-[rgba(46,196,182,0.15)]"><i class="fas fa-shopping-cart mr-2"></i>Subscribe to Contracts</button>
+          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2" data-i18n="mpEmptyTitle">No Portfolios Yet</h3>
+          <p class="text-sm text-[#5A9A90] mb-4" data-i18n="mpEmptyDesc">Portfolios are automatically generated after subscribing to contracts</p>
+          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-[rgba(46,196,182,0.15)]"><i class="fas fa-shopping-cart mr-2"></i><span data-i18n="mpEmptyBtn">Subscribe to Contracts</span></button>
         </div>
       </div>
     </div>
@@ -982,7 +982,7 @@ app.get('/', (c) => {
     <nav class="px-4 py-2.5 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToMyPortfolios()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">Back to Portfolios</span></button>
+          <button onclick="goToMyPortfolios()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium" data-i18n="navBackPortfolios">Back to Portfolios</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
             <div class="flex items-center space-x-2">
               <div class="w-8 h-8 rounded-lg flex items-center justify-center" id="pdIconBox" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm" id="pdIcon"></i></div>
@@ -1009,7 +1009,7 @@ app.get('/', (c) => {
       <div class="w-3/5 flex flex-col overflow-y-auto" style="background:rgba(11,30,28,0.95);">
         <div class="p-3 border-b border-[rgba(46,196,182,0.12)] bg-[#0F2E2B] flex items-center justify-between">
           <span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#8B5CF6]"></i>Portfolio Weighted Analysis</span>
-          <span class="text-xs text-[#3D7A70]" id="pdWeightNote">Cross-project equal-weight analysis</span>
+          <span class="text-xs text-[#3D7A70]" id="pdWeightNote" data-i18n="pdWeightNote">Cross-project equal-weight analysis</span>
         </div>
         <div class="flex-1 p-5" id="pdRight">
           <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">Loading portfolio analysis...</p></div>
@@ -1103,8 +1103,8 @@ app.get('/', (c) => {
         <div id="abPortfolioPanel" class="hidden flex-1 flex flex-col overflow-hidden">
           <!-- ===== Fixed top: Subscribe button ===== -->
           <div class="flex-shrink-0 flex gap-3 px-5 py-3" style="background: rgba(11,30,28,0.98); border-bottom: 1px solid rgba(46,196,182,0.1); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i>Subscribe to This Portfolio</button>
-            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i>Continue Adjusting</button>
+            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i><span data-i18n="abApply">Subscribe to This Portfolio</span></button>
+            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i><span data-i18n="abRefine">Continue Adjusting</span></button>
           </div>
 
           <!-- ===== Scrollable: Header + Radar + Sector Mix + Contracts ===== -->
@@ -1185,9 +1185,9 @@ app.get('/', (c) => {
     <div class="bg-[#0F2E2B] rounded-2xl max-w-sm w-full mx-4 overflow-hidden animate-scale-in">
       <div class="confirm-dialog" style="padding:32px; text-align:center;">
         <div id="confirmIcon" class="confirm-icon warning" style="width:56px;height:56px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(245,158,11,0.1);"><i class="fas fa-exclamation-triangle" style="color:#f59e0b;font-size:24px;"></i></div>
-        <h3 id="confirmTitle" class="text-lg font-bold text-[#E8F5F3] mb-2">Confirm Action</h3>
-        <p id="confirmMessage" class="text-sm text-[#5A9A90] mb-6">Are you sure you want to proceed?</p>
-        <div class="flex gap-3 justify-center"><button onclick="hideConfirm()" class="btn-secondary rounded-xl px-5 py-2">Cancel</button><button id="confirmAction" onclick="hideConfirm()" class="btn-primary rounded-xl px-5 py-2">Confirm</button></div>
+        <h3 id="confirmTitle" class="text-lg font-bold text-[#E8F5F3] mb-2" data-i18n="confirmTitle">Confirm Action</h3>
+        <p id="confirmMessage" class="text-sm text-[#5A9A90] mb-6" data-i18n="confirmMsg">Are you sure you want to proceed?</p>
+        <div class="flex gap-3 justify-center"><button onclick="hideConfirm()" class="btn-secondary rounded-xl px-5 py-2" data-i18n="confirmCancel">Cancel</button><button id="confirmAction" onclick="hideConfirm()" class="btn-primary rounded-xl px-5 py-2" data-i18n="confirmOk">Confirm</button></div>
       </div>
     </div>
   </div>
@@ -1206,7 +1206,7 @@ app.get('/', (c) => {
   <!-- ==================== AI Assistant FAB ==================== -->
   <div id="aiFab" class="ai-assistant-fab hidden" onclick="toggleAIChat()"><i class="fas fa-robot"></i></div>
   <div id="aiChat" class="ai-chat-window hidden">
-    <div class="ai-chat-header"><div class="flex items-center space-x-2"><i class="fas fa-robot text-white"></i><span class="text-white font-semibold text-sm">Deal Connect AI Assistant</span></div><button onclick="toggleAIChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button></div>
+    <div class="ai-chat-header"><div class="flex items-center space-x-2"><i class="fas fa-robot text-white"></i><span class="text-white font-semibold text-sm" data-i18n="aiChatTitle">Deal Connect AI Assistant</span></div><button onclick="toggleAIChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button></div>
     <div class="ai-chat-messages" id="aiMessages">
       <div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content">Hello! I am the Deal Connect AI Assistant. Ask me about sieve models, project assessments, or the participation process.</div></div>
     </div>
@@ -1248,6 +1248,12 @@ app.get('/', (c) => {
         spotlightTitle: '✨ 体验 AI 组合构建器',
         spotlightSub: '与 AI 对话 · 智能匹配 · 一键构建投资组合',
         spotlightDismiss: '点击任意空白处继续浏览',
+        navBack: '返回', navBackBoard: '返回看板', navBackPortfolios: '返回组合',
+        mcEmptyTitle: '暂无合约', mcEmptyDesc: '浏览看板并认购合约，认购后将在这里显示', mcEmptyBtn: '去认购',
+        mpEmptyTitle: '暂无组合', mpEmptyDesc: '认购合约后将自动生成投资组合', mpEmptyBtn: '去认购合约',
+        detRightEmpty: '选择一张合约查看筛子评估报告',
+        pdWeightNote: '跨项目等权重分析',
+        aiChatTitle: 'Deal Connect AI 助手',
         // Sieve
         sieveTitle: '评估通 · AI筛子', sieveSub: '选择筛子模型过滤机会，不选则展示全部',
         sieveAll: '全部机会', sieveManage: '管理筛子',
@@ -1372,7 +1378,15 @@ app.get('/', (c) => {
         pdWeightedRadarSub: '跨 {projects} 个项目 · {contracts} 张合约等权重加权',
         pdDimWeightedDetail: '各维度加权详解', pdScoreDist: '合约评分分布',
         // Onboarding
-        obStartBtn: '开始使用', obNextBtn: '下一步',
+        obStartBtn: '开始使用', obNextBtn: '下一步', obPrevBtn: '上一步', obSkipBtn: '跳过引导',
+        obWelcomeTitle: '欢迎使用 Deal Connect', obWelcomeDesc: '智能投资机遇看板 — 精准匹配，高效参与',
+        obOriginate: '发起通', obOriginateDesc: '项目来源', obAssess: '评估通', obAssessDesc: 'AI 筛选', obDeal: '参与通', obDealDesc: '您的选择',
+        obStep1Tag: '数据来源', obStep1Title: '来自发起通的投资机会', obStep1Desc: '融资方通过发起通上传经营数据和融资计划，生成标准化投资机会。这些项目经过预审后流入参与通。',
+        obStep1Check1: '标准化数据', obStep1Check2: '实时更新',
+        obStep2Tag: '智能筛选', obStep2Title: '来自评估通的AI筛子', obStep2Desc: '评估通提供多种AI筛选模型（筛子），每种有不同评估标准。选择筛子只显示通过的机会；不选则查看全部。',
+        obStep2Chip1: '行业偏好', obStep2Chip2: '风控优先', obStep2Chip3: '高回报',
+        obStep3Tag: '项目参与', obStep3Title: '筛选后精准参与', obStep3Desc: '在筛选后的优质机会中，查看详细评估报告，比较项目，表达认购意向。后续进入条款协商和合约签署。',
+        obStep3Flow1: '浏览筛选结果', obStep3Flow2: '表达意向', obStep3Flow3: '进入条款',
         // selectSieve
         sieveShowAll: '展示全部 ', sieveOpportunities: ' 个机会', sievePassed: '通过 ', sieveFiltered: '筛选出 ', sieveMatchOpp: ' 个匹配机会',
         // AI Chat
@@ -1480,6 +1494,8 @@ app.get('/', (c) => {
         detMatchPct: '{n}% 匹配度', detNoSieve: '暂未添加筛子', detGoManageSieve: '去管理筛子',
         detIncomeTitle: '收入预测', detMonthPrefix: '月',
         detTimelineTitle: '项目流向',
+        detDataFlow: '数据流向', detOriginateLabel: '发起通', detAssessLabel: '评估通', detDealLabel: '参与通（当前页）', detTermsLabel: '条款通',
+        detFirstTime: '第一次使用？', detViewGuide: '查看用户指南',
         detTL1: '发起通 — 项目提交', detTL2: '评估通 — AI筛选', detTL3: '参与通 — 当前阶段', detTL4: '条款通 → 合约通',
         detTL2Desc: '通过 {match}', detTL2DescBasic: '基础审核',
         detTL3Wait: '等待认购', detTL3Mine: '您已认购此合约', detTL3Sold: '已被认购',
@@ -1579,6 +1595,12 @@ app.get('/', (c) => {
         spotlightTitle: '✨ Try the AI Portfolio Architect',
         spotlightSub: 'AI-Powered · Smart Matching · Build Your Portfolio in One Click',
         spotlightDismiss: 'Click anywhere to dismiss',
+        navBack: 'Back', navBackBoard: 'Back to Board', navBackPortfolios: 'Back to Portfolios',
+        mcEmptyTitle: 'No Contracts Yet', mcEmptyDesc: 'Browse the board and subscribe to contracts', mcEmptyBtn: 'Subscribe Now',
+        mpEmptyTitle: 'No Portfolios Yet', mpEmptyDesc: 'Portfolios are automatically generated after subscribing to contracts', mpEmptyBtn: 'Subscribe to Contracts',
+        detRightEmpty: 'Select a contract to view sieve assessment report',
+        pdWeightNote: 'Cross-project equal-weight analysis',
+        aiChatTitle: 'Deal Connect AI Assistant',
         // Sieve
         sieveTitle: 'Assess · AI Sieves', sieveSub: 'Select a sieve model to filter opportunities, or view all',
         sieveAll: 'All Opportunities', sieveManage: 'Manage Sieves',
@@ -1703,7 +1725,15 @@ app.get('/', (c) => {
         pdWeightedRadarSub: '{projects} projects · {contracts} contracts equally weighted',
         pdDimWeightedDetail: 'Weighted Dimension Analysis', pdScoreDist: 'Contract Score Distribution',
         // Onboarding
-        obStartBtn: 'Get Started', obNextBtn: 'Next',
+        obStartBtn: 'Get Started', obNextBtn: 'Next', obPrevBtn: 'Previous', obSkipBtn: 'Skip Tutorial',
+        obWelcomeTitle: 'Welcome to Deal Connect', obWelcomeDesc: 'Intelligent opportunity board for investors — Precise matching, efficient participation',
+        obOriginate: 'Originate', obOriginateDesc: 'Deal Source', obAssess: 'Assess Sieves', obAssessDesc: 'AI Filtering', obDeal: 'Deal Decision', obDealDesc: 'Your Choice',
+        obStep1Tag: 'DATA SOURCE', obStep1Title: 'Opportunities from Originate', obStep1Desc: 'Fundraisers upload business data and plans through Originate, generating standardized investment opportunities. These are pre-screened before flowing into Deal Connect.',
+        obStep1Check1: 'Standardized Data', obStep1Check2: 'Real-time Updates',
+        obStep2Tag: 'SMART FILTERING', obStep2Title: 'AI Sieves from Assess', obStep2Desc: 'Assess provides multiple AI filtering models (sieves), each with different evaluation criteria. Select a sieve to show only passing opportunities; select none to view all.',
+        obStep2Chip1: 'Industry Pref.', obStep2Chip2: 'Risk-First', obStep2Chip3: 'High Return',
+        obStep3Tag: 'DEAL PARTICIPATION', obStep3Title: 'Precise Participation After Filtering', obStep3Desc: 'Among filtered high-quality opportunities, review detailed assessment reports, compare deals, and express interest. Next steps flow into Terms and Contracts.',
+        obStep3Flow1: 'Browse Filtered', obStep3Flow2: 'Express Interest', obStep3Flow3: 'Enter Terms',
         // selectSieve
         sieveShowAll: 'Showing all ', sieveOpportunities: ' opportunities', sievePassed: 'Passed ', sieveFiltered: 'Filtered ', sieveMatchOpp: ' matching opportunities',
         // AI Chat
@@ -1811,6 +1841,8 @@ app.get('/', (c) => {
         detMatchPct: '{n}% match', detNoSieve: 'No sieves configured', detGoManageSieve: 'Configure Sieves',
         detIncomeTitle: 'Income Projection', detMonthPrefix: 'M',
         detTimelineTitle: 'Deal Flow',
+        detDataFlow: 'Data Flow', detOriginateLabel: 'Originate', detAssessLabel: 'Assess Sieves', detDealLabel: 'Deal Connect (This Page)', detTermsLabel: 'Terms Connect',
+        detFirstTime: 'First time?', detViewGuide: 'View user guide',
         detTL1: 'Originate — Deal Submission', detTL2: 'Assess — AI Screening', detTL3: 'Deal — Current Stage', detTL4: 'Term → Contract',
         detTL2Desc: 'Passed {match}', detTL2DescBasic: 'Basic review',
         detTL3Wait: 'Awaiting subscription', detTL3Mine: 'You have subscribed', detTL3Sold: 'Already subscribed',
@@ -2335,7 +2367,9 @@ app.get('/', (c) => {
     // Total numbers (e.g., 19,110) for statistics display only, no actual objects created
 
     const STATUS_POOL = ['available', 'available', 'available', 'sold', 'available', 'sold', 'available', 'mine', 'available', 'sold'];
-    const HOLDER_NAMES = ['J. Smith', 'L. Chen', 'W. Zhang', 'M. Liu', 'K. Yang', 'Inst. Alpha', 'Fund Beta', 'Investor C', 'Trust Delta', 'PE Epsilon', 'FO Foxtrot', 'AM Golf'];
+    const HOLDER_NAMES_EN = ['J. Smith', 'L. Chen', 'W. Zhang', 'M. Liu', 'K. Yang', 'Inst. Alpha', 'Fund Beta', 'Investor C', 'Trust Delta', 'PE Epsilon', 'FO Foxtrot', 'AM Golf'];
+    const HOLDER_NAMES_ZH = ['张先生', '陈女士', '王先生', '刘女士', '杨先生', '甲机构', '乙基金', '丙投资人', '丁信托', '戊私募', '己家族', '庚资管'];
+    function getHolderName(idx) { return currentLang === 'zh' ? HOLDER_NAMES_ZH[idx % HOLDER_NAMES_ZH.length] : HOLDER_NAMES_EN[idx % HOLDER_NAMES_EN.length]; }
     const MAX_CONTRACTS_PER_PROJECT = 60; // Max contracts generated per project (for display)
 
     // Project-level summary cache
@@ -2353,7 +2387,7 @@ app.get('/', (c) => {
         isMine = true;
         statusRand = 'sold';
       } else if (statusRand === 'sold') {
-        holder = HOLDER_NAMES[(pi * 3 + ci) % HOLDER_NAMES.length];
+        holder = getHolderName((pi * 3 + ci) % HOLDER_NAMES_EN.length);
       }
       var scoreVariation = ((ci * 7 + pi * 13) % 7 - 3) * 0.1;
       var finalScore = Math.max(6.5, Math.min(9.9, proj.aiScore + scoreVariation));
