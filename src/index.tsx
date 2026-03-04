@@ -1634,15 +1634,25 @@ app.get('/', (c) => {
       return [yieldScore, durationScore, stabilityScore, riskCtrlScore, liquidityScore, teamScore, marketScore, aiScoreVal];
     }
 
+    // 计算单张合约的预估月收（基于项目实际月营收 × 分成比例 ÷ 项目总合约数）
+    function calcContractMonthlyIncome(deal) {
+      const monthlyRev = parseInt(deal.monthlyRevenue) || 50; // 项目月营收（万元）
+      const shareNum = parseInt(deal.revenueShare) || 10;     // 分成比例(%)
+      const totalAmt = deal.projectTotalAmount || 50;          // 项目融资总额（万元）
+      const totalContracts = totalAmt * 10;                    // 项目总合约数（每张¥1000）
+      // 每张合约月收 = 月营收(万) × 10000 × 分成(%) / 100 / 总合约数
+      return monthlyRev * 10000 * shareNum / 100 / totalContracts;
+    }
+
     // 计算单个合约的实际展示值（用于维度卡片 — 让投资者一眼看懂组合长什么样）
     function calcDealDisplayValues(deal) {
       if (!deal) return ['—', '—', '—', '—', '—', '—', '—', '—'];
       const shareNum = parseInt(deal.revenueShare) || 10;
       const periodNum = parseInt(deal.period) || 24;
       const annualYield = shareNum; // revenueShare 本身就是年化收益率(%)
-      // 单张合约面值 ¥1,000 的每月预估收入
-      const dealMonthlyIncome = 1000 * annualYield / 100 / 12;
-      const dealIncomeStr = '¥' + Math.round(dealMonthlyIncome);
+      // 单张合约预估月收 = 基于项目实际月营收推算
+      const dealMonthlyIncome = calcContractMonthlyIncome(deal);
+      const dealIncomeStr = dealMonthlyIncome >= 1000 ? (dealMonthlyIncome / 10000).toFixed(2) + '万' : '¥' + Math.round(dealMonthlyIncome);
       return [
         annualYield.toFixed(1) + '%',                // YITO年化收益率
         (periodNum * 30) + '天',                      // 合约时长（转天数）
@@ -1676,11 +1686,10 @@ app.get('/', (c) => {
       const avgDays = Math.round(avgMonths * 30);
 
       // 3. 组合每月预估收入 — 所有底层合约预估月收的加总
-      // 每张合约面值 ¥1,000，每月收入 = 1000 × 年化收益率(%) / 100 / 12
+      // 每张合约月收 = 项目月营收(万) × 10000 × 分成比例(%) / 100 / 项目总合约数
       let monthlyIncome = 0;
       contracts.forEach(c => {
-        const shareNum = parseInt(c.revenueShare) || 10;
-        monthlyIncome += 1000 * shareNum / 100 / 12;
+        monthlyIncome += calcContractMonthlyIncome(c);
       });
       const incomeDisplay = monthlyIncome >= 1000 ? (monthlyIncome / 10000).toFixed(2) + '万' : '¥' + Math.round(monthlyIncome);
 
