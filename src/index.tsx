@@ -476,6 +476,29 @@ app.get('/', (c) => {
     body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; line-height: 1.5; background: #0B1E1C; color: #E8F5F3; -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
     .hidden { display: none !important; }
     .page { display: none; }
+
+    /* ===== Loading Screen ===== */
+    #app-loading {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, #0B1E1C 0%, #0F2E2B 50%, #0B1E1C 100%);
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    #app-loading.fade-out {
+      opacity: 0; visibility: hidden; pointer-events: none;
+    }
+    .loading-text {
+      font-size: 28px; color: #E8F5F3; font-weight: 900;
+      letter-spacing: 0.05em; margin-top: 4px;
+    }
+    .loading-sub {
+      font-size: 12px; color: rgba(232,245,243,0.5);
+      letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.06); opacity: 0.75; }
+    }
     .page.active { display: flex; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
     /* Sieve selector styles */
@@ -1782,7 +1805,7 @@ app.get('/', (c) => {
         abNlpAnalysis: '💡 配置解读',
         abNlpParsing: '正在分析您的需求...',
         abNlpNoMatch: '我没有完全理解您的意思，能否再描述得具体一些？比如：',
-        abNlpExamples: '「收益要高一些，风险能接受中等」\n「看好科技和医疗，短期为主」\n「预算5万，稳定收益优先」',
+        abNlpExamples: '「收益要高一些，风险能接受中等」 · 「看好科技和医疗，短期为主」 · 「预算5万，稳定收益优先」',
         abNlpStyleConservative: '🛡️ 稳健守护', abNlpStyleAggressive: '🚀 进取猎手', abNlpStyleBalanced: '⚖️ 均衡优选', abNlpStyleSector: '🎯 行业先锋',
         abNlpRiskLow: '低风险', abNlpRiskMed: '中等风险', abNlpRiskHigh: '较高风险',
         abNlpReturnLow: '年化 7-10%', abNlpReturnMed: '年化 10-14%', abNlpReturnHigh: '年化 14%+',
@@ -2196,7 +2219,7 @@ app.get('/', (c) => {
         abResetQ: 'What matters most in your investment this time?',
         abResetOpt1: 'Stable returns, safety first', abResetOpt2: 'Willing to take risks for high returns', abResetOpt3: 'Balanced approach', abResetOpt4: 'Bullish on specific sectors',
         // Smart NLP Confirm Card
-        abNlpTitle: '📋 Here\'s How I Understood Your Preferences',
+        abNlpTitle: '📋 AI Configuration Analysis',
         abNlpSubtitle: 'Please confirm the configuration below. Click any item to modify:',
         abNlpStyle: 'Investment Style', abNlpRisk: 'Risk Appetite', abNlpReturn: 'Return Target',
         abNlpIndustry: 'Sector Focus', abNlpPeriod: 'Investment Horizon', abNlpBudget: 'Budget Scale',
@@ -2204,7 +2227,7 @@ app.get('/', (c) => {
         abNlpAnalysis: '💡 Configuration Analysis',
         abNlpParsing: 'Analyzing your requirements...',
         abNlpNoMatch: "I didn't fully understand your request. Could you be more specific? For example:",
-        abNlpExamples: '"High returns with balanced risk"\n"Bullish on tech and healthcare, conservative approach"\n"Budget 50K, stable returns priority"',
+        abNlpExamples: '"High returns with balanced risk" · "Bullish on tech and healthcare, conservative approach" · "Budget 50K, stable returns priority"',
         abNlpStyleConservative: '🛡️ Conservative Guard', abNlpStyleAggressive: '🚀 Aggressive Hunter', abNlpStyleBalanced: '⚖️ Balanced Select', abNlpStyleSector: '🎯 Sector Pioneer',
         abNlpRiskLow: 'Low Risk', abNlpRiskMed: 'Moderate Risk', abNlpRiskHigh: 'Higher Risk',
         abNlpReturnLow: '7-10% annualized', abNlpReturnMed: '10-14% annualized', abNlpReturnHigh: '14%+ annualized',
@@ -2213,7 +2236,7 @@ app.get('/', (c) => {
         abNlpAllIndustry: 'All Sectors',
         abNlpConfirmed: '✅ Configuration confirmed! Building your custom portfolio...',
         abNlpWelcome1: 'Hello! I am the <span style="color:#3DD8CA;font-weight:700;">Deal Connect AI Portfolio Architect</span>.',
-        abNlpWelcome2: 'Tell me your investment needs in natural language. I\'ll analyze, confirm my logic with you, then <span style="color:#5eead4;">tailor-make</span> your portfolio.',
+        abNlpWelcome2: 'Tell me your investment needs in natural language. I will analyze, confirm my logic with you, then <span style="color:#5eead4;">tailor-make</span> your portfolio.',
         abNlpWelcome3: 'For example, you could say:',
         abNlpWelcomeEx1: '"High returns with balanced risk"',
         abNlpWelcomeEx2: '"Bullish on tech and healthcare, conservative approach"',
@@ -2230,10 +2253,10 @@ app.get('/', (c) => {
         abNlpFilterDesc3: 'Annualized return {range}',
         abNlpFilterDesc4: 'Contract term {period}',
         abNlpFilterDesc5: 'Max {max} per project for diversification',
-        abNlpAdjustIntro: 'Got it! Based on your adjustment, here\'s my updated configuration logic:',
+        abNlpAdjustIntro: 'Got it! Based on your adjustment, here is my updated configuration logic:',
         // AI followup & explain
         abAiThinking: 'AI is thinking...',
-        abAiFollowupIntro: 'I\'ve captured some of your preferences, but need a bit more to configure precisely:',
+        abAiFollowupIntro: 'I have captured some of your preferences, but need a bit more to configure precisely:',
         abAiFollowupQ: 'Please answer these questions to complete your profile:',
         abAiExplainTitle: '📊 AI Portfolio Analysis',
         abAiHighlights: '✨ Highlights',
@@ -5252,32 +5275,32 @@ app.get('/', (c) => {
       html += '<div class="grid grid-cols-2 gap-2 mb-3">';
 
       // Style
-      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'style\')">';
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(&#39;style&#39;)">';
       html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-compass mr-1"></i>' + t('abNlpStyle') + '</p>';
       html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + (styleLabels[style] || style) + '</p></div>';
 
       // Risk
-      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'risk\')">';
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(&#39;risk&#39;)">';
       html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-shield-alt mr-1"></i>' + t('abNlpRisk') + '</p>';
       html += '<p class="text-sm font-bold" style="color: ' + (riskColors[risk] || '#E8F5F3') + ';">' + (riskLabels[risk] || risk) + '</p></div>';
 
       // Return
-      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'return\')">';
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(&#39;return&#39;)">';
       html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-chart-line mr-1"></i>' + t('abNlpReturn') + '</p>';
       html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + (returnLabels[ret] || ret) + '</p></div>';
 
       // Industry
-      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'industry\')">';
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(&#39;industry&#39;)">';
       html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-industry mr-1"></i>' + t('abNlpIndustry') + '</p>';
       html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + indDisplay + '</p></div>';
 
       // Period
-      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'period\')">';
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(&#39;period&#39;)">';
       html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-clock mr-1"></i>' + t('abNlpPeriod') + '</p>';
       html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + (periodLabels[period] || period) + '</p></div>';
 
       // Budget
-      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'budget\')">';
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(&#39;budget&#39;)">';
       html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-wallet mr-1"></i>' + t('abNlpBudget') + '</p>';
       html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + (budgetLabels[budget] || '¥' + (budget * 1000).toLocaleString()) + '</p></div>';
 
@@ -5879,7 +5902,7 @@ app.get('/', (c) => {
         html += '<div class="flex flex-wrap gap-1.5">';
         var dimNames = { risk: t('abNlpRisk'), period: t('abNlpPeriod'), budget: t('abNlpBudget'), returnTarget: t('abNlpReturn'), style: t('abNlpStyle'), industries: t('abNlpIndustry') };
         missingDims.forEach(function(dim) {
-          html += '<span class="px-2 py-0.5 rounded text-xs cursor-pointer hover:opacity-80" style="background:rgba(245,158,11,0.15);color:#fbbf24;" onclick="abEditConfigDim(\\'' + (dim === 'returnTarget' ? 'return' : dim) + '\\')">' + (dimNames[dim] || dim) + ' <i class="fas fa-edit" style="font-size:9px;"></i></span>';
+          html += '<span class="px-2 py-0.5 rounded text-xs cursor-pointer hover:opacity-80" style="background:rgba(245,158,11,0.15);color:#fbbf24;" onclick="abEditConfigDim(&#39;' + (dim === 'returnTarget' ? 'return' : dim) + '&#39;)">' + (dimNames[dim] || dim) + ' <i class="fas fa-edit" style="font-size:9px;"></i></span>';
         });
         html += '</div></div>';
       }
