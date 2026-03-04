@@ -955,12 +955,12 @@ app.get('/', (c) => {
       <div class="max-w-7xl mx-auto">
         <!-- Portfolio Filter Bar -->
         <div class="flex items-center gap-2 mb-4 flex-wrap">
-          <button onclick="filterPortfoliosByCategory('all')" class="mp-filter-btn active px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="all"><i class="fas fa-th mr-1"></i>All</button>
-          <button onclick="filterPortfoliosByCategory('Conservative')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Conservative"><i class="fas fa-shield-alt mr-1"></i>Conservative</button>
-          <button onclick="filterPortfoliosByCategory('Aggressive')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Aggressive"><i class="fas fa-rocket mr-1"></i>Aggressive</button>
-          <button onclick="filterPortfoliosByCategory('Balanced')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Balanced"><i class="fas fa-balance-scale mr-1"></i>Balanced</button>
-          <button onclick="filterPortfoliosByCategory('Thematic')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Thematic"><i class="fas fa-bullseye mr-1"></i>Thematic</button>
-          <button onclick="filterPortfoliosByCategory('Industry')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Industry"><i class="fas fa-industry mr-1"></i>Industry</button>
+          <button onclick="filterPortfoliosByCategory('all')" class="mp-filter-btn active px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="all"><i class="fas fa-th mr-1"></i><span data-i18n="mpFilterAll">All</span></button>
+          <button onclick="filterPortfoliosByCategory('Conservative')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Conservative"><i class="fas fa-shield-alt mr-1"></i><span data-i18n="mpCatConservative">Conservative</span></button>
+          <button onclick="filterPortfoliosByCategory('Aggressive')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Aggressive"><i class="fas fa-rocket mr-1"></i><span data-i18n="mpCatAggressive">Aggressive</span></button>
+          <button onclick="filterPortfoliosByCategory('Balanced')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Balanced"><i class="fas fa-balance-scale mr-1"></i><span data-i18n="mpCatBalanced">Balanced</span></button>
+          <button onclick="filterPortfoliosByCategory('Thematic')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Thematic"><i class="fas fa-bullseye mr-1"></i><span data-i18n="mpCatThematic">Thematic</span></button>
+          <button onclick="filterPortfoliosByCategory('Industry')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Industry"><i class="fas fa-industry mr-1"></i><span data-i18n="mpCatSector">Industry</span></button>
         </div>
         <!-- Portfolio Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="mpStatsGrid"></div>
@@ -1523,6 +1523,7 @@ app.get('/', (c) => {
         mpContracts: '合约', mpProjects: '项目', mpTargetReturn: '目标回报', mpPeriod: '投资周期',
         mpStrategy: '投资策略', mpContractCountLabel: '张合约',
         mpCatConservative: '稳健型', mpCatAggressive: '进取型', mpCatBalanced: '均衡型', mpCatThematic: '主题型', mpCatSector: '行业型',
+        mpFilterAll: '全部',
         mpRiskLow: '低风险', mpRiskMedHigh: '中高风险', mpRiskHigh: '高风险', mpRiskMedium: '中等风险',
         // Portfolio Detail dynamic
         pdSubtitle: '{contracts} 张合约 · 覆盖 {projects} 个项目',
@@ -1853,6 +1854,7 @@ app.get('/', (c) => {
         mpContracts: 'Contracts', mpProjects: 'Projects', mpTargetReturn: 'Target Return', mpPeriod: 'Horizon',
         mpStrategy: 'Strategy', mpContractCountLabel: ' contracts',
         mpCatConservative: 'Conservative', mpCatAggressive: 'Aggressive', mpCatBalanced: 'Balanced', mpCatThematic: 'Thematic', mpCatSector: 'Sector',
+        mpFilterAll: 'All',
         mpRiskLow: 'Low Risk', mpRiskMedHigh: 'Med-High Risk', mpRiskHigh: 'High Risk', mpRiskMedium: 'Moderate Risk',
         // Portfolio Detail dynamic
         pdSubtitle: '{contracts} contracts · {projects} projects',
@@ -2282,7 +2284,7 @@ app.get('/', (c) => {
     }
 
     // ==================== i18n: Industry / City / Data Translation Maps ====================
-    const INDUSTRY_ZH = { 'F&B': '餐饮', 'Retail': '零售', 'Technology': '科技', 'Education': '教育', 'Healthcare': '医疗', 'Entertainment': '娱乐', 'Finance': '金融', 'Real Estate': '房地产', 'Logistics': '物流', 'Agriculture': '农业' };
+    const INDUSTRY_ZH = { 'F&B': '餐饮', 'Retail': '零售', 'Technology': '科技', 'Education': '教育', 'Healthcare': '医疗', 'Entertainment': '娱乐', 'Finance': '金融', 'Real Estate': '房地产', 'Logistics': '物流', 'Agriculture': '农业', 'All Sectors': '全行业' };
     const CITY_ZH = { 'Hangzhou': '杭州', 'Shenzhen': '深圳', 'Beijing': '北京', 'Shanghai': '上海', 'Chengdu': '成都', 'Guangzhou': '广州', 'Tianjin': '天津', 'Nationwide': '全国', 'Hong Kong': '香港', 'Macau': '澳门' };
 
     function getIndustryName(ind) { return currentLang === 'zh' ? (INDUSTRY_ZH[ind] || ind) : ind; }
@@ -3998,6 +4000,20 @@ app.get('/', (c) => {
     function getFundStrategy(fund) { return currentLang === 'en' && FUND_EN[fund.id] ? FUND_EN[fund.id].strategy : fund.strategy; }
     function getFundCategory(fund) { return currentLang === 'en' ? (CAT_EN[fund.category] || fund.category) : fund.category; }
     function getFundRiskLevel(fund) { return currentLang === 'en' ? (RISK_EN[fund.riskLevel] || fund.riskLevel) : fund.riskLevel; }
+    // Translate targetPeriod: '24 months' → '24个月' in zh
+    function getTargetPeriod(fund) {
+      var p = fund.targetPeriod;
+      if (currentLang === 'zh') return p.replace(/\s*months?/gi, '个月').replace('mo', '个月');
+      return p;
+    }
+    // Translate targetIndustries array for display
+    function getTargetIndustriesDisplay(fund, sep) {
+      sep = sep || (currentLang === 'zh' ? ' · ' : ' · ');
+      return fund.targetIndustries.map(function(ind) { return getIndustryName(ind); }).join(sep);
+    }
+    // Translate PORTFOLIO_CATEGORY_STYLES label
+    var CAT_LABEL_ZH = { 'Conservative': '稳健型', 'Aggressive': '进取型', 'Balanced': '均衡型', 'Thematic': '主题型', 'Industry': '行业型' };
+    function getCategoryLabel(key) { return currentLang === 'zh' ? (CAT_LABEL_ZH[key] || key) : (CAT_EN[key] || key); }
 
     let currentPortfolioFilter = 'all';
 
@@ -4142,7 +4158,7 @@ app.get('/', (c) => {
           // Portfolio config info
           '<div class="p-3 rounded-xl mb-2" style="background:' + catStyle.bg + '; border: 1px solid ' + catStyle.border + ';">' +
             '<div class="flex items-center justify-between mb-2">' +
-              '<span class="text-xs font-bold" style="color:' + catStyle.color + ';"><i class="fas fa-layer-group mr-1"></i>' + p.contracts.length + t('mpContractCountLabel') + ' · ' + p.projectCount + (' projects') + '</span>' +
+              '<span class="text-xs font-bold" style="color:' + catStyle.color + ';"><i class="fas fa-layer-group mr-1"></i>' + p.contracts.length + t('mpContractCountLabel') + ' · ' + p.projectCount + (currentLang === 'zh' ? ' 个项目' : ' projects') + '</span>' +
               '<span class="text-sm font-black" style="color:' + catStyle.color + ';">¥' + totalValue.toLocaleString() + '</span>' +
             '</div>' +
             '<div class="flex flex-wrap gap-1">' +
@@ -4159,7 +4175,7 @@ app.get('/', (c) => {
           '</div>' +
           // Footer
           '<div class="flex items-center justify-between pt-2 border-t border-[rgba(46,196,182,0.08)]">' +
-            '<span class="text-xs text-[#3D7A70]"><i class="fas fa-tags mr-1"></i>' + p.targetIndustries.join(' · ') + '</span>' +
+            '<span class="text-xs text-[#3D7A70]"><i class="fas fa-tags mr-1"></i>' + getTargetIndustriesDisplay(p) + '</span>' +
             '<span class="text-xs font-medium group-hover:text-[#A78BFA] transition-colors" style="color:' + catStyle.color + ';"><i class="fas fa-arrow-right mr-1"></i>' + t('dealViewDetail') + '</span>' +
           '</div>' +
         '</div>';
@@ -4287,7 +4303,7 @@ app.get('/', (c) => {
           '<div class="p-4 rounded-2xl mb-4" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%); position: relative; overflow: hidden;">' +
             '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(139,92,246,0.25) 0%, transparent 50%);pointer-events:none;"></div>' +
             '<div class="relative z-10">' +
-              '<div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.color + '33; color: rgba(167,139,250,0.8);">' + getFundCategory(currentPortfolio) + '</span><span class="text-xs" style="color: rgba(255,255,255,0.4);">' + catStyle.label + (currentLang === 'zh' ? ' 基金' : ' Fund') + '</span><span class="px-2 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);">' + getFundRiskLevel(currentPortfolio) + '</span></div>' +
+              '<div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.color + '33; color: rgba(167,139,250,0.8);">' + getFundCategory(currentPortfolio) + '</span><span class="text-xs" style="color: rgba(255,255,255,0.4);">' + getCategoryLabel(currentPortfolio.category) + (currentLang === 'zh' ? ' 基金' : ' Fund') + '</span><span class="px-2 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);">' + getFundRiskLevel(currentPortfolio) + '</span></div>' +
               '<h2 class="text-lg font-bold text-white mb-1">' + getFundName(currentPortfolio) + '</h2>' +
               '<p class="text-xs mb-3" style="color: rgba(255,255,255,0.5);">' + getFundStrategy(currentPortfolio) + '</p>' +
               '<div class="grid grid-cols-4 gap-2">' +
@@ -4303,7 +4319,7 @@ app.get('/', (c) => {
             '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdAnnualYield') + '</p><p class="text-lg font-bold text-[#F59E0B]">' + pdAvgYield + '%</p><p class="text-xs text-[#3D7A70]">' + t('pdWeightedShare') + avgShare + '%</p></div>' +
             '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdAvgContract') + '</p><p class="text-lg font-bold text-[#06B6D4]">' + pdAvgDays + t('pdDayUnit') + '</p><p class="text-xs text-[#3D7A70]">' + t('pdAboutMonths', {n: (pdTotalMonths / contracts.length).toFixed(0)}) + '</p></div>' +
             '<div class="p-3 bg-[rgba(16,185,129,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdAvgAIScore') + '</p><p class="text-lg font-bold text-[#10B981]">' + avgAI + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
-            '<div class="p-3 bg-[rgba(139,92,246,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdTargetHorizon') + '</p><p class="text-lg font-bold text-[#8B5CF6]">' + currentPortfolio.targetPeriod + '</p></div>' +
+            '<div class="p-3 bg-[rgba(139,92,246,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdTargetHorizon') + '</p><p class="text-lg font-bold text-[#8B5CF6]">' + getTargetPeriod(currentPortfolio) + '</p></div>' +
           '</div>' +
           // Industry allocation
           '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] mb-4">' +
