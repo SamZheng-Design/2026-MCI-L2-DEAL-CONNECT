@@ -4925,7 +4925,7 @@ app.get('/', (c) => {
             '<p style="font-size:9px; color:' + cg.color + ';">' + cg.grade + '</p>' +
           '</div>' +
         '</div>';
-      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2 text-[#3D7A70]">' + ((p.length - 30) + t('abContractUnitMore') : '... ' + (p.length - 30) + ' more contracts not shown') + '</p>' : '');
+      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2 text-[#3D7A70]">... ' + (p.length - 30) + t('abContractUnitMore') + '</p>' : '');
     }
 
     function abApplyPortfolio() {
