@@ -139,6 +139,45 @@ app.get('/', (c) => {
     .cc-timeline-dot.active { background: #2EC4B6; }
     .cc-grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
     @media (max-width: 768px) { .cc-grid-cards { grid-template-columns: 1fr; } .cc-metrics { grid-template-columns: repeat(2, 1fr); } }
+    /* 移动端详情页/组合详情：左右分栏改为上下堆叠 */
+    @media (max-width: 1024px) {
+      #pageDetail .flex.flex-1.overflow-hidden,
+      #pagePortfolioDetail .flex.flex-1.overflow-hidden,
+      #pageAIBuilder .flex.flex-1.overflow-hidden { flex-direction: column; }
+      #pageDetail .w-2\\/5, #pageDetail .w-3\\/5,
+      #pagePortfolioDetail .w-2\\/5, #pagePortfolioDetail .w-3\\/5,
+      #pageAIBuilder .w-2\\/5, #pageAIBuilder .w-3\\/5 { width: 100%; }
+      #pageDetail .w-2\\/5, #pagePortfolioDetail .w-2\\/5, #pageAIBuilder .w-2\\/5 { max-height: 45vh; border-right: none; border-bottom: 1px solid rgba(46,196,182,0.12); }
+      #pageDetail .w-3\\/5, #pagePortfolioDetail .w-3\\/5, #pageAIBuilder .w-3\\/5 { flex: 1; }
+    }
+    /* 搜索框快捷键提示 */
+    .search-shortcut { display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #3D7A70; background: rgba(46,196,182,0.06); border: 1px solid rgba(46,196,182,0.12); font-family: 'SF Mono', monospace; pointer-events: none; }
+    /* Toast容器 — 确保移动端可见 */
+    .toast-container { position: fixed; top: 16px; right: 16px; z-index: 900; display: flex; flex-direction: column; gap: 8px; max-width: 380px; }
+    @media (max-width: 480px) { .toast-container { top: auto; bottom: 16px; right: 8px; left: 8px; max-width: none; } }
+    .toast { display: flex; align-items: flex-start; padding: 12px 16px; border-radius: 12px; background: rgba(13,36,34,0.96); backdrop-filter: blur(16px); border: 1px solid rgba(46,196,182,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: toastSlideIn 0.3s cubic-bezier(0.28,0.11,0.32,1); position: relative; overflow: hidden; }
+    .toast-exit { animation: toastSlideOut 0.3s ease forwards; }
+    .toast-icon { flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 14px; }
+    .toast-success .toast-icon { color: #34d399; }
+    .toast-error .toast-icon { color: #f87171; }
+    .toast-warning .toast-icon { color: #fbbf24; }
+    .toast-info .toast-icon { color: #22d3ee; }
+    .toast-body { flex: 1; min-width: 0; }
+    .toast-title { font-size: 13px; font-weight: 700; color: #E8F5F3; }
+    .toast-message { font-size: 12px; color: #5A9A90; margin-top: 2px; }
+    .toast-close { flex-shrink: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: none; border: none; color: #3D7A70; cursor: pointer; font-size: 11px; margin-left: 8px; transition: all 0.15s; }
+    .toast-close:hover { background: rgba(46,196,182,0.1); color: #8EBDB5; }
+    .toast-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: linear-gradient(90deg, #2EC4B6, #06b6d4); animation: toastProgress linear forwards; border-radius: 0 0 12px 12px; }
+    @keyframes toastSlideIn { from { opacity: 0; transform: translateX(40px) scale(0.96); } to { opacity: 1; transform: translateX(0) scale(1); } }
+    @keyframes toastSlideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(60px); } }
+    @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
+    /* 骨架屏加载效果 */
+    .skeleton-card { background: rgba(15,46,43,0.6); border: 1px solid rgba(46,196,182,0.06); border-radius: 6px; padding: 14px; }
+    .skeleton-line { height: 12px; background: linear-gradient(90deg, rgba(46,196,182,0.06) 0%, rgba(46,196,182,0.12) 50%, rgba(46,196,182,0.06) 100%); background-size: 200% 100%; border-radius: 6px; animation: shimmer 1.5s infinite; margin-bottom: 8px; }
+    .skeleton-line.w-60 { width: 60%; }
+    .skeleton-line.w-80 { width: 80%; }
+    .skeleton-line.w-40 { width: 40%; }
+    .skeleton-line.h-6 { height: 24px; }
     /* AI Builder 专属样式 — 深色终端青绿色系 */
     .ab-quick-btn { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.28,0.11,0.32,1); background: rgba(46,196,182,0.08); border: 1px solid rgba(46,196,182,0.2); color: #2EC4B6; white-space: nowrap; }
     .ab-quick-btn:hover { background: rgba(46,196,182,0.18); border-color: rgba(46,196,182,0.4); color: #3DD8CA; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(46,196,182,0.15); }
@@ -448,7 +487,7 @@ app.get('/', (c) => {
               <a href="#" class="text-[#3DD8CA] hover:text-[#2EC4B6]" onclick="event.preventDefault(); showToast('info','密码重置','此功能即将上线')">忘记密码？</a>
             </div>
             <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-sign-in-alt mr-2"></i>登录</button>
-            <button type="button" onclick="handleGuestLogin()" class="w-full py-3 rounded-xl font-medium transition-colors" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;background:rgba(46,196,182,0.05);"><i class="fas fa-user-secret mr-2"></i>游客模式（体验功能）</button>
+            <button type="button" onclick="handleGuestLogin()" class="w-full py-3 rounded-xl font-medium transition-colors" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;background:rgba(46,196,182,0.05);"><i class="fas fa-user-secret mr-2"></i>游客模式（一键体验全部功能）</button>
           </div>
           <p id="loginError" class="hidden mt-4 text-sm text-red-500 text-center"></p>
           </form>
@@ -579,7 +618,7 @@ app.get('/', (c) => {
           <div class="flex items-center" style="gap:12px;">
             <h2 style="font-size:14px;font-weight:700;color:#E8F5F3;letter-spacing:-0.02em;" id="welcomeText">欢迎回来</h2>
             <span style="font-size:11px;color:#3D7A70;">|</span>
-            <p style="font-size:12px;color:#5A9A90;">发起通的投资机会，经您的评估通筛子精选后展示于此</p>
+            <p style="font-size:12px;color:#5A9A90;" id="welcomeSubText">发起通的投资机会，经您的评估通筛子精选后展示于此</p>
           </div>
           <div class="hidden sm:flex items-center" style="gap:8px;">
             <span style="font-size:10px;color:#3D7A70;font-family:'SF Mono','Fira Code',monospace;" id="terminalDate"></span>
@@ -690,7 +729,7 @@ app.get('/', (c) => {
             <span id="filterLabel" class="text-xs font-medium" style="color:#5A9A90;">· 展示全部</span>
           </div>
           <div class="flex items-center space-x-2">
-            <div class="relative"><input type="text" id="dealSearch" placeholder="搜索项目名称…" class="search-input px-3 py-1.5 rounded-lg text-xs w-48" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" oninput="renderDeals()"></div>
+            <div class="relative"><input type="text" id="dealSearch" placeholder="搜索项目名称…" class="search-input px-3 py-1.5 rounded-lg text-xs w-48" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" oninput="debounceRenderDeals()"><span class="search-shortcut" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);">⌘K</span></div>
             <select class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#8EBDB5;" id="filterStatus" onchange="renderDeals()">
               <option value="all">全部状态</option>
               <option value="available">可买</option>
@@ -1306,7 +1345,12 @@ app.get('/', (c) => {
       const page = document.getElementById(pageId); if (page) page.classList.add('active');
       const fab = document.getElementById('aiFab'); if (fab) fab.classList.toggle('hidden', pageId === 'pageAuth');
       // 记住上一页用于返回
-      if (pageId !== 'pageDetail') window._lastPage = pageId;
+      if (pageId !== 'pageDetail' && pageId !== 'pagePortfolioDetail') window._lastPage = pageId;
+      // 页面切换后滚动到顶部
+      window.scrollTo(0, 0);
+      // 可滚动面板也重置到顶部
+      var scrollables = page ? page.querySelectorAll('.overflow-y-auto') : [];
+      scrollables.forEach(function(el) { el.scrollTop = 0; });
     }
 
     // ==================== Auth ====================
@@ -1356,7 +1400,7 @@ app.get('/', (c) => {
       currentUser = { id: 'guest', username: 'guest', displayName: '游客', email: 'guest@demo.com', role: 'investor' };
       loadDemoData();
       onLoginSuccess();
-      showToast('info', '游客模式', '已加载 ' + totalVirtualContracts.toLocaleString() + ' 张合约（' + PROJECT_TEMPLATES.length + '个项目 · ¥1,000/张）展示 ' + allDeals.length + ' 张代表性合约');
+      showToast('info', '游客模式', '已加载 ' + totalVirtualContracts.toLocaleString() + ' 张合约（' + PROJECT_TEMPLATES.length + '个项目），点击合约卡片查看详情');
     }
 
     function onLoginSuccess() {
@@ -1369,22 +1413,64 @@ app.get('/', (c) => {
       document.getElementById('ddRole').textContent = '投资者';
       document.getElementById('welcomeText').textContent = '欢迎回来，' + name;
       initMySieves();
+      // 自动加载数据（如果还没加载）
+      if (allDeals.length === 0) loadDemoData();
+      // 恢复上次的筛子选择
+      var savedSieve = localStorage.getItem('ec_lastSieve') || 'all';
       renderSieveSelector();
-      selectSieve('all');
+      selectSieve(savedSieve);
       // 登录后直接进入合约看板（首页）
       goToDashboard();
       showToast('success', '登录成功', '欢迎回来，' + name);
-      // 延迟1.2秒后触发聚光灯引导效果
-      setTimeout(function() { showSpotlight(); }, 1200);
-      // 新手引导弹窗已移除自动弹出，用户可通过导航栏问号按钮或下拉菜单手动查看
+      // 延迟1.2秒后触发聚光灯引导效果（仅首次）
+      if (!localStorage.getItem('ec_spotlightShown')) {
+        setTimeout(function() { showSpotlight(); localStorage.setItem('ec_spotlightShown', '1'); }, 1200);
+      }
     }
 
-    function handleLogout() { currentUser = null; switchPage('pageAuth'); showToast('info', '已退出', '您已安全退出账号'); }
+    function handleLogout() {
+      currentUser = null;
+      allDeals = []; dealsList = []; projectSummaries = []; totalVirtualContracts = 0;
+      switchPage('pageAuth');
+      showToast('info', '已退出', '您已安全退出账号');
+    }
 
     // ==================== User Dropdown ====================
     function toggleUserDD(e) { e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); }
     function closeUserDD() { document.getElementById('userDropdown').classList.remove('show'); }
     document.addEventListener('click', (e) => { if (!e.target.closest('#navUserBtn') && !e.target.closest('#userDropdown')) closeUserDD(); });
+
+    // ==================== 全局键盘快捷键 ====================
+    document.addEventListener('keydown', function(e) {
+      // Escape 关闭弹窗
+      if (e.key === 'Escape') {
+        var modals = ['subscribeModal', 'sieveManagerModal', 'onboardingModal', 'confirmModal'];
+        modals.forEach(function(id) { var m = document.getElementById(id); if (m && !m.classList.contains('hidden')) { m.remove ? m.remove() : m.classList.add('hidden'); } });
+        closeUserDD();
+        dismissSpotlight();
+      }
+      // Cmd/Ctrl + K 聚焦搜索
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        var searchInput = document.getElementById('dealSearch');
+        if (searchInput && document.getElementById('pageDashboard').classList.contains('active')) {
+          searchInput.focus(); searchInput.select();
+        }
+      }
+    });
+
+    // ==================== 浏览器历史导航 ====================
+    window.addEventListener('popstate', function(e) {
+      if (e.state && e.state.page) {
+        var pageId = e.state.page;
+        document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+        var page = document.getElementById(pageId);
+        if (page) page.classList.add('active');
+      }
+    });
+    function pushPageState(pageId) {
+      history.pushState({ page: pageId }, '', '#' + pageId.replace('page', '').toLowerCase());
+    }
 
     // ==================== MCN 合约编号体系 ====================
     // MCN = Micro Connect Note
@@ -1511,6 +1597,8 @@ app.get('/', (c) => {
     }
 
     function loadDemoData() {
+      // 显示骨架屏加载效果
+      showDealGridSkeleton();
       // ★ 性能优化：每个项目只生成 MAX_CONTRACTS_PER_PROJECT 张代表性合约
       //   项目的真实合约总数 = totalAmount × 10（仅用于统计展示）
       //   例：星巴克80万 = 虚拟800张，但实际只生成60张供浏览
@@ -2093,6 +2181,8 @@ app.get('/', (c) => {
     // ==================== 筛子选择 ====================
     function selectSieve(sieveKey) {
       currentSieve = sieveKey;
+      // 持久化筛子选择
+      try { localStorage.setItem('ec_lastSieve', sieveKey); } catch(e) {}
       // 更新UI（安全处理，因为可能从非 dashboard 页面调用）
       document.querySelectorAll('#sieveSelector .sieve-chip').forEach(el => {
         el.classList.toggle('active', el.dataset.sieve === sieveKey);
@@ -2166,20 +2256,37 @@ app.get('/', (c) => {
       var fundPortfolios = getMyPortfolios();
       var dashVPortfolios = fundPortfolios.length;
       var el;
-      el = document.getElementById('statTotalContracts'); if (el) el.textContent = dashVTotal.toLocaleString();
-      el = document.getElementById('statTotalTransactions'); if (el) el.textContent = dashVSold.toLocaleString();
-      el = document.getElementById('statMyContracts'); if (el) el.textContent = dashVMine.toLocaleString();
-      el = document.getElementById('statMyPortfolios'); if (el) el.textContent = dashVPortfolios.toLocaleString();
+      el = document.getElementById('statTotalContracts'); animateNumber(el, dashVTotal);
+      el = document.getElementById('statTotalTransactions'); animateNumber(el, dashVSold);
+      el = document.getElementById('statMyContracts'); animateNumber(el, dashVMine);
+      el = document.getElementById('statMyPortfolios'); animateNumber(el, dashVPortfolios);
       // Bloomberg Ticker 同步更新
-      el = document.getElementById('tickerTotalContracts'); if (el) el.textContent = dashVTotal.toLocaleString();
-      el = document.getElementById('tickerTotalTransactions'); if (el) el.textContent = dashVSold.toLocaleString();
-      el = document.getElementById('tickerMyContracts'); if (el) el.textContent = dashVMine.toLocaleString();
-      el = document.getElementById('tickerMyPortfolios'); if (el) el.textContent = dashVPortfolios.toLocaleString();
+      el = document.getElementById('tickerTotalContracts'); animateNumber(el, dashVTotal);
+      el = document.getElementById('tickerTotalTransactions'); animateNumber(el, dashVSold);
+      el = document.getElementById('tickerMyContracts'); animateNumber(el, dashVMine);
+      el = document.getElementById('tickerMyPortfolios'); animateNumber(el, dashVPortfolios);
       // 更新AI入口卡片统计
       el = document.getElementById('aiEntryContracts'); if (el) el.textContent = dashVTotal.toLocaleString();
       el = document.getElementById('aiEntryProjects'); if (el) el.textContent = allDeals.length.toLocaleString();
+      // 动态更新欢迎副标题
+      var subText = document.getElementById('welcomeSubText');
+      if (subText) {
+        if (dashVMine > 0) {
+          subText.textContent = '持有 ' + dashVMine + ' 张合约 · ' + dashVPortfolios + ' 个组合 · 使用筛子精选您的下一个投资机会';
+        } else {
+          subText.textContent = dashVTotal.toLocaleString() + ' 张合约待您探索，选择筛子或用 AI 组合构建器快速开始';
+        }
+      }
 
-      if (filtered.length === 0) { grid.innerHTML = ''; if (empty) empty.classList.remove('hidden'); return; }
+      if (filtered.length === 0) {
+        if (searchVal) {
+          grid.innerHTML = '<div class="col-span-full text-center py-12"><div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background:rgba(46,196,182,0.06);"><i class="fas fa-search text-2xl" style="color:#3D7A70;"></i></div><p class="text-sm font-semibold" style="color:#8EBDB5;">未找到「' + searchVal + '」相关合约</p><p class="text-xs mt-1" style="color:#3D7A70;">尝试换个关键词，或清空搜索查看全部</p><button onclick="document.getElementById(&#39;dealSearch&#39;).value=&#39;&#39;;renderDeals();" class="mt-3 px-4 py-1.5 rounded-lg text-xs font-medium" style="background:rgba(46,196,182,0.08);color:#3DD8CA;border:1px solid rgba(46,196,182,0.2);">清空搜索</button></div>';
+          if (empty) empty.classList.add('hidden');
+        } else {
+          grid.innerHTML = ''; if (empty) empty.classList.remove('hidden');
+        }
+        return;
+      }
       if (empty) empty.classList.add('hidden');
 
       const statusMap = {
@@ -2547,14 +2654,16 @@ app.get('/', (c) => {
       }, 50);
 
       switchPage('pageDetail');
+      pushPageState('pageDetail');
     }
 
-    function goToDashboard() { switchPage('pageDashboard'); renderDeals(); }
+    function goToDashboard() { switchPage('pageDashboard'); pushPageState('pageDashboard'); renderDeals(); }
 
     function goBack() {
       const lastPage = window._lastPage || 'pageDashboard';
       if (lastPage === 'pageMyContracts') goToMyContracts();
       else if (lastPage === 'pageMyPortfolios') goToMyPortfolios();
+      else if (lastPage === 'pageAIBuilder') goToAIBuilder();
       else goToDashboard();
     }
 
@@ -2647,6 +2756,39 @@ app.get('/', (c) => {
       }, 800);
     }
 
+    // ==================== 搜索防抖 ====================
+    var _debounceTimer = null;
+    function debounceRenderDeals() {
+      clearTimeout(_debounceTimer);
+      _debounceTimer = setTimeout(renderDeals, 200);
+    }
+
+    // ==================== 数字动态过渡 ====================
+    function animateNumber(el, newVal) {
+      if (!el) return;
+      var text = typeof newVal === 'number' ? newVal.toLocaleString() : newVal;
+      if (el.textContent === text) return;
+      el.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+      el.style.opacity = '0.4';
+      el.style.transform = 'translateY(-2px)';
+      setTimeout(function() {
+        el.textContent = text;
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, 150);
+    }
+
+    // ==================== 骨架屏加载效果 ====================
+    function showDealGridSkeleton() {
+      var grid = document.getElementById('dealGrid');
+      if (!grid) return;
+      var skeletons = '';
+      for (var i = 0; i < 6; i++) {
+        skeletons += '<div class="skeleton-card"><div class="skeleton-line w-60 h-6"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div><div class="flex gap-1 mt-2"><div class="skeleton-line" style="width:24%;height:40px;"></div><div class="skeleton-line" style="width:24%;height:40px;"></div><div class="skeleton-line" style="width:24%;height:40px;"></div><div class="skeleton-line" style="width:24%;height:40px;"></div></div></div>';
+      }
+      grid.innerHTML = skeletons;
+    }
+
     // ==================== Init ====================
     function initApp() {
       var bar = document.getElementById('loadingBar');
@@ -2706,6 +2848,7 @@ app.get('/', (c) => {
     function goToMyContracts() {
       renderMyContracts();
       switchPage('pageMyContracts');
+      pushPageState('pageMyContracts');
     }
 
     function renderMyContracts() {
@@ -2989,6 +3132,7 @@ app.get('/', (c) => {
     function goToMyPortfolios() {
       renderMyPortfolios();
       switchPage('pageMyPortfolios');
+      pushPageState('pageMyPortfolios');
     }
 
     function filterPortfoliosByCategory(cat) {
@@ -3343,6 +3487,7 @@ app.get('/', (c) => {
       }, 50);
 
       switchPage('pagePortfolioDetail');
+      pushPageState('pagePortfolioDetail');
     }
 
     // ==================== AI 组合构建器 (Portfolio Architect) ====================
@@ -3471,6 +3616,7 @@ app.get('/', (c) => {
       var el = document.getElementById('abTotalContracts');
       if (el) el.textContent = (totalVirtualContracts || allDeals.length).toLocaleString();
       switchPage('pageAIBuilder');
+      pushPageState('pageAIBuilder');
     }
 
     function resetAIBuilder() {
@@ -3940,7 +4086,7 @@ app.get('/', (c) => {
           count++;
         }
       });
-      showToast('success', '一键认购成功！', '已认购 ' + count + ' 张合约 · 总投入 ¥' + (count * 1000).toLocaleString());
+      showToast('success', '一键认购成功！', '已认购 ' + count + ' 张合约 · 总投入 ¥' + (count * 1000).toLocaleString() + '，可在「我的合约」中查看');
       abBuildPortfolio(); // 刷新面板
     }
 
