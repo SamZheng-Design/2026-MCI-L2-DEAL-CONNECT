@@ -509,7 +509,7 @@ app.get('/', (c) => {
           <div style="width:120px; height:2.5px; background:#2EC4B6; margin:8px auto 10px; border-radius:2px;"></div>
           <p style="font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:0.2em; color:#5A9A90; font-weight:500;">POWERED BY MICRO CONNECT GROUP</p>
           <p class="text-lg font-bold mt-3" style="color:#E8F5F3;">Deal Connect</p>
-          <p class="text-xs mt-1" style="color:#5A9A90;">Intelligent Opportunity Board for Investors</p>
+          <p class="text-xs mt-1" style="color:#5A9A90;" data-i18n="authSubtitle">Intelligent Opportunity Board for Investors</p>
         </div>
         <div class="flex" style="border-bottom: 1px solid rgba(46,196,182,0.1);">
           <button onclick="switchAuthTab('login')" id="tabLogin" class="flex-1 py-3 text-center font-semibold" style="color:#2EC4B6; border-bottom: 2px solid #2EC4B6;" data-i18n="authLogin">Login</button>
@@ -519,11 +519,11 @@ app.get('/', (c) => {
         <div id="formLogin" class="p-6">
           <form onsubmit="event.preventDefault(); handleLogin();" autocomplete="on">
           <div class="space-y-4">
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Username / Email</label><input type="text" id="loginUsername" placeholder="Enter username or email" autocomplete="username" class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()"></div>
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Password</label><div class="password-wrapper" style="position:relative;"><input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" class="w-full px-4 py-3 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('loginPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;" data-i18n="authUsernameEmail">Username / Email</label><input type="text" id="loginUsername" data-i18n="authPlaceholderLogin" data-i18n-attr="placeholder" placeholder="Enter username or email" autocomplete="username" class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;" data-i18n="authPassword">Password</label><div class="password-wrapper" style="position:relative;"><input type="password" id="loginPassword" data-i18n="authPlaceholderPwd" data-i18n-attr="placeholder" placeholder="Enter password" autocomplete="current-password" class="w-full px-4 py-3 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('loginPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
             <div class="flex items-center justify-between text-sm">
-              <label class="flex items-center cursor-pointer whitespace-nowrap" style="color:#5A9A90;"><input type="checkbox" id="rememberMe" class="mr-2 rounded" style="width:16px;height:16px;flex-shrink:0;"><span>Remember me</span></label>
-              <a href="#" class="text-[#3DD8CA] hover:text-[#2EC4B6]" onclick="event.preventDefault(); showToast('info','Password Reset','This feature is coming soon')">Forgot password?</a>
+              <label class="flex items-center cursor-pointer whitespace-nowrap" style="color:#5A9A90;"><input type="checkbox" id="rememberMe" class="mr-2 rounded" style="width:16px;height:16px;flex-shrink:0;"><span data-i18n="authRemember">Remember me</span></label>
+              <a href="#" class="text-[#3DD8CA] hover:text-[#2EC4B6]" onclick="event.preventDefault(); showToast('info',t('toastPwdReset'),t('toastPwdResetMsg'))" data-i18n="authForgot">Forgot password?</a>
             </div>
             <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-sign-in-alt mr-2"></i><span data-i18n="authLoginBtn">Login</span></button>
             <button type="button" onclick="handleGuestLogin()" class="w-full py-3 rounded-xl font-medium transition-colors" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;background:rgba(46,196,182,0.05);"><i class="fas fa-user-secret mr-2"></i><span data-i18n="authGuestBtn">Quick Guest Access</span></button>
@@ -531,8 +531,8 @@ app.get('/', (c) => {
           <p id="loginError" class="hidden mt-4 text-sm text-red-500 text-center"></p>
           </form>
           <div class="mt-6 pt-6" style="border-top:1px solid rgba(46,196,182,0.1);">
-            <p class="text-xs text-center mb-3" style="color:#5A9A90;">Enterprise Users</p>
-            <button onclick="showToast('info','SSO Coming Soon','Enterprise unified authentication interface reserved')" class="w-full py-3 rounded-xl font-medium transition-colors flex items-center justify-center" style="background:rgba(46,196,182,0.06);color:#5A9A90;"><i class="fas fa-building mr-2"></i>Company SSO Login (Coming Soon)</button>
+            <p class="text-xs text-center mb-3" style="color:#5A9A90;" data-i18n="authEnterprise">Enterprise Users</p>
+            <button onclick="showToast('info',t('toastSSOTitle'),t('toastSSOMsg'))" class="w-full py-3 rounded-xl font-medium transition-colors flex items-center justify-center" style="background:rgba(46,196,182,0.06);color:#5A9A90;"><i class="fas fa-building mr-2"></i><span data-i18n="authSSO">Company SSO Login (Coming Soon)</span></button>
           </div>
         </div>
         <!-- Register Form -->
@@ -540,13 +540,13 @@ app.get('/', (c) => {
           <form onsubmit="event.preventDefault(); handleRegister();" autocomplete="on">
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-3">
-              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Username <span class="text-red-500">*</span></label><input type="text" id="regUsername" placeholder="For login" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
-              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Display Name</label><input type="text" id="regDisplayName" placeholder="Display name" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;"><span data-i18n="authRegUsernameLabel">Username</span> <span class="text-red-500">*</span></label><input type="text" id="regUsername" data-i18n="authRegUsernamePh" data-i18n-attr="placeholder" placeholder="For login" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;" data-i18n="authRegDisplayLabel">Display Name</label><input type="text" id="regDisplayName" data-i18n="authRegDisplayPh" data-i18n-attr="placeholder" placeholder="Display name" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
             </div>
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Email <span class="text-red-500">*</span></label><input type="email" id="regEmail" placeholder="your@email.com" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Phone</label><input type="tel" id="regPhone" placeholder="+1 (555) 000-0000" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Password <span class="text-red-500">*</span></label><div class="password-wrapper" style="position:relative;"><input type="password" id="regPassword" placeholder="At least 6 characters" autocomplete="new-password" class="w-full px-4 py-2.5 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('regPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
-            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-user-plus mr-2"></i>Register</button>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;"><span data-i18n="authRegEmailLabel">Email</span> <span class="text-red-500">*</span></label><input type="email" id="regEmail" data-i18n="authRegEmailPh" data-i18n-attr="placeholder" placeholder="your@email.com" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;" data-i18n="authRegPhoneLabel">Phone</label><input type="tel" id="regPhone" data-i18n="authRegPhonePh" data-i18n-attr="placeholder" placeholder="+1 (555) 000-0000" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;"><span data-i18n="authRegPwdLabel">Password</span> <span class="text-red-500">*</span></label><div class="password-wrapper" style="position:relative;"><input type="password" id="regPassword" data-i18n="authRegPwdPh" data-i18n-attr="placeholder" placeholder="At least 6 characters" autocomplete="new-password" class="w-full px-4 py-2.5 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('regPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
+            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-user-plus mr-2"></i><span data-i18n="authRegisterBtn">Register</span></button>
           </div>
           <p id="regError" class="hidden mt-4 text-sm text-red-500 text-center"></p>
           </form>
@@ -602,8 +602,8 @@ app.get('/', (c) => {
             <div id="userDropdown" class="user-dropdown">
               <div class="user-dropdown-header"><div class="flex items-center space-x-3"><div id="ddAvatar" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83);">U</div><div><div id="ddName" class="font-semibold text-sm" style="color:#E8F5F3;">User</div><div id="ddRole" class="text-xs" style="color:#5A9A90;">Investor</div></div></div></div>
               <div class="py-1">
-                <button class="user-dropdown-item" onclick="showToast('info', t('navProfile'), currentLang === 'zh' ? '功能开发中' : 'Feature under development'); closeUserDD();"><i class="fas fa-user-circle"></i>Profile</button>
-                <button class="user-dropdown-item" onclick="showToast('info', t('navSievePrefs'), currentLang === 'zh' ? '在评估通中管理您的筛子模型' : 'Manage your sieve models in Assess'); closeUserDD();"><i class="fas fa-sliders-h"></i>Sieve Preferences</button>
+                <button class="user-dropdown-item" onclick="showToast('info', t('navProfile'), t('toastFeatureWIP')); closeUserDD();"><i class="fas fa-user-circle"></i>Profile</button>
+                <button class="user-dropdown-item" onclick="showToast('info', t('navSievePrefs'), t('toastSieveHint')); closeUserDD();"><i class="fas fa-sliders-h"></i>Sieve Preferences</button>
                 <button class="user-dropdown-item" onclick="showOnboarding(); closeUserDD();"><i class="fas fa-graduation-cap"></i>User Guide</button>
                 <div class="user-dropdown-divider"></div>
                 <button class="user-dropdown-item danger" onclick="closeUserDD(); handleLogout();"><i class="fas fa-sign-out-alt"></i>Sign Out</button>
@@ -862,8 +862,8 @@ app.get('/', (c) => {
           </div>
         </div>
         <div class="flex items-center space-x-1.5">
-          <button onclick="showToast('info','Share','Share link copied')" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="Share"><i class="fas fa-share-alt"></i></button>
-          <button onclick="showToast('info','Bookmark','Added to bookmarks')" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="Bookmark"><i class="fas fa-bookmark"></i></button>
+          <button onclick="showToast('info',t('toastShare'),t('toastShareMsg'))" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="Share"><i class="fas fa-share-alt"></i></button>
+          <button onclick="showToast('info',t('toastBookmark'),t('toastBookmarkMsg'))" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="Bookmark"><i class="fas fa-bookmark"></i></button>
           <div class="w-px h-6 bg-[rgba(46,196,182,0.1)] mx-1"></div>
           <button onclick="expressIntent()" id="btnExpressIntent" class="btn-primary text-xs py-1.5 px-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);"><i class="fas fa-hand-point-up mr-1"></i>Express Interest</button>
         </div>
@@ -1411,6 +1411,19 @@ app.get('/', (c) => {
         authRoleInvestor: '投资者', authRoleManager: '管理者',
         authLoginBtn: '登录', authRegisterBtn: '创建账户',
         authGuestBtn: '游客快速体验', authGuestHint: '无需注册，一键体验全部功能', authOr: '或者',
+        authSubtitle: '智能投资机遇平台',
+        authUsernameEmail: '用户名 / 邮箱', authPlaceholderLogin: '请输入用户名或邮箱', authPlaceholderPwd: '请输入密码',
+        authRemember: '记住我', authForgot: '忘记密码？', authEnterprise: '企业用户', authSSO: '企业SSO登录（即将上线）',
+        authRegUsernameLabel: '用户名', authRegDisplayLabel: '显示名称', authRegEmailLabel: '邮箱', authRegPhoneLabel: '手机号码', authRegPwdLabel: '密码',
+        authRegUsernamePh: '用于登录', authRegDisplayPh: '显示名称', authRegEmailPh: '您的邮箱', authRegPhonePh: '+86 138 0000 0000', authRegPwdPh: '至少6个字符',
+        toastPwdReset: '密码重置', toastPwdResetMsg: '此功能即将上线',
+        toastSSOTitle: 'SSO即将上线', toastSSOMsg: '企业统一认证接口已预留',
+        toastIncomplete: '信息不完整', toastIncompleteMsg: '请输入用户名和密码',
+        toastLoginFailed: '登录失败', toastNetworkError: '网络错误', toastNetworkErrorMsg: '请检查网络连接',
+        toastRegFieldsMissing: '必填项缺失', toastPwdTooShort: '密码太短', toastPwdTooShortMsg: '至少6个字符',
+        toastRegSuccess: '注册成功', toastRegSuccessMsg: '欢迎加入 Deal Connect！', toastRegFailed: '注册失败',
+        toastLoginSuccessMsg: '欢迎回来，{name}', toastSignedOut: '已退出', toastSignedOutMsg: '您已安全退出',
+        toastShare: '分享', toastShareMsg: '分享链接已复制', toastBookmark: '收藏', toastBookmarkMsg: '已添加到收藏夹',
         // Empty
         emptyDeals: '未发现匹配机会', emptyDealsAction: '试试切换筛子或加载演示数据',
         emptyLoadDemo: '加载演示数据', emptyConfigSieve: '配置筛子',
@@ -1728,6 +1741,19 @@ app.get('/', (c) => {
         authRoleInvestor: 'Investor', authRoleManager: 'Manager',
         authLoginBtn: 'Sign In', authRegisterBtn: 'Create Account',
         authGuestBtn: 'Quick Guest Access', authGuestHint: 'No registration required — explore all features instantly', authOr: 'or',
+        authSubtitle: 'Intelligent Opportunity Board for Investors',
+        authUsernameEmail: 'Username / Email', authPlaceholderLogin: 'Enter username or email', authPlaceholderPwd: 'Enter password',
+        authRemember: 'Remember me', authForgot: 'Forgot password?', authEnterprise: 'Enterprise Users', authSSO: 'Company SSO Login (Coming Soon)',
+        authRegUsernameLabel: 'Username', authRegDisplayLabel: 'Display Name', authRegEmailLabel: 'Email', authRegPhoneLabel: 'Phone', authRegPwdLabel: 'Password',
+        authRegUsernamePh: 'For login', authRegDisplayPh: 'Display name', authRegEmailPh: 'your@email.com', authRegPhonePh: '+1 (555) 000-0000', authRegPwdPh: 'At least 6 characters',
+        toastPwdReset: 'Password Reset', toastPwdResetMsg: 'This feature is coming soon',
+        toastSSOTitle: 'SSO Coming Soon', toastSSOMsg: 'Enterprise unified authentication interface reserved',
+        toastIncomplete: 'Incomplete', toastIncompleteMsg: 'Username and password required',
+        toastLoginFailed: 'Login Failed', toastNetworkError: 'Network error', toastNetworkErrorMsg: 'Please check network connection',
+        toastRegFieldsMissing: 'Required fields missing', toastPwdTooShort: 'Password too short', toastPwdTooShortMsg: 'Minimum 6 characters',
+        toastRegSuccess: 'Registration Successful', toastRegSuccessMsg: 'Welcome to Deal Connect!', toastRegFailed: 'Registration Failed',
+        toastLoginSuccessMsg: 'Welcome back, {name}', toastSignedOut: 'Signed Out', toastSignedOutMsg: 'You have been safely signed out',
+        toastShare: 'Share', toastShareMsg: 'Share link copied', toastBookmark: 'Bookmark', toastBookmarkMsg: 'Added to bookmarks',
         // Empty
         emptyDeals: 'No matching opportunities found', emptyDealsAction: 'Try switching sieves or loading demo data',
         emptyLoadDemo: 'Load Demo Data', emptyConfigSieve: 'Configure Sieves',
@@ -2128,13 +2154,13 @@ app.get('/', (c) => {
     async function handleLogin() {
       const username = document.getElementById('loginUsername').value.trim();
       const password = document.getElementById('loginPassword').value;
-      if (!username || !password) { showToast('warning', 'Incomplete', 'Username and password required'); return; }
+      if (!username || !password) { showToast('warning', t('toastIncomplete'), t('toastIncompleteMsg')); return; }
       try {
         const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
         const data = await res.json();
         if (data.success) { currentUser = data.user; onLoginSuccess(); }
-        else { showToast('error', 'Login Failed', data.message); }
-      } catch (e) { showToast('error', 'Network error', 'Please check network connection'); }
+        else { showToast('error', t('toastLoginFailed'), data.message); }
+      } catch (e) { showToast('error', t('toastNetworkError'), t('toastNetworkErrorMsg')); }
     }
 
     async function handleRegister() {
@@ -2143,14 +2169,14 @@ app.get('/', (c) => {
       const password = document.getElementById('regPassword').value;
       const displayName = document.getElementById('regDisplayName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
-      if (!username || !email || !password) { showToast('warning', 'Required fields missing'); return; }
-      if (password.length < 6) { showToast('warning', 'Password too short', 'Minimum 6 characters'); return; }
+      if (!username || !email || !password) { showToast('warning', t('toastRegFieldsMissing')); return; }
+      if (password.length < 6) { showToast('warning', t('toastPwdTooShort'), t('toastPwdTooShortMsg')); return; }
       try {
         const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, email, password, displayName, phone, role: 'investor' }) });
         const data = await res.json();
-        if (data.success) { showToast('success', 'Registration Successful', 'Welcome to Deal Connect!'); switchAuthTab('login'); document.getElementById('loginUsername').value = username; }
-        else { showToast('error', 'Registration Failed', data.message); }
-      } catch (e) { showToast('error', 'Network error'); }
+        if (data.success) { showToast('success', t('toastRegSuccess'), t('toastRegSuccessMsg')); switchAuthTab('login'); document.getElementById('loginUsername').value = username; }
+        else { showToast('error', t('toastRegFailed'), data.message); }
+      } catch (e) { showToast('error', t('toastNetworkError')); }
     }
 
     function handleGuestLogin() {
@@ -2178,7 +2204,7 @@ app.get('/', (c) => {
       selectSieve(savedSieve);
       // Go to contract board after login
       goToDashboard();
-      showToast('success', 'Login Successful', 'Welcome back, ' + name);
+      showToast('success', t('toastLoginSuccess'), t('toastLoginSuccessMsg', {name: name}));
       // Delay 1.2s for spotlight onboarding (first time only)
       if (!localStorage.getItem('ec_spotlightShown')) {
         setTimeout(function() { showSpotlight(); localStorage.setItem('ec_spotlightShown', '1'); }, 1200);
@@ -2189,7 +2215,7 @@ app.get('/', (c) => {
       currentUser = null;
       allDeals = []; dealsList = []; projectSummaries = []; totalVirtualContracts = 0;
       switchPage('pageAuth');
-      showToast('info', 'Signed Out', 'You have been safely signed out');
+      showToast('info', t('toastSignedOut'), t('toastSignedOutMsg'));
     }
 
     // ==================== User Dropdown ====================
@@ -2931,7 +2957,7 @@ app.get('/', (c) => {
       saveMySieves();
       refreshSieveManager();
       renderSieveSelector();
-      showToast('success', 'Added', SIEVE_LIBRARY[key].name + ' has been added to your sieve panel');
+      showToast('success', currentLang === 'zh' ? '已添加' : 'Added', getSieveName(key) + (currentLang === 'zh' ? ' 已添加到您的筛子面板' : ' has been added to your sieve panel'));
     }
 
     function removeSieve(key) {
@@ -2944,7 +2970,7 @@ app.get('/', (c) => {
       }
       refreshSieveManager();
       renderSieveSelector();
-      showToast('info', 'Removed', SIEVE_LIBRARY[key].name + ' has been removed from your panel');
+      showToast('info', currentLang === 'zh' ? '已移除' : 'Removed', getSieveName(key) + (currentLang === 'zh' ? ' 已从您的面板移除' : ' has been removed from your panel'));
     }
 
     function refreshSieveManager() {
@@ -3115,7 +3141,7 @@ app.get('/', (c) => {
           // Source + Sieve Tags
           (hasMatch ? '<div class="flex items-center gap-1.5 mb-2">' +
             '<span class="source-tag source-originate"><i class="fas fa-paper-plane" style="font-size:8px;"></i>' + t('dealOriginate') + '</span>' +
-            '<span class="sieve-tag sieve-pass"><i class="fas fa-check" style="font-size:8px;"></i>' + (d.sieveName ? getSieveName(mySieves.find(k => SIEVE_LIBRARY[k] && SIEVE_LIBRARY[k].name === d.sieveName) || '') || d.sieveName : t('dealSieve')) + '</span>' +
+            '<span class="sieve-tag sieve-pass"><i class="fas fa-check" style="font-size:8px;"></i>' + (d.sieveName ? (function(){ var foundKey = mySieves.find(k => SIEVE_LIBRARY[k] && SIEVE_LIBRARY[k].name === d.sieveName) || Object.keys(SIEVE_LIBRARY).find(k => SIEVE_LIBRARY[k].name === d.sieveName) || ''; return foundKey ? getSieveName(foundKey) : d.sieveName; })() : t('dealSieve')) + '</span>' +
             '<span class="font-mono text-xs font-bold" style="color:' + matchColor + ';">' + d.matchScore + '%</span>' +
             '<div class="flex-1 h-1 rounded-full overflow-hidden" style="background:rgba(46,196,182,0.08);"><div class="h-full rounded-full" style="width:' + d.matchScore + '%;background:' + matchColor + ';"></div></div>' +
           '</div>' : '<div class="flex items-center gap-1.5 mb-2"><span class="source-tag source-originate"><i class="fas fa-paper-plane" style="font-size:8px;"></i>' + t('dealOriginate') + '</span></div>') +
