@@ -52,46 +52,87 @@ app.get('/api/deals', (c) => c.json({ success: true, deals: [] }))
    ============================ */
 
 // System prompt for AI portfolio architect agent
-const AI_SYSTEM_PROMPT = `You are an AI Investment Portfolio Architect for "Deal Connect" platform (参与通). Your role is to analyze user investment requirements expressed in natural language and output structured portfolio configuration.
+const AI_SYSTEM_PROMPT = `你是 Deal Connect（参与通）平台的**AI投资组合顾问**。你是一位经验丰富、善于倾听的投资顾问，擅长从客户的只言片语中精准捕捉投资偏好，并给出专业的定制化建议。
 
-## Your Capabilities
-- Parse investment intent from natural language (Chinese & English)
-- Identify risk tolerance, return targets, industry preferences, time horizons, and budget
-- Explain your selection logic transparently
-- Provide personalized portfolio construction reasoning
-- Engage in multi-round refinement conversation
+## 你的角色定位
+- 像一位资深投资顾问那样跟客户对话——温和、专业、有洞察力
+- 仔细分析客户说的每一句话，从中提取投资偏好信号
+- 如果信息不足，**主动追问**而非用默认值敷衍
+- 每次给出配置时，要**解释你的推理逻辑**，让客户理解为什么这样配
 
-## Available Industries
+## 对话模式（mode字段控制）
+你根据不同场景输出不同结构：
+
+### mode = "analyze"（首次分析 / 用户输入新需求）
+从用户自然语言中提取投资偏好，生成配置建议。
+
+### mode = "followup"（追问补全）
+当你认为某些关键维度缺失时，主动追问获取信息，而非使用默认值。
+
+### mode = "adjust"（调整优化）
+用户在已有配置基础上微调，只修改提到的维度。
+
+### mode = "explain"（组合解说）
+对已生成的组合进行专业解读，解释为什么选了这些合约。
+
+## 平台可用行业
 F&B (餐饮美食), Technology (科技创新), Healthcare (医疗健康), Retail (零售消费), Education (教育培训), Entertainment (演艺娱乐)
 
-## Available Parameters
+## 配置参数
 - style: "conservative" | "aggressive" | "balanced" | "sector"
-- risk: "low" | "medium" | "high"
+- risk: "low" | "medium" | "high"  
 - returnTarget: "low" (7-10%) | "medium" (10-14%) | "high" (14%+)
-- industries: array of industry codes, or ["all"]
-- period: "short" (≤24mo) | "medium" (24-30mo) | "long" (≥30mo)
+- industries: 行业代码数组 或 ["all"]
+- period: "short" (≤24个月) | "medium" (24-30个月) | "long" (≥30个月)
 - budget: 10 (¥5k-20k) | 35 (¥20k-50k) | 60 (¥50k+)
 
-## Output Format
-You MUST respond with a SINGLE flat JSON object. Do NOT nest JSON inside JSON. The "analysis" field must be a plain text string, NOT a JSON string.
+## 输出格式
+你必须返回一个扁平JSON对象。analysis字段必须是纯文本字符串。
 
-Example correct response:
-{"config":{"style":"balanced","risk":"medium","returnTarget":"medium","industries":["Technology","Healthcare"],"period":"medium","budget":35},"analysis":"Plain text analysis here explaining your reasoning","logic":["Step 1: reason","Step 2: reason","Step 3: reason"],"confidence":85,"followUp":"Optional question"}
+### 当 mode = "analyze" 或 "adjust" 时：
+{"mode":"analyze","config":{"style":"balanced","risk":"medium","returnTarget":"medium","industries":["Technology","Healthcare"],"period":"medium","budget":35},"analysis":"你的分析文本","logic":["推理步骤1","推理步骤2","推理步骤3"],"confidence":85,"followUp":"可选的追问","missingDims":[]}
 
-## Rules
-1. If user input is vague, still provide best-guess config but set confidence lower and include a followUp question
-2. Analysis should be in the SAME LANGUAGE as user input (Chinese if user speaks Chinese, English if English)
-3. logic array should contain 3-5 clear reasoning steps explaining your selection methodology
-4. For adjustments in existing portfolio, only modify the fields that user mentioned, keep others unchanged
-5. Be concise but insightful in your analysis - explain trade-offs the user might want to consider
-6. Confidence score: 90+ = very clear intent, 70-89 = reasonable guess, below 70 = need clarification
-7. Keep analysis concise (under 200 chars for Chinese, 300 chars for English)
-8. Keep logic array to exactly 3-4 items, each under 80 chars
-9. Keep followUp under 100 chars`;
+### 当 mode = "followup" 时（缺失维度较多，需要追问）：
+{"mode":"followup","partialConfig":{"style":"balanced","risk":null,"returnTarget":null,"industries":["Technology"],"period":null,"budget":null},"analysis":"我理解您看好科技板块。为了给您定制最合适的组合，我还需要了解几个重要信息：","questions":["您的风险承受能力如何？能接受波动大一些但收益更高，还是更偏好稳定？","您打算投资多久？短期（2年内）还是中长期？","预算大概在什么范围？"],"missingDims":["risk","period","budget"],"confidence":40}
+
+### 当 mode = "explain" 时（组合解说）：
+{"mode":"explain","analysis":"对组合的专业解读文本","highlights":["亮点1","亮点2","亮点3"],"risks":["风险提示1","风险提示2"],"suggestion":"优化建议"}
+
+## 核心规则
+1. **用户语言优先**：用户说中文你就回中文，说英文就回英文
+2. **不要用默认值敷衍**：如果用户只说了"收益高"但没提风险、期限、预算，置信度应该很低（<60），并主动追问
+3. **主动追问的触发条件**：
+   - 缺少3个及以上关键维度（style、risk、returnTarget、period、budget中的3个以上全无线索）→ mode="followup"
+   - 缺少1-2个维度时→ mode="analyze"，为缺失维度选择合理默认值，并在 followUp 中简要说明
+   - 所有维度都能推断时→ mode="analyze" 且 confidence 较高
+   - **重要**：如果用户提供了3个以上维度的信息，即使还有1-2个维度不明确，也应该用 mode="analyze" 并给出合理默认值
+4. **追问要具体且有选项感**：不要问"你的预算是多少"，而是"您的预算大概是5千到2万的轻投入，还是2万到5万的中等配置，或是5万以上的大额配置？"
+5. **调整时保留已有配置**：用户说"风险再低一点"时，只改 risk，其他全部保留
+6. **解释你的逻辑**：logic数组要清晰说明每一步推理，让用户理解你的思路
+7. analysis简洁有力（中文200字内，英文300字内）
+8. logic数组3-4项，每项80字符内
+9. followUp在100字符内
+10. questions数组（followup模式）2-3项，每项引导性强`;
+
+// System prompt for portfolio explanation
+const AI_EXPLAIN_PROMPT = `你是Deal Connect平台的AI投资组合分析师。请根据提供的组合数据，给出专业的投资解读。
+
+## 你的任务
+分析已构建的投资组合，解释选择逻辑，指出亮点和风险。
+
+## 输出格式
+返回JSON：{"mode":"explain","analysis":"总体评价","highlights":["亮点1","亮点2","亮点3"],"risks":["风险1","风险2"],"suggestion":"优化建议"}
+
+## 规则
+1. 用与用户相同的语言
+2. analysis简明扼要（150字内）
+3. highlights 2-4项，每项说清楚为什么是亮点
+4. risks 1-3项，真实有价值的风险提示
+5. suggestion给出一个具体可操作的优化方向`;
 
 app.post('/api/ai/chat', async (c) => {
   try {
-    const { messages, currentConfig, lang } = await c.req.json();
+    const { messages, currentConfig, lang, mode, portfolioSummary, platformStats } = await c.req.json();
 
     // Get API credentials from environment
     const apiKey = c.env?.OPENAI_API_KEY || '';
@@ -101,27 +142,46 @@ app.post('/api/ai/chat', async (c) => {
       return c.json({ success: false, error: 'AI service not configured' }, 500);
     }
 
+    // Choose system prompt based on mode
+    const systemPrompt = mode === 'explain' ? AI_EXPLAIN_PROMPT : AI_SYSTEM_PROMPT;
+
     // Build messages array for LLM
     const llmMessages = [
-      { role: 'system', content: AI_SYSTEM_PROMPT },
+      { role: 'system', content: systemPrompt },
     ];
+
+    // Add platform context if available
+    if (platformStats) {
+      llmMessages.push({
+        role: 'system',
+        content: '平台数据概况: ' + JSON.stringify(platformStats)
+      });
+    }
 
     // Add context about current config if adjusting
     if (currentConfig) {
       llmMessages.push({
         role: 'system',
-        content: 'Current portfolio configuration (user is adjusting): ' + JSON.stringify(currentConfig) + '. Only modify fields the user explicitly mentions. Keep unmentioned fields unchanged.'
+        content: '当前组合配置（用户正在调整中，只修改用户提到的维度）: ' + JSON.stringify(currentConfig)
+      });
+    }
+
+    // Add portfolio summary for explanation mode
+    if (mode === 'explain' && portfolioSummary) {
+      llmMessages.push({
+        role: 'system',
+        content: '当前已生成的组合摘要: ' + JSON.stringify(portfolioSummary)
       });
     }
 
     // Add language context
     llmMessages.push({
       role: 'system',
-      content: 'User language: ' + (lang || 'zh') + '. Respond analysis in the same language as the user.'
+      content: 'User language: ' + (lang || 'zh') + '. 用相同语言回复。'
     });
 
-    // Add conversation history (last 10 messages max)
-    const recentMessages = (messages || []).slice(-10);
+    // Add conversation history (last 12 messages max for better context)
+    const recentMessages = (messages || []).slice(-12);
     recentMessages.forEach((msg) => {
       llmMessages.push({ role: msg.role, content: msg.content });
     });
@@ -160,12 +220,12 @@ app.post('/api/ai/chat', async (c) => {
         parsed = JSON.parse(cleaned);
       } catch (e2) {
         parsed = {
+          mode: mode || 'analyze',
           config: { style: 'balanced', risk: 'medium', returnTarget: 'medium', industries: ['all'], period: 'medium', budget: 35 },
           analysis: content,
           logic: [],
           confidence: 50,
           followUp: '',
-          adjustments: []
         };
       }
     }
@@ -174,32 +234,215 @@ app.post('/api/ai/chat', async (c) => {
     if (parsed.analysis && typeof parsed.analysis === 'string') {
       try {
         const nestedJson = JSON.parse(parsed.analysis);
-        if (nestedJson.config) {
-          // Nested JSON has the real config — merge it
-          parsed.config = nestedJson.config;
-          parsed.analysis = nestedJson.analysis || '';
-          parsed.logic = nestedJson.logic || parsed.logic || [];
-          parsed.confidence = nestedJson.confidence || parsed.confidence || 70;
-          parsed.followUp = nestedJson.followUp || parsed.followUp || '';
+        if (nestedJson.config || nestedJson.mode) {
+          if (nestedJson.config) parsed.config = nestedJson.config;
+          if (nestedJson.analysis) parsed.analysis = nestedJson.analysis;
+          if (nestedJson.logic) parsed.logic = nestedJson.logic;
+          if (nestedJson.confidence) parsed.confidence = nestedJson.confidence;
+          if (nestedJson.followUp) parsed.followUp = nestedJson.followUp;
+          if (nestedJson.mode) parsed.mode = nestedJson.mode;
+          if (nestedJson.questions) parsed.questions = nestedJson.questions;
+          if (nestedJson.missingDims) parsed.missingDims = nestedJson.missingDims;
+          if (nestedJson.partialConfig) parsed.partialConfig = nestedJson.partialConfig;
+          if (nestedJson.highlights) parsed.highlights = nestedJson.highlights;
+          if (nestedJson.risks) parsed.risks = nestedJson.risks;
+          if (nestedJson.suggestion) parsed.suggestion = nestedJson.suggestion;
         }
       } catch (ignored) {
         // analysis is plain text, that's fine
       }
     }
 
-    // Ensure config has all required fields with defaults
-    if (!parsed.config) parsed.config = {};
-    parsed.config.style = parsed.config.style || 'balanced';
-    parsed.config.risk = parsed.config.risk || 'medium';
-    parsed.config.returnTarget = parsed.config.returnTarget || 'medium';
-    parsed.config.industries = parsed.config.industries || ['all'];
-    parsed.config.period = parsed.config.period || 'medium';
-    parsed.config.budget = parsed.config.budget || 35;
+    // Ensure required mode field
+    parsed.mode = parsed.mode || mode || 'analyze';
+
+    // For analyze/adjust mode, ensure config has all required fields
+    if (parsed.mode === 'analyze' || parsed.mode === 'adjust') {
+      if (!parsed.config) parsed.config = parsed.partialConfig || {};
+      parsed.config.style = parsed.config.style || 'balanced';
+      parsed.config.risk = parsed.config.risk || 'medium';
+      parsed.config.returnTarget = parsed.config.returnTarget || 'medium';
+      parsed.config.industries = parsed.config.industries || ['all'];
+      parsed.config.period = parsed.config.period || 'medium';
+      parsed.config.budget = parsed.config.budget || 35;
+    }
+
+    // For followup mode, ensure partialConfig exists
+    if (parsed.mode === 'followup') {
+      parsed.partialConfig = parsed.partialConfig || parsed.config || {};
+      parsed.questions = parsed.questions || [];
+      parsed.missingDims = parsed.missingDims || [];
+    }
 
     return c.json({ success: true, data: parsed });
 
   } catch (err) {
     console.error('AI chat error:', err);
+    return c.json({ success: false, error: 'Internal error: ' + (err.message || err) }, 500);
+  }
+})
+
+// Streaming AI chat endpoint (SSE)
+app.post('/api/ai/chat/stream', async (c) => {
+  try {
+    const { messages, currentConfig, lang, mode, portfolioSummary, platformStats } = await c.req.json();
+
+    const apiKey = c.env?.OPENAI_API_KEY || '';
+    const baseUrl = c.env?.OPENAI_BASE_URL || 'https://www.genspark.ai/api/llm_proxy/v1';
+
+    if (!apiKey) {
+      return c.json({ success: false, error: 'AI service not configured' }, 500);
+    }
+
+    const systemPrompt = mode === 'explain' ? AI_EXPLAIN_PROMPT : AI_SYSTEM_PROMPT;
+
+    const llmMessages = [{ role: 'system', content: systemPrompt }];
+
+    if (platformStats) {
+      llmMessages.push({ role: 'system', content: '平台数据概况: ' + JSON.stringify(platformStats) });
+    }
+    if (currentConfig) {
+      llmMessages.push({ role: 'system', content: '当前组合配置: ' + JSON.stringify(currentConfig) });
+    }
+    if (mode === 'explain' && portfolioSummary) {
+      llmMessages.push({ role: 'system', content: '组合摘要: ' + JSON.stringify(portfolioSummary) });
+    }
+    llmMessages.push({ role: 'system', content: 'User language: ' + (lang || 'zh') + '. 用相同语言回复。' });
+
+    const recentMessages = (messages || []).slice(-12);
+    recentMessages.forEach((msg) => {
+      llmMessages.push({ role: msg.role, content: msg.content });
+    });
+
+    // Call LLM API with streaming
+    const response = await fetch(baseUrl + '/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey,
+      },
+      body: JSON.stringify({
+        model: 'gpt-5-mini',
+        messages: llmMessages,
+        temperature: 0.3,
+        max_tokens: 2048,
+        stream: true,
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      return c.json({ success: false, error: 'AI service error: ' + response.status }, 500);
+    }
+
+    // Forward the SSE stream
+    return new Response(response.body, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+
+  } catch (err) {
+    console.error('AI stream error:', err);
+    return c.json({ success: false, error: 'Internal error: ' + (err.message || err) }, 500);
+  }
+})
+
+// AI portfolio explanation endpoint
+app.post('/api/ai/explain', async (c) => {
+  try {
+    const { portfolioSummary, userConfig, lang } = await c.req.json();
+
+    const apiKey = c.env?.OPENAI_API_KEY || '';
+    const baseUrl = c.env?.OPENAI_BASE_URL || 'https://www.genspark.ai/api/llm_proxy/v1';
+
+    if (!apiKey) {
+      return c.json({ success: false, error: 'AI service not configured' }, 500);
+    }
+
+    const llmMessages = [
+      { role: 'system', content: AI_EXPLAIN_PROMPT + '\n\nIMPORTANT: Return ONLY a JSON object. Do NOT wrap JSON inside other JSON. The analysis field must be a plain text string, NOT a JSON string. Example:\n{"mode":"explain","analysis":"这个组合整体表现良好...","highlights":["亮点1","亮点2"],"risks":["风险1"],"suggestion":"建议文本"}' },
+      { role: 'system', content: 'User language: ' + (lang || 'zh') },
+      { role: 'user', content: 'Analyze this portfolio:\nUser config: ' + JSON.stringify(userConfig) + '\nPortfolio data: ' + JSON.stringify(portfolioSummary) }
+    ];
+
+    const response = await fetch(baseUrl + '/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model: 'gpt-5-mini', messages: llmMessages, temperature: 0.3, max_tokens: 2048 }),
+    });
+
+    if (!response.ok) {
+      return c.json({ success: false, error: 'AI service error' }, 500);
+    }
+
+    const result = await response.json();
+    const content = result.choices?.[0]?.message?.content || '';
+
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch (e) {
+      try {
+        let cleaned = content.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+        parsed = JSON.parse(cleaned);
+      } catch (e2) {
+        // Try to extract the largest JSON object from the text
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          try { parsed = JSON.parse(jsonMatch[0]); } catch (e3) {
+            parsed = { mode: 'explain', analysis: content, highlights: [], risks: [], suggestion: '' };
+          }
+        } else {
+          parsed = { mode: 'explain', analysis: content, highlights: [], risks: [], suggestion: '' };
+        }
+      }
+    }
+
+    // Deep extraction: if analysis contains nested JSON, extract the inner fields
+    parsed.mode = 'explain';
+    function extractFromAnalysis(obj) {
+      if (obj.analysis && typeof obj.analysis === 'string') {
+        try {
+          const nested = JSON.parse(obj.analysis);
+          if (nested && typeof nested === 'object') {
+            if (nested.analysis && typeof nested.analysis === 'string' && !nested.analysis.startsWith('{')) {
+              obj.analysis = nested.analysis;
+            }
+            if (nested.highlights && nested.highlights.length > 0) obj.highlights = nested.highlights;
+            if (nested.risks && nested.risks.length > 0) obj.risks = nested.risks;
+            if (nested.suggestion) obj.suggestion = nested.suggestion;
+            // Recursively check if the extracted analysis is also JSON
+            extractFromAnalysis(obj);
+          }
+        } catch (ignored) {}
+      }
+    }
+    extractFromAnalysis(parsed);
+
+    // If analysis is still a JSON string, just use it as text
+    if (parsed.analysis && typeof parsed.analysis === 'string' && parsed.analysis.startsWith('{')) {
+      try {
+        const obj = JSON.parse(parsed.analysis);
+        parsed.analysis = obj.analysis || '组合已构建，请查看右侧面板了解详情。';
+        if (obj.highlights) parsed.highlights = obj.highlights;
+        if (obj.risks) parsed.risks = obj.risks;
+        if (obj.suggestion) parsed.suggestion = obj.suggestion;
+      } catch(e) {
+        parsed.analysis = '组合已构建，请查看右侧面板了解详情。';
+      }
+    }
+
+    parsed.analysis = parsed.analysis || '';
+    parsed.highlights = parsed.highlights || [];
+    parsed.risks = parsed.risks || [];
+    parsed.suggestion = parsed.suggestion || '';
+
+    return c.json({ success: true, data: parsed });
+  } catch (err) {
     return c.json({ success: false, error: 'Internal error: ' + (err.message || err) }, 500);
   }
 })
@@ -1566,6 +1809,20 @@ app.get('/', (c) => {
         abNlpFilterDesc4: '合约期限 {period}',
         abNlpFilterDesc5: '每项目最多 {max} 张，确保分散化',
         abNlpAdjustIntro: '收到！根据您的调整要求，我重新分析了配置逻辑：',
+        // AI followup & explain
+        abAiThinking: 'AI 正在思考...',
+        abAiFollowupIntro: '我捕捉到了您的部分偏好，但还需要更多信息来精准配置：',
+        abAiFollowupQ: '请回答以下问题，帮我完善您的配置：',
+        abAiExplainTitle: '📊 AI 组合解读',
+        abAiHighlights: '✨ 亮点',
+        abAiRisks: '⚠️ 风险提示',
+        abAiSuggestion: '💡 优化建议',
+        abAiExplainLoading: 'AI 正在分析您的组合...',
+        abAiAnswerMore: '继续回答',
+        abAiSkipBuild: '跳过，先用这些配置构建',
+        abAiPartialConfig: '已识别的偏好：',
+        abAiMissingHint: '还差几项关键信息（点击维度可手动设置）：',
+        abAiStreamError: 'AI 响应中断，已切换到本地分析',
         // Portfolio detail more
         pdInvested: '总投入', pdAnnualYield: '年化收益率', pdWeightedShare: '加权分成 ',
         pdAvgContract: '平均合约时长', pdDayUnit: '天', pdAboutMonths: '约 {n} 个月',
@@ -1974,6 +2231,20 @@ app.get('/', (c) => {
         abNlpFilterDesc4: 'Contract term {period}',
         abNlpFilterDesc5: 'Max {max} per project for diversification',
         abNlpAdjustIntro: 'Got it! Based on your adjustment, here\'s my updated configuration logic:',
+        // AI followup & explain
+        abAiThinking: 'AI is thinking...',
+        abAiFollowupIntro: 'I\'ve captured some of your preferences, but need a bit more to configure precisely:',
+        abAiFollowupQ: 'Please answer these questions to complete your profile:',
+        abAiExplainTitle: '📊 AI Portfolio Analysis',
+        abAiHighlights: '✨ Highlights',
+        abAiRisks: '⚠️ Risk Notes',
+        abAiSuggestion: '💡 Optimization Tip',
+        abAiExplainLoading: 'AI is analyzing your portfolio...',
+        abAiAnswerMore: 'Answer More',
+        abAiSkipBuild: 'Skip, build with current config',
+        abAiPartialConfig: 'Identified preferences:',
+        abAiMissingHint: 'Missing key dimensions (click to set manually):',
+        abAiStreamError: 'AI response interrupted, switched to local analysis',
         // Portfolio detail more
         pdInvested: 'Invested', pdAnnualYield: 'Annualized Yield', pdWeightedShare: 'Weighted share ',
         pdAvgContract: 'Avg Contract Term', pdDayUnit: 'd', pdAboutMonths: '~{n} months',
@@ -5110,6 +5381,46 @@ app.get('/', (c) => {
           { text: t('abAddTech'), icon: 'fa-microchip', color: 'violet', action: "abSelectOption('" + t('abAddTech') + "')" },
         ]
       );
+
+      // Trigger AI portfolio explanation in background
+      abRequestExplanation();
+    }
+
+    // ===== Request AI explanation for the built portfolio =====
+    function abRequestExplanation() {
+      var summary = abGetPortfolioSummary();
+      if (!summary) return;
+
+      var userConfig = {
+        style: abState.style,
+        risk: abState.riskTolerance,
+        returnTarget: abState.targetReturn,
+        industries: abState.industries,
+        period: abState.period,
+        budget: abState.budget
+      };
+
+      fetch('/api/ai/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          portfolioSummary: summary,
+          userConfig: userConfig,
+          lang: currentLang
+        })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(result) {
+        if (result.success && result.data) {
+          // Store the explanation and show it
+          abConversationHistory.push({ role: 'assistant', content: JSON.stringify(result.data) });
+          abHandleExplain(result.data);
+        }
+      })
+      .catch(function(err) {
+        console.warn('AI explain error:', err);
+        // Silently fail — the portfolio is already built
+      });
     }
 
     // ===== Edit a specific config dimension =====
@@ -5309,7 +5620,7 @@ app.get('/', (c) => {
       if (waitEl) waitEl.classList.remove('hidden');
       var panelEl = document.getElementById('abPortfolioPanel');
       if (panelEl) panelEl.classList.add('hidden');
-      // Regenerate welcome message with NLP-first approach
+      // Regenerate welcome message with enhanced AI-first approach
       abAddAIMessage(
         '<p class="text-sm text-[#E8F5F3] leading-relaxed mb-3">' + t('abNlpWelcome1') + '</p>' +
         '<p class="text-sm leading-relaxed mb-3" style="color: #5A9A90;">' + t('abNlpWelcome2') + '</p>' +
@@ -5386,6 +5697,65 @@ app.get('/', (c) => {
     // ===== Conversation history for AI context =====
     let abConversationHistory = [];
 
+    // ===== Helper: get platform stats for AI context =====
+    function abGetPlatformStats() {
+      return {
+        totalContracts: totalVirtualContracts || allDeals.length,
+        totalProjects: [...new Set(allDeals.map(d => d.projectId))].length,
+        industries: [...new Set(allDeals.map(d => d.industry))],
+        avgAIScore: allDeals.length > 0 ? (allDeals.reduce((s,d) => s + parseFloat(d.aiScore || 0), 0) / allDeals.length).toFixed(1) : 'N/A',
+        avgRevenueShare: allDeals.length > 0 ? (allDeals.reduce((s,d) => s + parseInt(d.revenueShare || 0), 0) / allDeals.length).toFixed(1) + '%' : 'N/A',
+      };
+    }
+
+    // ===== Helper: get portfolio summary for AI context =====
+    function abGetPortfolioSummary() {
+      var p = abState.portfolio;
+      if (!p || p.length === 0) return null;
+      var projects = [...new Set(p.map(c => c.projectId))];
+      var industries = [...new Set(p.map(c => c.industry))];
+      var avgScore = (p.reduce((s,c) => s + parseFloat(c.aiScore || 0), 0) / p.length).toFixed(1);
+      var avgReturn = (p.reduce((s,c) => s + parseInt(c.revenueShare || 0), 0) / p.length).toFixed(1);
+      var riskGrades = {};
+      p.forEach(c => { riskGrades[c.riskGrade] = (riskGrades[c.riskGrade]||0) + 1; });
+      return {
+        contractCount: p.length,
+        projectCount: projects.length,
+        industries: industries,
+        avgAIScore: avgScore,
+        avgReturnShare: avgReturn + '%',
+        totalValue: '¥' + (p.length * 1000).toLocaleString(),
+        riskDistribution: riskGrades,
+        topProjects: projects.slice(0, 5).map(pid => {
+          var deals = p.filter(c => c.projectId === pid);
+          return { id: pid, name: deals[0]?.projectName || pid, count: deals.length, industry: deals[0]?.industry };
+        })
+      };
+    }
+
+    // ===== Streaming text renderer =====
+    function abStreamText(targetEl, text, onComplete) {
+      var i = 0;
+      var speed = 20; // ms per character
+      targetEl.textContent = '';
+      function tick() {
+        if (i < text.length) {
+          // Add 2-4 chars at a time for natural feel
+          var chunk = text.substring(i, i + Math.floor(Math.random() * 3) + 2);
+          targetEl.textContent += chunk;
+          i += chunk.length;
+          // Scroll parent messages container
+          var msgs = document.getElementById('abMessages');
+          if (msgs) msgs.scrollTop = msgs.scrollHeight;
+          setTimeout(tick, speed + Math.random() * 15);
+        } else {
+          targetEl.textContent = text; // ensure complete
+          if (onComplete) onComplete();
+        }
+      }
+      tick();
+    }
+
     // ===== NEW: AI-powered + NLP fallback input processing =====
     function abProcessUserInput(text) {
       var isAdjust = abState.step >= 5;
@@ -5398,7 +5768,7 @@ app.get('/', (c) => {
       var typingEl = document.createElement('div');
       typingEl.className = 'ab-msg-ai';
       typingEl.id = 'abTypingIndicator';
-      typingEl.innerHTML = '<div class="ab-avatar"><i class="fas fa-robot"></i></div><div class="ab-content"><div class="ab-typing"><span></span><span></span><span></span></div><p class="text-xs mt-1" style="color: #5A9A90;">' + t('abNlpParsing') + '</p></div>';
+      typingEl.innerHTML = '<div class="ab-avatar"><i class="fas fa-robot"></i></div><div class="ab-content"><div class="ab-typing"><span></span><span></span><span></span></div><p class="text-xs mt-1" style="color: #5A9A90;">' + t('abAiThinking') + '</p></div>';
       if (msgs) { msgs.appendChild(typingEl); msgs.scrollTop = msgs.scrollHeight; }
 
       // Build current config for context
@@ -5414,14 +5784,20 @@ app.get('/', (c) => {
         };
       }
 
-      // Call AI API
+      // Determine mode
+      var mode = isAdjust ? 'adjust' : 'analyze';
+
+      // Call AI API with full context
       fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: abConversationHistory.slice(-10),
+          messages: abConversationHistory.slice(-12),
           currentConfig: currentConfig,
-          lang: currentLang
+          lang: currentLang,
+          mode: mode,
+          platformStats: abGetPlatformStats(),
+          portfolioSummary: isAdjust ? abGetPortfolioSummary() : null
         })
       })
       .then(function(res) { return res.json(); })
@@ -5432,32 +5808,20 @@ app.get('/', (c) => {
 
         if (result.success && result.data) {
           var aiData = result.data;
-          var config = aiData.config || {};
-
-          // Build parsed object compatible with confirm card
-          var parsed = {
-            style: config.style || 'balanced',
-            risk: config.risk || 'medium',
-            returnTarget: config.returnTarget || 'medium',
-            industries: config.industries || ['all'],
-            period: config.period || 'medium',
-            budget: config.budget || 35,
-            confidence: aiData.confidence || 70,
-            reasons: aiData.logic || [],
-            aiAnalysis: aiData.analysis || '',
-            followUp: aiData.followUp || ''
-          };
+          var responseMode = aiData.mode || 'analyze';
 
           // Add to conversation history
           abConversationHistory.push({ role: 'assistant', content: JSON.stringify(aiData) });
 
-          // Store pending config
-          abState.pendingConfig = parsed;
-          abState.step = Math.max(abState.step, 1);
-          if (isAdjust) abState.extraPrefs.push(text);
-
-          // Show AI analysis message + confirm card
-          abShowAIConfirmCard(parsed, isAdjust);
+          // Route to appropriate handler based on AI response mode
+          if (responseMode === 'followup') {
+            abHandleFollowup(aiData);
+          } else if (responseMode === 'explain') {
+            abHandleExplain(aiData);
+          } else {
+            // analyze or adjust mode
+            abHandleAnalyze(aiData, isAdjust);
+          }
         } else {
           // AI API failed — fallback to local NLP
           console.warn('AI API failed, falling back to local NLP:', result.error);
@@ -5473,16 +5837,200 @@ app.get('/', (c) => {
       });
     }
 
+    // ===== Handle AI "followup" mode — AI wants to ask more questions =====
+    function abHandleFollowup(aiData) {
+      var partialConfig = aiData.partialConfig || {};
+      var questions = aiData.questions || [];
+      var missingDims = aiData.missingDims || [];
+      var analysis = aiData.analysis || t('abAiFollowupIntro');
+
+      // Build the followup card HTML
+      var html = '';
+
+      // AI analysis text (streamed in)
+      html += '<div class="mb-3">';
+      html += '<p class="text-sm leading-relaxed ab-stream-text" style="color: #8EBDB5;">' + analysis + '</p>';
+      html += '</div>';
+
+      // Show identified partial config as mini-card
+      var hasPartial = partialConfig.style || partialConfig.risk || partialConfig.returnTarget || 
+                       (partialConfig.industries && partialConfig.industries.length > 0 && !partialConfig.industries.includes('all'));
+      if (hasPartial) {
+        html += '<div class="p-2 rounded-lg mb-3" style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15);">';
+        html += '<p class="text-xs font-semibold mb-1.5" style="color: #34d399;"><i class="fas fa-check-circle mr-1"></i>' + t('abAiPartialConfig') + '</p>';
+        html += '<div class="flex flex-wrap gap-1.5">';
+        var indNameMap = {'F&B': t('indDining'), 'Technology': t('indTech'), 'Healthcare': t('indHealth'), 'Retail': t('indRetail'), 'Education': t('indEducation'), 'Entertainment': t('indEntertainment')};
+        var styleLabels = { conservative: t('abNlpStyleConservative'), aggressive: t('abNlpStyleAggressive'), balanced: t('abNlpStyleBalanced'), sector: t('abNlpStyleSector') };
+        var riskLabels = { low: t('abNlpRiskLow'), medium: t('abNlpRiskMed'), high: t('abNlpRiskHigh') };
+        if (partialConfig.style) html += '<span class="px-2 py-0.5 rounded text-xs" style="background:rgba(93,196,179,0.15);color:#3DD8CA;">' + (styleLabels[partialConfig.style] || partialConfig.style) + '</span>';
+        if (partialConfig.risk) html += '<span class="px-2 py-0.5 rounded text-xs" style="background:rgba(93,196,179,0.15);color:#3DD8CA;">' + (riskLabels[partialConfig.risk] || partialConfig.risk) + '</span>';
+        if (partialConfig.industries && partialConfig.industries.length > 0 && !partialConfig.industries.includes('all')) {
+          partialConfig.industries.forEach(function(ind) {
+            html += '<span class="px-2 py-0.5 rounded text-xs" style="background:rgba(93,196,179,0.15);color:#3DD8CA;">' + (indNameMap[ind] || ind) + '</span>';
+          });
+        }
+        html += '</div></div>';
+      }
+
+      // Show missing dimensions hint
+      if (missingDims.length > 0) {
+        html += '<div class="p-2 rounded-lg mb-3" style="background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15);">';
+        html += '<p class="text-xs font-semibold mb-1.5" style="color: #fbbf24;"><i class="fas fa-exclamation-triangle mr-1"></i>' + t('abAiMissingHint') + '</p>';
+        html += '<div class="flex flex-wrap gap-1.5">';
+        var dimNames = { risk: t('abNlpRisk'), period: t('abNlpPeriod'), budget: t('abNlpBudget'), returnTarget: t('abNlpReturn'), style: t('abNlpStyle'), industries: t('abNlpIndustry') };
+        missingDims.forEach(function(dim) {
+          html += '<span class="px-2 py-0.5 rounded text-xs cursor-pointer hover:opacity-80" style="background:rgba(245,158,11,0.15);color:#fbbf24;" onclick="abEditConfigDim(\\'' + (dim === 'returnTarget' ? 'return' : dim) + '\\')">' + (dimNames[dim] || dim) + ' <i class="fas fa-edit" style="font-size:9px;"></i></span>';
+        });
+        html += '</div></div>';
+      }
+
+      // Show questions from AI
+      if (questions.length > 0) {
+        html += '<div class="p-3 rounded-xl" style="background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.15);">';
+        html += '<p class="text-xs font-semibold mb-2" style="color: #a78bfa;"><i class="fas fa-question-circle mr-1"></i>' + t('abAiFollowupQ') + '</p>';
+        questions.forEach(function(q, idx) {
+          html += '<p class="text-xs mb-1.5" style="color: #8EBDB5;">' + (idx + 1) + '. ' + q + '</p>';
+        });
+        html += '</div>';
+      }
+
+      // Store partial config so manual dim edits can fill it in
+      abState.pendingConfig = {
+        style: partialConfig.style || null,
+        risk: partialConfig.risk || null,
+        returnTarget: partialConfig.returnTarget || null,
+        industries: (partialConfig.industries && partialConfig.industries.length > 0) ? partialConfig.industries : ['all'],
+        period: partialConfig.period || null,
+        budget: partialConfig.budget || null,
+        confidence: aiData.confidence || 40,
+        reasons: [],
+        aiAnalysis: analysis,
+      };
+      abState.step = Math.max(abState.step, 1);
+
+      abAddAIMessage(
+        html,
+        [
+          { text: t('abAiAnswerMore'), icon: 'fa-comment-dots', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '继续描述您的投资需求...' : 'Continue describing your needs...') + "'" },
+          { text: t('abAiSkipBuild'), icon: 'fa-forward', color: 'emerald', action: "abForceConfirmPartial()" },
+        ]
+      );
+    }
+
+    // ===== Force confirm partial config (fill defaults for missing) =====
+    function abForceConfirmPartial() {
+      if (!abState.pendingConfig) return;
+      var cfg = abState.pendingConfig;
+      // Fill defaults for missing dimensions
+      cfg.style = cfg.style || 'balanced';
+      cfg.risk = cfg.risk || 'medium';
+      cfg.returnTarget = cfg.returnTarget || cfg.risk || 'medium';
+      cfg.period = cfg.period || 'medium';
+      cfg.budget = cfg.budget || 35;
+      if (!cfg.industries || cfg.industries.length === 0) cfg.industries = ['all'];
+      cfg.confidence = Math.max(cfg.confidence || 50, 50);
+
+      // Show the full confirm card
+      abShowAIConfirmCard(cfg, false);
+    }
+
+    // ===== Handle AI "analyze" / "adjust" mode — show confirm card =====
+    function abHandleAnalyze(aiData, isAdjust) {
+      var config = aiData.config || {};
+
+      // Build parsed object compatible with confirm card
+      var parsed = {
+        style: config.style || 'balanced',
+        risk: config.risk || 'medium',
+        returnTarget: config.returnTarget || 'medium',
+        industries: config.industries || ['all'],
+        period: config.period || 'medium',
+        budget: config.budget || 35,
+        confidence: aiData.confidence || 70,
+        reasons: aiData.logic || [],
+        aiAnalysis: aiData.analysis || '',
+        followUp: aiData.followUp || ''
+      };
+
+      // Store pending config
+      abState.pendingConfig = parsed;
+      abState.step = Math.max(abState.step, 1);
+      if (isAdjust) abState.extraPrefs.push('adjust');
+
+      // Show AI analysis message + confirm card
+      abShowAIConfirmCard(parsed, isAdjust);
+    }
+
+    // ===== Handle AI "explain" mode — portfolio explanation =====
+    function abHandleExplain(aiData) {
+      var html = '';
+
+      // Title
+      html += '<p class="text-sm font-bold mb-2" style="color: #E8F5F3;"><i class="fas fa-chart-pie mr-1.5" style="color:#8B5CF6;"></i>' + t('abAiExplainTitle') + '</p>';
+
+      // Analysis
+      if (aiData.analysis) {
+        html += '<p class="text-sm leading-relaxed mb-3 ab-stream-text" style="color: #8EBDB5;">' + aiData.analysis + '</p>';
+      }
+
+      // Highlights
+      if (aiData.highlights && aiData.highlights.length > 0) {
+        html += '<div class="p-2 rounded-lg mb-2" style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15);">';
+        html += '<p class="text-xs font-semibold mb-1.5" style="color: #34d399;">' + t('abAiHighlights') + '</p>';
+        aiData.highlights.forEach(function(h) {
+          html += '<p class="text-xs mb-1" style="color: #8EBDB5;">• ' + h + '</p>';
+        });
+        html += '</div>';
+      }
+
+      // Risks
+      if (aiData.risks && aiData.risks.length > 0) {
+        html += '<div class="p-2 rounded-lg mb-2" style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15);">';
+        html += '<p class="text-xs font-semibold mb-1.5" style="color: #f87171;">' + t('abAiRisks') + '</p>';
+        aiData.risks.forEach(function(r) {
+          html += '<p class="text-xs mb-1" style="color: #8EBDB5;">• ' + r + '</p>';
+        });
+        html += '</div>';
+      }
+
+      // Suggestion
+      if (aiData.suggestion) {
+        html += '<div class="p-2 rounded-lg" style="background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15);">';
+        html += '<p class="text-xs font-semibold mb-1" style="color: #fbbf24;">' + t('abAiSuggestion') + '</p>';
+        html += '<p class="text-xs" style="color: #8EBDB5;">' + aiData.suggestion + '</p>';
+        html += '</div>';
+      }
+
+      abAddAIMessage(
+        html,
+        [
+          { text: t('abSatisfied'), icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
+          { text: t('abReduceRisk'), icon: 'fa-shield-alt', color: 'blue', action: "abSelectOption('" + t('abReduceRisk') + "')" },
+          { text: t('abAddTech'), icon: 'fa-microchip', color: 'violet', action: "abSelectOption('" + t('abAddTech') + "')" },
+        ]
+      );
+    }
+
     // ===== Show AI-enhanced confirm card with analysis =====
     function abShowAIConfirmCard(parsed, isAdjust) {
       // Build the card HTML with AI analysis
       var cardHTML = '';
 
-      // AI natural language analysis
+      // AI natural language analysis (with streaming effect)
       if (parsed.aiAnalysis) {
         cardHTML += '<div class="p-3 rounded-xl mb-3" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);">';
         cardHTML += '<p class="text-xs font-semibold mb-1.5" style="color: #3DD8CA;"><i class="fas fa-brain mr-1"></i>' + (currentLang === 'zh' ? 'AI 分析' : 'AI Analysis') + '</p>';
-        cardHTML += '<p class="text-sm leading-relaxed" style="color: #8EBDB5;">' + parsed.aiAnalysis + '</p>';
+        cardHTML += '<p class="text-sm leading-relaxed ab-stream-text" style="color: #8EBDB5;">' + parsed.aiAnalysis + '</p>';
+        cardHTML += '</div>';
+      }
+
+      // Confidence indicator
+      if (parsed.confidence) {
+        var confColor = parsed.confidence >= 80 ? '#10b981' : (parsed.confidence >= 60 ? '#f59e0b' : '#ef4444');
+        var confLabel = parsed.confidence >= 80 ? (currentLang === 'zh' ? '高置信度' : 'High confidence') : (parsed.confidence >= 60 ? (currentLang === 'zh' ? '中置信度' : 'Medium confidence') : (currentLang === 'zh' ? '低置信度' : 'Low confidence'));
+        cardHTML += '<div class="flex items-center gap-2 mb-3">';
+        cardHTML += '<div class="flex-1 h-1.5 rounded-full" style="background:rgba(46,196,182,0.1);"><div class="h-full rounded-full" style="width:' + parsed.confidence + '%; background:' + confColor + ';"></div></div>';
+        cardHTML += '<span class="text-xs font-bold" style="color:' + confColor + ';">' + confLabel + ' ' + parsed.confidence + '%</span>';
         cardHTML += '</div>';
       }
 
