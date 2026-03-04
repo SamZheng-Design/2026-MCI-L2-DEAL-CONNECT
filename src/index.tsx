@@ -1376,7 +1376,7 @@ app.get('/', (c) => {
       showToast('success', '登录成功', '欢迎回来，' + name);
       // 延迟1.2秒后触发聚光灯引导效果
       setTimeout(function() { showSpotlight(); }, 1200);
-      if (!localStorage.getItem('ec_onboarded')) { setTimeout(showOnboarding, 800); }
+      // 新手引导弹窗已移除自动弹出，用户可通过导航栏问号按钮或下拉菜单手动查看
     }
 
     function handleLogout() { currentUser = null; switchPage('pageAuth'); showToast('info', '已退出', '您已安全退出账号'); }
