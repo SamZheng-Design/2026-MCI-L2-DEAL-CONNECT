@@ -1652,7 +1652,7 @@ app.get('/', (c) => {
       const annualYield = shareNum; // revenueShare 本身就是年化收益率(%)
       // 单张合约预估月收 = 基于项目实际月营收推算
       const dealMonthlyIncome = calcContractMonthlyIncome(deal);
-      const dealIncomeStr = dealMonthlyIncome >= 1000 ? (dealMonthlyIncome / 10000).toFixed(2) + '万' : '¥' + Math.round(dealMonthlyIncome);
+      const dealIncomeStr = dealMonthlyIncome >= 10000 ? (dealMonthlyIncome / 10000).toFixed(1) + '万' : '¥' + Math.round(dealMonthlyIncome).toLocaleString();
       return [
         annualYield.toFixed(1) + '%',                // YITO年化收益率
         (periodNum * 30) + '天',                      // 合约时长（转天数）
@@ -1691,7 +1691,7 @@ app.get('/', (c) => {
       contracts.forEach(c => {
         monthlyIncome += calcContractMonthlyIncome(c);
       });
-      const incomeDisplay = monthlyIncome >= 1000 ? (monthlyIncome / 10000).toFixed(2) + '万' : '¥' + Math.round(monthlyIncome);
+      const incomeDisplay = monthlyIncome >= 10000 ? (monthlyIncome / 10000).toFixed(1) + '万' : '¥' + Math.round(monthlyIncome).toLocaleString();
 
       // 4. 风控评级 — 取众数
       const riskCounts = {};
