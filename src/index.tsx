@@ -199,18 +199,52 @@ app.get('/', (c) => {
     @keyframes ccSlideDown { from { max-height: 0; opacity: 0; } to { max-height: 1800px; opacity: 1; } }
     .ab-contract-item { background: rgba(15,46,43,0.6); border: 1px solid rgba(46,196,182,0.08); }
     .ab-contract-item:hover { border-color: rgba(46,196,182,0.25); background: rgba(46,196,182,0.06); box-shadow: 0 2px 8px rgba(46,196,182,0.08); }
-    /* AI入口卡片动效 */
+    /* AI入口卡片动效 — 增强版 */
     @keyframes aiEntryShimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
-    @keyframes aiEntryPulse { 0%, 100% { box-shadow: 0 4px 16px rgba(93,196,179,0.2), 0 0 0 0 rgba(93,196,179,0.3); } 50% { box-shadow: 0 8px 32px rgba(93,196,179,0.25), 0 0 0 6px rgba(93,196,179,0); } }
+    @keyframes aiEntryPulse { 0%, 100% { box-shadow: 0 4px 20px rgba(93,196,179,0.25), 0 0 0 0 rgba(93,196,179,0.4), inset 0 1px 0 rgba(255,255,255,0.08); } 50% { box-shadow: 0 8px 40px rgba(93,196,179,0.35), 0 0 0 8px rgba(93,196,179,0), inset 0 1px 0 rgba(255,255,255,0.08); } }
     @keyframes aiEntryFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-    .ai-entry-card { position: relative; overflow: hidden; cursor: pointer; transition: all 0.4s cubic-bezier(0.28,0.11,0.32,1); animation: aiEntryPulse 3s ease-in-out infinite; }
-    .ai-entry-card:hover { transform: translateY(-3px) scale(1.005); box-shadow: 0 12px 40px rgba(93,196,179,0.2), 0 4px 12px rgba(0,0,0,0.06) !important; }
-    .ai-entry-card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); animation: aiEntryShimmer 4s ease-in-out infinite; pointer-events: none; }
+    @keyframes aiEntryBorderGlow { 0%, 100% { border-color: rgba(93,196,179,0.35); } 50% { border-color: rgba(93,196,179,0.65); } }
+    @keyframes aiEntryGradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes aiParticleRise { 0% { transform: translateY(100%) translateX(0) scale(0); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 0.6; } 100% { transform: translateY(-100%) translateX(20px) scale(1); opacity: 0; } }
+    @keyframes aiParticleRise2 { 0% { transform: translateY(100%) translateX(0) scale(0); opacity: 0; } 15% { opacity: 0.8; } 85% { opacity: 0.4; } 100% { transform: translateY(-120%) translateX(-15px) scale(1.2); opacity: 0; } }
+    @keyframes aiRingPulse { 0% { transform: scale(0.8); opacity: 0.6; } 50% { transform: scale(1.15); opacity: 0; } 100% { transform: scale(0.8); opacity: 0; } }
+    @keyframes navAIPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(46,196,182,0.4); } 50% { box-shadow: 0 0 0 6px rgba(46,196,182,0); } }
+    @keyframes aiFabPulse { 0%, 100% { box-shadow: 0 4px 20px rgba(46,196,182,0.4), 0 0 0 0 rgba(46,196,182,0.3); } 50% { box-shadow: 0 4px 20px rgba(46,196,182,0.4), 0 0 0 10px rgba(46,196,182,0); } }
+    @keyframes aiFabBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes aiStatShine { 0% { left: -100%; } 100% { left: 200%; } }
+    .ai-entry-card { position: relative; overflow: hidden; cursor: pointer; transition: all 0.4s cubic-bezier(0.28,0.11,0.32,1); animation: aiEntryPulse 3s ease-in-out infinite, aiEntryBorderGlow 3s ease-in-out infinite; border: 1.5px solid rgba(93,196,179,0.35) !important; }
+    .ai-entry-card:hover { transform: translateY(-4px) scale(1.008); box-shadow: 0 16px 48px rgba(93,196,179,0.3), 0 4px 16px rgba(0,0,0,0.1), 0 0 80px rgba(46,196,182,0.1) !important; border-color: rgba(93,196,179,0.7) !important; }
+    .ai-entry-card::before { content: ''; position: absolute; inset: -2px; border-radius: inherit; background: linear-gradient(135deg, rgba(93,196,179,0.2), transparent 40%, transparent 60%, rgba(46,196,182,0.15)); z-index: 0; pointer-events: none; }
+    .ai-entry-card::after { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), rgba(93,196,179,0.08), transparent); animation: aiEntryShimmer 3.5s ease-in-out infinite; pointer-events: none; z-index: 1; }
     .ai-entry-icon { animation: aiEntryFloat 3s ease-in-out infinite; }
-    .ai-entry-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-    .ai-entry-particles::before, .ai-entry-particles::after { content: ''; position: absolute; border-radius: 50%; background: rgba(255,255,255,0.3); animation: aiEntryFloat 4s ease-in-out infinite; }
-    .ai-entry-particles::before { width: 6px; height: 6px; top: 20%; right: 15%; animation-delay: -1s; }
-    .ai-entry-particles::after { width: 4px; height: 4px; bottom: 25%; right: 30%; animation-delay: -2.5s; }
+    .ai-entry-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .ai-entry-particles::before, .ai-entry-particles::after { content: ''; position: absolute; border-radius: 50%; background: rgba(93,196,179,0.5); }
+    .ai-entry-particles::before { width: 5px; height: 5px; top: 30%; right: 12%; animation: aiParticleRise 4s ease-in-out infinite; }
+    .ai-entry-particles::after { width: 3px; height: 3px; bottom: 20%; right: 25%; animation: aiParticleRise2 5s ease-in-out infinite 1s; }
+    /* AI入口额外粒子层 */
+    .ai-entry-particles-extra { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .ai-entry-particles-extra::before { content: ''; position: absolute; width: 4px; height: 4px; border-radius: 50%; background: rgba(94,234,212,0.4); top: 60%; right: 8%; animation: aiParticleRise 6s ease-in-out infinite 2s; }
+    .ai-entry-particles-extra::after { content: ''; position: absolute; width: 6px; height: 6px; border-radius: 50%; background: rgba(46,196,182,0.3); bottom: 40%; left: 15%; animation: aiParticleRise2 7s ease-in-out infinite 0.5s; }
+    /* AI入口脉冲环 */
+    .ai-entry-ring { position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; transform: translate(-50%,-50%); border: 2px solid rgba(93,196,179,0.15); border-radius: inherit; pointer-events: none; animation: aiRingPulse 3s ease-out infinite; z-index: 0; }
+    /* 导航栏AI按钮增强 */
+    .nav-ai-btn { position: relative; gap: 5px; padding: 5px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #3DD8CA; background: linear-gradient(135deg, rgba(46,196,182,0.15), rgba(93,196,179,0.08)); border: 1px solid rgba(46,196,182,0.35); transition: all 0.3s cubic-bezier(0.28,0.11,0.32,1); cursor: pointer; animation: navAIPulse 2.5s ease-in-out infinite; }
+    .nav-ai-btn:hover { background: linear-gradient(135deg, rgba(46,196,182,0.25), rgba(93,196,179,0.15)); box-shadow: 0 0 20px rgba(46,196,182,0.2); border-color: rgba(46,196,182,0.6); color: #5eead4; transform: translateY(-1px); }
+    .nav-ai-btn::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; background: linear-gradient(135deg, rgba(93,196,179,0.3), transparent, rgba(46,196,182,0.2)); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .nav-ai-btn:hover::after { opacity: 1; }
+    .nav-ai-dot { width: 6px; height: 6px; border-radius: 50%; background: #5eead4; animation: pulse 1.5s ease-in-out infinite; flex-shrink: 0; }
+    /* 全局浮动AI入口 FAB */
+    .ai-builder-fab { position: fixed; bottom: 90px; right: 20px; z-index: 800; width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #2EC4B6, #1a9e92); border: 1.5px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 20px; transition: all 0.3s cubic-bezier(0.28,0.11,0.32,1); animation: aiFabPulse 2.5s ease-in-out infinite; box-shadow: 0 4px 20px rgba(46,196,182,0.4); }
+    .ai-builder-fab:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 32px rgba(46,196,182,0.5), 0 0 60px rgba(46,196,182,0.15); }
+    .ai-builder-fab .fab-badge { position: absolute; top: -4px; right: -4px; background: #f59e0b; color: white; font-size: 8px; font-weight: 800; padding: 2px 5px; border-radius: 6px; line-height: 1; letter-spacing: 0.05em; }
+    .ai-builder-fab .fab-ring { position: absolute; inset: -4px; border-radius: 20px; border: 2px solid rgba(46,196,182,0.3); animation: aiRingPulse 3s ease-out infinite; pointer-events: none; }
+    .ai-builder-fab-tooltip { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); background: rgba(13,36,34,0.95); border: 1px solid rgba(46,196,182,0.25); border-radius: 10px; padding: 8px 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: all 0.25s; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+    .ai-builder-fab:hover .ai-builder-fab-tooltip { opacity: 1; transform: translateY(-50%) translateX(-4px); }
+    .ai-builder-fab-tooltip::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) rotate(45deg); width: 10px; height: 10px; background: rgba(13,36,34,0.95); border-right: 1px solid rgba(46,196,182,0.25); border-bottom: 1px solid rgba(46,196,182,0.25); }
+    /* AI统计卡片增强 */
+    .ai-stat-card { position: relative; overflow: hidden; padding: 10px 14px; background: linear-gradient(135deg, rgba(15,60,55,0.9), rgba(20,75,68,0.8)); border: 1.5px solid rgba(46,196,182,0.25); border-radius: 6px; transition: all 0.3s; cursor: pointer; animation: aiEntryBorderGlow 3s ease-in-out infinite; }
+    .ai-stat-card:hover { border-color: rgba(46,196,182,0.5); background: linear-gradient(135deg, rgba(15,60,55,1), rgba(25,85,75,0.9)); box-shadow: 0 4px 20px rgba(46,196,182,0.15); transform: translateY(-1px); }
+    .ai-stat-card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(93,196,179,0.08), transparent); animation: aiStatShine 4s ease-in-out infinite; pointer-events: none; }
     /* AI入口指引提示 */
     @keyframes aiHintBounce {
       0%, 100% { transform: translateY(0); }
@@ -227,7 +261,7 @@ app.get('/', (c) => {
     }
     .ai-entry-hint {
       position: absolute;
-      bottom: -52px;
+      bottom: -58px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
@@ -238,11 +272,11 @@ app.get('/', (c) => {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(13,36,34,0.95);
-      border: 1px solid rgba(93,196,179,0.25);
+      background: linear-gradient(135deg, rgba(13,36,34,0.98), rgba(20,55,50,0.95));
+      border: 1px solid rgba(93,196,179,0.35);
       border-radius: 12px;
-      padding: 8px 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(93,196,179,0.1);
+      padding: 10px 20px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.35), 0 0 20px rgba(46,196,182,0.1), 0 0 0 1px rgba(93,196,179,0.15);
       white-space: nowrap;
       animation: aiHintBounce 2.5s ease-in-out 2.2s infinite;
     }
@@ -270,8 +304,8 @@ app.get('/', (c) => {
       to { opacity: 1; }
     }
     @keyframes spotlightGlow {
-      0%, 100% { box-shadow: 0 0 30px rgba(93,196,179,0.4), 0 0 60px rgba(93,196,179,0.15), 0 4px 16px rgba(93,196,179,0.15); }
-      50% { box-shadow: 0 0 40px rgba(93,196,179,0.5), 0 0 80px rgba(93,196,179,0.2), 0 8px 32px rgba(93,196,179,0.25); }
+      0%, 100% { box-shadow: 0 0 40px rgba(93,196,179,0.5), 0 0 80px rgba(93,196,179,0.2), 0 4px 20px rgba(93,196,179,0.2); }
+      50% { box-shadow: 0 0 60px rgba(93,196,179,0.6), 0 0 120px rgba(93,196,179,0.25), 0 8px 40px rgba(93,196,179,0.3); }
     }
     @keyframes spotlightLabelPulse {
       0%, 100% { transform: translateX(-50%) scale(1); }
@@ -295,8 +329,8 @@ app.get('/', (c) => {
       position: relative;
       z-index: 1001 !important;
       animation: spotlightGlow 2s ease-in-out infinite !important;
-      transform: scale(1.02);
-      border: 1.5px solid rgba(93,196,179,0.5) !important;
+      transform: scale(1.03);
+      border: 2px solid rgba(93,196,179,0.7) !important;
     }
     .spotlight-active #aiEntryWrapper {
       position: relative;
@@ -362,7 +396,7 @@ app.get('/', (c) => {
     <i class="fas fa-magic" style="color: #5eead4; font-size: 16px;"></i>
     <div>
       <div class="spotlight-label-text">✨ 试试 AI 智能组合构建器</div>
-      <div class="spotlight-label-sub">与 AI 对话，快速构建您的专属投资组合</div>
+      <div class="spotlight-label-sub">与 AI 对话 · 智能匹配 · 一键构建专属投资组合</div>
     </div>
   </div>
   <div id="spotlightDismissHint"><i class="fas fa-hand-pointer" style="margin-right: 4px;"></i>点击任意空白处继续浏览</div>
@@ -545,7 +579,7 @@ app.get('/', (c) => {
         </div>
         <!-- 右：工具栏 -->
         <div class="flex items-center" style="gap:6px;">
-          <button onclick="goToAIBuilder()" class="flex items-center" style="gap:5px;padding:4px 12px;border-radius:4px;font-size:11px;font-weight:700;color:#3DD8CA;background:rgba(46,196,182,0.1);border:1px solid rgba(46,196,182,0.25);transition:all 0.2s;cursor:pointer;" onmouseover="this.style.background='rgba(46,196,182,0.18)';this.style.boxShadow='0 0 12px rgba(46,196,182,0.15)'" onmouseout="this.style.background='rgba(46,196,182,0.1)';this.style.boxShadow='none'"><i class="fas fa-magic" style="font-size:10px;"></i><span>AI 组合</span></button>
+          <button onclick="goToAIBuilder()" class="flex items-center nav-ai-btn"><span class="nav-ai-dot"></span><i class="fas fa-magic" style="font-size:10px;"></i><span>AI 组合</span></button>
           <button onclick="showOnboarding()" style="width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#5A9A90;background:transparent;border:1px solid transparent;transition:all 0.15s;cursor:pointer;font-size:12px;" onmouseover="this.style.background='rgba(46,196,182,0.08)';this.style.borderColor='rgba(46,196,182,0.12)'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent'"><i class="fas fa-question-circle"></i></button>
           <div style="width:1px;height:20px;background:rgba(46,196,182,0.1);"></div>
           <!-- User avatar -->
@@ -626,7 +660,7 @@ app.get('/', (c) => {
         </div>
 
         <!-- Terminal Stats — 紧凑的monospace数据卡片 -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
           <div class="cursor-pointer" onclick="selectSieve('all')" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(99,102,241,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
               <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">CONTRACTS</span>
@@ -659,33 +693,58 @@ app.get('/', (c) => {
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#818cf8;margin-top:4px;line-height:1;" id="statMyPortfolios">0</p>
             <p style="font-size:10px;color:#3D7A70;margin-top:2px;">投资组合</p>
           </div>
+          <!-- AI BUILDER 专属卡片 -->
+          <div class="ai-stat-card cursor-pointer" onclick="goToAIBuilder()">
+            <div class="flex items-center justify-between">
+              <span style="font-size:10px;color:#2EC4B6;font-weight:700;letter-spacing:0.05em;">AI BUILDER</span>
+              <i class="fas fa-magic" style="font-size:10px;color:#5eead4;"></i>
+            </div>
+            <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#5eead4;margin-top:4px;line-height:1;" id="statAIReady"><i class="fas fa-bolt" style="font-size:16px;"></i></p>
+            <p style="font-size:10px;color:#2EC4B6;margin-top:2px;font-weight:600;">点击开始构建 →</p>
+          </div>
         </div>
 
-        <!-- ===== AI 组合构建器入口 ===== -->
+        <!-- ===== AI 组合构建器入口 — 强化版 ===== -->
         <div class="relative mb-5" id="aiEntryWrapper" style="margin-bottom: 72px;">
-          <div onclick="dismissSpotlight(); goToAIBuilder(); dismissAIHint();" class="ai-entry-card rounded-2xl p-0 border border-transparent" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%); box-shadow: 0 4px 16px rgba(93,196,179,0.15), 0 2px 6px rgba(0,0,0,0.06);">
+          <div onclick="dismissSpotlight(); goToAIBuilder(); dismissAIHint();" class="ai-entry-card rounded-2xl p-0" style="background: linear-gradient(135deg, #0a3530 0%, #0f4a42 35%, #1a5f55 70%, #175248 100%); background-size: 200% 200%; animation: aiEntryPulse 3s ease-in-out infinite, aiEntryBorderGlow 3s ease-in-out infinite, aiEntryGradientShift 8s ease-in-out infinite;">
             <div class="ai-entry-particles"></div>
-            <div class="relative z-10 flex items-center justify-between p-5">
-              <div class="flex items-center gap-4">
-                <div class="ai-entry-icon w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(93,196,179,0.25), rgba(46,196,182,0.15)); border: 1px solid rgba(93,196,179,0.3); backdrop-filter: blur(8px);">
-                  <i class="fas fa-magic text-xl text-white"></i>
+            <div class="ai-entry-particles-extra"></div>
+            <div class="ai-entry-ring" style="border-radius: 16px;"></div>
+            <!-- 顶部渐变装饰线 -->
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, #2EC4B6, #5eead4, #06b6d4, #2EC4B6);background-size:200% 100%;animation:aiEntryShimmer 3s linear infinite;border-radius:16px 16px 0 0;z-index:2;"></div>
+            <div class="relative z-10 flex items-center justify-between p-5" style="padding: 20px 24px;">
+              <div class="flex items-center gap-5">
+                <div class="ai-entry-icon flex-shrink-0" style="width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, rgba(46,196,182,0.3), rgba(93,196,179,0.15));border:1.5px solid rgba(93,196,179,0.4);backdrop-filter:blur(8px);box-shadow:0 4px 16px rgba(46,196,182,0.2);">
+                  <i class="fas fa-magic text-2xl" style="color:#5eead4;text-shadow:0 0 12px rgba(94,234,212,0.4);"></i>
                 </div>
                 <div>
-                  <div class="flex items-center gap-2 mb-1">
-                    <h3 class="text-base font-bold text-white" style="letter-spacing: -0.02em;">AI 智能组合构建器</h3>
-                    <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background: rgba(46,196,182,0.2); color: #5eead4; animation: pulseGlow 2s ease-in-out infinite;">NEW</span>
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <h3 style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.02em;">AI 智能组合构建器</h3>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:linear-gradient(135deg, #f59e0b, #f97316);color:#fff;font-size:10px;letter-spacing:0.05em;box-shadow:0 2px 8px rgba(245,158,11,0.3);">HOT</span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(46,196,182,0.15);color:#5eead4;font-size:10px;animation:pulseGlow 2s ease-in-out infinite;">试点功能</span>
                   </div>
-                  <p class="text-sm" style="color: #5A9A90;">与 AI 对话，智能匹配全平台合约，一键构建个性化投资组合</p>
+                  <p style="font-size:13px;color:#8EBDB5;line-height:1.5;">与 AI 对话，智能匹配全平台合约 · 一键构建您的专属投资组合</p>
+                  <div class="flex items-center gap-3 mt-2">
+                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i>智能风控匹配</span>
+                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i>多维度评估</span>
+                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i>一键认购</span>
+                  </div>
                 </div>
               </div>
-              <div class="flex items-center gap-3">
-                <div class="hidden sm:flex items-center gap-4 mr-2">
-                  <div class="text-center"><p class="text-lg font-black" style="color: #5eead4;" id="aiEntryContracts">0</p><p style="font-size:10px; color: rgba(255,255,255,0.35);">可选合约</p></div>
-                  <div class="w-px h-8" style="background: rgba(255,255,255,0.1);"></div>
-                  <div class="text-center"><p class="text-lg font-black" style="color: #fbbf24;" id="aiEntryProjects">0</p><p style="font-size:10px; color: rgba(255,255,255,0.35);">覆盖项目</p></div>
+              <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-5 mr-3">
+                  <div class="text-center">
+                    <p style="font-family:'SF Mono','Fira Code',monospace;font-size:22px;font-weight:900;color:#5eead4;line-height:1;text-shadow:0 0 8px rgba(94,234,212,0.3);" id="aiEntryContracts">0</p>
+                    <p style="font-size:10px;color:rgba(142,189,181,0.6);margin-top:3px;font-weight:600;">可选合约</p>
+                  </div>
+                  <div style="width:1px;height:36px;background:linear-gradient(to bottom, transparent, rgba(93,196,179,0.3), transparent);"></div>
+                  <div class="text-center">
+                    <p style="font-family:'SF Mono','Fira Code',monospace;font-size:22px;font-weight:900;color:#fbbf24;line-height:1;text-shadow:0 0 8px rgba(251,191,36,0.3);" id="aiEntryProjects">0</p>
+                    <p style="font-size:10px;color:rgba(142,189,181,0.6);margin-top:3px;font-weight:600;">覆盖项目</p>
+                  </div>
                 </div>
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);">
-                  <i class="fas fa-arrow-right text-white text-sm"></i>
+                <div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, rgba(46,196,182,0.2), rgba(93,196,179,0.1));border:1.5px solid rgba(93,196,179,0.3);transition:all 0.3s;" onmouseover="this.style.background='linear-gradient(135deg, rgba(46,196,182,0.35), rgba(93,196,179,0.2))';this.style.borderColor='rgba(93,196,179,0.5)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46,196,182,0.2), rgba(93,196,179,0.1))';this.style.borderColor='rgba(93,196,179,0.3)'">
+                  <i class="fas fa-arrow-right" style="color:#5eead4;font-size:14px;"></i>
                 </div>
               </div>
             </div>
@@ -1123,6 +1182,17 @@ app.get('/', (c) => {
     </div>
   </div>
 
+  <!-- ==================== AI Builder 全局浮动入口 ==================== -->
+  <div id="aiBuilderFab" class="ai-builder-fab hidden" onclick="goToAIBuilder()">
+    <i class="fas fa-magic"></i>
+    <span class="fab-badge">AI</span>
+    <div class="fab-ring"></div>
+    <div class="ai-builder-fab-tooltip">
+      <div style="font-size:12px;font-weight:700;color:#5eead4;">AI 智能组合构建器</div>
+      <div style="font-size:10px;color:#5A9A90;margin-top:2px;">与AI对话，一键构建投资组合</div>
+    </div>
+  </div>
+
   <!-- ==================== AI Assistant FAB ==================== -->
   <div id="aiFab" class="ai-assistant-fab hidden" onclick="toggleAIChat()"><i class="fas fa-robot"></i></div>
   <div id="aiChat" class="ai-chat-window hidden">
@@ -1344,6 +1414,7 @@ app.get('/', (c) => {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const page = document.getElementById(pageId); if (page) page.classList.add('active');
       const fab = document.getElementById('aiFab'); if (fab) fab.classList.toggle('hidden', pageId === 'pageAuth');
+      const aiFab = document.getElementById('aiBuilderFab'); if (aiFab) aiFab.classList.toggle('hidden', pageId === 'pageAuth' || pageId === 'pageAIBuilder');
       // 记住上一页用于返回
       if (pageId !== 'pageDetail' && pageId !== 'pagePortfolioDetail') window._lastPage = pageId;
       // 页面切换后滚动到顶部
@@ -2268,6 +2339,9 @@ app.get('/', (c) => {
       // 更新AI入口卡片统计
       el = document.getElementById('aiEntryContracts'); if (el) el.textContent = dashVTotal.toLocaleString();
       el = document.getElementById('aiEntryProjects'); if (el) el.textContent = allDeals.length.toLocaleString();
+      // 更新AI统计卡片
+      var aiReadyEl = document.getElementById('statAIReady');
+      if (aiReadyEl && dashVTotal > 0) { aiReadyEl.innerHTML = '<span style="font-family:SF Mono,Fira Code,monospace;">' + dashVTotal.toLocaleString() + '</span>'; }
       // 动态更新欢迎副标题
       var subText = document.getElementById('welcomeSubText');
       if (subText) {
@@ -3583,8 +3657,8 @@ app.get('/', (c) => {
       // 显示底部 dismiss 提示
       var dismiss = document.getElementById('spotlightDismissHint');
       if (dismiss) setTimeout(function() { dismiss.classList.add('active'); }, 100);
-      // 5秒后自动关闭（如果用户没手动关）
-      setTimeout(function() { dismissSpotlight(); }, 6000);
+      // 10秒后自动关闭（如果用户没手动关）
+      setTimeout(function() { dismissSpotlight(); }, 10000);
     }
 
     function dismissSpotlight() {
