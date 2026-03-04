@@ -1050,14 +1050,19 @@ app.get('/', (c) => {
             <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);"><i class="fas fa-robot text-white text-sm"></i></div>
             <div class="flex-1">
               <div class="p-4 rounded-2xl rounded-tl-md bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-                <p class="text-sm text-[#E8F5F3] leading-relaxed mb-3" data-i18n="abWelcome1">Hello! I am the <span style="color: #3DD8CA; font-weight: 700;">Deal Connect AI Portfolio Architect</span>.</p>
-                <p class="text-sm leading-relaxed mb-3 text-[#5A9A90]" data-i18n="abWelcome2">Through our conversation, I will understand your investment preferences and goals, and intelligently build a personalized portfolio from all platform contracts.</p>
-                <p class="text-sm leading-relaxed mb-4 text-[#5A9A90]" data-i18n="abWelcome2Q">Let's start with a simple question —</p>
-                <div class="p-3 rounded-xl" style="background: linear-gradient(135deg, rgba(93,196,179,0.08), rgba(46,196,182,0.06)); border: 1px solid rgba(93,196,179,0.2);">
-                  <p class="text-sm font-semibold" style="color: #3DD8CA;"><i class="fas fa-compass mr-1.5"></i><span data-i18n="abResetQ">What matters most to you in this investment?</span></p>
+                <p class="text-sm text-[#E8F5F3] leading-relaxed mb-3" data-i18n="abNlpWelcome1">Hello! I am the <span style="color: #3DD8CA; font-weight: 700;">Deal Connect AI Portfolio Architect</span>.</p>
+                <p class="text-sm leading-relaxed mb-3 text-[#5A9A90]" data-i18n="abNlpWelcome2">Tell me your investment needs in natural language. I'll analyze, confirm my logic with you, then <span style="color:#5eead4;">tailor-make</span> your portfolio.</p>
+                <div class="p-3 rounded-xl mb-3" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);">
+                  <p class="text-xs font-semibold mb-2" style="color: #3DD8CA;" data-i18n="abNlpWelcome3">For example, you could say:</p>
+                  <div class="space-y-1.5">
+                    <p class="text-xs cursor-pointer transition-colors hover:text-[#3DD8CA]" style="color: #5A9A90;" onclick="document.getElementById('abInput').value=this.textContent.replace(/[「」\u201c\u201d]/g,'');document.getElementById('abInput').focus()"><span data-i18n="abNlpWelcomeEx1">「收益够高，风险平衡」</span></p>
+                    <p class="text-xs cursor-pointer transition-colors hover:text-[#3DD8CA]" style="color: #5A9A90;" onclick="document.getElementById('abInput').value=this.textContent.replace(/[「」\u201c\u201d]/g,'');document.getElementById('abInput').focus()"><span data-i18n="abNlpWelcomeEx2">「看好科技和医疗，稳健为主」</span></p>
+                    <p class="text-xs cursor-pointer transition-colors hover:text-[#3DD8CA]" style="color: #5A9A90;" onclick="document.getElementById('abInput').value=this.textContent.replace(/[「」\u201c\u201d]/g,'');document.getElementById('abInput').focus()"><span data-i18n="abNlpWelcomeEx3">「短期投资，预算3万」</span></p>
+                  </div>
                 </div>
+                <p class="text-xs leading-relaxed text-[#5A9A90]" data-i18n="abNlpWelcomeHint">Or pick a quick style below ——</p>
               </div>
-              <!-- Quick Options -->
+              <!-- Quick Options (kept as fallback) -->
               <div class="flex flex-wrap gap-2 mt-3" id="abQuickOptions">
                 <button onclick="abSelectOption(t('abStep2Low'))" class="ab-quick-btn"><i class="fas fa-shield-alt mr-1.5 text-emerald-500"></i><span data-i18n="abStep2Low">Conservative</span></button>
                 <button onclick="abSelectOption(t('abStep2High'))" class="ab-quick-btn"><i class="fas fa-rocket mr-1.5 text-amber-500"></i><span data-i18n="abStep2High">Aggressive</span></button>
@@ -1071,7 +1076,7 @@ app.get('/', (c) => {
         <div class="flex-shrink-0 p-4 bg-[#0F2E2B]" style="border-top: 1px solid rgba(46,196,182,0.1);">
           <div class="flex items-center gap-2">
             <div class="flex-1 relative">
-              <input type="text" id="abInput" data-i18n="abInputPlaceholder" data-i18n-attr="placeholder" placeholder="Describe your investment needs or preferences..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: #0F2E2B; border: 1px solid rgba(46,196,182,0.15); color: #E8F5F3;" onkeydown="if(event.key==='Enter')abSendMessage()">
+              <input type="text" id="abInput" data-i18n="abInputPlaceholder" data-i18n-attr="placeholder" placeholder="用自然语言描述您的投资需求，如「收益够高，风险平衡」..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: #0F2E2B; border: 1px solid rgba(46,196,182,0.15); color: #E8F5F3;" onkeydown="if(event.key==='Enter')abSendMessage()">
             </div>
             <button onclick="abSendMessage()" class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><i class="fas fa-paper-plane text-white text-sm"></i></button>
           </div>
@@ -1309,7 +1314,7 @@ app.get('/', (c) => {
         abWelcome2: '我会通过几个简单的问题了解您的投资偏好，然后从全平台合约中智能筛选，为您构建个性化的投资组合。',
         abWelcome3: '首先，您对哪些 <span style="color:#5eead4;">行业</span> 感兴趣？',
         abTotalContracts: '全平台可匹配合约',
-        abInputPlaceholder: '输入自由调整需求...',
+        abInputPlaceholder: '用自然语言描述您的投资需求，如「收益够高，风险平衡」...',
         abStatus: '由参与通AI模型驱动 · 投资建议仅供参考',
         abWaitTitle: '等待 AI 构建您的专属组合',
         abWaitDesc: '在左侧与 AI 对话后，您的专属投资组合将在此呈现',
@@ -1368,6 +1373,42 @@ app.get('/', (c) => {
         abResetWelcome: '好的，我们重新开始！',
         abResetQ: '您这次投资最看重什么？',
         abResetOpt1: '稳定收益，安全第一', abResetOpt2: '愿承担风险，追高回报', abResetOpt3: '攻守兼备，均衡配置', abResetOpt4: '看好特定行业，集中布局',
+        // Smart NLP Confirm Card
+        abNlpTitle: '📋 我理解到的配置逻辑',
+        abNlpSubtitle: '请确认以下配置是否符合您的意图，可点击任意项修改：',
+        abNlpStyle: '投资风格', abNlpRisk: '风险偏好', abNlpReturn: '收益目标',
+        abNlpIndustry: '行业偏好', abNlpPeriod: '投资期限', abNlpBudget: '预算规模',
+        abNlpConfirm: '✅ 确认，开始构建', abNlpModify: '🔧 我要修改',
+        abNlpAnalysis: '💡 配置解读',
+        abNlpParsing: '正在分析您的需求...',
+        abNlpNoMatch: '我没有完全理解您的意思，能否再描述得具体一些？比如：',
+        abNlpExamples: '「收益要高一些，风险能接受中等」\n「看好科技和医疗，短期为主」\n「预算5万，稳定收益优先」',
+        abNlpStyleConservative: '🛡️ 稳健守护', abNlpStyleAggressive: '🚀 进取猎手', abNlpStyleBalanced: '⚖️ 均衡优选', abNlpStyleSector: '🎯 行业先锋',
+        abNlpRiskLow: '低风险', abNlpRiskMed: '中等风险', abNlpRiskHigh: '较高风险',
+        abNlpReturnLow: '年化 7-10%', abNlpReturnMed: '年化 10-14%', abNlpReturnHigh: '年化 14%+',
+        abNlpPeriodShort: '短期 ≤24月', abNlpPeriodMed: '中期 24-30月', abNlpPeriodLong: '长期 ≥30月',
+        abNlpBudgetSmall: '¥5k-2万', abNlpBudgetMed: '¥2万-5万', abNlpBudgetLarge: '¥5万+',
+        abNlpAllIndustry: '全行业配置',
+        abNlpConfirmed: '✅ 配置已确认！正在为您定制组合...',
+        abNlpWelcome1: '您好！我是 <span style="color:#3DD8CA;font-weight:700;">参与通 AI 组合构建器</span>。',
+        abNlpWelcome2: '请用自然语言告诉我您的投资需求，我会分析后跟您确认配置逻辑，再为您<span style="color:#5eead4;">量身定制</span>投资组合。',
+        abNlpWelcome3: '比如您可以说：',
+        abNlpWelcomeEx1: '「收益够高，风险平衡」',
+        abNlpWelcomeEx2: '「看好科技和医疗，稳健为主」',
+        abNlpWelcomeEx3: '「短期投资，预算3万」',
+        abNlpWelcomeHint: '或者直接选择一个快速风格 ——',
+        abNlpLogicExplain: '🧠 我的挑选逻辑',
+        abNlpFilterStep1: '第1步 · 行业筛选',
+        abNlpFilterStep2: '第2步 · 风控过滤',
+        abNlpFilterStep3: '第3步 · 收益匹配',
+        abNlpFilterStep4: '第4步 · 期限适配',
+        abNlpFilterStep5: '第5步 · 多样化配置',
+        abNlpFilterDesc1: '从 {total} 张合约中筛选 {industry} 行业',
+        abNlpFilterDesc2: 'AI评分 ≥ {score}，风控等级 {grade}',
+        abNlpFilterDesc3: '年化收益 {range}',
+        abNlpFilterDesc4: '合约期限 {period}',
+        abNlpFilterDesc5: '每项目最多 {max} 张，确保分散化',
+        abNlpAdjustIntro: '收到！根据您的调整要求，我重新分析了配置逻辑：',
         // Portfolio detail more
         pdInvested: '总投入', pdAnnualYield: '年化收益率', pdWeightedShare: '加权分成 ',
         pdAvgContract: '平均合约时长', pdDayUnit: '天', pdAboutMonths: '约 {n} 个月',
@@ -1681,7 +1722,7 @@ app.get('/', (c) => {
         abWelcome2: "I'll ask a few simple questions about your investment preferences, then intelligently screen contracts across the platform to construct your personalized portfolio.",
         abWelcome3: 'First, which <span style="color:#5eead4;">industries</span> interest you?',
         abTotalContracts: 'Platform-wide Matchable Contracts',
-        abInputPlaceholder: 'Describe your adjustment preferences...',
+        abInputPlaceholder: 'Describe your needs naturally, e.g. "high returns, balanced risk"...',
         abStatus: 'Powered by Deal Connect AI · Investment advice for reference only',
         abWaitTitle: 'Awaiting AI Portfolio Construction',
         abWaitDesc: 'Converse with AI on the left, and your personalized portfolio will appear here',
@@ -1740,6 +1781,42 @@ app.get('/', (c) => {
         abResetWelcome: "OK, let's start fresh!",
         abResetQ: 'What matters most in your investment this time?',
         abResetOpt1: 'Stable returns, safety first', abResetOpt2: 'Willing to take risks for high returns', abResetOpt3: 'Balanced approach', abResetOpt4: 'Bullish on specific sectors',
+        // Smart NLP Confirm Card
+        abNlpTitle: '📋 Here\'s How I Understood Your Preferences',
+        abNlpSubtitle: 'Please confirm the configuration below. Click any item to modify:',
+        abNlpStyle: 'Investment Style', abNlpRisk: 'Risk Appetite', abNlpReturn: 'Return Target',
+        abNlpIndustry: 'Sector Focus', abNlpPeriod: 'Investment Horizon', abNlpBudget: 'Budget Scale',
+        abNlpConfirm: '✅ Confirm & Build', abNlpModify: '🔧 Modify',
+        abNlpAnalysis: '💡 Configuration Analysis',
+        abNlpParsing: 'Analyzing your requirements...',
+        abNlpNoMatch: "I didn't fully understand your request. Could you be more specific? For example:",
+        abNlpExamples: '"High returns with balanced risk"\n"Bullish on tech and healthcare, conservative approach"\n"Budget 50K, stable returns priority"',
+        abNlpStyleConservative: '🛡️ Conservative Guard', abNlpStyleAggressive: '🚀 Aggressive Hunter', abNlpStyleBalanced: '⚖️ Balanced Select', abNlpStyleSector: '🎯 Sector Pioneer',
+        abNlpRiskLow: 'Low Risk', abNlpRiskMed: 'Moderate Risk', abNlpRiskHigh: 'Higher Risk',
+        abNlpReturnLow: '7-10% annualized', abNlpReturnMed: '10-14% annualized', abNlpReturnHigh: '14%+ annualized',
+        abNlpPeriodShort: 'Short ≤24mo', abNlpPeriodMed: 'Medium 24-30mo', abNlpPeriodLong: 'Long ≥30mo',
+        abNlpBudgetSmall: '¥5k-20k', abNlpBudgetMed: '¥20k-50k', abNlpBudgetLarge: '¥50k+',
+        abNlpAllIndustry: 'All Sectors',
+        abNlpConfirmed: '✅ Configuration confirmed! Building your custom portfolio...',
+        abNlpWelcome1: 'Hello! I am the <span style="color:#3DD8CA;font-weight:700;">Deal Connect AI Portfolio Architect</span>.',
+        abNlpWelcome2: 'Tell me your investment needs in natural language. I\'ll analyze, confirm my logic with you, then <span style="color:#5eead4;">tailor-make</span> your portfolio.',
+        abNlpWelcome3: 'For example, you could say:',
+        abNlpWelcomeEx1: '"High returns with balanced risk"',
+        abNlpWelcomeEx2: '"Bullish on tech and healthcare, conservative approach"',
+        abNlpWelcomeEx3: '"Short-term investment, budget 30K"',
+        abNlpWelcomeHint: 'Or pick a quick style below ——',
+        abNlpLogicExplain: '🧠 My Selection Logic',
+        abNlpFilterStep1: 'Step 1 · Sector Screening',
+        abNlpFilterStep2: 'Step 2 · Risk Filtering',
+        abNlpFilterStep3: 'Step 3 · Return Matching',
+        abNlpFilterStep4: 'Step 4 · Horizon Matching',
+        abNlpFilterStep5: 'Step 5 · Diversification',
+        abNlpFilterDesc1: 'Screening {industry} sectors from {total} contracts',
+        abNlpFilterDesc2: 'AI score ≥ {score}, risk grade {grade}',
+        abNlpFilterDesc3: 'Annualized return {range}',
+        abNlpFilterDesc4: 'Contract term {period}',
+        abNlpFilterDesc5: 'Max {max} per project for diversification',
+        abNlpAdjustIntro: 'Got it! Based on your adjustment, here\'s my updated configuration logic:',
         // Portfolio detail more
         pdInvested: 'Invested', pdAnnualYield: 'Annualized Yield', pdWeightedShare: 'Weighted share ',
         pdAvgContract: 'Avg Contract Term', pdDayUnit: 'd', pdAboutMonths: '~{n} months',
@@ -4525,7 +4602,7 @@ app.get('/', (c) => {
     // After each round, AI updates the right-panel recommended portfolio in real-time
 
     let abState = {
-      step: 0,  // Dialog step: 0=style 1=industry 2=params 3=generated 4=adjust
+      step: 0,  // Dialog step: 0=initial 1=confirmed 2+=adjust
       style: null,       // Investment style
       industries: [],    // Preferred industries
       riskTolerance: null, // low / medium / high
@@ -4535,15 +4612,443 @@ app.get('/', (c) => {
       extraPrefs: [],    // Extra preferences (NL)
       portfolio: [],     // Current recommended contracts
       portfolioName: '', // Portfolio name
+      pendingConfig: null, // Pending NLP-parsed config awaiting confirmation
     };
 
-    // Conversation flow steps
+    // ===== NLP Parse Engine: Extract multi-dimensional investment parameters from natural language =====
+    function abNLPParse(text) {
+      const lower = text.toLowerCase();
+      const result = { style: null, risk: null, industries: [], period: null, budget: null, returnTarget: null, confidence: 0, reasons: [] };
+
+      // --- Style detection (zh + en) ---
+      const stylePatterns = {
+        conservative: { zh: ['稳健','保守','安全','低风险','稳定','安稳','稳妥','不要太激进','保本','安心'], en: ['conservative','stable','safe','safety','defensive','protect','low risk','steady'] },
+        aggressive: { zh: ['进取','激进','高收益','高回报','冒险','大胆','追高','高风险','暴利','翻倍'], en: ['aggressive','high return','high yield','risky','bold','maximize','growth','high risk'] },
+        balanced: { zh: ['均衡','平衡','攻守兼备','中等','适中','不偏不倚','稳中求进'], en: ['balanced','moderate','mixed','diversified','middle ground','blend'] },
+        sector: { zh: ['行业','板块','赛道','集中','看好','特定','专注','聚焦'], en: ['sector','industry','focus','concentrated','bullish on','specific'] }
+      };
+
+      for (const [style, patterns] of Object.entries(stylePatterns)) {
+        const allPatterns = [...patterns.zh, ...patterns.en];
+        for (const p of allPatterns) {
+          if (lower.includes(p.toLowerCase())) {
+            result.style = style;
+            result.confidence += 20;
+            result.reasons.push(currentLang === 'zh' ? '检测到风格关键词「' + p + '」' : 'Detected style keyword "' + p + '"');
+            break;
+          }
+        }
+        if (result.style) break;
+      }
+
+      // --- Risk detection ---
+      const riskPatterns = {
+        low: { zh: ['低风险','风险小','不要风险','少风险','稳当','规避风险','风险低'], en: ['low risk','minimal risk','risk averse','no risk','less risk'] },
+        high: { zh: ['高风险','风险大','能承受','能接受风险','不怕风险','愿意冒险','风险高'], en: ['high risk','risk tolerant','can handle risk','willing to risk','take risks'] },
+        medium: { zh: ['中等风险','适度风险','风险平衡','风险可控','中风险'], en: ['moderate risk','balanced risk','manageable risk','medium risk'] }
+      };
+
+      for (const [risk, patterns] of Object.entries(riskPatterns)) {
+        const allPatterns = [...patterns.zh, ...patterns.en];
+        for (const p of allPatterns) {
+          if (lower.includes(p.toLowerCase())) {
+            result.risk = risk;
+            result.confidence += 15;
+            result.reasons.push(currentLang === 'zh' ? '检测到风险偏好「' + p + '」' : 'Detected risk preference "' + p + '"');
+            break;
+          }
+        }
+        if (result.risk) break;
+      }
+
+      // --- Return target detection ---
+      const returnPatterns = {
+        high: { zh: ['高收益','收益够高','收益高','回报高','赚得多','高回报','14','15','20','翻倍'], en: ['high return','high yield','maximize return','high profit','14','15','20'] },
+        medium: { zh: ['中等收益','适当收益','10','11','12','13','稳定收益','合理回报'], en: ['moderate return','decent return','10','11','12','13','reasonable return'] },
+        low: { zh: ['低收益','保本','7','8','9','稳定就好','少赚没关系'], en: ['low return','preserve capital','7','8','9','steady income'] }
+      };
+
+      for (const [ret, patterns] of Object.entries(returnPatterns)) {
+        const allPatterns = [...patterns.zh, ...patterns.en];
+        for (const p of allPatterns) {
+          if (lower.includes(p.toLowerCase())) {
+            result.returnTarget = ret;
+            result.confidence += 15;
+            result.reasons.push(currentLang === 'zh' ? '检测到收益目标「' + p + '」' : 'Detected return target "' + p + '"');
+            break;
+          }
+        }
+        if (result.returnTarget) break;
+      }
+
+      // --- Industry detection ---
+      const industryPatterns = {
+        'F&B': { zh: ['餐饮','美食','食品','饮食','饭店','餐厅'], en: ['f&b','food','dining','restaurant','catering'] },
+        'Technology': { zh: ['科技','技术','ai','互联网','数字','软件','创新','人工智能'], en: ['tech','technology','ai','digital','software','innovation','it'] },
+        'Healthcare': { zh: ['医疗','健康','医药','生物','医院','保健'], en: ['health','medical','healthcare','pharma','biotech'] },
+        'Retail': { zh: ['零售','消费','购物','电商','商品','消费品'], en: ['retail','consumer','shopping','ecommerce','goods'] },
+        'Education': { zh: ['教育','培训','学习','教学','学校'], en: ['education','training','learning','school','edtech'] },
+        'Entertainment': { zh: ['娱乐','演艺','影视','音乐','游戏','文化'], en: ['entertainment','media','music','gaming','culture','film'] }
+      };
+
+      for (const [ind, patterns] of Object.entries(industryPatterns)) {
+        const allPatterns = [...patterns.zh, ...patterns.en];
+        for (const p of allPatterns) {
+          if (lower.includes(p.toLowerCase())) {
+            if (!result.industries.includes(ind)) {
+              result.industries.push(ind);
+              result.confidence += 10;
+              result.reasons.push(currentLang === 'zh' ? '检测到行业偏好「' + p + '」→ ' + ind : 'Detected sector "' + p + '" → ' + ind);
+            }
+            break;
+          }
+        }
+      }
+
+      // --- Period detection ---
+      const periodPatterns = {
+        short: { zh: ['短期','短线','快速','24个月','两年内','1年','一年','半年','几个月'], en: ['short','short-term','quick','24 month','within 2 year','1 year','6 month'] },
+        medium: { zh: ['中期','中等期限','两三年','24到30','2-3年'], en: ['medium','medium-term','2-3 year','couple years'] },
+        long: { zh: ['长期','长线','30个月','三年','3年以上','长久','持久'], en: ['long','long-term','30 month','3 year','3+ year','long haul'] }
+      };
+
+      for (const [period, patterns] of Object.entries(periodPatterns)) {
+        const allPatterns = [...patterns.zh, ...patterns.en];
+        for (const p of allPatterns) {
+          if (lower.includes(p.toLowerCase())) {
+            result.period = period;
+            result.confidence += 10;
+            result.reasons.push(currentLang === 'zh' ? '检测到期限偏好「' + p + '」' : 'Detected horizon "' + p + '"');
+            break;
+          }
+        }
+        if (result.period) break;
+      }
+
+      // --- Budget detection ---
+      const budgetMatch = text.match(/(\d+)\s*[万wWkK千]/);
+      if (budgetMatch) {
+        const num = parseInt(budgetMatch[0]);
+        if (text.includes('万') || text.includes('W') || text.includes('w')) {
+          if (num <= 2) result.budget = 10;
+          else if (num <= 5) result.budget = 35;
+          else result.budget = 60;
+        } else if (text.includes('千') || text.includes('k') || text.includes('K')) {
+          const wanVal = num / 10;
+          if (wanVal <= 2) result.budget = 10;
+          else if (wanVal <= 5) result.budget = 35;
+          else result.budget = 60;
+        }
+        result.confidence += 10;
+        result.reasons.push(currentLang === 'zh' ? '检测到预算信息' : 'Detected budget info');
+      }
+      // Also check raw number patterns like 5000, 30000, etc.
+      if (!result.budget) {
+        const rawNum = text.match(/[¥￥]?\s*(\d{4,})/);
+        if (rawNum) {
+          const val = parseInt(rawNum[1]);
+          if (val <= 20000) result.budget = 10;
+          else if (val <= 50000) result.budget = 35;
+          else result.budget = 60;
+          result.confidence += 10;
+          result.reasons.push(currentLang === 'zh' ? '检测到预算金额' : 'Detected budget amount');
+        }
+      }
+      // Budget keyword patterns
+      if (!result.budget) {
+        if (lower.includes('轻量') || lower.includes('少量') || lower.includes('试试') || lower.includes('small') || lower.includes('light')) {
+          result.budget = 10; result.confidence += 5;
+        } else if (lower.includes('重仓') || lower.includes('大量') || lower.includes('全力') || lower.includes('heavy') || lower.includes('large') || lower.includes('all in')) {
+          result.budget = 60; result.confidence += 5;
+        }
+      }
+
+      // --- Smart inference: fill gaps from style ---
+      if (result.style && !result.risk) {
+        if (result.style === 'conservative') result.risk = 'low';
+        else if (result.style === 'aggressive') result.risk = 'high';
+        else result.risk = 'medium';
+        result.reasons.push(currentLang === 'zh' ? '根据风格推断风险偏好' : 'Risk inferred from style');
+      }
+      if (result.style && !result.returnTarget) {
+        if (result.style === 'conservative') result.returnTarget = 'low';
+        else if (result.style === 'aggressive') result.returnTarget = 'high';
+        else result.returnTarget = 'medium';
+        result.reasons.push(currentLang === 'zh' ? '根据风格推断收益目标' : 'Return target inferred from style');
+      }
+      // If we got risk but no return target
+      if (result.risk && !result.returnTarget) {
+        result.returnTarget = result.risk;
+      }
+      // If we got return but no risk
+      if (result.returnTarget && !result.risk) {
+        result.risk = result.returnTarget;
+      }
+
+      return result;
+    }
+
+    // ===== Build Confirm Card HTML: show parsed config for user to review/edit =====
+    function abBuildConfirmCardHTML(parsed, isAdjust) {
+      const styleLabels = { conservative: t('abNlpStyleConservative'), aggressive: t('abNlpStyleAggressive'), balanced: t('abNlpStyleBalanced'), sector: t('abNlpStyleSector') };
+      const riskLabels = { low: t('abNlpRiskLow'), medium: t('abNlpRiskMed'), high: t('abNlpRiskHigh') };
+      const riskColors = { low: '#10b981', medium: '#3b82f6', high: '#f59e0b' };
+      const returnLabels = { low: t('abNlpReturnLow'), medium: t('abNlpReturnMed'), high: t('abNlpReturnHigh') };
+      const periodLabels = { short: t('abNlpPeriodShort'), medium: t('abNlpPeriodMed'), long: t('abNlpPeriodLong') };
+      const budgetLabels = { 10: t('abNlpBudgetSmall'), 35: t('abNlpBudgetMed'), 60: t('abNlpBudgetLarge') };
+      var indNameMap = {'F&B': t('indDining'), 'Technology': t('indTech'), 'Healthcare': t('indHealth'), 'Retail': t('indRetail'), 'Education': t('indEducation'), 'Entertainment': t('indEntertainment'), 'all': t('abNlpAllIndustry')};
+
+      var style = parsed.style || 'balanced';
+      var risk = parsed.risk || 'medium';
+      var ret = parsed.returnTarget || 'medium';
+      var industries = parsed.industries.length > 0 ? parsed.industries : ['all'];
+      var period = parsed.period || 'medium';
+      var budget = parsed.budget || 35;
+
+      var indDisplay = industries.includes('all') ? t('abNlpAllIndustry') : industries.map(function(v) { return indNameMap[v] || v; }).join(currentLang === 'en' ? ', ' : '、');
+
+      // Build the card
+      var introText = isAdjust ? t('abNlpAdjustIntro') : t('abNlpSubtitle');
+      var html = '<div class="rounded-xl overflow-hidden" style="border: 1px solid rgba(46,196,182,0.2);">';
+
+      // Header
+      html += '<div class="p-3 flex items-center gap-2" style="background: rgba(46,196,182,0.08);">';
+      html += '<i class="fas fa-clipboard-check" style="color: #3DD8CA;"></i>';
+      html += '<span class="text-sm font-bold" style="color: #E8F5F3;">' + t('abNlpTitle') + '</span>';
+      html += '</div>';
+
+      html += '<div class="p-3" style="background: rgba(15,46,43,0.5);">';
+      html += '<p class="text-xs mb-3" style="color: #5A9A90;">' + introText + '</p>';
+
+      // Config grid - 6 dimensions
+      html += '<div class="grid grid-cols-2 gap-2 mb-3">';
+
+      // Style
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'style\')">';
+      html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-compass mr-1"></i>' + t('abNlpStyle') + '</p>';
+      html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + (styleLabels[style] || style) + '</p></div>';
+
+      // Risk
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'risk\')">';
+      html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-shield-alt mr-1"></i>' + t('abNlpRisk') + '</p>';
+      html += '<p class="text-sm font-bold" style="color: ' + (riskColors[risk] || '#E8F5F3') + ';">' + (riskLabels[risk] || risk) + '</p></div>';
+
+      // Return
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'return\')">';
+      html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-chart-line mr-1"></i>' + t('abNlpReturn') + '</p>';
+      html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + (returnLabels[ret] || ret) + '</p></div>';
+
+      // Industry
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'industry\')">';
+      html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-industry mr-1"></i>' + t('abNlpIndustry') + '</p>';
+      html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + indDisplay + '</p></div>';
+
+      // Period
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'period\')">';
+      html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-clock mr-1"></i>' + t('abNlpPeriod') + '</p>';
+      html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + (periodLabels[period] || period) + '</p></div>';
+
+      // Budget
+      html += '<div class="p-2 rounded-lg cursor-pointer transition-all hover:scale-[1.02]" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);" onclick="abEditConfigDim(\'budget\')">';
+      html += '<p class="text-xs mb-1" style="color: #5A9A90;"><i class="fas fa-wallet mr-1"></i>' + t('abNlpBudget') + '</p>';
+      html += '<p class="text-sm font-bold" style="color: #E8F5F3;">' + (budgetLabels[budget] || '¥' + (budget * 1000).toLocaleString()) + '</p></div>';
+
+      html += '</div>'; // end grid
+
+      // Analysis reasons
+      if (parsed.reasons && parsed.reasons.length > 0) {
+        html += '<div class="p-2 rounded-lg mb-3" style="background: rgba(93,196,179,0.04); border: 1px solid rgba(93,196,179,0.1);">';
+        html += '<p class="text-xs font-semibold mb-1" style="color: #3DD8CA;">' + t('abNlpAnalysis') + '</p>';
+        parsed.reasons.slice(0, 5).forEach(function(r) {
+          html += '<p class="text-xs" style="color: #5A9A90;">· ' + r + '</p>';
+        });
+        html += '</div>';
+      }
+
+      // Selection logic explanation
+      html += abBuildFilterLogicHTML(style, risk, ret, industries, period, budget);
+
+      html += '</div>'; // end inner padding
+      html += '</div>'; // end card
+
+      return html;
+    }
+
+    // ===== Build filter logic explanation HTML =====
+    function abBuildFilterLogicHTML(style, risk, ret, industries, period, budget) {
+      var totalContracts = totalVirtualContracts || allDeals.length;
+      var indNameMap = {'F&B': t('indDining'), 'Technology': t('indTech'), 'Healthcare': t('indHealth'), 'Retail': t('indRetail'), 'Education': t('indEducation'), 'Entertainment': t('indEntertainment'), 'all': t('abNlpAllIndustry')};
+      var indDisplay = industries.includes('all') ? t('abNlpAllIndustry') : industries.map(function(v) { return indNameMap[v] || v; }).join(currentLang === 'en' ? ', ' : '、');
+
+      var scoreThreshold = risk === 'low' ? '8.0' : (risk === 'high' ? '6.0' : '7.0');
+      var gradeReq = risk === 'low' ? 'A / A+' : (risk === 'high' ? currentLang === 'zh' ? '不限' : 'Any' : 'B+');
+      var returnRange = ret === 'low' ? '7-10%' : (ret === 'high' ? '14%+' : '10-14%');
+      var periodDesc = period === 'short' ? '≤24' + (currentLang === 'zh' ? '个月' : 'mo') : (period === 'long' ? '≥30' + (currentLang === 'zh' ? '个月' : 'mo') : '24-30' + (currentLang === 'zh' ? '个月' : 'mo'));
+      var maxPerProject = Math.max(3, Math.ceil((budget || 25) / 5));
+
+      var html = '<div class="p-2 rounded-lg" style="background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.15);">';
+      html += '<p class="text-xs font-semibold mb-2" style="color: #a78bfa;">' + t('abNlpLogicExplain') + '</p>';
+
+      var steps = [
+        { label: t('abNlpFilterStep1'), desc: t('abNlpFilterDesc1', {total: totalContracts.toLocaleString(), industry: indDisplay}), icon: 'fa-filter', color: '#06b6d4' },
+        { label: t('abNlpFilterStep2'), desc: t('abNlpFilterDesc2', {score: scoreThreshold, grade: gradeReq}), icon: 'fa-shield-alt', color: '#10b981' },
+        { label: t('abNlpFilterStep3'), desc: t('abNlpFilterDesc3', {range: returnRange}), icon: 'fa-chart-line', color: '#f59e0b' },
+        { label: t('abNlpFilterStep4'), desc: t('abNlpFilterDesc4', {period: periodDesc}), icon: 'fa-clock', color: '#8b5cf6' },
+        { label: t('abNlpFilterStep5'), desc: t('abNlpFilterDesc5', {max: maxPerProject}), icon: 'fa-project-diagram', color: '#ec4899' },
+      ];
+
+      steps.forEach(function(s) {
+        html += '<div class="flex items-start gap-2 mb-1">';
+        html += '<i class="fas ' + s.icon + ' mt-0.5" style="color: ' + s.color + '; font-size: 9px; width: 12px;"></i>';
+        html += '<div><p class="text-xs font-medium" style="color: rgba(255,255,255,0.7);">' + s.label + '</p>';
+        html += '<p class="text-xs" style="color: #5A9A90;">' + s.desc + '</p></div>';
+        html += '</div>';
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    // ===== Show confirm card and register pending config =====
+    function abShowConfirmCard(parsed, isAdjust) {
+      var cardHTML = abBuildConfirmCardHTML(parsed, isAdjust);
+      abAddAIMessage(
+        cardHTML,
+        [
+          { text: t('abNlpConfirm'), icon: 'fa-check-circle', color: 'emerald', action: "abConfirmConfig()" },
+          { text: t('abNlpModify'), icon: 'fa-edit', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '输入要修改的内容，如「风险改为低」「加入科技行业」...' : 'Type what to change, e.g. \"lower risk\" \"add tech sector\"...') + "'" },
+        ]
+      );
+    }
+
+    // ===== Confirm pending config and build portfolio =====
+    function abConfirmConfig() {
+      if (!abState.pendingConfig) return;
+      var cfg = abState.pendingConfig;
+
+      // Apply config to abState
+      abState.style = cfg.style || 'balanced';
+      abState.riskTolerance = cfg.risk || 'medium';
+      abState.targetReturn = cfg.returnTarget || 'medium';
+      abState.industries = cfg.industries.length > 0 ? cfg.industries : ['all'];
+      abState.period = cfg.period || 'medium';
+      abState.budget = cfg.budget || 35;
+      abState.step = 5;
+      abState.pendingConfig = null;
+
+      // Build portfolio
+      abBuildPortfolio();
+
+      // Show completion message
+      abAddAIMessage(
+        '<p class="text-sm leading-relaxed mb-2 font-semibold text-[#E8F5F3]">' + t('abNlpConfirmed') + '</p>' +
+        '<p class="text-sm leading-relaxed mb-2 font-semibold text-[#E8F5F3]">' + t('abCompleteTitle') + '</p>' +
+        '<p class="text-sm leading-relaxed mb-3" style="color: #5A9A90;">' + t('abCompleteDesc', {total: (totalVirtualContracts || allDeals.length).toLocaleString()}) + '</p>' +
+        '<div class="p-3 rounded-xl" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);">' +
+          '<p class="text-xs" style="color: #34d399;"><i class="fas fa-check-circle mr-1"></i>' + t('abCompleteHint') + '</p>' +
+        '</div>',
+        [
+          { text: t('abSatisfied'), icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
+          { text: t('abReduceRisk'), icon: 'fa-shield-alt', color: 'blue', action: "abSelectOption('" + t('abReduceRisk') + "')" },
+          { text: t('abAddTech'), icon: 'fa-microchip', color: 'violet', action: "abSelectOption('" + t('abAddTech') + "')" },
+        ]
+      );
+    }
+
+    // ===== Edit a specific config dimension =====
+    function abEditConfigDim(dim) {
+      var cfg = abState.pendingConfig || { style: abState.style, risk: abState.riskTolerance, returnTarget: abState.targetReturn, industries: [...abState.industries], period: abState.period, budget: abState.budget, reasons: [], confidence: 50 };
+      var options = [];
+
+      if (dim === 'style') {
+        options = [
+          { text: t('abNlpStyleConservative'), icon: 'fa-shield-alt', color: 'emerald', action: "abSetConfigDim('style','conservative')" },
+          { text: t('abNlpStyleAggressive'), icon: 'fa-rocket', color: 'amber', action: "abSetConfigDim('style','aggressive')" },
+          { text: t('abNlpStyleBalanced'), icon: 'fa-balance-scale', color: 'blue', action: "abSetConfigDim('style','balanced')" },
+          { text: t('abNlpStyleSector'), icon: 'fa-bullseye', color: 'pink', action: "abSetConfigDim('style','sector')" },
+        ];
+      } else if (dim === 'risk') {
+        options = [
+          { text: t('abNlpRiskLow'), icon: 'fa-shield-alt', color: 'emerald', action: "abSetConfigDim('risk','low')" },
+          { text: t('abNlpRiskMed'), icon: 'fa-balance-scale', color: 'blue', action: "abSetConfigDim('risk','medium')" },
+          { text: t('abNlpRiskHigh'), icon: 'fa-fire-alt', color: 'amber', action: "abSetConfigDim('risk','high')" },
+        ];
+      } else if (dim === 'return') {
+        options = [
+          { text: t('abNlpReturnLow'), icon: 'fa-seedling', color: 'emerald', action: "abSetConfigDim('returnTarget','low')" },
+          { text: t('abNlpReturnMed'), icon: 'fa-chart-bar', color: 'blue', action: "abSetConfigDim('returnTarget','medium')" },
+          { text: t('abNlpReturnHigh'), icon: 'fa-chart-line', color: 'amber', action: "abSetConfigDim('returnTarget','high')" },
+        ];
+      } else if (dim === 'industry') {
+        options = [
+          { text: t('abIndDining'), icon: 'fa-utensils', color: 'amber', action: "abToggleConfigIndustry('F&B')" },
+          { text: t('abIndTech'), icon: 'fa-microchip', color: 'violet', action: "abToggleConfigIndustry('Technology')" },
+          { text: t('abIndHealth'), icon: 'fa-heartbeat', color: 'red', action: "abToggleConfigIndustry('Healthcare')" },
+          { text: t('abIndRetail'), icon: 'fa-shopping-bag', color: 'cyan', action: "abToggleConfigIndustry('Retail')" },
+          { text: t('abIndEdu'), icon: 'fa-graduation-cap', color: 'emerald', action: "abToggleConfigIndustry('Education')" },
+          { text: t('abIndEnter'), icon: 'fa-music', color: 'pink', action: "abToggleConfigIndustry('Entertainment')" },
+          { text: t('abIndAll'), icon: 'fa-globe', color: 'gray', action: "abSetConfigDim('industries',['all'])" },
+        ];
+      } else if (dim === 'period') {
+        options = [
+          { text: t('abNlpPeriodShort'), icon: 'fa-bolt', color: 'yellow', action: "abSetConfigDim('period','short')" },
+          { text: t('abNlpPeriodMed'), icon: 'fa-clock', color: 'cyan', action: "abSetConfigDim('period','medium')" },
+          { text: t('abNlpPeriodLong'), icon: 'fa-hourglass-half', color: 'violet', action: "abSetConfigDim('period','long')" },
+        ];
+      } else if (dim === 'budget') {
+        options = [
+          { text: t('abNlpBudgetSmall'), icon: 'fa-seedling', color: 'emerald', action: "abSetConfigDim('budget',10)" },
+          { text: t('abNlpBudgetMed'), icon: 'fa-tree', color: 'cyan', action: "abSetConfigDim('budget',35)" },
+          { text: t('abNlpBudgetLarge'), icon: 'fa-landmark', color: 'violet', action: "abSetConfigDim('budget',60)" },
+        ];
+      }
+
+      var dimNames = { style: t('abNlpStyle'), risk: t('abNlpRisk'), 'return': t('abNlpReturn'), industry: t('abNlpIndustry'), period: t('abNlpPeriod'), budget: t('abNlpBudget') };
+      abAddAIMessage(
+        '<p class="text-sm leading-relaxed" style="color: #8EBDB5;">' + (currentLang === 'zh' ? '请选择新的' : 'Select new ') + '<span class="font-bold text-[#2EC4B6]">' + (dimNames[dim] || dim) + '</span>：</p>',
+        options
+      );
+    }
+
+    // ===== Set a config dimension value and re-show card =====
+    function abSetConfigDim(key, value) {
+      if (!abState.pendingConfig) {
+        abState.pendingConfig = { style: abState.style || 'balanced', risk: abState.riskTolerance || 'medium', returnTarget: abState.targetReturn || 'medium', industries: abState.industries.length > 0 ? [...abState.industries] : ['all'], period: abState.period || 'medium', budget: abState.budget || 35, reasons: [], confidence: 50 };
+      }
+      if (key === 'industries') {
+        abState.pendingConfig.industries = Array.isArray(value) ? value : [value];
+      } else {
+        abState.pendingConfig[key] = value;
+      }
+      // Show label for user
+      var displayVal = typeof value === 'object' ? JSON.stringify(value) : String(value);
+      abAddUserMessage(currentLang === 'zh' ? '修改为: ' + displayVal : 'Changed to: ' + displayVal);
+      // Re-show confirm card with updated config
+      abShowConfirmCard(abState.pendingConfig, true);
+    }
+
+    // ===== Toggle an industry in pending config =====
+    function abToggleConfigIndustry(ind) {
+      if (!abState.pendingConfig) {
+        abState.pendingConfig = { style: abState.style || 'balanced', risk: abState.riskTolerance || 'medium', returnTarget: abState.targetReturn || 'medium', industries: abState.industries.length > 0 ? [...abState.industries] : ['all'], period: abState.period || 'medium', budget: abState.budget || 35, reasons: [], confidence: 50 };
+      }
+      var inds = abState.pendingConfig.industries.filter(function(i) { return i !== 'all'; });
+      if (inds.includes(ind)) {
+        inds = inds.filter(function(i) { return i !== ind; });
+      } else {
+        inds.push(ind);
+      }
+      if (inds.length === 0) inds = ['all'];
+      abState.pendingConfig.industries = inds;
+      var indNameMap = {'F&B': t('indDining'), 'Technology': t('indTech'), 'Healthcare': t('indHealth'), 'Retail': t('indRetail'), 'Education': t('indEducation'), 'Entertainment': t('indEntertainment')};
+      var displayNames = inds.map(function(v) { return indNameMap[v] || v; });
+      abAddUserMessage(currentLang === 'zh' ? '行业选择: ' + displayNames.join('、') : 'Sectors: ' + displayNames.join(', '));
+      abShowConfirmCard(abState.pendingConfig, true);
+    }
+
+    // Conversation flow steps (kept for backward compat with quick-select buttons)
     function getABFlow() { return [
-      // Step 0: Investment style (triggered by initial quick-select)
-      // Step 1: Industry preference
-      {
-        question: t('abIndustryQ'),
-        options: [
+      { question: t('abIndustryQ'), options: [
           { text: t('abIndDining'), icon: 'fa-utensils', color: '#f59e0b', value: 'F&B' },
           { text: t('abIndTech'), icon: 'fa-microchip', color: '#8b5cf6', value: 'Technology' },
           { text: t('abIndHealth'), icon: 'fa-heartbeat', color: '#ef4444', value: 'Healthcare' },
@@ -4551,35 +5056,22 @@ app.get('/', (c) => {
           { text: t('abIndEdu'), icon: 'fa-graduation-cap', color: '#10b981', value: 'Education' },
           { text: t('abIndEnter'), icon: 'fa-music', color: '#ec4899', value: 'Entertainment' },
           { text: t('abIndAll'), icon: 'fa-globe', color: '#3D7A70', value: 'all' },
-        ]
-      },
-      // Step 2: Risk and return parameters
-      {
-        question: t('abRiskQ'),
-        options: [
+      ]},
+      { question: t('abRiskQ'), options: [
           { text: t('abStep2LowD'), icon: 'fa-shield-alt', color: '#10b981', value: 'low' },
           { text: t('abStep2MidD'), icon: 'fa-balance-scale', color: '#3b82f6', value: 'medium' },
           { text: t('abStep2HighD'), icon: 'fa-fire-alt', color: '#f59e0b', value: 'high' },
-        ]
-      },
-      // Step 3: Investment horizon
-      {
-        question: t('abPeriodQ'),
-        options: [
+      ]},
+      { question: t('abPeriodQ'), options: [
           { text: t('abStep3ShortD'), icon: 'fa-bolt', color: '#eab308', value: 'short' },
           { text: t('abStep3MidD'), icon: 'fa-clock', color: '#06b6d4', value: 'medium' },
           { text: t('abStep3LongD'), icon: 'fa-hourglass-half', color: '#8b5cf6', value: 'long' },
-        ]
-      },
-      // Step 4: Budget scale
-      {
-        question: t('abBudgetQ'),
-        options: [
+      ]},
+      { question: t('abBudgetQ'), options: [
           { text: t('abStep4SmallD'), icon: 'fa-seedling', color: '#10b981', value: '10' },
           { text: t('abStep4MidD'), icon: 'fa-tree', color: '#06b6d4', value: '35' },
           { text: t('abStep4LargeD'), icon: 'fa-landmark', color: '#8b5cf6', value: '60' },
-        ]
-      }
+      ]}
     ]; }
 
     function dismissAIHint() {
@@ -4650,7 +5142,7 @@ app.get('/', (c) => {
     }
 
     function resetAIBuilder() {
-      abState = { step: 0, style: null, industries: [], riskTolerance: null, targetReturn: null, budget: null, period: null, extraPrefs: [], portfolio: [], portfolioName: '' };
+      abState = { step: 0, style: null, industries: [], riskTolerance: null, targetReturn: null, budget: null, period: null, extraPrefs: [], portfolio: [], portfolioName: '', pendingConfig: null };
       abSelectedIndustries = [];
       // Reset UI
       var msgs = document.getElementById('abMessages');
@@ -4659,10 +5151,17 @@ app.get('/', (c) => {
       if (waitEl) waitEl.classList.remove('hidden');
       var panelEl = document.getElementById('abPortfolioPanel');
       if (panelEl) panelEl.classList.add('hidden');
-      // Regenerate welcome message
+      // Regenerate welcome message with NLP-first approach
       abAddAIMessage(
-        '<p class="text-sm text-[#E8F5F3] leading-relaxed mb-3">' + t('abResetWelcome') + '</p>' +
-        '<p class="text-sm leading-relaxed mb-4" style="color: #5A9A90;">' + t('abResetQ') + '</p>',
+        '<p class="text-sm text-[#E8F5F3] leading-relaxed mb-3">' + t('abNlpWelcome1') + '</p>' +
+        '<p class="text-sm leading-relaxed mb-3" style="color: #5A9A90;">' + t('abNlpWelcome2') + '</p>' +
+        '<div class="p-3 rounded-xl mb-3" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);">' +
+          '<p class="text-xs font-semibold mb-2" style="color: #3DD8CA;">' + t('abNlpWelcome3') + '</p>' +
+          '<p class="text-xs" style="color: #5A9A90;">' + t('abNlpWelcomeEx1') + '</p>' +
+          '<p class="text-xs" style="color: #5A9A90;">' + t('abNlpWelcomeEx2') + '</p>' +
+          '<p class="text-xs" style="color: #5A9A90;">' + t('abNlpWelcomeEx3') + '</p>' +
+        '</div>' +
+        '<p class="text-xs leading-relaxed" style="color: #5A9A90;">' + t('abNlpWelcomeHint') + '</p>',
         [
           { text: t('abResetOpt1'), icon: 'fa-shield-alt', color: 'emerald', action: "abSelectOption('" + t('abResetOpt1') + "')" },
           { text: t('abResetOpt2'), icon: 'fa-rocket', color: 'amber', action: "abSelectOption('" + t('abResetOpt2') + "')" },
@@ -4714,9 +5213,6 @@ app.get('/', (c) => {
 
     function abSelectOption(text) {
       abAddUserMessage(text);
-      // Remove current quick buttons (already clicked)
-      const lastMsg = document.getElementById('abMessages').lastElementChild;
-      // Parse user selection and advance dialog
       abProcessUserInput(text);
     }
 
@@ -4729,235 +5225,98 @@ app.get('/', (c) => {
       abProcessUserInput(msg);
     }
 
+    // ===== NEW: Smart NLP-powered input processing =====
     function abProcessUserInput(text) {
-      const lower = text.toLowerCase();
-      const AB_FLOW = getABFlow();
+      // Parse user input with NLP engine
+      var parsed = abNLPParse(text);
 
-      if (abState.step === 0) {
-        // Step 0: Parse investment style (supports both zh + en keywords)
-        if (lower.includes('stable') || lower.includes('safe') || lower.includes('Conservative') || lower.includes('conservative') || lower.includes('stable') || lower.includes('safety')) {
-          abState.style = 'conservative';
-          abState.riskTolerance = 'low';
-        } else if (lower.includes('Risk') || lower.includes('high return') || lower.includes('Aggressive') || lower.includes('Aggressive') || lower.includes('aggressive') || lower.includes('high return')) {
-          abState.style = 'aggressive';
-          abState.riskTolerance = 'high';
-        } else if (lower.includes('balanced') || lower.includes('balanced') || lower.includes('Balanced') || lower.includes('balanced') || lower.includes('moderate')) {
-          abState.style = 'balanced';
-          abState.riskTolerance = 'medium';
-        } else if (lower.includes('sector') || lower.includes('concentrate') || lower.includes('bullish') || lower.includes('sector') || lower.includes('bullish') || lower.includes('specific')) {
-          abState.style = 'sector';
-          abState.riskTolerance = 'medium';
-        } else {
-          abState.style = 'balanced';
-          abState.riskTolerance = 'medium';
+      // If already in adjustment phase (step >= 5), merge with existing state
+      var isAdjust = abState.step >= 5;
+      if (isAdjust) {
+        // Merge: only override fields that were explicitly detected
+        if (!parsed.style && abState.style) parsed.style = abState.style;
+        if (!parsed.risk && abState.riskTolerance) parsed.risk = abState.riskTolerance;
+        if (!parsed.returnTarget && abState.targetReturn) parsed.returnTarget = abState.targetReturn;
+        if (parsed.industries.length === 0 && abState.industries.length > 0) parsed.industries = [...abState.industries];
+        if (!parsed.period && abState.period) parsed.period = abState.period;
+        if (!parsed.budget && abState.budget) parsed.budget = abState.budget;
+
+        // Handle specific adjustment keywords (removal, reduction)
+        var lower = text.toLowerCase();
+        if ((lower.includes('减少') || lower.includes('去掉') || lower.includes('remove') || lower.includes('reduce')) && (lower.includes('餐饮') || lower.includes('f&b') || lower.includes('food'))) {
+          parsed.industries = parsed.industries.filter(function(i) { return i !== 'F&B'; });
+          if (parsed.industries.length === 0) parsed.industries = ['all'];
+          parsed.reasons.push(currentLang === 'zh' ? '移除餐饮行业' : 'Removed F&B sector');
         }
-        abState.step = 1;
-        const styleNames = { conservative: t('abStyleConservative'), aggressive: t('abStyleAggressive'), balanced: t('abStyleBalanced'), sector: t('abStyleSector') };
-        const styleEmojis = { conservative: '🛡️', aggressive: '🚀', balanced: '⚖️', sector: '🎯' };
+        if ((lower.includes('减少') || lower.includes('降低') || lower.includes('lower') || lower.includes('reduce')) && (lower.includes('风险') || lower.includes('risk'))) {
+          parsed.risk = 'low';
+          parsed.reasons.push(currentLang === 'zh' ? '降低风险偏好' : 'Lowered risk preference');
+        }
+        if ((lower.includes('提高') || lower.includes('增加') || lower.includes('higher') || lower.includes('increase') || lower.includes('more')) && (lower.includes('收益') || lower.includes('回报') || lower.includes('return') || lower.includes('yield'))) {
+          parsed.returnTarget = 'high';
+          parsed.risk = parsed.risk === 'low' ? 'medium' : 'high';
+          parsed.reasons.push(currentLang === 'zh' ? '提高收益目标' : 'Increased return target');
+        }
+
+        abState.extraPrefs.push(text);
+      }
+
+      // Check if we got meaningful info
+      if (parsed.confidence < 10 && !parsed.style && !parsed.risk && parsed.industries.length === 0) {
+        // Not enough info — ask for clarification
         abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abGotStyle') + '<span class="font-bold text-[#2EC4B6]">' + styleNames[abState.style] + '</span> ' + styleEmojis[abState.style] + t('abStyleStrategy') + '</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + t('abNextIndustry') + AB_FLOW[0].question + '</p>',
-          AB_FLOW[0].options.map(opt => ({
-            text: opt.text, icon: opt.icon, color: opt.color.replace('#', '').substring(0,3) === '10b' ? 'emerald' : (opt.color.includes('5cf6') ? 'violet' : (opt.color.includes('f44') ? 'red' : (opt.color.includes('b6d4') ? 'cyan' : (opt.color.includes('4899') ? 'pink' : (opt.color.includes('b308') ? 'yellow' : 'gray'))))),
-            action: "abSelectIndustry('" + opt.value + "')"
-          }))
-        );
-        abBuildPortfolio();
-      } else if (abState.step === 1) {
-        abParseIndustryInput(lower);
-        abState.step = 2;
-        abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abIndustryConfirmed') + '</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[1].question + '</p>',
-          AB_FLOW[1].options.map(opt => ({
-            text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
-            action: "abSelectRisk('" + opt.value + "')"
-          }))
-        );
-        abBuildPortfolio();
-      } else if (abState.step === 2) {
-        if (lower.includes('low') || lower.includes('7') || lower.includes('safe') || lower.includes('low') || lower.includes('conservative')) abState.riskTolerance = 'low';
-        else if (lower.includes('high') || lower.includes('14') || lower.includes('tolerate') || lower.includes('high') || lower.includes('aggressive')) abState.riskTolerance = 'high';
-        else abState.riskTolerance = 'medium';
-        abState.step = 3;
-        abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abRiskConfirmed') + '</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[2].question + '</p>',
-          AB_FLOW[2].options.map(opt => ({
-            text: opt.text, icon: opt.icon, color: opt.color.includes('eab') ? 'yellow' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
-            action: "abSelectPeriod('" + opt.value + "')"
-          }))
-        );
-        abBuildPortfolio();
-      } else if (abState.step === 3) {
-        if (lower.includes('short') || lower.includes('quick') || lower.includes('24') || lower.includes('short')) abState.period = 'short';
-        else if (lower.includes('long') || lower.includes('30') || lower.includes('long')) abState.period = 'long';
-        else abState.period = 'medium';
-        abState.step = 4;
-        abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abPeriodConfirmed') + '</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[3].question + '</p>',
-          AB_FLOW[3].options.map(opt => ({
-            text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
-            action: "abSelectBudget('" + opt.value + "')"
-          }))
-        );
-        abBuildPortfolio();
-      } else if (abState.step === 4) {
-        if (lower.includes('5') && !lower.includes('50')) abState.budget = 10;
-        else if (lower.includes('50') || lower.includes('above') || lower.includes('large') || lower.includes('heavy')) abState.budget = 60;
-        else abState.budget = 35;
-        abState.step = 5;
-        abBuildPortfolio();
-        abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2 font-semibold text-[#E8F5F3]">' + t('abCompleteTitle') + '</p>' +
-          '<p class="text-sm leading-relaxed mb-3" style="color: #5A9A90;">' + t('abCompleteDesc', {total: (totalVirtualContracts || allDeals.length).toLocaleString()}) + '</p>' +
-          '<div class="p-3 rounded-xl" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);">' +
-            '<p class="text-xs" style="color: #34d399;"><i class="fas fa-check-circle mr-1"></i>' + t('abCompleteHint') + '</p>' +
+          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abNlpNoMatch') + '</p>' +
+          '<div class="p-3 rounded-xl" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);">' +
+            '<p class="text-xs whitespace-pre-line" style="color: #5A9A90;">' + t('abNlpExamples') + '</p>' +
           '</div>',
           [
-            { text: t('abSatisfied'), icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
-            { text: t('abReduceRisk'), icon: 'fa-shield-alt', color: 'blue', action: "abSelectOption('" + t('abReduceRisk') + "')" },
-            { text: t('abAddTech'), icon: 'fa-microchip', color: 'violet', action: "abSelectOption('" + t('abAddTech') + "')" },
+            { text: t('abResetOpt1'), icon: 'fa-shield-alt', color: 'emerald', action: "abSelectOption('" + t('abResetOpt1') + "')" },
+            { text: t('abResetOpt2'), icon: 'fa-rocket', color: 'amber', action: "abSelectOption('" + t('abResetOpt2') + "')" },
+            { text: t('abResetOpt3'), icon: 'fa-balance-scale', color: 'blue', action: "abSelectOption('" + t('abResetOpt3') + "')" },
           ]
-        );
-      } else {
-        // Step 5+: Free adjustment phase
-        abState.extraPrefs.push(text);
-        if (lower.includes('Technology') || lower.includes('ai') || lower.includes('AI') || lower.includes('tech')) {
-          if (!abState.industries.includes('Technology')) abState.industries.push('Technology');
-        }
-        if (lower.includes('F&B') || lower.includes('food') || lower.includes('f&b') || lower.includes('dining')) {
-          if (!abState.industries.includes('F&B')) abState.industries.push('F&B');
-        }
-        if (lower.includes('reduce risk') || lower.includes('lower risk') || lower.includes('safer') || lower.includes('reduce risk') || lower.includes('lower risk')) {
-          abState.riskTolerance = 'low';
-        }
-        if (lower.includes('higher return') || lower.includes('more aggressive') || lower.includes('higher') || lower.includes('higher return') || lower.includes('more aggressive')) {
-          abState.riskTolerance = 'high';
-        }
-        if (lower.includes('reduce') && lower.includes('F&B') || lower.includes('reduce') && lower.includes('f&b')) {
-          abState.industries = abState.industries.filter(i => i !== 'F&B');
-          if (abState.industries.length === 0) abState.industries = ['all'];
-        }
-        if (lower.includes('short term') || lower.includes('quick') || lower.includes('short')) abState.period = 'short';
-        if (lower.includes('Healthcare') || lower.includes('Healthcare') || lower.includes('health')) {
-          if (!abState.industries.includes('Healthcare')) abState.industries.push('Healthcare');
-        }
-        if (lower.includes('Entertainment') || lower.includes('entertainment') || lower.includes('entertainment')) {
-          if (!abState.industries.includes('Entertainment')) abState.industries.push('Entertainment');
-        }
-        if (lower.includes('Education') || lower.includes('education')) {
-          if (!abState.industries.includes('Education')) abState.industries.push('Education');
-        }
-        if (lower.includes('Retail') || lower.includes('retail')) {
-          if (!abState.industries.includes('Retail')) abState.industries.push('Retail');
-        }
-
-        abBuildPortfolio();
-        const p = abState.portfolio;
-        abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abAdjusted') + '</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + t('abAdjustedDesc', {contracts: p.length, industries: [...new Set(p.map(c=>c.industry))].length}) + '</p>' +
-          '<p class="text-xs mt-2" style="color: #5A9A90;">' + t('abAdjustedHint') + '</p>',
-          [
-            { text: t('abSatisfied'), icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
-            { text: t('abContinueRefine'), icon: 'fa-sliders-h', color: 'violet', action: "document.getElementById('abInput').focus()" },
-          ]
-        );
-      }
-    }
-
-    // Industry selection (supports multi-select)
-    let abSelectedIndustries = [];
-    function abSelectIndustry(value) {
-      const AB_FLOW = getABFlow();
-      if (value === 'all') {
-        abSelectedIndustries = ['all'];
-        abAddUserMessage(t('abAllIndustries'));
-        abState.industries = ['all'];
-        abState.step = 2;
-        abBuildPortfolio();
-        abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abAllIndustriesConfirm') + '</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[1].question + '</p>',
-          AB_FLOW[1].options.map(opt => ({
-            text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
-            action: "abSelectRisk('" + opt.value + "')"
-          }))
         );
         return;
       }
-      if (abSelectedIndustries.includes(value)) return;
-      abSelectedIndustries.push(value);
-      abState.industries = [...abSelectedIndustries];
-      var indNameMap = {'F&B': t('indDining'), 'Technology': t('indTech'), 'Healthcare': t('indHealth'), 'Retail': t('indRetail'), 'Education': t('indEducation'), 'Entertainment': t('indEntertainment')};
-      var displayNames = abSelectedIndustries.map(function(v) { return indNameMap[v] || v; });
-      abAddUserMessage(t('abSelected') + displayNames.join(currentLang === 'en' ? ', ' : '、'));
-      abBuildPortfolio();
 
-      if (abSelectedIndustries.length >= 1) {
-        abState.step = 2;
-        abAddAIMessage(
-          '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abSelectedConfirm') + '<span class="font-bold text-[#2EC4B6]">' + displayNames.join(currentLang === 'en' ? ', ' : '、') + '</span> ✅</p>' +
-          '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[1].question + '</p>',
-          AB_FLOW[1].options.map(opt => ({
-            text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('3b82') ? 'blue' : 'amber'),
-            action: "abSelectRisk('" + opt.value + "')"
-          }))
-        );
-      }
+      // Fill defaults for any missing dimensions
+      if (!parsed.style) parsed.style = parsed.risk === 'low' ? 'conservative' : (parsed.risk === 'high' ? 'aggressive' : 'balanced');
+      if (!parsed.risk) parsed.risk = 'medium';
+      if (!parsed.returnTarget) parsed.returnTarget = parsed.risk;
+      if (!parsed.period) parsed.period = 'medium';
+      if (!parsed.budget) parsed.budget = 35;
+      if (parsed.industries.length === 0) parsed.industries = ['all'];
+
+      // Store pending config
+      abState.pendingConfig = parsed;
+      abState.step = Math.max(abState.step, 1);
+
+      // Show confirm card
+      abShowConfirmCard(parsed, isAdjust);
+    }
+
+    // Industry selection (supports multi-select, kept for backward compat)
+    let abSelectedIndustries = [];
+    function abSelectIndustry(value) {
+      abToggleConfigIndustry(value);
     }
 
     function abSelectRisk(value) {
-      const AB_FLOW = getABFlow();
-      abState.riskTolerance = value;
-      const labels = { low: t('abRiskLowLabel'), medium: t('abRiskMidLabel'), high: t('abRiskHighLabel') };
-      abAddUserMessage(labels[value] || value);
-      abState.step = 3;
-      abBuildPortfolio();
-      abAddAIMessage(
-        '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abRiskPref') + '<span class="font-bold text-[#2EC4B6]">' + (labels[value] || value) + '</span> 📊</p>' +
-        '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[2].question + '</p>',
-        AB_FLOW[2].options.map(opt => ({
-          text: opt.text, icon: opt.icon, color: opt.color.includes('eab') ? 'yellow' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
-          action: "abSelectPeriod('" + opt.value + "')"
-        }))
-      );
+      abSetConfigDim('risk', value);
     }
 
     function abSelectPeriod(value) {
-      const AB_FLOW = getABFlow();
-      abState.period = value;
-      const labels = { short: t('abPeriodShortLabel'), medium: t('abPeriodMidLabel'), long: t('abPeriodLongLabel') };
-      abAddUserMessage(labels[value] || value);
-      abState.step = 4;
-      abBuildPortfolio();
-      abAddAIMessage(
-        '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abPeriodPref') + '<span class="font-bold text-[#2EC4B6]">' + (labels[value] || value) + '</span> ⏱️</p>' +
-        '<p class="text-sm leading-relaxed" style="color: #5A9A90;">' + AB_FLOW[3].question + '</p>',
-        AB_FLOW[3].options.map(opt => ({
-          text: opt.text, icon: opt.icon, color: opt.color.includes('10b') ? 'emerald' : (opt.color.includes('06b') ? 'cyan' : 'violet'),
-          action: "abSelectBudget('" + opt.value + "')"
-        }))
-      );
+      abSetConfigDim('period', value);
     }
 
     function abSelectBudget(value) {
-      abState.budget = parseInt(value);
-      const labels = { '10': '¥5,000 - ¥20,000', '35': '¥20,000 - ¥50,000', '60': '¥50,000+' };
-      abAddUserMessage(labels[value] || '¥' + (parseInt(value) * 1000).toLocaleString());
-      abProcessUserInput(labels[value] || value);
+      abSetConfigDim('budget', parseInt(value));
     }
 
     function abParseIndustryInput(text) {
-      const mapping = { 'F&B': 'F&B', 'food': 'F&B', 'Technology': 'Technology', 'ai': 'Technology', 'Healthcare': 'Healthcare', 'Healthcare': 'Healthcare', 'Retail': 'Retail', 'consumer': 'Retail', 'Education': 'Education', 'Entertainment': 'Entertainment', 'enter': 'Entertainment' };
-      Object.keys(mapping).forEach(key => {
-        if (text.includes(key) && !abState.industries.includes(mapping[key])) {
-          abState.industries.push(mapping[key]);
-        }
-      });
-      if (abState.industries.length === 0) abState.industries = ['all'];
+      // Kept for backward compat but now handled by NLP engine
+      var parsed = abNLPParse(text);
+      if (parsed.industries.length > 0) abState.industries = parsed.industries;
+      else abState.industries = ['all'];
     }
 
     // ★ Core: Build portfolio from all contracts based on current state
