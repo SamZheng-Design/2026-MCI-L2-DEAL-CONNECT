@@ -617,22 +617,22 @@ app.get('/', (c) => {
         <div class="max-w-7xl mx-auto flex items-center justify-between" style="padding:5px 20px;">
           <div class="flex items-center" style="gap:16px;">
             <div class="flex items-center" style="gap:6px;">
-              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">CONTRACTS</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;" data-i18n="statContractsLabel">CONTRACTS</span>
               <span id="tickerTotalContracts" style="font-family:'SF Mono','Fira Code',monospace;font-size:13px;font-weight:800;color:#3DD8CA;">0</span>
             </div>
             <div style="width:1px;height:14px;background:rgba(46,196,182,0.1);"></div>
             <div class="flex items-center" style="gap:6px;">
-              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">DEALS</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;" data-i18n="statDealsLabel">DEALS</span>
               <span id="tickerTotalTransactions" style="font-family:'SF Mono','Fira Code',monospace;font-size:13px;font-weight:800;color:#fbbf24;">0</span>
             </div>
             <div style="width:1px;height:14px;background:rgba(46,196,182,0.1);"></div>
             <div class="flex items-center" style="gap:6px;">
-              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">MY POS</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;" data-i18n="statMyPosLabel">MY POS</span>
               <span id="tickerMyContracts" style="font-family:'SF Mono','Fira Code',monospace;font-size:13px;font-weight:800;color:#34d399;">0</span>
             </div>
             <div style="width:1px;height:14px;background:rgba(46,196,182,0.1);"></div>
             <div class="flex items-center" style="gap:6px;">
-              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">PORTFOLIOS</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;" data-i18n="statPortfoliosLabel">PORTFOLIOS</span>
               <span id="tickerMyPortfolios" style="font-family:'SF Mono','Fira Code',monospace;font-size:13px;font-weight:800;color:#818cf8;">0</span>
             </div>
           </div>
@@ -673,7 +673,7 @@ app.get('/', (c) => {
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
           <div class="cursor-pointer" onclick="selectSieve('all')" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(99,102,241,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
-              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">CONTRACTS</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;" data-i18n="statContractsLabel">CONTRACTS</span>
               <i class="fas fa-layer-group" style="font-size:10px;color:#818cf8;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#818cf8;margin-top:4px;line-height:1;" id="statTotalContracts">0</p>
@@ -681,7 +681,7 @@ app.get('/', (c) => {
           </div>
           <div class="cursor-pointer" onclick="selectSieve('all')" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(245,158,11,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
-              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">DEALS</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;" data-i18n="statDealsLabel">DEALS</span>
               <i class="fas fa-exchange-alt" style="font-size:10px;color:#fbbf24;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#fbbf24;margin-top:4px;line-height:1;" id="statTotalTransactions">0</p>
@@ -689,7 +689,7 @@ app.get('/', (c) => {
           </div>
           <div class="cursor-pointer" onclick="goToMyContracts()" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(52,211,153,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
-              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">MY POS</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;" data-i18n="statMyPosLabel">MY POS</span>
               <i class="fas fa-file-contract" style="font-size:10px;color:#34d399;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#34d399;margin-top:4px;line-height:1;" id="statMyContracts">0</p>
@@ -697,7 +697,7 @@ app.get('/', (c) => {
           </div>
           <div class="cursor-pointer" onclick="goToMyPortfolios()" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
-              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;">PORTFOLIOS</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:600;letter-spacing:0.05em;" data-i18n="statPortfoliosLabel">PORTFOLIOS</span>
               <i class="fas fa-object-group" style="font-size:10px;color:#818cf8;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#818cf8;margin-top:4px;line-height:1;" id="statMyPortfolios">0</p>
@@ -706,7 +706,7 @@ app.get('/', (c) => {
           <!-- AI BUILDER Card -->
           <div class="ai-stat-card cursor-pointer" onclick="goToAIBuilder()">
             <div class="flex items-center justify-between">
-              <span style="font-size:10px;color:#2EC4B6;font-weight:700;letter-spacing:0.05em;">AI BUILDER</span>
+              <span style="font-size:10px;color:#2EC4B6;font-weight:700;letter-spacing:0.05em;" data-i18n="statAIBuilderLabel">AI BUILDER</span>
               <i class="fas fa-magic" style="font-size:10px;color:#5eead4;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#5eead4;margin-top:4px;line-height:1;" id="statAIReady"><i class="fas fa-bolt" style="font-size:16px;"></i></p>
@@ -779,7 +779,7 @@ app.get('/', (c) => {
                 <p class="text-xs" style="color:#5A9A90;" data-i18n="sieveSub">Select a sieve model to filter opportunities, or view all</p>
               </div>
             </div>
-            <button onclick="showSieveManager()" class="text-xs font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors" style="color:#22d3ee;"><i class="fas fa-cogs mr-1"></i>Manage Sieves</button>
+            <button onclick="showSieveManager()" class="text-xs font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors" style="color:#22d3ee;"><i class="fas fa-cogs mr-1"></i><span data-i18n="sieveManage">Manage Sieves</span></button>
           </div>
           <div class="flex flex-wrap gap-2" id="sieveSelector">
             <!-- Dynamically rendered by renderSieveSelector() -->
@@ -794,16 +794,16 @@ app.get('/', (c) => {
         <!-- Filter Bar -->
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center space-x-2">
-            <h2 class="text-base font-bold" style="color:#E8F5F3;"><i class="fas fa-file-contract mr-1.5" style="color:#3DD8CA;"></i>Contract Board</h2>
-            <span id="filterLabel" class="text-xs font-medium" style="color:#5A9A90;">· Showing all</span>
+            <h2 class="text-base font-bold" style="color:#E8F5F3;"><i class="fas fa-file-contract mr-1.5" style="color:#3DD8CA;"></i><span data-i18n="boardTitle">Contract Board</span></h2>
+            <span id="filterLabel" class="text-xs font-medium" style="color:#5A9A90;" data-i18n="boardShowing">· Showing all</span>
           </div>
           <div class="flex items-center space-x-2">
-            <div class="relative"><input type="text" id="dealSearch" placeholder="Search project name..." class="search-input px-3 py-1.5 rounded-lg text-xs w-48" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" oninput="debounceRenderDeals()"><span class="search-shortcut" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);">⌘K</span></div>
+            <div class="relative"><input type="text" id="dealSearch" placeholder="" data-i18n="searchPlaceholder" data-i18n-attr="placeholder" class="search-input px-3 py-1.5 rounded-lg text-xs w-48" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" oninput="debounceRenderDeals()"><span class="search-shortcut" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);">⌘K</span></div>
             <select class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#8EBDB5;" id="filterStatus" onchange="renderDeals()">
-              <option value="all">All Status</option>
-              <option value="available">Available</option>
-              <option value="sold">Sold</option>
-              <option value="mine">Mine</option>
+              <option value="all" data-i18n="filterAll">All Status</option>
+              <option value="available" data-i18n="filterAvailable">Available</option>
+              <option value="sold" data-i18n="filterSold">Sold</option>
+              <option value="mine" data-i18n="filterMine">Mine</option>
             </select>
           </div>
         </div>
@@ -907,13 +907,13 @@ app.get('/', (c) => {
         <div class="flex items-center space-x-2">
           <input type="text" id="mcSearchInput" placeholder="Search contract/MCN..." class="search-input px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B] w-52" oninput="renderMyContracts()">
           <select class="px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B]" id="mcFilterIndustry" onchange="renderMyContracts()">
-            <option value="all">All Industries</option>
+            <option value="all" data-i18n="abStep1All">All Industries</option>
           </select>
           <select class="px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B]" id="mcSortBy" onchange="renderMyContracts()">
-            <option value="date">By subscription date</option>
-            <option value="score">By AI score</option>
-            <option value="yield">By revenue share</option>
-            <option value="project">By project</option>
+            <option value="date" data-i18n="myContractsSortDate">By subscription date</option>
+            <option value="score" data-i18n="myContractsSortAI">By AI score</option>
+            <option value="yield" data-i18n="myContractsSortShare">By revenue share</option>
+            <option value="project" data-i18n="sortByProject">By project</option>
           </select>
         </div>
       </div>
@@ -1092,7 +1092,7 @@ app.get('/', (c) => {
             <div class="flex items-center justify-center gap-4 mt-6">
               <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #5DC4B3;"></div><span class="text-xs" id="abFlowStep1">Style Preference</span></div>
               <i class="fas fa-long-arrow-alt-right text-[#2A5E58]"></i>
-              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs" id="abFlowStep2">Industry Selection</span></div>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs" id="abFlowStep2" data-i18n="abFlowStep2">Industry Selection</span></div>
               <i class="fas fa-long-arrow-alt-right text-[#2A5E58]"></i>
               <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs" id="abFlowStep3">Portfolio Generation</span></div>
             </div>
@@ -1229,9 +1229,9 @@ app.get('/', (c) => {
         navDashboard: '看板', navContracts: '合约', navPortfolios: '组合', navAIBuilder: 'AI 组合',
         navProfile: '个人中心', navSievePrefs: '筛子偏好设置', navOnboarding: '新手引导', navLogout: '退出登录',
         // Ticker
-        tickerSourceVal: 'Originate', tickerFilterVal: 'Assess',
+        tickerSourceVal: '发起通', tickerFilterVal: '评估通',
         // Welcome
-        welcomeBack: 'Welcome back',
+        welcomeBack: '欢迎回来',
         welcomeSubDefault: '发起通的投资机会，经您的评估通筛子精选后展示于此',
         welcomeSubHolding: '持有 {mine} 张合约 · {portfolios} 个组合 · 使用筛子精选您的下一个投资机会',
         welcomeSubExplore: '{total} 张合约待您探索 · 使用筛子精选您的下一个投资机会',
@@ -1245,8 +1245,8 @@ app.get('/', (c) => {
         aiEntryContractsLabel: '可选合约', aiEntryProjectsLabel: '覆盖项目',
         aiEntryHint: '点击体验 AI 构建您的专属组合',
         // Spotlight
-        spotlightTitle: '✨ Try the AI Portfolio Builder',
-        spotlightSub: 'Chat with AI · Smart Matching · One-Click Portfolio Building',
+        spotlightTitle: '✨ 体验 AI 组合构建器',
+        spotlightSub: '与 AI 对话 · 智能匹配 · 一键构建投资组合',
         spotlightDismiss: '点击任意空白处继续浏览',
         // Sieve
         sieveTitle: '评估通 · AI筛子', sieveSub: '选择筛子模型过滤机会，不选则展示全部',
@@ -1261,11 +1261,11 @@ app.get('/', (c) => {
         filterSearch: '搜索项目、MCN编号...',
         filterAll: '全部状态', filterAvailable: '可认购', filterSold: '已认购', filterMine: '我的',
         // Deal Card
-        dealOrigin: 'Originate', dealRSN: '收益分享合约',
+        dealOrigin: '发起通', dealRSN: '收益分享合约',
         dealAIScore: 'AI评分', dealRevenueShare: '分成比例', dealPeriod: '合约期限',
         dealMonthlyIncome: '预估月收', dealFaceValue: '合约面值',
         dealAvailable: '可认购', dealSold: '已认购', dealMine: '已持有',
-        dealSubscribe: 'Subscribe', dealViewDetail: '查看详情',
+        dealSubscribe: '认购', dealViewDetail: '查看详情',
         // Detail
         detailBack: '返回看板', detailProjectInfo: '项目信息', detailContractInfo: '合约核心信息',
         detailRadarTitle: '多维雷达评估', detailRadar8Dim: '8维度量化',
@@ -1276,17 +1276,17 @@ app.get('/', (c) => {
         // Subscription
         subTitle: '确认认购', subContractInfo: '合约信息', subMCN: 'MCN合约编号',
         subFaceValue: '合约面值', subRevenueShare: '收益分享', subPeriod: '合约期限',
-        subAIScore: 'AI评分', subCancel: 'Cancel', subConfirm: '确认认购',
-        subSuccess: '认购成功', subSuccessMsg: 'Contract added to your holdings',
+        subAIScore: 'AI评分', subCancel: '取消', subConfirm: '确认认购',
+        subSuccess: '认购成功', subSuccessMsg: '合约已加入您的持仓',
         // My Contracts
-        myContractsTitle: '我的合约', myContractsSub: 'MY CONTRACTS',
+        myContractsTitle: '我的合约', myContractsSub: '我的合约',
         myContractsSummary: '合约摘要', myContractsTotal: '总持仓', myContractsValue: '总价值',
         myContractsAvgAI: '平均AI评分', myContractsAvgShare: '平均分成',
-        myContractsFilterAll: 'All', myContractsFilterActive: 'Active', myContractsFilterPending: 'Pending',
+        myContractsFilterAll: '全部', myContractsFilterActive: '生效中', myContractsFilterPending: '待生效',
         myContractsSortAI: 'AI评分', myContractsSortDate: '认购日期', myContractsSortShare: '分成比例',
         myContractsEmpty: '暂无持仓合约', myContractsEmptyAction: '前往看板认购',
         // My Portfolios
-        myPortfoliosTitle: '我的组合', myPortfoliosSub: 'MY PORTFOLIOS',
+        myPortfoliosTitle: '我的组合', myPortfoliosSub: '我的组合',
         myPortfoliosFilterAll: '全部组合',
         pfContracts: '合约', pfProjects: '项目', pfValue: '组合价值', pfAvgAI: '均分',
         pfTargetReturn: '目标回报', pfPeriod: '投资周期', pfStrategy: '投资策略',
@@ -1297,11 +1297,11 @@ app.get('/', (c) => {
         pdContracts: '合约数', pdProjects: '项目数', pdValue: '组合价值', pdAvgAI: 'AI均分',
         pdAvgYield: '年化收益', pdAvgDays: '平均期限',
         // AI Builder
-        abTitle: 'AI 组合构建器', abSub: 'PORTFOLIO ARCHITECT · PILOT',
+        abTitle: 'AI 组合构建器', abSub: '组合构建器 · 试点',
         abPilot: '试点功能', abReset: '重置',
         abWelcome1: '您好！我是 <span style="color:#3DD8CA;font-weight:700;">参与通 AI 组合构建器</span>。',
         abWelcome2: '我会通过几个简单的问题了解您的投资偏好，然后从全平台合约中智能筛选，为您构建个性化的投资组合。',
-        abWelcome3: '首先，您对哪些 <span style="color:#5eead4;">Industry</span> 感兴趣？',
+        abWelcome3: '首先，您对哪些 <span style="color:#5eead4;">行业</span> 感兴趣？',
         abTotalContracts: '全平台可匹配合约',
         abInputPlaceholder: '输入自由调整需求...',
         abStatus: '由参与通AI模型驱动 · 投资建议仅供参考',
@@ -1316,9 +1316,9 @@ app.get('/', (c) => {
         abStep1Q: '请选择您感兴趣的行业：',
         abStep1All: '全部行业',
         abStep2Q: '了解！接下来，您的 <span style="color:#5eead4;">风险偏好</span> 是？',
-        abStep2Low: 'Conservative', abStep2LowD: '低风险·年化 7-10%',
-        abStep2Mid: 'Balanced', abStep2MidD: '中等风险·年化 10-14%',
-        abStep2High: 'Aggressive', abStep2HighD: '较高风险·年化 14%+',
+        abStep2Low: '稳健型', abStep2LowD: '低风险·年化 7-10%',
+        abStep2Mid: '均衡型', abStep2MidD: '中等风险·年化 10-14%',
+        abStep2High: '进取型', abStep2HighD: '较高风险·年化 14%+',
         abStep3Q: '收到！您期望的 <span style="color:#5eead4;">投资期限</span> 是？',
         abStep3Short: '短期', abStep3ShortD: '≤24个月',
         abStep3Mid: '中期', abStep3MidD: '24-30个月',
@@ -1353,7 +1353,7 @@ app.get('/', (c) => {
         abRiskLowLabel: '低风险 · 年化 7-10%', abRiskMidLabel: '中等风险 · 年化 10-14%', abRiskHighLabel: '较高风险 · 年化 14%+',
         abPeriodShortLabel: '短期 ≤24个月', abPeriodMidLabel: '中期 24-30个月', abPeriodLongLabel: '长期 30个月+',
         abPortfolioDescTpl: '基于您的投资偏好从 {total} 张合约中智能生成',
-        abPortfolioMetaTpl: 'Step {step}/5 · 实时演进',
+        abPortfolioMetaTpl: '第 {step}/5 步 · 实时演进',
         abContractUnit: '', abContractUnitMore: '张合约未展示',
         abApplyEmptyTitle: '组合为空', abApplyEmptyMsg: '请先通过对话构建组合',
         abApplySuccessTitle: '一键认购成功！', abApplySuccessMsgFull: '已认购 {count} 张合约 · 总投入 ¥{total}，可在「我的合约」中查看',
@@ -1364,7 +1364,7 @@ app.get('/', (c) => {
         abResetOpt1: '稳定收益，安全第一', abResetOpt2: '愿承担风险，追高回报', abResetOpt3: '攻守兼备，均衡配置', abResetOpt4: '看好特定行业，集中布局',
         // Portfolio detail more
         pdInvested: '总投入', pdAnnualYield: '年化收益率', pdWeightedShare: '加权分成 ',
-        pdAvgContract: '平均合约时长', pdDayUnit: 'days', pdAboutMonths: '约 {n} 个月',
+        pdAvgContract: '平均合约时长', pdDayUnit: '天', pdAboutMonths: '约 {n} 个月',
         pdAvgAIScore: 'AI评分均值', pdTargetHorizon: '目标期限',
         pdSectorAlloc: '行业配比 · {n} 个行业', pdSectorsLabel: '覆盖行业：',
         pdStrategyAcross: ' | 跨 {projects} 个项目配置 {contracts} 张合约',
@@ -1389,27 +1389,27 @@ app.get('/', (c) => {
         abIndDining: '餐饮美食', abIndTech: '科技创新', abIndHealth: '医疗健康', abIndRetail: '零售消费', abIndEdu: '教育培训', abIndEnter: '演艺娱乐',
         abIndAll: '不限行业，全面配置',
         // Radar Dims
-        dimYield: 'Yield', dimDuration: 'Duration', dimStability: 'Stability', dimRiskCtrl: 'Risk Mgmt',
-        dimLiquidity: 'Liquidity', dimTeam: 'Team', dimMarket: 'Market', dimAIScore: 'AI评分',
+        dimYield: '收益率', dimDuration: '期限', dimStability: '稳定性', dimRiskCtrl: '风控',
+        dimLiquidity: '流动性', dimTeam: '团队', dimMarket: '市场', dimAIScore: 'AI评分',
         // Industries
-        indDining: 'F&B', indRetail: 'Retail', indTech: 'Technology', indEducation: 'Education', indHealth: 'Healthcare', indEntertainment: 'Entertainment',
+        indDining: '餐饮', indRetail: '零售', indTech: '科技', indEducation: '教育', indHealth: '医疗', indEntertainment: '娱乐',
         // Portfolio Categories
-        catConservative: 'Conservative', catAggressive: 'Aggressive', catBalanced: 'Balanced', catThematic: 'Thematic', catSector: 'Industry',
+        catConservative: '稳健型', catAggressive: '进取型', catBalanced: '均衡型', catThematic: '主题型', catSector: '行业型',
         // Common
-        months: 'months', wan: '0K',
-        confirmTitle: '确认操作', confirmMsg: '确定要执行此操作吗？', confirmCancel: 'Cancel', confirmOk: 'Confirm',
+        months: '个月', wan: '万',
+        confirmTitle: '确认操作', confirmMsg: '确定要执行此操作吗？', confirmCancel: '取消', confirmOk: '确认',
         // Onboarding
         obTitle: '欢迎使用 参与通', obSkip: '跳过', obNext: '下一步', obStart: '开始探索',
         // Toast
         toastLoginSuccess: '登录成功', toastLogout: '已安全退出',
         toastGuestWelcome: '游客模式', toastGuestMsg: '已加载 {contracts} 张虚拟合约（{projects} 个项目），请自由体验',
-        toastSubscribeSuccess: '认购成功', toastSubscribeMsg: 'Contract added to your holdings',
-        toastFeatureWIP: 'Feature under development', toastSieveHint: 'Manage your sieve models in Assess',
+        toastSubscribeSuccess: '认购成功', toastSubscribeMsg: '合约已加入您的持仓',
+        toastFeatureWIP: '功能开发中', toastSieveHint: '在评估通中管理您的筛子模型',
         // Auth
-        authLogin: 'Login', authRegister: 'Register', authUsername: '用户名', authEmail: 'Email',
-        authPassword: 'Password', authDisplayName: '显示名称', authPhone: '手机号码',
-        authRoleInvestor: 'Investor', authRoleManager: 'Manager',
-        authLoginBtn: 'Login', authRegisterBtn: '创建账户',
+        authLogin: '登录', authRegister: '注册', authUsername: '用户名', authEmail: '邮箱',
+        authPassword: '密码', authDisplayName: '显示名称', authPhone: '手机号码',
+        authRoleInvestor: '投资者', authRoleManager: '管理者',
+        authLoginBtn: '登录', authRegisterBtn: '创建账户',
         authGuestBtn: '游客快速体验', authGuestHint: '无需注册，一键体验全部功能', authOr: '或者',
         // Empty
         emptyDeals: '未发现匹配机会', emptyDealsAction: '试试切换筛子或加载演示数据',
@@ -1421,14 +1421,14 @@ app.get('/', (c) => {
         aiAssistWelcome: '您好！我是参与通AI助手。您可以问我关于筛子模型、项目评估、参与流程等问题。',
         aiAssistPlaceholder: '例如：哪个筛子适合我？',
         // Data
-        monthlyRevenue: '月营收', employees: '员工', years: 'yrs',
+        monthlyRevenue: '月营收', employees: '员工', years: '年',
         totalAmount: '融资总额', issued: '发行', maturity: '到期',
         riskLow: '低', riskMedium: '中', riskHigh: '高',
         contractCount: '{n} 张', projectCount: '{n} 个项目',
         // Sieve Manager
         smTitle: '管理我的筛子', smSub: '从筛子库添加，或移除已有筛子',
         smLibrary: '筛子库', smAvailable: '{n} 个可用', smMySieves: '我的筛子', smAdded: '{n} 个已添加',
-        smAlreadyAdded: '已添加', smAdd: 'Add', smRemove: 'Remove', smDone: 'Done',
+        smAlreadyAdded: '已添加', smAdd: '添加', smRemove: '移除', smDone: '完成',
         smEmptyTitle: '暂无筛子', smEmptySub: '从左侧筛子库中添加',
         smBuiltinHint: '「全部机会」为内置项，始终可用无需添加',
         // Sieve names (dynamic)
@@ -1440,14 +1440,14 @@ app.get('/', (c) => {
         sieveTeamStrengthDesc: '优选员工>=50人、运营年限>=3年的成熟团队项目',
         sieveQuickReturnDesc: '聚焦分成期限<=24个月的快速回收项目',
         sieveSafeHavenDesc: '极保守策略：风控评级A及以上、AI评分>=9.0、金额<=500万',
-        sieveCatIndustry: '行业', sieveCatRisk: 'Risk Mgmt', sieveCatReturn: '收益', sieveCatComposite: '综合',
-        sieveCatLocation: '区域', sieveCatGrowth: '成长', sieveCatScale: '规模', sieveCatTeam: 'Team',
-        sieveCatCycle: '周期', sieveCatRiskCtrl: 'Risk Mgmt',
+        sieveCatIndustry: '行业', sieveCatRisk: '风控', sieveCatReturn: '收益', sieveCatComposite: '综合',
+        sieveCatLocation: '区域', sieveCatGrowth: '成长', sieveCatScale: '规模', sieveCatTeam: '团队',
+        sieveCatCycle: '周期', sieveCatRiskCtrl: '风控',
         sieveAllDesc: '不使用筛子，展示发起通的所有投资机会',
         // Deal card dynamic
         dealSearchEmpty: '未找到「{keyword}」相关合约', dealSearchEmptyHint: '尝试换个关键词，或清空搜索查看全部',
-        dealClearSearch: '清空搜索', dealOriginate: 'Originate', dealSieve: '筛子',
-        dealStatusAvailable: 'Available', dealStatusSold: 'Sold',
+        dealClearSearch: '清空搜索', dealOriginate: '发起通', dealSieve: '筛子',
+        dealStatusAvailable: '可认购', dealStatusSold: '已认购',
         dealStatusMine: '·我', dealScoreTitle: '合约综合评分',
         // Detail page
         detMCNLabel: '合约身份编号', detIndustryLabel: '行业', detCityLabel: '城市', detIssueLabel: '发行', detTypeLabel: '类型',
@@ -1456,39 +1456,39 @@ app.get('/', (c) => {
         detStatus: '状态', detHolder: '持有人', detNoHolder: '无（可认购）',
         detMyContract: '我的合约', detMyContractNote: '投入 ¥1,000 · MCN编号永久绑定',
         detProjectTotal: '项目总额', detShareRatio: '分成比例', detSharePeriod: '分成期限', detAIScoreLabel: 'AI评分',
-        detBizData: '经营数据（发起通提供）', detAvgRevenue: 'Monthly avg revenue', detNoData: 'N/A',
-        detEmployeeCount: '员工人数', detOpYears: '运营年限', detRiskGrade: 'Risk Rating', detMaturityDate: '到期日',
+        detBizData: '经营数据（发起通提供）', detAvgRevenue: '月均营收', detNoData: '暂无',
+        detEmployeeCount: '员工人数', detOpYears: '运营年限', detRiskGrade: '风控评级', detMaturityDate: '到期日',
         detRadarTitle: '合约多维评估', detRadar8Dim: '8维度量化分析 · 综合评级',
         detDimDetail: '维度详解', detExpandAll: '全部展开', detScoringBasis: '评分依据',
         detAbovePct: '优于{pct}%同类合约', detAroundMedian: '处于中位数附近', detBelowPct: '低于{pct}%同类合约',
         detCurrentSieveMatch: '当前筛子匹配度',
         detHighMatch: '高度匹配，建议重点关注', detMidMatch: '中等匹配，可进一步了解', detLowMatch: '匹配度较低',
-        detSieveEval: '筛子评估', detSievePass: 'Pass', detSieveFail: 'Fail',
+        detSieveEval: '筛子评估', detSievePass: '通过', detSieveFail: '未通过',
         detMatchPct: '{n}% 匹配度', detNoSieve: '暂未添加筛子', detGoManageSieve: '去管理筛子',
-        detIncomeTitle: '收入预测', detMonthPrefix: 'mo',
+        detIncomeTitle: '收入预测', detMonthPrefix: '月',
         detTimelineTitle: '项目流向',
         detTL1: '发起通 — 项目提交', detTL2: '评估通 — AI筛选', detTL3: '参与通 — 当前阶段', detTL4: '条款通 → 合约通',
         detTL2Desc: '通过 {match}', detTL2DescBasic: '基础审核',
-        detTL3Wait: '等待认购', detTL3Mine: 'You have subscribed to this contract', detTL3Sold: '已被认购',
+        detTL3Wait: '等待认购', detTL3Mine: '您已认购此合约', detTL3Sold: '已被认购',
         detTL4Desc: '确认参与后进入条款协商',
         // Subscribe modal
         subModalTitle: '认购合约', subFaceNote: '单张合约面值 · 不可分割',
         subShareLabel: '分成比例', subPeriodLabel: '分成期限',
         subNote: '认购后这张合约将归您所有，MCN编号永久绑定。在合约期内按约定比例分享收益。',
-        subCancelBtn: 'Cancel', subConfirmBtn: '确认认购 ¥1,000',
-        subAlreadySold: 'This contract has been subscribed', subSuccessDetail: '合约 {mcn} 已归您所有 · ¥1,000',
+        subCancelBtn: '取消', subConfirmBtn: '确认认购 ¥1,000',
+        subAlreadySold: '此合约已被认购', subSuccessDetail: '合约 {mcn} 已归您所有 · ¥1,000',
         // Express intent
         eiMyContract: '我的合约', eiMyContractMsg: '您持有此合约 · {mcn}',
-        eiSold: '已售出', eiSoldMsg: 'This contract has been subscribed by another investor',
+        eiSold: '已售出', eiSoldMsg: '此合约已被其他投资者认购',
         // Detail button
         btnMyContract: '我的合约', btnSoldOut: '已售出', btnSubscribe: '认购此合约 ¥1,000',
         btnMyContractToast: '您持有此合约 · {mcn}',
         // Grade labels
-        gradeExcellent: 'Excellent', gradeGood: 'Outstanding', gradeAboveAvg: 'Good', gradeAverage: 'Average', gradeBelowAvg: 'Below Avg', gradeRisky: 'Risk',
+        gradeExcellent: '卓越', gradeGood: '优秀', gradeAboveAvg: '良好', gradeAverage: '一般', gradeBelowAvg: '偏低', gradeRisky: '风险',
         gradeLevelSuffix: '水平',
         // Radar dims (dynamic)
-        rdYield: 'YITO年化收益率', rdDuration: '合约时长适配度', rdStability: 'Income Stability', rdRiskCtrl: 'Risk Rating',
-        rdLiquidity: 'Liquidity', rdTeam: 'Team Strength', rdMarket: 'Market Potential', rdAIScore: 'AI综合评分',
+        rdYield: '年化收益率', rdDuration: '合约时长适配度', rdStability: '收入稳定性', rdRiskCtrl: '风控评级',
+        rdLiquidity: '流动性', rdTeam: '团队实力', rdMarket: '市场潜力', rdAIScore: 'AI综合评分',
         rdYieldDesc: '基于分成比例和期限折算的年化投资回报率（YITO模型）',
         rdDurationDesc: '合约期限合理性评估，12-30个月为最优区间',
         rdStabilityDesc: '基于月营收数据推算的收入波动系数，越低越稳',
@@ -1498,8 +1498,8 @@ app.get('/', (c) => {
         rdMarketDesc: '所在行业景气度与目标城市经济活力加权',
         rdAIScoreDesc: 'AI大模型对合约多维度因子的综合信用打分',
         // Radar sub-labels
-        rslYield: '年化收益', rslDuration: '合约时长', rslStability: '预估月收', rslRiskCtrl: 'Risk Rating',
-        rslLiquidity: 'Liquidity', rslTeam: 'Team Strength', rslMarket: 'Market Potential', rslAIScore: 'AI综合',
+        rslYield: '年化收益', rslDuration: '合约时长', rslStability: '预估月收', rslRiskCtrl: '风控评级',
+        rslLiquidity: '流动性', rslTeam: '团队实力', rslMarket: '市场潜力', rslAIScore: 'AI综合',
         // My Contracts dynamic
         mcSubtitle: '已认购 {count} 张 · 总投入 ¥{total}',
         mcStatHolding: '持有合约', mcStatUnit: '', mcStatInvest: '总投入', mcStatInvestNote: '面值合计',
@@ -1509,8 +1509,8 @@ app.get('/', (c) => {
         mpSubtitle: '共 {count} 个组合 · 覆盖 {contracts} 张合约',
         mpContracts: '合约', mpProjects: '项目', mpTargetReturn: '目标回报', mpPeriod: '投资周期',
         mpStrategy: '投资策略', mpContractCountLabel: '张合约',
-        mpCatConservative: 'Conservative', mpCatAggressive: 'Aggressive', mpCatBalanced: 'Balanced', mpCatThematic: 'Thematic', mpCatSector: 'Industry',
-        mpRiskLow: 'Low Risk', mpRiskMedHigh: 'Higher Risk', mpRiskHigh: 'High Risk', mpRiskMedium: 'Moderate Risk',
+        mpCatConservative: '稳健型', mpCatAggressive: '进取型', mpCatBalanced: '均衡型', mpCatThematic: '主题型', mpCatSector: '行业型',
+        mpRiskLow: '低风险', mpRiskMedHigh: '中高风险', mpRiskHigh: '高风险', mpRiskMedium: '中等风险',
         // Portfolio Detail dynamic
         pdSubtitle: '{contracts} 张合约 · 覆盖 {projects} 个项目',
         pdRadar8Dim: '8维度量化',
@@ -1530,6 +1530,16 @@ app.get('/', (c) => {
         abResultOverall: '综合评分', abResultGrade: '综合评级',
         abStrategyLabel: '投资策略',
         abStrategyDefault: '50%配置稳定消费类（餐饮零售）+ 50%科技成长类，攻守兼备的经典组合',
+
+        // Header Stats
+        statContractsLabel: '合约', statDealsLabel: '成交', statMyPosLabel: '我的持仓', statPortfoliosLabel: '组合', statAIBuilderLabel: 'AI 构建器',
+        // Contract Board
+        boardTitle: '合约看板', boardShowing: '· 展示全部',
+        // Card labels
+        cardFace: '面值', cardYield: '收益', cardTerm: '期限', cardRisk: '评级', cardBuy: '认购',
+        // Search
+        searchPlaceholder: '搜索项目名称...',
+        sortByProject: '按项目',
       },
       en: {
         // Nav
@@ -1837,6 +1847,16 @@ app.get('/', (c) => {
         abResultOverall: 'Overall Score', abResultGrade: 'Overall Rating',
         abStrategyLabel: 'Investment Strategy',
         abStrategyDefault: '50% stable consumer staples (F&B/Retail) + 50% technology growth — a classic balanced allocation',
+
+        // Header Stats
+        statContractsLabel: 'CONTRACTS', statDealsLabel: 'DEALS', statMyPosLabel: 'MY POS', statPortfoliosLabel: 'PORTFOLIOS', statAIBuilderLabel: 'AI BUILDER',
+        // Contract Board
+        boardTitle: 'Contract Board', boardShowing: '· Showing all',
+        // Card labels
+        cardFace: 'FACE', cardYield: 'YIELD', cardTerm: 'TERM', cardRisk: 'RISK', cardBuy: 'BUY',
+        // Search
+        searchPlaceholder: 'Search project name...',
+        sortByProject: 'By project',
       }
     };
 
@@ -2134,14 +2154,14 @@ app.get('/', (c) => {
     }
 
     function handleGuestLogin() {
-      currentUser = { id: 'guest', username: 'guest', displayName: currentLang === 'en' ? 'Guest' : 'Guest', email: 'guest@demo.com', role: 'investor' };
+      currentUser = { id: 'guest', username: 'guest', displayName: currentLang === 'en' ? 'Guest' : '游客', email: 'guest@demo.com', role: 'investor' };
       loadDemoData();
       onLoginSuccess();
       showToast('info', t('toastGuestWelcome'), t('toastGuestMsg', { contracts: totalVirtualContracts.toLocaleString(), projects: String(PROJECT_TEMPLATES.length) }));
     }
 
     function onLoginSuccess() {
-      const name = currentUser?.displayName || currentUser?.username || (currentLang === 'en' ? 'User' : 'User');
+      const name = currentUser?.displayName || currentUser?.username || (currentLang === 'en' ? 'User' : '用户');
       const initial = name.charAt(0).toUpperCase();
       document.getElementById('navAvatar').textContent = initial;
       document.getElementById('navName').textContent = name;
@@ -2289,7 +2309,7 @@ app.get('/', (c) => {
       var holder = null;
       var isMine = false;
       if (statusRand === 'mine') {
-        holder = currentUser ? (currentUser.displayName || currentUser.username) : 'Guest';
+        holder = currentUser ? (currentUser.displayName || currentUser.username) : (currentLang === 'en' ? 'Guest' : '游客');
         isMine = true;
         statusRand = 'sold';
       } else if (statusRand === 'sold') {
@@ -3084,10 +3104,10 @@ app.get('/', (c) => {
           '</div>' : '<div class="flex items-center gap-1.5 mb-2"><span class="source-tag source-originate"><i class="fas fa-paper-plane" style="font-size:8px;"></i>' + t('dealOriginate') + '</span></div>') +
           // Terminal Data Grid — Contract Core Info
           '<div class="grid grid-cols-4 gap-1 mb-2">' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(46,196,182,0.05); border:1px solid rgba(46,196,182,0.08);"><p class="font-mono text-sm font-black text-[#3DD8CA]">¥1K</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">FACE</p></div>' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.08);"><p class="font-mono text-sm font-bold text-[#FBBF24]">' + d.revenueShare + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">YIELD</p></div>' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + d.period + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">TERM</p></div>' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.08);"><p class="font-mono text-sm font-bold text-[#34D399]">' + d.riskGrade + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">RISK</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(46,196,182,0.05); border:1px solid rgba(46,196,182,0.08);"><p class="font-mono text-sm font-black text-[#3DD8CA]">¥1K</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardFace') + '</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.08);"><p class="font-mono text-sm font-bold text-[#FBBF24]">' + d.revenueShare + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardYield') + '</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + d.period + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardTerm') + '</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.08);"><p class="font-mono text-sm font-bold text-[#34D399]">' + d.riskGrade + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardRisk') + '</p></div>' +
           '</div>' +
           // Footer — Date + AI Score + Action
           '<div class="flex items-center justify-between pt-2 border-t border-[rgba(46,196,182,0.06)]">' +
@@ -3101,7 +3121,7 @@ app.get('/', (c) => {
                 ? '<span class="text-xs text-[#3D7A70] font-mono">SOLD</span>'
                 : d.holder
                   ? '<span class="text-xs text-[#5A9A90]">' + d.holder + '</span>'
-                  : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-mono font-bold text-[#2EC4B6] hover:text-[#3DD8CA] transition-colors"><i class="fas fa-shopping-cart mr-1"></i>BUY</button>') +
+                  : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-mono font-bold text-[#2EC4B6] hover:text-[#3DD8CA] transition-colors"><i class="fas fa-shopping-cart mr-1"></i>' + t('cardBuy') + '</button>') +
           '</div>' +
         '</div>';
       }).join('');
@@ -3167,7 +3187,7 @@ app.get('/', (c) => {
       if (currentDeal.status === 'sold') { showToast('error', t('eiSold'), t('subAlreadySold')); return; }
 
       // Update data: assign this contract to current user
-      const userName = currentUser ? (currentUser.displayName || currentUser.username) : (currentLang === 'en' ? 'Guest' : 'Guest');
+      const userName = currentUser ? (currentUser.displayName || currentUser.username) : (currentLang === 'en' ? 'Guest' : '游客');
       currentDeal.status = 'sold';
       currentDeal.holder = userName;
       currentDeal.isMine = true;
@@ -3494,7 +3514,7 @@ app.get('/', (c) => {
       msgs.innerHTML += '<div class="ai-message user"><div class="ai-message-avatar"><i class="fas fa-user"></i></div><div class="ai-message-content">' + msg + '</div></div>';
       input.value = '';
       setTimeout(() => {
-        var sieveName = getSieveName(currentSieve) || (currentLang === 'en' ? 'All' : 'All');
+        var sieveName = getSieveName(currentSieve) || (currentLang === 'en' ? 'All' : '全部');
         var responses = currentLang === 'en' ? [
           'Current sieve "' + sieveName + '" filtered ' + dealsList.length + ' opportunities. Switch sieves or manage them in Assess to adjust criteria.',
           'The "Risk Priority Sieve" suits conservative investors — requires AI score ≥8.5 and raise ≤¥8M. The "High Return Sieve" focuses on revenue share ≥12%.',
@@ -3591,6 +3611,8 @@ app.get('/', (c) => {
       }
       // Page title updates
       document.title = 'Deal Connect';
+      // Re-render sieve to update board showing text
+      if (typeof selectSieve === 'function' && allDeals.length > 0) selectSieve(currentSieve);
       // AI Builder flow steps
       var abF1 = document.getElementById('abFlowStep1');
       var abF2 = document.getElementById('abFlowStep2');
@@ -3739,10 +3761,10 @@ app.get('/', (c) => {
             '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
           '</div>' +
           '<div class="grid grid-cols-4 gap-1 mb-2">' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(46,196,182,0.05); border:1px solid rgba(46,196,182,0.08);"><p class="font-mono text-sm font-black text-[#3DD8CA]">¥1K</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">FACE</p></div>' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.08);"><p class="font-mono text-sm font-bold text-[#FBBF24]">' + d.revenueShare + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">YIELD</p></div>' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + d.period + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">TERM</p></div>' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.08);"><p class="font-mono text-sm font-bold text-[#34D399]">' + d.riskGrade + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">RISK</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(46,196,182,0.05); border:1px solid rgba(46,196,182,0.08);"><p class="font-mono text-sm font-black text-[#3DD8CA]">¥1K</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardFace') + '</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.08);"><p class="font-mono text-sm font-bold text-[#FBBF24]">' + d.revenueShare + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardYield') + '</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + d.period + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardTerm') + '</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.08);"><p class="font-mono text-sm font-bold text-[#34D399]">' + d.riskGrade + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardRisk') + '</p></div>' +
           '</div>' +
           '<div class="flex items-center justify-between pt-2 border-t border-[rgba(46,196,182,0.06)]">' +
             '<span class="font-mono text-xs font-bold text-[#B0D5CF]"><i class="fas fa-robot mr-1 text-[#2EC4B6]" style="font-size:9px;"></i>AI ' + d.aiScore + '</span>' +
@@ -4930,7 +4952,7 @@ app.get('/', (c) => {
 
     function abApplyPortfolio() {
       if (abState.portfolio.length === 0) { showToast('warning', t('abApplyEmptyTitle'), t('abApplyEmptyMsg')); return; }
-      const userName = currentUser ? (currentUser.displayName || currentUser.username) : 'Guest';
+      const userName = currentUser ? (currentUser.displayName || currentUser.username) : (currentLang === 'en' ? 'Guest' : '游客');
       let count = 0;
       abState.portfolio.forEach(c => {
         if (c.status === 'available' && !c.isMine) {
