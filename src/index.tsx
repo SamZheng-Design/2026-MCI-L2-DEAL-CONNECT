@@ -48,6 +48,163 @@ app.get('/api/auth/me', (c) => c.json({ success: true, user: null }))
 app.get('/api/deals', (c) => c.json({ success: true, deals: [] }))
 
 /* ============================
+   AI Portfolio Architect API
+   ============================ */
+
+// System prompt for AI portfolio architect agent
+const AI_SYSTEM_PROMPT = `You are an AI Investment Portfolio Architect for "Deal Connect" platform (参与通). Your role is to analyze user investment requirements expressed in natural language and output structured portfolio configuration.
+
+## Your Capabilities
+- Parse investment intent from natural language (Chinese & English)
+- Identify risk tolerance, return targets, industry preferences, time horizons, and budget
+- Explain your selection logic transparently
+- Provide personalized portfolio construction reasoning
+- Engage in multi-round refinement conversation
+
+## Available Industries
+F&B (餐饮美食), Technology (科技创新), Healthcare (医疗健康), Retail (零售消费), Education (教育培训), Entertainment (演艺娱乐)
+
+## Available Parameters
+- style: "conservative" | "aggressive" | "balanced" | "sector"
+- risk: "low" | "medium" | "high"
+- returnTarget: "low" (7-10%) | "medium" (10-14%) | "high" (14%+)
+- industries: array of industry codes, or ["all"]
+- period: "short" (≤24mo) | "medium" (24-30mo) | "long" (≥30mo)
+- budget: 10 (¥5k-20k) | 35 (¥20k-50k) | 60 (¥50k+)
+
+## Output Format
+You MUST respond with a SINGLE flat JSON object. Do NOT nest JSON inside JSON. The "analysis" field must be a plain text string, NOT a JSON string.
+
+Example correct response:
+{"config":{"style":"balanced","risk":"medium","returnTarget":"medium","industries":["Technology","Healthcare"],"period":"medium","budget":35},"analysis":"Plain text analysis here explaining your reasoning","logic":["Step 1: reason","Step 2: reason","Step 3: reason"],"confidence":85,"followUp":"Optional question"}
+
+## Rules
+1. If user input is vague, still provide best-guess config but set confidence lower and include a followUp question
+2. Analysis should be in the SAME LANGUAGE as user input (Chinese if user speaks Chinese, English if English)
+3. logic array should contain 3-5 clear reasoning steps explaining your selection methodology
+4. For adjustments in existing portfolio, only modify the fields that user mentioned, keep others unchanged
+5. Be concise but insightful in your analysis - explain trade-offs the user might want to consider
+6. Confidence score: 90+ = very clear intent, 70-89 = reasonable guess, below 70 = need clarification
+7. Keep analysis concise (under 200 chars for Chinese, 300 chars for English)
+8. Keep logic array to exactly 3-4 items, each under 80 chars
+9. Keep followUp under 100 chars`;
+
+app.post('/api/ai/chat', async (c) => {
+  try {
+    const { messages, currentConfig, lang } = await c.req.json();
+
+    // Get API credentials from environment
+    const apiKey = c.env?.OPENAI_API_KEY || '';
+    const baseUrl = c.env?.OPENAI_BASE_URL || 'https://www.genspark.ai/api/llm_proxy/v1';
+
+    if (!apiKey) {
+      return c.json({ success: false, error: 'AI service not configured' }, 500);
+    }
+
+    // Build messages array for LLM
+    const llmMessages = [
+      { role: 'system', content: AI_SYSTEM_PROMPT },
+    ];
+
+    // Add context about current config if adjusting
+    if (currentConfig) {
+      llmMessages.push({
+        role: 'system',
+        content: 'Current portfolio configuration (user is adjusting): ' + JSON.stringify(currentConfig) + '. Only modify fields the user explicitly mentions. Keep unmentioned fields unchanged.'
+      });
+    }
+
+    // Add language context
+    llmMessages.push({
+      role: 'system',
+      content: 'User language: ' + (lang || 'zh') + '. Respond analysis in the same language as the user.'
+    });
+
+    // Add conversation history (last 10 messages max)
+    const recentMessages = (messages || []).slice(-10);
+    recentMessages.forEach((msg) => {
+      llmMessages.push({ role: msg.role, content: msg.content });
+    });
+
+    // Call LLM API
+    const response = await fetch(baseUrl + '/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey,
+      },
+      body: JSON.stringify({
+        model: 'gpt-5-mini',
+        messages: llmMessages,
+        temperature: 0.3,
+        max_tokens: 2048,
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error('LLM API error:', response.status, errText);
+      return c.json({ success: false, error: 'AI service error: ' + response.status }, 500);
+    }
+
+    const result = await response.json();
+    const content = result.choices?.[0]?.message?.content || '';
+
+    // Parse the JSON response
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch (e) {
+      try {
+        let cleaned = content.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+        parsed = JSON.parse(cleaned);
+      } catch (e2) {
+        parsed = {
+          config: { style: 'balanced', risk: 'medium', returnTarget: 'medium', industries: ['all'], period: 'medium', budget: 35 },
+          analysis: content,
+          logic: [],
+          confidence: 50,
+          followUp: '',
+          adjustments: []
+        };
+      }
+    }
+
+    // Post-process: if analysis contains a nested JSON with better config, extract it
+    if (parsed.analysis && typeof parsed.analysis === 'string') {
+      try {
+        const nestedJson = JSON.parse(parsed.analysis);
+        if (nestedJson.config) {
+          // Nested JSON has the real config — merge it
+          parsed.config = nestedJson.config;
+          parsed.analysis = nestedJson.analysis || '';
+          parsed.logic = nestedJson.logic || parsed.logic || [];
+          parsed.confidence = nestedJson.confidence || parsed.confidence || 70;
+          parsed.followUp = nestedJson.followUp || parsed.followUp || '';
+        }
+      } catch (ignored) {
+        // analysis is plain text, that's fine
+      }
+    }
+
+    // Ensure config has all required fields with defaults
+    if (!parsed.config) parsed.config = {};
+    parsed.config.style = parsed.config.style || 'balanced';
+    parsed.config.risk = parsed.config.risk || 'medium';
+    parsed.config.returnTarget = parsed.config.returnTarget || 'medium';
+    parsed.config.industries = parsed.config.industries || ['all'];
+    parsed.config.period = parsed.config.period || 'medium';
+    parsed.config.budget = parsed.config.budget || 35;
+
+    return c.json({ success: true, data: parsed });
+
+  } catch (err) {
+    console.error('AI chat error:', err);
+    return c.json({ success: false, error: 'Internal error: ' + (err.message || err) }, 500);
+  }
+})
+
+/* ============================
    Main HTML Page (SPA)
    ============================ */
 app.get('/', (c) => {
@@ -5144,6 +5301,7 @@ app.get('/', (c) => {
     function resetAIBuilder() {
       abState = { step: 0, style: null, industries: [], riskTolerance: null, targetReturn: null, budget: null, period: null, extraPrefs: [], portfolio: [], portfolioName: '', pendingConfig: null };
       abSelectedIndustries = [];
+      abConversationHistory = [];
       // Reset UI
       var msgs = document.getElementById('abMessages');
       if (msgs) msgs.innerHTML = '';
@@ -5225,15 +5383,134 @@ app.get('/', (c) => {
       abProcessUserInput(msg);
     }
 
-    // ===== NEW: Smart NLP-powered input processing =====
-    function abProcessUserInput(text) {
-      // Parse user input with NLP engine
-      var parsed = abNLPParse(text);
+    // ===== Conversation history for AI context =====
+    let abConversationHistory = [];
 
-      // If already in adjustment phase (step >= 5), merge with existing state
+    // ===== NEW: AI-powered + NLP fallback input processing =====
+    function abProcessUserInput(text) {
       var isAdjust = abState.step >= 5;
+
+      // Add to conversation history
+      abConversationHistory.push({ role: 'user', content: text });
+
+      // Show typing indicator immediately
+      var msgs = document.getElementById('abMessages');
+      var typingEl = document.createElement('div');
+      typingEl.className = 'ab-msg-ai';
+      typingEl.id = 'abTypingIndicator';
+      typingEl.innerHTML = '<div class="ab-avatar"><i class="fas fa-robot"></i></div><div class="ab-content"><div class="ab-typing"><span></span><span></span><span></span></div><p class="text-xs mt-1" style="color: #5A9A90;">' + t('abNlpParsing') + '</p></div>';
+      if (msgs) { msgs.appendChild(typingEl); msgs.scrollTop = msgs.scrollHeight; }
+
+      // Build current config for context
+      var currentConfig = null;
       if (isAdjust) {
-        // Merge: only override fields that were explicitly detected
+        currentConfig = {
+          style: abState.style,
+          risk: abState.riskTolerance,
+          returnTarget: abState.targetReturn,
+          industries: abState.industries,
+          period: abState.period,
+          budget: abState.budget
+        };
+      }
+
+      // Call AI API
+      fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: abConversationHistory.slice(-10),
+          currentConfig: currentConfig,
+          lang: currentLang
+        })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(result) {
+        // Remove typing indicator
+        var typing = document.getElementById('abTypingIndicator');
+        if (typing) typing.remove();
+
+        if (result.success && result.data) {
+          var aiData = result.data;
+          var config = aiData.config || {};
+
+          // Build parsed object compatible with confirm card
+          var parsed = {
+            style: config.style || 'balanced',
+            risk: config.risk || 'medium',
+            returnTarget: config.returnTarget || 'medium',
+            industries: config.industries || ['all'],
+            period: config.period || 'medium',
+            budget: config.budget || 35,
+            confidence: aiData.confidence || 70,
+            reasons: aiData.logic || [],
+            aiAnalysis: aiData.analysis || '',
+            followUp: aiData.followUp || ''
+          };
+
+          // Add to conversation history
+          abConversationHistory.push({ role: 'assistant', content: JSON.stringify(aiData) });
+
+          // Store pending config
+          abState.pendingConfig = parsed;
+          abState.step = Math.max(abState.step, 1);
+          if (isAdjust) abState.extraPrefs.push(text);
+
+          // Show AI analysis message + confirm card
+          abShowAIConfirmCard(parsed, isAdjust);
+        } else {
+          // AI API failed — fallback to local NLP
+          console.warn('AI API failed, falling back to local NLP:', result.error);
+          abProcessUserInputLocal(text);
+        }
+      })
+      .catch(function(err) {
+        // Network error — fallback to local NLP
+        console.warn('AI API network error, falling back to local NLP:', err);
+        var typing = document.getElementById('abTypingIndicator');
+        if (typing) typing.remove();
+        abProcessUserInputLocal(text);
+      });
+    }
+
+    // ===== Show AI-enhanced confirm card with analysis =====
+    function abShowAIConfirmCard(parsed, isAdjust) {
+      // Build the card HTML with AI analysis
+      var cardHTML = '';
+
+      // AI natural language analysis
+      if (parsed.aiAnalysis) {
+        cardHTML += '<div class="p-3 rounded-xl mb-3" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);">';
+        cardHTML += '<p class="text-xs font-semibold mb-1.5" style="color: #3DD8CA;"><i class="fas fa-brain mr-1"></i>' + (currentLang === 'zh' ? 'AI 分析' : 'AI Analysis') + '</p>';
+        cardHTML += '<p class="text-sm leading-relaxed" style="color: #8EBDB5;">' + parsed.aiAnalysis + '</p>';
+        cardHTML += '</div>';
+      }
+
+      // Confirm card (reuse existing function)
+      cardHTML += abBuildConfirmCardHTML(parsed, isAdjust);
+
+      // Follow-up question from AI
+      if (parsed.followUp) {
+        cardHTML += '<div class="p-2 rounded-lg mt-3" style="background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15);">';
+        cardHTML += '<p class="text-xs" style="color: #fbbf24;"><i class="fas fa-lightbulb mr-1"></i>' + parsed.followUp + '</p>';
+        cardHTML += '</div>';
+      }
+
+      abAddAIMessage(
+        cardHTML,
+        [
+          { text: t('abNlpConfirm'), icon: 'fa-check-circle', color: 'emerald', action: "abConfirmConfig()" },
+          { text: t('abNlpModify'), icon: 'fa-edit', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '告诉我您想修改什么...' : 'Tell me what to change...') + "'" },
+        ]
+      );
+    }
+
+    // ===== Local NLP fallback (when AI API is unavailable) =====
+    function abProcessUserInputLocal(text) {
+      var parsed = abNLPParse(text);
+      var isAdjust = abState.step >= 5;
+
+      if (isAdjust) {
         if (!parsed.style && abState.style) parsed.style = abState.style;
         if (!parsed.risk && abState.riskTolerance) parsed.risk = abState.riskTolerance;
         if (!parsed.returnTarget && abState.targetReturn) parsed.returnTarget = abState.targetReturn;
@@ -5241,29 +5518,22 @@ app.get('/', (c) => {
         if (!parsed.period && abState.period) parsed.period = abState.period;
         if (!parsed.budget && abState.budget) parsed.budget = abState.budget;
 
-        // Handle specific adjustment keywords (removal, reduction)
         var lower = text.toLowerCase();
         if ((lower.includes('减少') || lower.includes('去掉') || lower.includes('remove') || lower.includes('reduce')) && (lower.includes('餐饮') || lower.includes('f&b') || lower.includes('food'))) {
           parsed.industries = parsed.industries.filter(function(i) { return i !== 'F&B'; });
           if (parsed.industries.length === 0) parsed.industries = ['all'];
-          parsed.reasons.push(currentLang === 'zh' ? '移除餐饮行业' : 'Removed F&B sector');
         }
         if ((lower.includes('减少') || lower.includes('降低') || lower.includes('lower') || lower.includes('reduce')) && (lower.includes('风险') || lower.includes('risk'))) {
           parsed.risk = 'low';
-          parsed.reasons.push(currentLang === 'zh' ? '降低风险偏好' : 'Lowered risk preference');
         }
-        if ((lower.includes('提高') || lower.includes('增加') || lower.includes('higher') || lower.includes('increase') || lower.includes('more')) && (lower.includes('收益') || lower.includes('回报') || lower.includes('return') || lower.includes('yield'))) {
+        if ((lower.includes('提高') || lower.includes('增加') || lower.includes('higher') || lower.includes('increase')) && (lower.includes('收益') || lower.includes('回报') || lower.includes('return'))) {
           parsed.returnTarget = 'high';
           parsed.risk = parsed.risk === 'low' ? 'medium' : 'high';
-          parsed.reasons.push(currentLang === 'zh' ? '提高收益目标' : 'Increased return target');
         }
-
         abState.extraPrefs.push(text);
       }
 
-      // Check if we got meaningful info
       if (parsed.confidence < 10 && !parsed.style && !parsed.risk && parsed.industries.length === 0) {
-        // Not enough info — ask for clarification
         abAddAIMessage(
           '<p class="text-sm leading-relaxed mb-2" style="color: #8EBDB5;">' + t('abNlpNoMatch') + '</p>' +
           '<div class="p-3 rounded-xl" style="background: rgba(93,196,179,0.06); border: 1px solid rgba(93,196,179,0.15);">' +
@@ -5278,7 +5548,6 @@ app.get('/', (c) => {
         return;
       }
 
-      // Fill defaults for any missing dimensions
       if (!parsed.style) parsed.style = parsed.risk === 'low' ? 'conservative' : (parsed.risk === 'high' ? 'aggressive' : 'balanced');
       if (!parsed.risk) parsed.risk = 'medium';
       if (!parsed.returnTarget) parsed.returnTarget = parsed.risk;
@@ -5286,11 +5555,9 @@ app.get('/', (c) => {
       if (!parsed.budget) parsed.budget = 35;
       if (parsed.industries.length === 0) parsed.industries = ['all'];
 
-      // Store pending config
       abState.pendingConfig = parsed;
       abState.step = Math.max(abState.step, 1);
 
-      // Show confirm card
       abShowConfirmCard(parsed, isAdjust);
     }
 
