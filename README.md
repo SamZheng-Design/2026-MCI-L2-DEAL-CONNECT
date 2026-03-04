@@ -31,11 +31,18 @@
 - 我的合约页面 — 已认购合约管理
 - 我的组合页面 — 20个跨项目基金型预定义组合（稳健型/进取型/平衡型/主题型/行业型）
 - 组合详情页 — 加权雷达图 + 行业配比 + 持仓明细
-- **AI 组合构建器（NEW - 试点）** — 对话式智能投资组合构建
-  - 左侧: AI引导对话，5步流程（风格→行业→风险→期限→预算）
-  - 右侧: 实时演进的组合面板（雷达图+行业配比+合约清单）
-  - 支持自然语言微调（如"减少餐饮""加入更多科技"）
-  - 一键认购整个组合
+- **AI 智能组合构建器 V3** — 完整AI投资顾问体验
+  - 🧠 **GPT-5-mini 驱动**: 真正的自然语言理解，非关键词匹配
+  - 🔄 **多模式对话**: analyze(分析) / followup(追问) / adjust(调整) / explain(解说)
+  - 💬 **智能追问**: 信息不足时AI主动追问（而非用默认值敷衍）
+  - 📊 **置信度系统**: 高/中/低置信度可视化，用户一目了然
+  - 🎯 **6维配置确认卡**: 风格/风险/收益/行业/期限/预算可编辑
+  - 🧮 **5步筛选逻辑透明化**: 展示AI的完整挑选思路供用户确认
+  - 📈 **组合构建后AI解说**: 自动分析组合亮点、风险和优化建议
+  - 🌍 **中英文双语**: 完整的i18n支持
+  - 🔒 **API安全**: 后端代理，API key不暴露到前端
+  - 📡 **上下文感知**: 传递平台数据统计和组合摘要给AI
+  - ⬅️ **本地NLP回退**: AI API不可用时自动切换到本地100+关键词引擎
 - AI助手聊天窗口
 - 新手引导 Onboarding
 - 响应式设计
@@ -65,21 +72,45 @@
 | 短周期筛子 | 周期 | 分成期限<=24个月 |
 | 稳健保守筛子 | 风控 | A级评级 + AI>=9.0 + <=500万 |
 
-## AI 组合构建器 — 使用指南
+## AI 智能组合构建器 — 使用指南 (V3)
 
+### 对话流程
 1. 点击导航栏「AI组合」按钮进入
-2. AI会逐步引导您：
-   - **Step 1**: 您最看重什么？（稳定/高回报/均衡/行业聚焦）
-   - **Step 2**: 偏好哪些行业？（支持多选）
-   - **Step 3**: 风险承受能力？（低/中/高）
-   - **Step 4**: 投资期限偏好？（短/中/长期）
-   - **Step 5**: 预算规模？
-3. 每步对话后，右侧面板实时更新推荐组合
-4. 完成后可继续自然语言微调
-5. 满意后一键认购
+2. **用自然语言描述您的投资需求**，例如：
+   - 「收益够高，风险平衡」
+   - 「看好科技和医疗，稳健为主，预算3万」
+   - 「短期投资，不想冒太大风险」
+3. AI会根据输入信息量智能决定：
+   - **信息充分** → 直接生成配置确认卡（含6维度配置 + 5步筛选逻辑）
+   - **信息不足** → 主动追问缺失维度（给出选项引导）
+4. 确认配置后，AI从19,110+张合约中精准筛选定制组合
+5. 组合生成后，AI自动给出**投资解读**（亮点/风险/优化建议）
+6. 随时用自然语言微调：「风险再低一点」「去掉餐饮行业」
+
+### AI对话模式
+| Mode | 触发条件 | AI行为 |
+|------|----------|--------|
+| analyze | 用户提供3+维度信息 | 直接生成完整配置 |
+| followup | 缺少3+关键维度 | 主动追问，展示已识别的部分偏好 |
+| adjust | 已有配置，用户微调 | 只修改提到的维度，保留其他 |
+| explain | 组合构建完成后 | 分析组合亮点、风险、优化方向 |
+
+## API Endpoints
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | /api/auth/register | User registration |
+| POST | /api/auth/login | User login |
+| POST | /api/auth/logout | User logout |
+| GET | /api/auth/me | Current user info |
+| GET | /api/deals | Get deals list |
+| **POST** | **/api/ai/chat** | **AI对话 — 分析/追问/调整** |
+| **POST** | **/api/ai/chat/stream** | **AI对话(流式SSE)** |
+| **POST** | **/api/ai/explain** | **AI组合解说** |
+| GET | / | Main SPA page |
 
 ## Tech Stack
 - **Backend**: Hono (Cloudflare Workers framework)
+- **AI**: GPT-5-mini via LLM proxy (genspark.ai)
 - **Frontend**: Tailwind CSS (CDN) + Font Awesome + Vanilla JS
 - **Runtime**: Cloudflare Workers / Wrangler
 - **Build**: Vite + @hono/vite-cloudflare-pages
@@ -91,6 +122,7 @@
 ├── public/
 │   └── static/
 │       └── style.css      # Custom CSS styles
+├── .dev.vars              # Local env (OPENAI_API_KEY, OPENAI_BASE_URL)
 ├── ecosystem.config.cjs   # PM2 config (local dev)
 ├── wrangler.jsonc          # Cloudflare Workers config
 ├── vite.config.ts          # Vite build config
@@ -100,8 +132,11 @@
 ```
 
 ## Version History
+- **SAM-V1**: 初版看板
 - **SAM-V2**: 筛子驱动看板 + 我的合约/组合完整版
-- **Current**: SAM-V2 + AI组合构建器试点
+- **SAM-V2 + AI V1**: 本地NLP关键词匹配的AI组合构建器
+- **SAM-V2 + AI V2**: 接入GPT-5-mini API，真正的自然语言理解
+- **SAM-V2 + AI V3 (Current)**: 多模式对话(followup/analyze/adjust/explain) + 智能追问 + 组合解说 + 上下文感知
 
 ## Local Development
 
@@ -109,24 +144,16 @@
 # Install & build
 npm install && npm run build
 
+# Create .dev.vars with API keys
+echo "OPENAI_API_KEY=your-key" >> .dev.vars
+echo "OPENAI_BASE_URL=https://..." >> .dev.vars
+
 # Start with PM2
 pm2 start ecosystem.config.cjs
 # Visit http://localhost:3000
 ```
 
-## API Endpoints
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | /api/auth/register | User registration |
-| POST | /api/auth/login | User login |
-| POST | /api/auth/logout | User logout |
-| GET | /api/auth/me | Current user info |
-| GET | /api/deals | Get deals list |
-| GET | / | Main SPA page |
-
 ## Data Storage
 - **Current**: In-memory (demo mode) + localStorage (client-side persistence)
+- **AI**: GPT-5-mini via backend proxy (API key secured in .dev.vars / Cloudflare secrets)
 - **Production-ready**: Cloudflare D1 (migration-ready)
-
----
-*L2 Deal Connect - Micro Connect Group - 2026*
