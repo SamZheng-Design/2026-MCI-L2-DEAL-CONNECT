@@ -1529,10 +1529,10 @@ app.get('/', (c) => {
 
         <!-- Portfolio Result Panel (initially hidden) -->
         <div id="abPortfolioPanel" class="hidden flex-1 flex flex-col overflow-hidden">
-          <!-- ===== Fixed top: Subscribe button ===== -->
-          <div class="flex-shrink-0 flex gap-3 px-5 py-3" style="background: rgba(11,30,28,0.98); border-bottom: 1px solid rgba(46,196,182,0.1); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i><span data-i18n="abApply">Subscribe to This Portfolio</span></button>
-            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i><span data-i18n="abRefine">Continue Adjusting</span></button>
+          <!-- ===== Fixed top: One-click Purchase button ===== -->
+          <div class="flex-shrink-0 px-5 py-3" style="background: rgba(11,30,28,0.98); border-bottom: 1px solid rgba(46,196,182,0.1); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+            <button onclick="abOneClickPurchase()" class="w-full py-3.5 rounded-xl text-sm font-bold transition-all btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 16px rgba(16,185,129,0.4);"><i class="fas fa-shopping-cart mr-2"></i><span data-i18n="abOneClickPurchase">Confirm & Subscribe All</span></button>
+            <p class="text-xs text-center mt-2" style="color: #3D7A70;"><i class="fas fa-info-circle mr-1"></i><span data-i18n="abPurchaseHint">Continue chatting on the left to adjust portfolio in real-time</span></p>
           </div>
 
           <!-- ===== Scrollable: Header + Radar + Sector Mix + Contracts ===== -->
@@ -1545,6 +1545,7 @@ app.get('/', (c) => {
                   <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
                       <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);"><i class="fas fa-magic mr-1"></i><span data-i18n="abAIBuilt">AI Built</span></span>
+                      <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(16,185,129,0.2); color: #34d399;"><div class="inline-block w-1.5 h-1.5 rounded-full mr-1" style="background:#34d399; animation: pulse 2s infinite;"></div><span data-i18n="abPreviewTag">Live Preview</span></span>
                       <span class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioMeta" data-i18n="abPortfolioMetaDefault">Real-time Generation</span>
                     </div>
                     <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.2); color: #34d399;">A · 82</span>
@@ -1745,6 +1746,11 @@ app.get('/', (c) => {
         abRadarTitle: '组合雷达评估', abRadar8Dim: '8维度量化',
         abIndustryTitle: '行业配比', abContractListTitle: '推荐合约清单',
         abApply: '一键认购全部', abRefine: '继续调整',
+        abOneClickPurchase: '确认认购全部合约', abPurchaseHint: '左侧继续对话可实时调整组合',
+        abLivePreview: '🔄 实时预览已更新', abAutoBuilding: '正在根据您的偏好实时构建...',
+        abPurchaseConfirmTitle: '确认认购', abPurchaseConfirmMsg: '确认认购该组合中的所有可用合约？',
+        abPurchaseSuccess: '认购成功！', abPurchaseSuccessMsg: '已成功认购 {count} 张合约，总金额 ¥{total}',
+        abPreviewTag: '实时预览', abPreviewUpdated: '组合已根据您的最新偏好更新',
         abApplySuccess: '认购成功', abApplySuccessMsg: '{count} 张合约已加入您的持仓',
         // AI Builder Steps
         abStep1Q: '请选择您感兴趣的行业：',
@@ -2167,6 +2173,11 @@ app.get('/', (c) => {
         abRadarTitle: 'Portfolio Radar Analysis', abRadar8Dim: '8-Dimension Scoring',
         abIndustryTitle: 'Sector Allocation', abContractListTitle: 'Recommended Contracts',
         abApply: 'Subscribe All Contracts', abRefine: 'Continue Refining',
+        abOneClickPurchase: 'Confirm & Subscribe All', abPurchaseHint: 'Keep chatting on the left to adjust portfolio in real-time',
+        abLivePreview: '🔄 Live preview updated', abAutoBuilding: 'Building in real-time based on your preferences...',
+        abPurchaseConfirmTitle: 'Confirm Subscription', abPurchaseConfirmMsg: 'Subscribe to all available contracts in this portfolio?',
+        abPurchaseSuccess: 'Subscribed!', abPurchaseSuccessMsg: 'Successfully subscribed to {count} contracts, total ¥{total}',
+        abPreviewTag: 'Live Preview', abPreviewUpdated: 'Portfolio updated based on your latest preferences',
         abApplySuccess: 'Subscription Successful', abApplySuccessMsg: '{count} contracts added to your holdings',
         // AI Builder Steps
         abStep1Q: 'Which industries are you interested in?',
@@ -5360,53 +5371,57 @@ app.get('/', (c) => {
       return html;
     }
 
-    // ===== Show confirm card and register pending config =====
+    // ===== V3: Auto-build preview — every message triggers a real-time portfolio update =====
+    function abAutoBuildPreview(config, options) {
+      options = options || {};
+      var cfg = config || abState.pendingConfig || {};
+
+      // Apply config to abState (fill defaults for missing dimensions)
+      abState.style = cfg.style || abState.style || 'balanced';
+      abState.riskTolerance = cfg.risk || abState.riskTolerance || 'medium';
+      abState.targetReturn = cfg.returnTarget || abState.targetReturn || 'medium';
+      abState.industries = (cfg.industries && cfg.industries.length > 0) ? cfg.industries : (abState.industries.length > 0 ? abState.industries : ['all']);
+      abState.period = cfg.period || abState.period || 'medium';
+      abState.budget = cfg.budget || abState.budget || 35;
+      abState.step = Math.max(abState.step, 5);
+      abState.pendingConfig = cfg; // Keep for dim-editing
+
+      // Build portfolio immediately
+      abBuildPortfolio();
+
+      // Trigger AI explanation in background (only on first build or significant changes)
+      if (!options.skipExplain && abState.portfolio.length > 0) {
+        abRequestExplanation();
+      }
+    }
+
+    // ===== Show confirm card (V3: now shows config summary + immediately builds preview) =====
     function abShowConfirmCard(parsed, isAdjust) {
       var cardHTML = abBuildConfirmCardHTML(parsed, isAdjust);
       abAddAIMessage(
         cardHTML,
         [
-          { text: t('abNlpConfirm'), icon: 'fa-check-circle', color: 'emerald', action: "abConfirmConfig()" },
-          { text: t('abNlpModify'), icon: 'fa-edit', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '输入要修改的内容，如「风险改为低」「加入科技行业」...' : 'Type what to change, e.g. \"lower risk\" \"add tech sector\"...') + "'" },
+          { text: currentLang === 'zh' ? '继续微调' : 'Continue Refining', icon: 'fa-edit', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '告诉我您想调整什么，如「降低风险」「加入科技」...' : 'Tell me what to adjust, e.g. \"lower risk\" \"add tech\"...') + "'" },
         ]
       );
+      // V3: Immediately build portfolio preview
+      abAutoBuildPreview(parsed, { skipExplain: false });
     }
 
-    // ===== Confirm pending config and build portfolio =====
+    // ===== Confirm pending config (V3: kept for backward compat, now just redirects) =====
     function abConfirmConfig() {
       if (!abState.pendingConfig) return;
-      var cfg = abState.pendingConfig;
+      abAutoBuildPreview(abState.pendingConfig);
+    }
 
-      // Apply config to abState
-      abState.style = cfg.style || 'balanced';
-      abState.riskTolerance = cfg.risk || 'medium';
-      abState.targetReturn = cfg.returnTarget || 'medium';
-      abState.industries = cfg.industries.length > 0 ? cfg.industries : ['all'];
-      abState.period = cfg.period || 'medium';
-      abState.budget = cfg.budget || 35;
-      abState.step = 5;
-      abState.pendingConfig = null;
-
-      // Build portfolio
-      abBuildPortfolio();
-
-      // Show completion message
-      abAddAIMessage(
-        '<p class="text-sm leading-relaxed mb-2 font-semibold text-[#E8F5F3]">' + t('abNlpConfirmed') + '</p>' +
-        '<p class="text-sm leading-relaxed mb-2 font-semibold text-[#E8F5F3]">' + t('abCompleteTitle') + '</p>' +
-        '<p class="text-sm leading-relaxed mb-3" style="color: #5A9A90;">' + t('abCompleteDesc', {total: (totalVirtualContracts || allDeals.length).toLocaleString()}) + '</p>' +
-        '<div class="p-3 rounded-xl" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);">' +
-          '<p class="text-xs" style="color: #34d399;"><i class="fas fa-check-circle mr-1"></i>' + t('abCompleteHint') + '</p>' +
-        '</div>',
-        [
-          { text: t('abSatisfied'), icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
-          { text: t('abReduceRisk'), icon: 'fa-shield-alt', color: 'blue', action: "abSelectOption('" + t('abReduceRisk') + "')" },
-          { text: t('abAddTech'), icon: 'fa-microchip', color: 'violet', action: "abSelectOption('" + t('abAddTech') + "')" },
-        ]
-      );
-
-      // Trigger AI portfolio explanation in background
-      abRequestExplanation();
+    // ===== One-click Purchase (V3 primary action) =====
+    function abOneClickPurchase() {
+      if (abState.portfolio.length === 0) { showToast('warning', t('abApplyEmptyTitle'), t('abApplyEmptyMsg')); return; }
+      var availableCount = abState.portfolio.filter(function(c) { return c.status === 'available' && !c.isMine; }).length;
+      if (availableCount === 0) { showToast('info', currentLang === 'zh' ? '已全部持有' : 'All Held', currentLang === 'zh' ? '该组合中的合约您已全部持有' : 'You already hold all contracts in this portfolio'); return; }
+      showConfirm(t('abPurchaseConfirmTitle'), t('abPurchaseConfirmMsg') + ' (' + availableCount + (currentLang === 'zh' ? ' 张合约, ¥' : ' contracts, ¥') + (availableCount * 1000).toLocaleString() + ')', function() {
+        abApplyPortfolio();
+      });
     }
 
     // ===== Request AI explanation for the built portfolio =====
@@ -5501,7 +5516,7 @@ app.get('/', (c) => {
       );
     }
 
-    // ===== Set a config dimension value and re-show card =====
+    // ===== Set a config dimension value and auto-rebuild (V3: no confirm card, direct rebuild) =====
     function abSetConfigDim(key, value) {
       if (!abState.pendingConfig) {
         abState.pendingConfig = { style: abState.style || 'balanced', risk: abState.riskTolerance || 'medium', returnTarget: abState.targetReturn || 'medium', industries: abState.industries.length > 0 ? [...abState.industries] : ['all'], period: abState.period || 'medium', budget: abState.budget || 35, reasons: [], confidence: 50 };
@@ -5514,11 +5529,12 @@ app.get('/', (c) => {
       // Show label for user
       var displayVal = typeof value === 'object' ? JSON.stringify(value) : String(value);
       abAddUserMessage(currentLang === 'zh' ? '修改为: ' + displayVal : 'Changed to: ' + displayVal);
-      // Re-show confirm card with updated config
-      abShowConfirmCard(abState.pendingConfig, true);
+      // V3: Auto-rebuild preview instead of showing confirm card
+      abAutoBuildPreview(abState.pendingConfig, { skipExplain: true });
+      showToast('info', t('abLivePreview'), t('abPreviewUpdated'));
     }
 
-    // ===== Toggle an industry in pending config =====
+    // ===== Toggle an industry in pending config (V3: auto-rebuild) =====
     function abToggleConfigIndustry(ind) {
       if (!abState.pendingConfig) {
         abState.pendingConfig = { style: abState.style || 'balanced', risk: abState.riskTolerance || 'medium', returnTarget: abState.targetReturn || 'medium', industries: abState.industries.length > 0 ? [...abState.industries] : ['all'], period: abState.period || 'medium', budget: abState.budget || 35, reasons: [], confidence: 50 };
@@ -5534,7 +5550,9 @@ app.get('/', (c) => {
       var indNameMap = {'F&B': t('indDining'), 'Technology': t('indTech'), 'Healthcare': t('indHealth'), 'Retail': t('indRetail'), 'Education': t('indEducation'), 'Entertainment': t('indEntertainment')};
       var displayNames = inds.map(function(v) { return indNameMap[v] || v; });
       abAddUserMessage(currentLang === 'zh' ? '行业选择: ' + displayNames.join('、') : 'Sectors: ' + displayNames.join(', '));
-      abShowConfirmCard(abState.pendingConfig, true);
+      // V3: Auto-rebuild preview instead of showing confirm card
+      abAutoBuildPreview(abState.pendingConfig, { skipExplain: true });
+      showToast('info', t('abLivePreview'), t('abPreviewUpdated'));
     }
 
     // Conversation flow steps (kept for backward compat with quick-select buttons)
@@ -5860,7 +5878,7 @@ app.get('/', (c) => {
       });
     }
 
-    // ===== Handle AI "followup" mode — AI wants to ask more questions =====
+    // ===== Handle AI "followup" mode — AI wants to ask more questions (V3: also builds preview) =====
     function abHandleFollowup(aiData) {
       var partialConfig = aiData.partialConfig || {};
       var questions = aiData.questions || [];
@@ -5918,7 +5936,7 @@ app.get('/', (c) => {
       }
 
       // Store partial config so manual dim edits can fill it in
-      abState.pendingConfig = {
+      var previewConfig = {
         style: partialConfig.style || null,
         risk: partialConfig.risk || null,
         returnTarget: partialConfig.returnTarget || null,
@@ -5929,18 +5947,29 @@ app.get('/', (c) => {
         reasons: [],
         aiAnalysis: analysis,
       };
+      abState.pendingConfig = previewConfig;
       abState.step = Math.max(abState.step, 1);
 
       abAddAIMessage(
         html,
         [
-          { text: t('abAiAnswerMore'), icon: 'fa-comment-dots', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '继续描述您的投资需求...' : 'Continue describing your needs...') + "'" },
-          { text: t('abAiSkipBuild'), icon: 'fa-forward', color: 'emerald', action: "abForceConfirmPartial()" },
+          { text: currentLang === 'zh' ? '继续补充' : 'Tell More', icon: 'fa-comment-dots', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '继续描述您的投资需求...' : 'Continue describing your needs...') + "'" },
         ]
       );
+
+      // V3: Auto-build preview with defaults for missing dims
+      var previewCfg = {
+        style: previewConfig.style || 'balanced',
+        risk: previewConfig.risk || 'medium',
+        returnTarget: previewConfig.returnTarget || 'medium',
+        industries: previewConfig.industries,
+        period: previewConfig.period || 'medium',
+        budget: previewConfig.budget || 35,
+      };
+      abAutoBuildPreview(previewCfg, { skipExplain: true });
     }
 
-    // ===== Force confirm partial config (fill defaults for missing) =====
+    // ===== Force confirm partial config (V3: fill defaults and auto-build) =====
     function abForceConfirmPartial() {
       if (!abState.pendingConfig) return;
       var cfg = abState.pendingConfig;
@@ -5953,11 +5982,11 @@ app.get('/', (c) => {
       if (!cfg.industries || cfg.industries.length === 0) cfg.industries = ['all'];
       cfg.confidence = Math.max(cfg.confidence || 50, 50);
 
-      // Show the full confirm card
-      abShowAIConfirmCard(cfg, false);
+      // V3: Auto-build directly
+      abAutoBuildPreview(cfg, { skipExplain: false });
     }
 
-    // ===== Handle AI "analyze" / "adjust" mode — show confirm card =====
+    // ===== Handle AI "analyze" / "adjust" mode (V3: auto-build preview, no confirm gate) =====
     function abHandleAnalyze(aiData, isAdjust) {
       var config = aiData.config || {};
 
@@ -5980,7 +6009,7 @@ app.get('/', (c) => {
       abState.step = Math.max(abState.step, 1);
       if (isAdjust) abState.extraPrefs.push('adjust');
 
-      // Show AI analysis message + confirm card
+      // V3: Show config summary + auto-build portfolio immediately
       abShowAIConfirmCard(parsed, isAdjust);
     }
 
@@ -6027,14 +6056,14 @@ app.get('/', (c) => {
       abAddAIMessage(
         html,
         [
-          { text: t('abSatisfied'), icon: 'fa-check', color: 'emerald', action: "abApplyPortfolio()" },
+          { text: currentLang === 'zh' ? '继续微调' : 'Keep Refining', icon: 'fa-edit', color: 'violet', action: "document.getElementById('abInput').focus()" },
           { text: t('abReduceRisk'), icon: 'fa-shield-alt', color: 'blue', action: "abSelectOption('" + t('abReduceRisk') + "')" },
-          { text: t('abAddTech'), icon: 'fa-microchip', color: 'violet', action: "abSelectOption('" + t('abAddTech') + "')" },
+          { text: t('abAddTech'), icon: 'fa-microchip', color: 'cyan', action: "abSelectOption('" + t('abAddTech') + "')" },
         ]
       );
     }
 
-    // ===== Show AI-enhanced confirm card with analysis =====
+    // ===== Show AI-enhanced confirm card with analysis (V3: auto-build, no confirm button) =====
     function abShowAIConfirmCard(parsed, isAdjust) {
       // Build the card HTML with AI analysis
       var cardHTML = '';
@@ -6067,13 +6096,23 @@ app.get('/', (c) => {
         cardHTML += '</div>';
       }
 
+      // V3: Live preview tag
+      cardHTML += '<div class="flex items-center gap-2 mt-3 p-2 rounded-lg" style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15);">';
+      cardHTML += '<div class="w-2 h-2 rounded-full" style="background:#10b981; animation: pulse 2s infinite;"></div>';
+      cardHTML += '<p class="text-xs" style="color: #34d399;"><i class="fas fa-sync-alt mr-1"></i>' + (currentLang === 'zh' ? '右侧组合已实时更新 → 满意后点击「确认认购」' : 'Portfolio preview updated → Click "Confirm & Subscribe" when ready') + '</p>';
+      cardHTML += '</div>';
+
       abAddAIMessage(
         cardHTML,
         [
-          { text: t('abNlpConfirm'), icon: 'fa-check-circle', color: 'emerald', action: "abConfirmConfig()" },
-          { text: t('abNlpModify'), icon: 'fa-edit', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '告诉我您想修改什么...' : 'Tell me what to change...') + "'" },
+          { text: currentLang === 'zh' ? '继续微调' : 'Keep Refining', icon: 'fa-edit', color: 'violet', action: "document.getElementById('abInput').focus();document.getElementById('abInput').placeholder='" + (currentLang === 'zh' ? '告诉我您想修改什么...' : 'Tell me what to change...') + "'" },
+          { text: currentLang === 'zh' ? '降低风险' : 'Lower Risk', icon: 'fa-shield-alt', color: 'blue', action: "abSelectOption('" + t('abReduceRisk') + "')" },
+          { text: currentLang === 'zh' ? '加入科技' : 'Add Tech', icon: 'fa-microchip', color: 'cyan', action: "abSelectOption('" + t('abAddTech') + "')" },
         ]
       );
+
+      // V3: Auto-build portfolio immediately
+      abAutoBuildPreview(parsed, { skipExplain: false });
     }
 
     // ===== Local NLP fallback (when AI API is unavailable) =====
@@ -6129,6 +6168,7 @@ app.get('/', (c) => {
       abState.pendingConfig = parsed;
       abState.step = Math.max(abState.step, 1);
 
+      // V3: Show config card and auto-build preview
       abShowConfirmCard(parsed, isAdjust);
     }
 
@@ -6313,7 +6353,16 @@ app.get('/', (c) => {
           count++;
         }
       });
-      showToast('success', t('abApplySuccessTitle'), t('abApplySuccessMsgFull', {count: count, total: (count * 1000).toLocaleString()}));
+      showToast('success', t('abPurchaseSuccess'), t('abPurchaseSuccessMsg', {count: count, total: (count * 1000).toLocaleString()}));
+      // Also add a success message in chat
+      abAddAIMessage(
+        '<div class="p-4 rounded-xl text-center" style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.1)); border: 1px solid rgba(16,185,129,0.3);">' +
+          '<i class="fas fa-check-circle text-2xl mb-2" style="color: #34d399;"></i>' +
+          '<p class="text-sm font-bold mb-1" style="color: #E8F5F3;">' + t('abPurchaseSuccess') + '</p>' +
+          '<p class="text-xs" style="color: #5A9A90;">' + t('abPurchaseSuccessMsg', {count: count, total: (count * 1000).toLocaleString()}) + '</p>' +
+        '</div>',
+        []
+      );
       abBuildPortfolio(); // Refresh panel
     }
 
