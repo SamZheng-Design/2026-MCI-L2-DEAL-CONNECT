@@ -1,19 +1,19 @@
 /**
  * ===================================================================
- * 参与通 Deal Connect — Full-Stack SPA (V2 — 筛子驱动看板)
+ * Deal Connect — Full-Stack SPA (V2 — Sieve-Driven Board)
  * ===================================================================
- * 核心逻辑：
- *   发起通(Originate) → 产生所有投资机会
- *   评估通(Assess)    → 提供多种AI筛子模型
- *   参与通(Deal)      → 投资者看板：筛后展示 + 参与决策
+ * Core Logic:
+ *   Originate → Generates all investment opportunities
+ *   Assess    → Provides multiple AI sieve models
+ *   Deal      → Investor board: filtered display + deal participation
  *
- * 参与通用户的工作流：
- *   1. 选择/切换评估通筛子（或不选 = 看全部）
- *   2. 浏览通过筛子的机会（来自发起通）
- *   3. 对感兴趣的机会表达参与意向
- *   4. 追踪参与进度
+ * Deal Connect user workflow:
+ *   1. Select/switch Assess sieves (or none = view all)
+ *   2. Browse sieve-filtered opportunities (from Originate)
+ *   3. Express interest in opportunities
+ *   4. Track participation progress
  *
- * Brand: DEAL CONNECT / 参与通
+ * Brand: DEAL CONNECT / Deal Connect
  * Powered by Micro Connect Group
  */
 import { Hono } from 'hono'
@@ -28,22 +28,22 @@ const users: Map<string, any> = new Map()
 
 app.post('/api/auth/register', async (c) => {
   const { username, email, password, displayName, phone, role } = await c.req.json()
-  if (!username || !email || !password) return c.json({ success: false, message: '用户名、邮箱和密码为必填项' }, 400)
-  if (users.has(username) || [...users.values()].find(u => u.email === email)) return c.json({ success: false, message: '用户名或邮箱已被注册' }, 409)
+  if (!username || !email || !password) return c.json({ success: false, message: 'Username, email, and password are required' }, 400)
+  if (users.has(username) || [...users.values()].find(u => u.email === email)) return c.json({ success: false, message: 'Username or email already registered' }, 409)
   const user = { id: 'U_' + Date.now(), username, email, password, displayName: displayName || username, phone, role: role || 'investor', createdAt: new Date().toISOString() }
   users.set(username, user)
-  return c.json({ success: true, user: { ...user, password: undefined }, message: '注册成功' })
+  return c.json({ success: true, user: { ...user, password: undefined }, message: 'Registration successful' })
 })
 
 app.post('/api/auth/login', async (c) => {
   const { username, password } = await c.req.json()
-  if (!username || !password) return c.json({ success: false, message: '请输入用户名和密码' }, 400)
+  if (!username || !password) return c.json({ success: false, message: 'Please enter username and password' }, 400)
   const user = users.get(username) || [...users.values()].find(u => u.email === username)
-  if (!user || user.password !== password) return c.json({ success: false, message: '用户名或密码错误' }, 401)
-  return c.json({ success: true, user: { ...user, password: undefined }, message: '登录成功' })
+  if (!user || user.password !== password) return c.json({ success: false, message: 'Invalid username or password' }, 401)
+  return c.json({ success: true, user: { ...user, password: undefined }, message: 'Login successful' })
 })
 
-app.post('/api/auth/logout', (c) => c.json({ success: true, message: '已安全退出' }))
+app.post('/api/auth/logout', (c) => c.json({ success: true, message: 'Logged out successfully' }))
 app.get('/api/auth/me', (c) => c.json({ success: true, user: null }))
 app.get('/api/deals', (c) => c.json({ success: true, deals: [] }))
 
@@ -52,12 +52,12 @@ app.get('/api/deals', (c) => c.json({ success: true, deals: [] }))
    ============================ */
 app.get('/', (c) => {
   return c.html(`<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>参与通 Deal Connect</title>
-  <meta name="description" content="参与通 Deal Connect — 投资者的智能机会看板。基于评估通AI筛子，精准匹配发起通项目。">
+  <title>Deal Connect</title>
+  <meta name="description" content="Deal Connect — Intelligent opportunity board for investors. AI sieve-powered matching from Originate projects.">
   <meta name="theme-color" content="#0a2e2a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -78,22 +78,22 @@ app.get('/', (c) => {
     .page { display: none; }
     .page.active { display: flex; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
-    /* 筛子选择器专属样式 */
+    /* Sieve selector styles */
     .sieve-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: 600; border: 1.5px solid rgba(46,196,182,0.15); background: rgba(15,46,43,0.8); color: #8EBDB5; cursor: pointer; transition: all 0.25s cubic-bezier(0.28,0.11,0.32,1); white-space: nowrap; }
     .sieve-chip:hover { border-color: rgba(46,196,182,0.4); background: rgba(46,196,182,0.1); transform: translateY(-1px); color: #2EC4B6; }
     .sieve-chip.active { border-color: #2EC4B6; background: linear-gradient(135deg, rgba(46,196,182,0.15), rgba(40,166,150,0.12)); color: #3DD8CA; box-shadow: 0 2px 8px rgba(46,196,182,0.2), 0 0 0 1px rgba(46,196,182,0.1); }
     .sieve-chip.active i { color: #2EC4B6; }
-    /* 匹配度指示条 */
+    /* Match indicator bar */
     .match-bar { height: 3px; border-radius: 2px; background: rgba(46,196,182,0.15); overflow: hidden; }
     .match-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
-    /* 来源标签 */
+    /* Source tag */
     .source-tag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.03em; }
     .source-originate { background: rgba(245,158,11,0.12); color: #fbbf24; }
-    /* 筛子标签 */
+    /* Sieve tag */
     .sieve-tag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; }
     .sieve-pass { background: rgba(16,185,129,0.12); color: #34d399; }
     .sieve-fail { background: rgba(239,68,68,0.12); color: #f87171; }
-    /* 用户下拉样式 */
+    /* User dropdown styles */
     .user-dropdown { position: absolute; top: calc(100% + 8px); right: 0; width: 240px; background: rgba(13,36,34,0.96); backdrop-filter: blur(20px); border-radius: 16px; border: 1px solid rgba(46,196,182,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(46,196,182,0.08); z-index: 100; opacity: 0; transform: translateY(-8px) scale(0.96); pointer-events: none; transition: all 0.2s cubic-bezier(0.28,0.11,0.32,1); }
     .user-dropdown.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
     .user-dropdown-header { padding: 16px; border-bottom: 1px solid rgba(46,196,182,0.1); }
@@ -102,7 +102,7 @@ app.get('/', (c) => {
     .user-dropdown-item.danger:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
     .user-dropdown-divider { height: 1px; background: rgba(46,196,182,0.1); margin: 4px 0; }
 
-    /* ===== 合约卡片系统 (Fintech Card) ===== */
+    /* ===== Contract Card System (Fintech Card) ===== */
     .cc { background: rgba(15,46,43,0.85); border-radius: 16px; border: 1px solid rgba(46,196,182,0.1); overflow: hidden; transition: all 0.35s cubic-bezier(0.28,0.11,0.32,1); position: relative; }
     .cc:hover { border-color: rgba(46,196,182,0.25); box-shadow: 0 8px 32px rgba(46,196,182,0.08), 0 2px 8px rgba(0,0,0,0.15); transform: translateY(-2px); }
     .cc.cc-expanded { border-color: rgba(46,196,182,0.3); box-shadow: 0 12px 48px rgba(46,196,182,0.12), 0 4px 16px rgba(0,0,0,0.06); transform: none; grid-column: 1 / -1; }
@@ -139,7 +139,7 @@ app.get('/', (c) => {
     .cc-timeline-dot.active { background: #2EC4B6; }
     .cc-grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
     @media (max-width: 768px) { .cc-grid-cards { grid-template-columns: 1fr; } .cc-metrics { grid-template-columns: repeat(2, 1fr); } }
-    /* 移动端详情页/组合详情：左右分栏改为上下堆叠 */
+    /* Mobile detail/portfolio: side-by-side to stacked layout */
     @media (max-width: 1024px) {
       #pageDetail .flex.flex-1.overflow-hidden,
       #pagePortfolioDetail .flex.flex-1.overflow-hidden,
@@ -150,9 +150,9 @@ app.get('/', (c) => {
       #pageDetail .w-2\\/5, #pagePortfolioDetail .w-2\\/5, #pageAIBuilder .w-2\\/5 { max-height: 45vh; border-right: none; border-bottom: 1px solid rgba(46,196,182,0.12); }
       #pageDetail .w-3\\/5, #pagePortfolioDetail .w-3\\/5, #pageAIBuilder .w-3\\/5 { flex: 1; }
     }
-    /* 搜索框快捷键提示 */
+    /* Search shortcut hint */
     .search-shortcut { display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #3D7A70; background: rgba(46,196,182,0.06); border: 1px solid rgba(46,196,182,0.12); font-family: 'SF Mono', monospace; pointer-events: none; }
-    /* Toast容器 — 确保移动端可见 */
+    /* Toast container — ensure mobile visibility */
     .toast-container { position: fixed; top: 16px; right: 16px; z-index: 900; display: flex; flex-direction: column; gap: 8px; max-width: 380px; }
     @media (max-width: 480px) { .toast-container { top: auto; bottom: 16px; right: 8px; left: 8px; max-width: none; } }
     .toast { display: flex; align-items: flex-start; padding: 12px 16px; border-radius: 12px; background: rgba(13,36,34,0.96); backdrop-filter: blur(16px); border: 1px solid rgba(46,196,182,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: toastSlideIn 0.3s cubic-bezier(0.28,0.11,0.32,1); position: relative; overflow: hidden; }
@@ -171,14 +171,14 @@ app.get('/', (c) => {
     @keyframes toastSlideIn { from { opacity: 0; transform: translateX(40px) scale(0.96); } to { opacity: 1; transform: translateX(0) scale(1); } }
     @keyframes toastSlideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(60px); } }
     @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
-    /* 骨架屏加载效果 */
+    /* Skeleton loading effect */
     .skeleton-card { background: rgba(15,46,43,0.6); border: 1px solid rgba(46,196,182,0.06); border-radius: 6px; padding: 14px; }
     .skeleton-line { height: 12px; background: linear-gradient(90deg, rgba(46,196,182,0.06) 0%, rgba(46,196,182,0.12) 50%, rgba(46,196,182,0.06) 100%); background-size: 200% 100%; border-radius: 6px; animation: shimmer 1.5s infinite; margin-bottom: 8px; }
     .skeleton-line.w-60 { width: 60%; }
     .skeleton-line.w-80 { width: 80%; }
     .skeleton-line.w-40 { width: 40%; }
     .skeleton-line.h-6 { height: 24px; }
-    /* AI Builder 专属样式 — 深色终端青绿色系 */
+    /* AI Builder styles — dark terminal teal theme */
     .ab-quick-btn { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.28,0.11,0.32,1); background: rgba(46,196,182,0.08); border: 1px solid rgba(46,196,182,0.2); color: #2EC4B6; white-space: nowrap; }
     .ab-quick-btn:hover { background: rgba(46,196,182,0.18); border-color: rgba(46,196,182,0.4); color: #3DD8CA; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(46,196,182,0.15); }
     .ab-msg-user { display: flex; justify-content: flex-end; }
@@ -199,7 +199,7 @@ app.get('/', (c) => {
     @keyframes ccSlideDown { from { max-height: 0; opacity: 0; } to { max-height: 1800px; opacity: 1; } }
     .ab-contract-item { background: rgba(15,46,43,0.6); border: 1px solid rgba(46,196,182,0.08); }
     .ab-contract-item:hover { border-color: rgba(46,196,182,0.25); background: rgba(46,196,182,0.06); box-shadow: 0 2px 8px rgba(46,196,182,0.08); }
-    /* AI入口卡片动效 — 增强版 */
+    /* AI entry card animation — enhanced */
     @keyframes aiEntryShimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
     @keyframes aiEntryPulse { 0%, 100% { box-shadow: 0 4px 20px rgba(93,196,179,0.25), 0 0 0 0 rgba(93,196,179,0.4), inset 0 1px 0 rgba(255,255,255,0.08); } 50% { box-shadow: 0 8px 40px rgba(93,196,179,0.35), 0 0 0 8px rgba(93,196,179,0), inset 0 1px 0 rgba(255,255,255,0.08); } }
     @keyframes aiEntryFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
@@ -221,19 +221,19 @@ app.get('/', (c) => {
     .ai-entry-particles::before, .ai-entry-particles::after { content: ''; position: absolute; border-radius: 50%; background: rgba(93,196,179,0.5); }
     .ai-entry-particles::before { width: 5px; height: 5px; top: 30%; right: 12%; animation: aiParticleRise 4s ease-in-out infinite; }
     .ai-entry-particles::after { width: 3px; height: 3px; bottom: 20%; right: 25%; animation: aiParticleRise2 5s ease-in-out infinite 1s; }
-    /* AI入口额外粒子层 */
+    /* AI entry extra particle layer */
     .ai-entry-particles-extra { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
     .ai-entry-particles-extra::before { content: ''; position: absolute; width: 4px; height: 4px; border-radius: 50%; background: rgba(94,234,212,0.4); top: 60%; right: 8%; animation: aiParticleRise 6s ease-in-out infinite 2s; }
     .ai-entry-particles-extra::after { content: ''; position: absolute; width: 6px; height: 6px; border-radius: 50%; background: rgba(46,196,182,0.3); bottom: 40%; left: 15%; animation: aiParticleRise2 7s ease-in-out infinite 0.5s; }
-    /* AI入口脉冲环 */
+    /* AI entry pulse ring */
     .ai-entry-ring { position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; transform: translate(-50%,-50%); border: 2px solid rgba(93,196,179,0.15); border-radius: inherit; pointer-events: none; animation: aiRingPulse 3s ease-out infinite; z-index: 0; }
-    /* 导航栏AI按钮增强 */
+    /* Nav bar AI button enhanced */
     .nav-ai-btn { position: relative; gap: 5px; padding: 5px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #3DD8CA; background: linear-gradient(135deg, rgba(46,196,182,0.15), rgba(93,196,179,0.08)); border: 1px solid rgba(46,196,182,0.35); transition: all 0.3s cubic-bezier(0.28,0.11,0.32,1); cursor: pointer; animation: navAIPulse 2.5s ease-in-out infinite; }
     .nav-ai-btn:hover { background: linear-gradient(135deg, rgba(46,196,182,0.25), rgba(93,196,179,0.15)); box-shadow: 0 0 20px rgba(46,196,182,0.2); border-color: rgba(46,196,182,0.6); color: #5eead4; transform: translateY(-1px); }
     .nav-ai-btn::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; background: linear-gradient(135deg, rgba(93,196,179,0.3), transparent, rgba(46,196,182,0.2)); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     .nav-ai-btn:hover::after { opacity: 1; }
     .nav-ai-dot { width: 6px; height: 6px; border-radius: 50%; background: #5eead4; animation: pulse 1.5s ease-in-out infinite; flex-shrink: 0; }
-    /* 全局浮动AI入口 FAB */
+    /* Global floating AI entry FAB */
     .ai-builder-fab { position: fixed; bottom: 90px; right: 20px; z-index: 800; width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, #2EC4B6, #1a9e92); border: 1.5px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 20px; transition: all 0.3s cubic-bezier(0.28,0.11,0.32,1); animation: aiFabPulse 2.5s ease-in-out infinite; box-shadow: 0 4px 20px rgba(46,196,182,0.4); }
     .ai-builder-fab:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 32px rgba(46,196,182,0.5), 0 0 60px rgba(46,196,182,0.15); }
     .ai-builder-fab .fab-badge { position: absolute; top: -4px; right: -4px; background: #f59e0b; color: white; font-size: 8px; font-weight: 800; padding: 2px 5px; border-radius: 6px; line-height: 1; letter-spacing: 0.05em; }
@@ -241,7 +241,7 @@ app.get('/', (c) => {
     .ai-builder-fab-tooltip { position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); background: rgba(13,36,34,0.95); border: 1px solid rgba(46,196,182,0.25); border-radius: 10px; padding: 8px 14px; white-space: nowrap; opacity: 0; pointer-events: none; transition: all 0.25s; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
     .ai-builder-fab:hover .ai-builder-fab-tooltip { opacity: 1; transform: translateY(-50%) translateX(-4px); }
     .ai-builder-fab-tooltip::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%) rotate(45deg); width: 10px; height: 10px; background: rgba(13,36,34,0.95); border-right: 1px solid rgba(46,196,182,0.25); border-bottom: 1px solid rgba(46,196,182,0.25); }
-    /* AI统计卡片增强 */
+    /* AI stat card enhanced */
     .ai-stat-card { position: relative; overflow: hidden; padding: 10px 14px; background: linear-gradient(135deg, rgba(15,60,55,0.9), rgba(20,75,68,0.8)); border: 1.5px solid rgba(46,196,182,0.25); border-radius: 6px; transition: all 0.3s; cursor: pointer; animation: aiEntryBorderGlow 3s ease-in-out infinite; }
     .ai-stat-card:hover { border-color: rgba(46,196,182,0.5); background: linear-gradient(135deg, rgba(15,60,55,1), rgba(25,85,75,0.9)); box-shadow: 0 4px 20px rgba(46,196,182,0.15); transform: translateY(-1px); }
     .ai-stat-card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(93,196,179,0.08), transparent); animation: aiStatShine 4s ease-in-out infinite; pointer-events: none; }
@@ -250,7 +250,7 @@ app.get('/', (c) => {
     .lang-btn { padding: 3px 8px; font-size: 10px; font-weight: 700; color: #5A9A90; background: transparent; border: none; cursor: pointer; transition: all 0.2s; letter-spacing: 0.03em; }
     .lang-btn:hover { color: #8EBDB5; }
     .lang-btn.active { color: #3DD8CA; background: rgba(46,196,182,0.15); }
-    /* AI入口指引提示 */
+    /* AI entry guide hint */
     @keyframes aiHintBounce {
       0%, 100% { transform: translateY(0); }
       40% { transform: translateY(-8px); }
@@ -303,7 +303,7 @@ app.get('/', (c) => {
       animation: aiHintPointer 1.5s ease-in-out 2.5s infinite;
       display: inline-block;
     }
-    /* ===== 聚光灯效果：AI入口点亮 ===== */
+    /* ===== Spotlight effect: AI entry highlight ===== */
     @keyframes spotlightFadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -395,16 +395,16 @@ app.get('/', (c) => {
 </head>
 <body class="min-h-screen" style="background:#0B1E1C;">
 
-  <!-- ===== 聚光灯遮罩层 ===== -->
+  <!-- ===== Spotlight Overlay ===== -->
   <div id="spotlightOverlay" onclick="dismissSpotlight()"></div>
   <div id="spotlightLabel">
     <i class="fas fa-magic" style="color: #5eead4; font-size: 16px;"></i>
     <div>
-      <div class="spotlight-label-text">✨ 试试 AI 智能组合构建器</div>
-      <div class="spotlight-label-sub">与 AI 对话 · 智能匹配 · 一键构建专属投资组合</div>
+      <div class="spotlight-label-text">✨ Try the AI Portfolio Builder</div>
+      <div class="spotlight-label-sub">Chat with AI · Smart Matching · One-Click Portfolio Building</div>
     </div>
   </div>
-  <div id="spotlightDismissHint"><i class="fas fa-hand-pointer" style="margin-right: 4px;"></i>点击任意空白处继续浏览</div>
+  <div id="spotlightDismissHint"><i class="fas fa-hand-pointer" style="margin-right: 4px;"></i>Click anywhere to continue browsing</div>
 
   <!-- ==================== Loading Screen ==================== -->
   <div id="app-loading">
@@ -413,8 +413,8 @@ app.get('/', (c) => {
       <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #28A696 0%, #2EC4B6 100%); position:absolute; bottom:0; left:4px; box-shadow: 0 4px 20px rgba(40,166,150,0.35); opacity:0.85; animation: pulse 2s ease-in-out infinite 0.3s;"></div>
     </div>
     <div class="loading-text" style="font-family:'Montserrat',sans-serif; font-weight:900; letter-spacing:0.05em;">DEAL CONNECT</div>
-    <div class="loading-sub" style="font-size:14px; letter-spacing:0.15em; margin-top:4px;">参与通</div>
-    <div class="loading-sub" id="loadingStatus" style="margin-top:12px;">正在初始化...</div>
+    <div class="loading-sub" style="font-size:14px; letter-spacing:0.15em; margin-top:4px;">DEAL CONNECT</div>
+    <div class="loading-sub" id="loadingStatus" style="margin-top:12px;">Initializing...</div>
     <div style="width: 200px; height: 3px; background: rgba(255,255,255,0.15); border-radius: 99px; margin-top: 16px; overflow: hidden;">
       <div id="loadingBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #2EC4B6, #3DD8CA); border-radius: 99px; transition: width 0.4s ease;"></div>
     </div>
@@ -438,59 +438,59 @@ app.get('/', (c) => {
         </div>
       </div>
       <div class="p-8 relative overflow-hidden" style="min-height: 280px; background:rgba(11,30,28,0.95);">
-        <!-- Step 0: 欢迎 -->
+        <!-- Step 0: Welcome -->
         <div id="obStep0" class="ob-step active text-center">
-          <h2 class="text-2xl font-bold mb-3" style="color:#E8F5F3;">欢迎使用参与通</h2>
-          <p class="mb-8" style="color:#5A9A90;">投资者的智能机会看板 — 精准匹配，高效参与</p>
+          <h2 class="text-2xl font-bold mb-3" style="color:#E8F5F3;">Welcome to Deal Connect</h2>
+          <p class="mb-8" style="color:#5A9A90;">Intelligent opportunity board for investors — Precise matching, efficient participation</p>
           <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="p-4 rounded-2xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(245,158,11,0.15);"><i class="fas fa-paper-plane text-xl" style="color:#fbbf24;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">发起通</p><p class="text-xs mt-1" style="color:#5A9A90;">机会来源</p></div>
-            <div class="p-4 rounded-2xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(6,182,212,0.15);"><i class="fas fa-filter text-xl" style="color:#22d3ee;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">评估通筛子</p><p class="text-xs mt-1" style="color:#5A9A90;">AI精筛</p></div>
-            <div class="p-4 rounded-2xl" style="background:rgba(46,196,182,0.08);border:1px solid rgba(46,196,182,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(46,196,182,0.15);"><i class="fas fa-hand-pointer text-xl" style="color:#3DD8CA;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">参与决策</p><p class="text-xs mt-1" style="color:#5A9A90;">你的选择</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(245,158,11,0.15);"><i class="fas fa-paper-plane text-xl" style="color:#fbbf24;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">Originate</p><p class="text-xs mt-1" style="color:#5A9A90;">Deal Source</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(6,182,212,0.15);"><i class="fas fa-filter text-xl" style="color:#22d3ee;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">Assess Sieves</p><p class="text-xs mt-1" style="color:#5A9A90;">AI Filtering</p></div>
+            <div class="p-4 rounded-2xl" style="background:rgba(46,196,182,0.08);border:1px solid rgba(46,196,182,0.15);"><div class="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(46,196,182,0.15);"><i class="fas fa-hand-pointer text-xl" style="color:#3DD8CA;"></i></div><p class="text-sm font-medium" style="color:#E8F5F3;">Deal Decision</p><p class="text-xs mt-1" style="color:#5A9A90;">Your Choice</p></div>
           </div>
         </div>
-        <!-- Step 1: 发起通来源 -->
+        <!-- Step 1: Originate Source -->
         <div id="obStep1" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
             <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(245,158,11,0.25);"><i class="fas fa-paper-plane text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#fbbf24;">数据来源</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">机会来自发起通</h3><p class="mb-4" style="color:#5A9A90;">融资方通过「发起通」上传经营数据、商业计划，生成标准化的投资机会。这些机会经过平台初筛后流入参与通。</p>
-              <div class="flex items-center space-x-4 text-sm"><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>标准化数据</span></div><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>实时更新</span></div></div>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#fbbf24;">DATA SOURCE</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">Opportunities from Originate</h3><p class="mb-4" style="color:#5A9A90;">Fundraisers upload business data and plans through Originate, generating standardized investment opportunities. These are pre-screened before flowing into Deal Connect.</p>
+              <div class="flex items-center space-x-4 text-sm"><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>Standardized Data</span></div><div class="flex items-center" style="color:#5A9A90;"><i class="fas fa-check-circle text-amber-500 mr-2"></i><span>Real-time Updates</span></div></div>
             </div>
           </div>
         </div>
-        <!-- Step 2: 评估通筛子 -->
+        <!-- Step 2: Assess Sieves -->
         <div id="obStep2" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
             <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(6,182,212,0.25);"><i class="fas fa-filter text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#22d3ee;">智能筛选</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">评估通提供AI筛子</h3><p class="mb-4" style="color:#5A9A90;">评估通内置多种AI筛选模型（筛子），每个筛子有不同的评估标准。选择筛子后，只展示通过该筛子的项目；不选则看到全部。</p>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#22d3ee;">SMART FILTERING</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">AI Sieves from Assess</h3><p class="mb-4" style="color:#5A9A90;">Assess provides multiple AI filtering models (sieves), each with different evaluation criteria. Select a sieve to show only passing opportunities; select none to view all.</p>
               <div class="flex flex-wrap gap-2">
-                <span class="sieve-chip active"><i class="fas fa-brain"></i>行业偏好</span>
-                <span class="sieve-chip"><i class="fas fa-shield-alt"></i>风控优先</span>
-                <span class="sieve-chip"><i class="fas fa-chart-line"></i>高回报</span>
+                <span class="sieve-chip active"><i class="fas fa-brain"></i>Industry Pref.</span>
+                <span class="sieve-chip"><i class="fas fa-shield-alt"></i>Risk-First</span>
+                <span class="sieve-chip"><i class="fas fa-chart-line"></i>High Return</span>
               </div>
             </div>
           </div>
         </div>
-        <!-- Step 3: 参与决策 -->
+        <!-- Step 3: Deal Decision -->
         <div id="obStep3" class="ob-step" style="display:none;">
           <div class="flex items-start space-x-6">
             <div class="flex-shrink-0"><div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl flex items-center justify-center" style="box-shadow:0 8px 24px rgba(46,196,182,0.25);"><i class="fas fa-hand-pointer text-white text-2xl"></i></div></div>
-            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#3DD8CA;">投资参与</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">筛后精准参与</h3><p class="mb-4" style="color:#5A9A90;">在筛后的高质量机会中，查看详细评估报告、对比项目，对心仪项目表达参与意向。后续流入条款通和合约通。</p>
+            <div class="flex-1"><span class="text-xs font-semibold uppercase tracking-wide" style="color:#3DD8CA;">DEAL PARTICIPATION</span><h3 class="text-xl font-bold mt-1 mb-3" style="color:#E8F5F3;">Precise Participation After Filtering</h3><p class="mb-4" style="color:#5A9A90;">Among filtered high-quality opportunities, review detailed assessment reports, compare deals, and express interest. Next steps flow into Terms and Contracts.</p>
               <div class="flex items-center space-x-3">
-                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(46,196,182,0.12);color:#3DD8CA;"><i class="fas fa-eye mr-1"></i>浏览筛后</div>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(46,196,182,0.12);color:#3DD8CA;"><i class="fas fa-eye mr-1"></i>Browse Filtered</div>
                 <i class="fas fa-arrow-right" style="color:#2A5E58;"></i>
-                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(16,185,129,0.12);color:#34d399;"><i class="fas fa-hand-point-up mr-1"></i>表达意向</div>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(16,185,129,0.12);color:#34d399;"><i class="fas fa-hand-point-up mr-1"></i>Express Interest</div>
                 <i class="fas fa-arrow-right" style="color:#2A5E58;"></i>
-                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(6,182,212,0.12);color:#22d3ee;"><i class="fas fa-file-contract mr-1"></i>进入条款</div>
+                <div class="px-3 py-1.5 rounded-lg text-sm font-medium" style="background:rgba(6,182,212,0.12);color:#22d3ee;"><i class="fas fa-file-contract mr-1"></i>Enter Terms</div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="px-8 pb-8 flex items-center justify-between">
-        <button onclick="closeOnboarding()" class="text-sm transition-colors" style="color:#5A9A90;">跳过教程</button>
+        <button onclick="closeOnboarding()" class="text-sm transition-colors" style="color:#5A9A90;">Skip Tutorial</button>
         <div class="flex items-center space-x-3">
-          <button id="obPrev" onclick="obPrev()" class="hidden px-4 py-2 rounded-xl transition-all" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;"><i class="fas fa-arrow-left mr-2"></i>上一步</button>
-          <button id="obNext" onclick="obNext()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-600 hover:to-cyan-600 transition-all font-medium" style="box-shadow:0 8px 24px rgba(46,196,182,0.25);">开始探索<i class="fas fa-arrow-right ml-2"></i></button>
+          <button id="obPrev" onclick="obPrev()" class="hidden px-4 py-2 rounded-xl transition-all" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;"><i class="fas fa-arrow-left mr-2"></i>Previous</button>
+          <button id="obNext" onclick="obNext()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-600 hover:to-cyan-600 transition-all font-medium" style="box-shadow:0 8px 24px rgba(46,196,182,0.25);">Start Exploring<i class="fas fa-arrow-right ml-2"></i></button>
         </div>
       </div>
     </div>
@@ -508,31 +508,31 @@ app.get('/', (c) => {
           <h1 style="font-family:'Montserrat',sans-serif; font-weight:900; font-size:22px; letter-spacing:0.04em; color:#E8F5F3; line-height:1.15; margin-bottom:6px;">DEAL<br>CONNECT</h1>
           <div style="width:120px; height:2.5px; background:#2EC4B6; margin:8px auto 10px; border-radius:2px;"></div>
           <p style="font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:0.2em; color:#5A9A90; font-weight:500;">POWERED BY MICRO CONNECT GROUP</p>
-          <p class="text-lg font-bold mt-3" style="color:#E8F5F3;">参与通</p>
-          <p class="text-xs mt-1" style="color:#5A9A90;">投资者的智能机会看板</p>
+          <p class="text-lg font-bold mt-3" style="color:#E8F5F3;">Deal Connect</p>
+          <p class="text-xs mt-1" style="color:#5A9A90;">Intelligent Opportunity Board for Investors</p>
         </div>
         <div class="flex" style="border-bottom: 1px solid rgba(46,196,182,0.1);">
-          <button onclick="switchAuthTab('login')" id="tabLogin" class="flex-1 py-3 text-center font-semibold" style="color:#2EC4B6; border-bottom: 2px solid #2EC4B6;" data-i18n="authLogin">登录</button>
-          <button onclick="switchAuthTab('register')" id="tabRegister" class="flex-1 py-3 text-center font-semibold" style="color:#5A9A90;" data-i18n="authRegister">注册</button>
+          <button onclick="switchAuthTab('login')" id="tabLogin" class="flex-1 py-3 text-center font-semibold" style="color:#2EC4B6; border-bottom: 2px solid #2EC4B6;" data-i18n="authLogin">Login</button>
+          <button onclick="switchAuthTab('register')" id="tabRegister" class="flex-1 py-3 text-center font-semibold" style="color:#5A9A90;" data-i18n="authRegister">Register</button>
         </div>
         <!-- Login Form -->
         <div id="formLogin" class="p-6">
           <form onsubmit="event.preventDefault(); handleLogin();" autocomplete="on">
           <div class="space-y-4">
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">用户名 / 邮箱</label><input type="text" id="loginUsername" placeholder="请输入用户名或邮箱" autocomplete="username" class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()"></div>
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">密码</label><div class="password-wrapper" style="position:relative;"><input type="password" id="loginPassword" placeholder="请输入密码" autocomplete="current-password" class="w-full px-4 py-3 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('loginPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Username / Email</label><input type="text" id="loginUsername" placeholder="Enter username or email" autocomplete="username" class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" onkeydown="if(event.key==='Enter')document.getElementById('loginPassword').focus()"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Password</label><div class="password-wrapper" style="position:relative;"><input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" class="w-full px-4 py-3 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('loginPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
             <div class="flex items-center justify-between text-sm">
-              <label class="flex items-center cursor-pointer whitespace-nowrap" style="color:#5A9A90;"><input type="checkbox" id="rememberMe" class="mr-2 rounded" style="width:16px;height:16px;flex-shrink:0;"><span>记住我</span></label>
-              <a href="#" class="text-[#3DD8CA] hover:text-[#2EC4B6]" onclick="event.preventDefault(); showToast('info','密码重置','此功能即将上线')">忘记密码？</a>
+              <label class="flex items-center cursor-pointer whitespace-nowrap" style="color:#5A9A90;"><input type="checkbox" id="rememberMe" class="mr-2 rounded" style="width:16px;height:16px;flex-shrink:0;"><span>Remember me</span></label>
+              <a href="#" class="text-[#3DD8CA] hover:text-[#2EC4B6]" onclick="event.preventDefault(); showToast('info','Password Reset','This feature is coming soon')">Forgot password?</a>
             </div>
-            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-sign-in-alt mr-2"></i><span data-i18n="authLoginBtn">登录</span></button>
-            <button type="button" onclick="handleGuestLogin()" class="w-full py-3 rounded-xl font-medium transition-colors" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;background:rgba(46,196,182,0.05);"><i class="fas fa-user-secret mr-2"></i><span data-i18n="authGuestBtn">游客快速体验</span></button>
+            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-sign-in-alt mr-2"></i><span data-i18n="authLoginBtn">Login</span></button>
+            <button type="button" onclick="handleGuestLogin()" class="w-full py-3 rounded-xl font-medium transition-colors" style="border:1px solid rgba(46,196,182,0.2);color:#8EBDB5;background:rgba(46,196,182,0.05);"><i class="fas fa-user-secret mr-2"></i><span data-i18n="authGuestBtn">Quick Guest Access</span></button>
           </div>
           <p id="loginError" class="hidden mt-4 text-sm text-red-500 text-center"></p>
           </form>
           <div class="mt-6 pt-6" style="border-top:1px solid rgba(46,196,182,0.1);">
-            <p class="text-xs text-center mb-3" style="color:#5A9A90;">企业用户</p>
-            <button onclick="showToast('info','SSO登录即将上线','企业统一认证接口已预留')" class="w-full py-3 rounded-xl font-medium transition-colors flex items-center justify-center" style="background:rgba(46,196,182,0.06);color:#5A9A90;"><i class="fas fa-building mr-2"></i>公司SSO登录（即将上线）</button>
+            <p class="text-xs text-center mb-3" style="color:#5A9A90;">Enterprise Users</p>
+            <button onclick="showToast('info','SSO Coming Soon','Enterprise unified authentication interface reserved')" class="w-full py-3 rounded-xl font-medium transition-colors flex items-center justify-center" style="background:rgba(46,196,182,0.06);color:#5A9A90;"><i class="fas fa-building mr-2"></i>Company SSO Login (Coming Soon)</button>
           </div>
         </div>
         <!-- Register Form -->
@@ -540,29 +540,29 @@ app.get('/', (c) => {
           <form onsubmit="event.preventDefault(); handleRegister();" autocomplete="on">
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-3">
-              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">用户名 <span class="text-red-500">*</span></label><input type="text" id="regUsername" placeholder="用于登录" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
-              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">姓名</label><input type="text" id="regDisplayName" placeholder="显示名称" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Username <span class="text-red-500">*</span></label><input type="text" id="regUsername" placeholder="For login" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+              <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Display Name</label><input type="text" id="regDisplayName" placeholder="Display name" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
             </div>
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">邮箱 <span class="text-red-500">*</span></label><input type="email" id="regEmail" placeholder="your@email.com" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">手机号</label><input type="tel" id="regPhone" placeholder="13800138000" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
-            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">密码 <span class="text-red-500">*</span></label><div class="password-wrapper" style="position:relative;"><input type="password" id="regPassword" placeholder="至少6位" autocomplete="new-password" class="w-full px-4 py-2.5 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('regPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
-            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-user-plus mr-2"></i>注册</button>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Email <span class="text-red-500">*</span></label><input type="email" id="regEmail" placeholder="your@email.com" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Phone</label><input type="tel" id="regPhone" placeholder="+1 (555) 000-0000" class="w-full px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"></div>
+            <div><label class="block text-sm font-medium mb-1" style="color:#8EBDB5;">Password <span class="text-red-500">*</span></label><div class="password-wrapper" style="position:relative;"><input type="password" id="regPassword" placeholder="At least 6 characters" autocomplete="new-password" class="w-full px-4 py-2.5 pr-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;"><button type="button" onclick="togglePwdVis('regPassword', this)" class="password-toggle" tabindex="-1" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A9A90;cursor:pointer;padding:4px;"><i class="fas fa-eye"></i></button></div></div>
+            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-medium shadow-lg"><i class="fas fa-user-plus mr-2"></i>Register</button>
           </div>
           <p id="regError" class="hidden mt-4 text-sm text-red-500 text-center"></p>
           </form>
         </div>
-        <div class="px-6 pb-4 text-center"><p class="text-xs" style="color:#3D7A70;">&copy; 2026 参与通 Deal Connect · Micro Connect Group</p></div>
+        <div class="px-6 pb-4 text-center"><p class="text-xs" style="color:#3D7A70;">&copy; 2026 Deal Connect · Micro Connect Group</p></div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== Page 1: Dashboard (投资者看板) ==================== -->
+  <!-- ==================== Page 1: Dashboard (Investor Board) ==================== -->
   <div id="pageDashboard" class="page flex-col min-h-screen grid-bg">
     <!-- Bloomberg-style Top Bar -->
     <nav style="background:rgba(8,24,22,0.98);border-bottom:1px solid rgba(46,196,182,0.12);backdrop-filter:blur(12px);">
-      <!-- 主导航行 -->
+      <!-- Main navigation row -->
       <div class="max-w-7xl mx-auto flex items-center justify-between" style="padding:8px 20px;">
-        <!-- 左：品牌 + 导航 -->
+        <!-- Left: Brand + Nav -->
         <div class="flex items-center" style="gap:16px;">
           <div class="flex items-center" style="gap:8px;">
             <div style="width:28px; height:32px; position:relative; flex-shrink:0;">
@@ -571,23 +571,23 @@ app.get('/', (c) => {
             </div>
             <div>
               <h1 style="color:#3DD8CA; font-family:'Montserrat',sans-serif; font-weight:800; font-size:13px; letter-spacing:0.08em; line-height:1.2;">DEAL CONNECT</h1>
-              <p style="color:#3D7A70; font-size:9px; letter-spacing:0.12em; font-weight:600; font-family:'Montserrat',sans-serif;">参与通 · MICRO CONNECT</p>
+              <p style="color:#3D7A70; font-size:9px; letter-spacing:0.12em; font-weight:600; font-family:'Montserrat',sans-serif;">DEAL CONNECT · MICRO CONNECT</p>
             </div>
           </div>
           <div style="width:1px;height:24px;background:rgba(46,196,182,0.12);"></div>
-          <!-- 导航快捷键 Bloomberg风格 -->
+          <!-- Navigation shortcuts Bloomberg-style -->
           <div class="hidden sm:flex items-center" style="gap:4px;">
-            <button onclick="selectSieve('all')" class="flex items-center" style="gap:4px;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;color:#8EBDB5;background:rgba(46,196,182,0.08);border:1px solid rgba(46,196,182,0.12);transition:all 0.15s;cursor:pointer;" onmouseover="this.style.background='rgba(46,196,182,0.15)';this.style.color='#3DD8CA'" onmouseout="this.style.background='rgba(46,196,182,0.08)';this.style.color='#8EBDB5'"><i class="fas fa-th-large" style="font-size:10px;"></i><span data-i18n="navDashboard">看板</span></button>
-            <button onclick="goToMyContracts()" class="flex items-center" style="gap:4px;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;color:#8EBDB5;background:transparent;border:1px solid transparent;transition:all 0.15s;cursor:pointer;" onmouseover="this.style.background='rgba(46,196,182,0.08)';this.style.borderColor='rgba(46,196,182,0.12)'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent'"><i class="fas fa-file-contract" style="font-size:10px;"></i><span data-i18n="navContracts">合约</span></button>
-            <button onclick="goToMyPortfolios()" class="flex items-center" style="gap:4px;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;color:#8EBDB5;background:transparent;border:1px solid transparent;transition:all 0.15s;cursor:pointer;" onmouseover="this.style.background='rgba(46,196,182,0.08)';this.style.borderColor='rgba(46,196,182,0.12)'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent'"><i class="fas fa-object-group" style="font-size:10px;"></i><span data-i18n="navPortfolios">组合</span></button>
+            <button onclick="selectSieve('all')" class="flex items-center" style="gap:4px;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;color:#8EBDB5;background:rgba(46,196,182,0.08);border:1px solid rgba(46,196,182,0.12);transition:all 0.15s;cursor:pointer;" onmouseover="this.style.background='rgba(46,196,182,0.15)';this.style.color='#3DD8CA'" onmouseout="this.style.background='rgba(46,196,182,0.08)';this.style.color='#8EBDB5'"><i class="fas fa-th-large" style="font-size:10px;"></i><span data-i18n="navDashboard">Board</span></button>
+            <button onclick="goToMyContracts()" class="flex items-center" style="gap:4px;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;color:#8EBDB5;background:transparent;border:1px solid transparent;transition:all 0.15s;cursor:pointer;" onmouseover="this.style.background='rgba(46,196,182,0.08)';this.style.borderColor='rgba(46,196,182,0.12)'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent'"><i class="fas fa-file-contract" style="font-size:10px;"></i><span data-i18n="navContracts">Contracts</span></button>
+            <button onclick="goToMyPortfolios()" class="flex items-center" style="gap:4px;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;color:#8EBDB5;background:transparent;border:1px solid transparent;transition:all 0.15s;cursor:pointer;" onmouseover="this.style.background='rgba(46,196,182,0.08)';this.style.borderColor='rgba(46,196,182,0.12)'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent'"><i class="fas fa-object-group" style="font-size:10px;"></i><span data-i18n="navPortfolios">Portfolios</span></button>
           </div>
         </div>
-        <!-- 右：工具栏 -->
+        <!-- Right: Toolbar -->
         <div class="flex items-center" style="gap:6px;">
-          <button onclick="goToAIBuilder()" class="flex items-center nav-ai-btn"><span class="nav-ai-dot"></span><i class="fas fa-magic" style="font-size:10px;"></i><span data-i18n="navAIBuilder">AI 组合</span></button>
+          <button onclick="goToAIBuilder()" class="flex items-center nav-ai-btn"><span class="nav-ai-dot"></span><i class="fas fa-magic" style="font-size:10px;"></i><span data-i18n="navAIBuilder">AI Portfolio</span></button>
           <!-- Language Toggle -->
           <div class="lang-toggle">
-            <button id="langZH" class="lang-btn active" onclick="setLanguage('zh')">中</button>
+            <button id="langZH" class="lang-btn active" onclick="setLanguage('zh')">ZH</button>
             <button id="langEN" class="lang-btn" onclick="setLanguage('en')">EN</button>
           </div>
           <button onclick="showOnboarding()" style="width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#5A9A90;background:transparent;border:1px solid transparent;transition:all 0.15s;cursor:pointer;font-size:12px;" onmouseover="this.style.background='rgba(46,196,182,0.08)';this.style.borderColor='rgba(46,196,182,0.12)'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent'"><i class="fas fa-question-circle"></i></button>
@@ -596,23 +596,23 @@ app.get('/', (c) => {
           <div class="relative">
             <button onclick="toggleUserDD(event)" id="navUserBtn" class="flex items-center" style="gap:6px;padding:3px 8px 3px 3px;border-radius:6px;background:rgba(46,196,182,0.04);transition:all 0.15s;cursor:pointer;border:1px solid transparent;" onmouseover="this.style.background='rgba(93,196,179,0.1)';this.style.borderColor='rgba(46,196,182,0.12)'" onmouseout="this.style.background='rgba(46,196,182,0.04)';this.style.borderColor='transparent'">
               <div id="navAvatar" class="flex items-center justify-center text-white font-bold" style="width:26px;height:26px;border-radius:6px;font-size:10px;background:linear-gradient(135deg, #5DC4B3, #3D8F83);">U</div>
-              <span id="navName" style="font-size:11px;font-weight:600;color:#8EBDB5;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">用户</span>
+              <span id="navName" style="font-size:11px;font-weight:600;color:#8EBDB5;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">User</span>
               <i class="fas fa-chevron-down" style="color:#3D7A70;font-size:8px;"></i>
             </button>
             <div id="userDropdown" class="user-dropdown">
-              <div class="user-dropdown-header"><div class="flex items-center space-x-3"><div id="ddAvatar" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83);">U</div><div><div id="ddName" class="font-semibold text-sm" style="color:#E8F5F3;">用户</div><div id="ddRole" class="text-xs" style="color:#5A9A90;">投资者</div></div></div></div>
+              <div class="user-dropdown-header"><div class="flex items-center space-x-3"><div id="ddAvatar" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83);">U</div><div><div id="ddName" class="font-semibold text-sm" style="color:#E8F5F3;">User</div><div id="ddRole" class="text-xs" style="color:#5A9A90;">Investor</div></div></div></div>
               <div class="py-1">
-                <button class="user-dropdown-item" onclick="showToast('info','个人中心','功能开发中'); closeUserDD();"><i class="fas fa-user-circle"></i>个人中心</button>
-                <button class="user-dropdown-item" onclick="showToast('info','筛子偏好','可在评估通中管理您的筛子模型'); closeUserDD();"><i class="fas fa-sliders-h"></i>筛子偏好设置</button>
-                <button class="user-dropdown-item" onclick="showOnboarding(); closeUserDD();"><i class="fas fa-graduation-cap"></i>新手引导</button>
+                <button class="user-dropdown-item" onclick="showToast('info','Profile','Feature under development'); closeUserDD();"><i class="fas fa-user-circle"></i>Profile</button>
+                <button class="user-dropdown-item" onclick="showToast('info','Sieve Preferences','Manage your sieve models in Assess'); closeUserDD();"><i class="fas fa-sliders-h"></i>Sieve Preferences</button>
+                <button class="user-dropdown-item" onclick="showOnboarding(); closeUserDD();"><i class="fas fa-graduation-cap"></i>User Guide</button>
                 <div class="user-dropdown-divider"></div>
-                <button class="user-dropdown-item danger" onclick="closeUserDD(); handleLogout();"><i class="fas fa-sign-out-alt"></i>退出登录</button>
+                <button class="user-dropdown-item danger" onclick="closeUserDD(); handleLogout();"><i class="fas fa-sign-out-alt"></i>Sign Out</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- 数据Ticker行 — Bloomberg风格实时数据条 -->
+      <!-- Data Ticker Row — Bloomberg-style live data bar -->
       <div style="border-top:1px solid rgba(46,196,182,0.06);background:rgba(6,20,18,0.6);">
         <div class="max-w-7xl mx-auto flex items-center justify-between" style="padding:5px 20px;">
           <div class="flex items-center" style="gap:16px;">
@@ -639,11 +639,11 @@ app.get('/', (c) => {
           <div class="flex items-center" style="gap:12px;">
             <div class="hidden sm:flex items-center" style="gap:6px;">
               <span style="font-size:10px;color:#3D7A70;font-weight:500;">SOURCE</span>
-              <span style="font-size:10px;font-weight:700;color:#fbbf24;"><i class="fas fa-paper-plane" style="font-size:8px;margin-right:2px;"></i><span data-i18n="tickerSourceVal">发起通</span></span>
+              <span style="font-size:10px;font-weight:700;color:#fbbf24;"><i class="fas fa-paper-plane" style="font-size:8px;margin-right:2px;"></i><span data-i18n="tickerSourceVal">Originate</span></span>
             </div>
             <div class="hidden sm:flex items-center" style="gap:6px;">
               <span style="font-size:10px;color:#3D7A70;font-weight:500;">FILTER</span>
-              <span style="font-size:10px;font-weight:700;color:#22d3ee;"><i class="fas fa-filter" style="font-size:8px;margin-right:2px;"></i><span data-i18n="tickerFilterVal">评估通</span></span>
+              <span style="font-size:10px;font-weight:700;color:#22d3ee;"><i class="fas fa-filter" style="font-size:8px;margin-right:2px;"></i><span data-i18n="tickerFilterVal">Assess</span></span>
             </div>
             <div class="flex items-center" style="gap:4px;">
               <div style="width:6px;height:6px;border-radius:50%;background:#34d399;animation:pulse 2s infinite;"></div>
@@ -657,19 +657,19 @@ app.get('/', (c) => {
 
     <div class="flex-1 p-4">
       <div class="max-w-7xl mx-auto">
-        <!-- Terminal Welcome Bar — 紧凑替代Hero Banner -->
+        <!-- Terminal Welcome Bar — Compact Hero Banner -->
         <div class="flex items-center justify-between mb-4" style="padding:10px 16px;background:rgba(8,24,22,0.6);border:1px solid rgba(46,196,182,0.08);border-radius:8px;">
           <div class="flex items-center" style="gap:12px;">
-            <h2 style="font-size:14px;font-weight:700;color:#E8F5F3;letter-spacing:-0.02em;" id="welcomeText" data-i18n="welcomeBack">欢迎回来</h2>
+            <h2 style="font-size:14px;font-weight:700;color:#E8F5F3;letter-spacing:-0.02em;" id="welcomeText" data-i18n="welcomeBack">Welcome back</h2>
             <span style="font-size:11px;color:#3D7A70;">|</span>
-            <p style="font-size:12px;color:#5A9A90;" id="welcomeSubText" data-i18n="welcomeSubDefault">发起通的投资机会，经您的评估通筛子精选后展示于此</p>
+            <p style="font-size:12px;color:#5A9A90;" id="welcomeSubText" data-i18n="welcomeSubDefault">Investment opportunities from Originate, filtered by your Assess sieves</p>
           </div>
           <div class="hidden sm:flex items-center" style="gap:8px;">
             <span style="font-size:10px;color:#3D7A70;font-family:'SF Mono','Fira Code',monospace;" id="terminalDate"></span>
           </div>
         </div>
 
-        <!-- Terminal Stats — 紧凑的monospace数据卡片 -->
+        <!-- Terminal Stats — Compact monospace data cards -->
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
           <div class="cursor-pointer" onclick="selectSieve('all')" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(99,102,241,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
@@ -677,7 +677,7 @@ app.get('/', (c) => {
               <i class="fas fa-layer-group" style="font-size:10px;color:#818cf8;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#818cf8;margin-top:4px;line-height:1;" id="statTotalContracts">0</p>
-            <p style="font-size:10px;color:#3D7A70;margin-top:2px;" data-i18n="statContractsDesc">平台全部合约</p>
+            <p style="font-size:10px;color:#3D7A70;margin-top:2px;" data-i18n="statContractsDesc">Total Platform Contracts</p>
           </div>
           <div class="cursor-pointer" onclick="selectSieve('all')" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(245,158,11,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
@@ -685,7 +685,7 @@ app.get('/', (c) => {
               <i class="fas fa-exchange-alt" style="font-size:10px;color:#fbbf24;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#fbbf24;margin-top:4px;line-height:1;" id="statTotalTransactions">0</p>
-            <p style="font-size:10px;color:#3D7A70;margin-top:2px;" data-i18n="statDealsDesc">已完成交易</p>
+            <p style="font-size:10px;color:#3D7A70;margin-top:2px;" data-i18n="statDealsDesc">Completed Transactions</p>
           </div>
           <div class="cursor-pointer" onclick="goToMyContracts()" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(52,211,153,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
@@ -693,7 +693,7 @@ app.get('/', (c) => {
               <i class="fas fa-file-contract" style="font-size:10px;color:#34d399;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#34d399;margin-top:4px;line-height:1;" id="statMyContracts">0</p>
-            <p style="font-size:10px;color:#3D7A70;margin-top:2px;" data-i18n="statMyPosDesc">已认购张数</p>
+            <p style="font-size:10px;color:#3D7A70;margin-top:2px;" data-i18n="statMyPosDesc">Subscribed Contracts</p>
           </div>
           <div class="cursor-pointer" onclick="goToMyPortfolios()" style="padding:10px 14px;background:rgba(15,46,43,0.7);border:1px solid rgba(46,196,182,0.08);border-radius:6px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(139,92,246,0.3)';this.style.background='rgba(15,46,43,0.9)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.08)';this.style.background='rgba(15,46,43,0.7)'">
             <div class="flex items-center justify-between">
@@ -701,26 +701,26 @@ app.get('/', (c) => {
               <i class="fas fa-object-group" style="font-size:10px;color:#818cf8;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#818cf8;margin-top:4px;line-height:1;" id="statMyPortfolios">0</p>
-            <p style="font-size:10px;color:#3D7A70;margin-top:2px;" data-i18n="statPortfoliosDesc">投资组合</p>
+            <p style="font-size:10px;color:#3D7A70;margin-top:2px;" data-i18n="statPortfoliosDesc">Investment Portfolios</p>
           </div>
-          <!-- AI BUILDER 专属卡片 -->
+          <!-- AI BUILDER Card -->
           <div class="ai-stat-card cursor-pointer" onclick="goToAIBuilder()">
             <div class="flex items-center justify-between">
               <span style="font-size:10px;color:#2EC4B6;font-weight:700;letter-spacing:0.05em;">AI BUILDER</span>
               <i class="fas fa-magic" style="font-size:10px;color:#5eead4;"></i>
             </div>
             <p style="font-family:'SF Mono','Fira Code',monospace;font-size:20px;font-weight:800;color:#5eead4;margin-top:4px;line-height:1;" id="statAIReady"><i class="fas fa-bolt" style="font-size:16px;"></i></p>
-            <p style="font-size:10px;color:#2EC4B6;margin-top:2px;font-weight:600;" data-i18n="statAIBuilderAction">点击开始构建 →</p>
+            <p style="font-size:10px;color:#2EC4B6;margin-top:2px;font-weight:600;" data-i18n="statAIBuilderAction">Start building →</p>
           </div>
         </div>
 
-        <!-- ===== AI 组合构建器入口 — 强化版 ===== -->
+        <!-- ===== AI Portfolio Builder Entry — Enhanced ===== -->
         <div class="relative mb-5" id="aiEntryWrapper" style="margin-bottom: 72px;">
           <div onclick="dismissSpotlight(); goToAIBuilder(); dismissAIHint();" class="ai-entry-card rounded-2xl p-0" style="background: linear-gradient(135deg, #0a3530 0%, #0f4a42 35%, #1a5f55 70%, #175248 100%); background-size: 200% 200%; animation: aiEntryPulse 3s ease-in-out infinite, aiEntryBorderGlow 3s ease-in-out infinite, aiEntryGradientShift 8s ease-in-out infinite;">
             <div class="ai-entry-particles"></div>
             <div class="ai-entry-particles-extra"></div>
             <div class="ai-entry-ring" style="border-radius: 16px;"></div>
-            <!-- 顶部渐变装饰线 -->
+            <!-- Top gradient decoration line -->
             <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, #2EC4B6, #5eead4, #06b6d4, #2EC4B6);background-size:200% 100%;animation:aiEntryShimmer 3s linear infinite;border-radius:16px 16px 0 0;z-index:2;"></div>
             <div class="relative z-10 flex items-center justify-between p-5" style="padding: 20px 24px;">
               <div class="flex items-center gap-5">
@@ -729,15 +729,15 @@ app.get('/', (c) => {
                 </div>
                 <div>
                   <div class="flex items-center gap-2 mb-1.5">
-                    <h3 style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.02em;" data-i18n="aiEntryTitle">AI 智能组合构建器</h3>
+                    <h3 style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-0.02em;" data-i18n="aiEntryTitle">AI Portfolio Architect</h3>
                     <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:linear-gradient(135deg, #f59e0b, #f97316);color:#fff;font-size:10px;letter-spacing:0.05em;box-shadow:0 2px 8px rgba(245,158,11,0.3);">HOT</span>
-                    <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(46,196,182,0.15);color:#5eead4;font-size:10px;animation:pulseGlow 2s ease-in-out infinite;" data-i18n="aiEntryPilot">试点功能</span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="background:rgba(46,196,182,0.15);color:#5eead4;font-size:10px;animation:pulseGlow 2s ease-in-out infinite;" data-i18n="aiEntryPilot">PILOT</span>
                   </div>
-                  <p style="font-size:13px;color:#8EBDB5;line-height:1.5;" data-i18n="aiEntryDesc">与 AI 对话，智能匹配全平台合约 · 一键构建您的专属投资组合</p>
+                  <p style="font-size:13px;color:#8EBDB5;line-height:1.5;" data-i18n="aiEntryDesc">Converse with AI to match contracts platform-wide · Build your personalized portfolio in one click</p>
                   <div class="flex items-center gap-3 mt-2">
-                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i><span data-i18n="aiEntryFeature1">智能风控匹配</span></span>
-                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i><span data-i18n="aiEntryFeature2">多维度评估</span></span>
-                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i><span data-i18n="aiEntryFeature3">一键认购</span></span>
+                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i><span data-i18n="aiEntryFeature1">Smart Risk Matching</span></span>
+                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i><span data-i18n="aiEntryFeature2">Multi-Dimension Analysis</span></span>
+                    <span style="font-size:11px;color:#5A9A90;display:flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="color:#34d399;font-size:10px;"></i><span data-i18n="aiEntryFeature3">One-Click Subscribe</span></span>
                   </div>
                 </div>
               </div>
@@ -745,12 +745,12 @@ app.get('/', (c) => {
                 <div class="hidden sm:flex items-center gap-5 mr-3">
                   <div class="text-center">
                     <p style="font-family:'SF Mono','Fira Code',monospace;font-size:22px;font-weight:900;color:#5eead4;line-height:1;text-shadow:0 0 8px rgba(94,234,212,0.3);" id="aiEntryContracts">0</p>
-                    <p style="font-size:10px;color:rgba(142,189,181,0.6);margin-top:3px;font-weight:600;" data-i18n="aiEntryContractsLabel">可选合约</p>
+                    <p style="font-size:10px;color:rgba(142,189,181,0.6);margin-top:3px;font-weight:600;" data-i18n="aiEntryContractsLabel">Available Contracts</p>
                   </div>
                   <div style="width:1px;height:36px;background:linear-gradient(to bottom, transparent, rgba(93,196,179,0.3), transparent);"></div>
                   <div class="text-center">
                     <p style="font-family:'SF Mono','Fira Code',monospace;font-size:22px;font-weight:900;color:#fbbf24;line-height:1;text-shadow:0 0 8px rgba(251,191,36,0.3);" id="aiEntryProjects">0</p>
-                    <p style="font-size:10px;color:rgba(142,189,181,0.6);margin-top:3px;font-weight:600;" data-i18n="aiEntryProjectsLabel">覆盖项目</p>
+                    <p style="font-size:10px;color:rgba(142,189,181,0.6);margin-top:3px;font-weight:600;" data-i18n="aiEntryProjectsLabel">Projects Covered</p>
                   </div>
                 </div>
                 <div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, rgba(46,196,182,0.2), rgba(93,196,179,0.1));border:1.5px solid rgba(93,196,179,0.3);transition:all 0.3s;" onmouseover="this.style.background='linear-gradient(135deg, rgba(46,196,182,0.35), rgba(93,196,179,0.2))';this.style.borderColor='rgba(93,196,179,0.5)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46,196,182,0.2), rgba(93,196,179,0.1))';this.style.borderColor='rgba(93,196,179,0.3)'">
@@ -759,51 +759,51 @@ app.get('/', (c) => {
               </div>
             </div>
           </div>
-          <!-- 指引提示气泡 -->
+          <!-- Guide hint bubble -->
           <div class="ai-entry-hint" id="aiEntryHint">
             <div class="ai-entry-hint-inner">
               <span class="ai-hint-hand">👆</span>
-              <span style="font-size: 13px; font-weight: 600; color: #3DD8CA;" data-i18n="aiEntryHint">点击体验 AI 构建您的专属组合</span>
+              <span style="font-size: 13px; font-weight: 600; color: #3DD8CA;" data-i18n="aiEntryHint">Click to experience AI building your portfolio</span>
               <i class="fas fa-sparkles text-xs" style="color: #5DC4B3;"></i>
             </div>
           </div>
         </div>
 
-        <!-- ===== 筛子选择器 (核心新功能) ===== -->
+        <!-- ===== Sieve Selector (Core Feature) ===== -->
         <div class="rounded-2xl p-4 mb-4" style="background:rgba(15,46,43,0.85);border:1px solid rgba(46,196,182,0.1);box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center space-x-2">
               <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(14,165,233,0.15));"><i class="fas fa-filter text-sm" style="color:#22d3ee;"></i></div>
               <div>
-                <h3 class="text-sm font-bold" style="color:#E8F5F3;" data-i18n="sieveTitle">评估通 · AI筛子</h3>
-                <p class="text-xs" style="color:#5A9A90;" data-i18n="sieveSub">选择筛子模型过滤机会，不选则展示全部</p>
+                <h3 class="text-sm font-bold" style="color:#E8F5F3;" data-i18n="sieveTitle">Assess · AI Sieves</h3>
+                <p class="text-xs" style="color:#5A9A90;" data-i18n="sieveSub">Select a sieve model to filter opportunities, or view all</p>
               </div>
             </div>
-            <button onclick="showSieveManager()" class="text-xs font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors" style="color:#22d3ee;"><i class="fas fa-cogs mr-1"></i>管理筛子</button>
+            <button onclick="showSieveManager()" class="text-xs font-medium flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-colors" style="color:#22d3ee;"><i class="fas fa-cogs mr-1"></i>Manage Sieves</button>
           </div>
           <div class="flex flex-wrap gap-2" id="sieveSelector">
-            <!-- 动态渲染 by renderSieveSelector() -->
+            <!-- Dynamically rendered by renderSieveSelector() -->
           </div>
-          <!-- 筛子说明 -->
+          <!-- Sieve description -->
           <div id="sieveDescription" class="mt-3 p-3 rounded-xl text-xs hidden" style="background:rgba(11,30,28,0.6);color:#5A9A90;">
             <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
-            <span id="sieveDescText">选择筛子后查看说明</span>
+            <span id="sieveDescText">Select a sieve to view description</span>
           </div>
         </div>
 
         <!-- Filter Bar -->
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center space-x-2">
-            <h2 class="text-base font-bold" style="color:#E8F5F3;"><i class="fas fa-file-contract mr-1.5" style="color:#3DD8CA;"></i>合约看板</h2>
-            <span id="filterLabel" class="text-xs font-medium" style="color:#5A9A90;">· 展示全部</span>
+            <h2 class="text-base font-bold" style="color:#E8F5F3;"><i class="fas fa-file-contract mr-1.5" style="color:#3DD8CA;"></i>Contract Board</h2>
+            <span id="filterLabel" class="text-xs font-medium" style="color:#5A9A90;">· Showing all</span>
           </div>
           <div class="flex items-center space-x-2">
-            <div class="relative"><input type="text" id="dealSearch" placeholder="搜索项目名称…" class="search-input px-3 py-1.5 rounded-lg text-xs w-48" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" oninput="debounceRenderDeals()"><span class="search-shortcut" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);">⌘K</span></div>
+            <div class="relative"><input type="text" id="dealSearch" placeholder="Search project name..." class="search-input px-3 py-1.5 rounded-lg text-xs w-48" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#E8F5F3;" oninput="debounceRenderDeals()"><span class="search-shortcut" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);">⌘K</span></div>
             <select class="px-3 py-1.5 rounded-lg text-xs" style="background:rgba(11,30,28,0.8);border:1px solid rgba(46,196,182,0.15);color:#8EBDB5;" id="filterStatus" onchange="renderDeals()">
-              <option value="all">全部状态</option>
-              <option value="available">可买</option>
-              <option value="sold">已售出</option>
-              <option value="mine">我的</option>
+              <option value="all">All Status</option>
+              <option value="available">Available</option>
+              <option value="sold">Sold</option>
+              <option value="mine">Mine</option>
             </select>
           </div>
         </div>
@@ -816,34 +816,34 @@ app.get('/', (c) => {
           <div class="max-w-3xl mx-auto">
             <div class="text-center mb-6">
               <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-filter"></i></div>
-              <h3 class="text-xl font-bold mb-2" style="color:#E8F5F3;letter-spacing:-0.02em;">等待发起通的投资机会</h3>
-              <p class="text-sm" style="color:#5A9A90;">机会由融资方通过发起通上传，经评估通筛子过滤后展示于此</p>
+              <h3 class="text-xl font-bold mb-2" style="color:#E8F5F3;letter-spacing:-0.02em;">Awaiting Investment Opportunities from Originate</h3>
+              <p class="text-sm" style="color:#5A9A90;">Opportunities are uploaded by fundraisers via Originate, filtered by Assess sieves and displayed here</p>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
               <button onclick="loadDemoData()" class="group text-left p-5 rounded-2xl border transition-all" style="background: rgba(15,46,43,0.8); border-color: rgba(46,196,182,0.1);" onmouseover="this.style.borderColor='rgba(52,199,89,0.3)';this.style.boxShadow='0 8px 32px rgba(52,199,89,0.08)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.1)';this.style.boxShadow='none';this.style.transform='none'">
                 <div class="w-12 h-12 icon-container icon-container-lg icon-gradient-success mb-4 group-hover:scale-105 transition-transform" style="border-radius:16px;"><i class="fas fa-database text-white text-lg"></i></div>
-                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;">加载演示数据</h4>
-                <p class="text-sm leading-relaxed" style="color:#5A9A90;">体验完整功能，查看模拟的发起通项目经筛子过滤后的效果</p>
+                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;">Load Demo Data</h4>
+                <p class="text-sm leading-relaxed" style="color:#5A9A90;">Experience full features with simulated Originate projects filtered by sieves</p>
               </button>
               <div class="text-left p-5 rounded-2xl border" style="background: rgba(15,46,43,0.8); border-color: rgba(46,196,182,0.1);">
                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(14,165,233,0.15));"><i class="fas fa-filter text-lg" style="color:#22d3ee;"></i></div>
-                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;">配置您的筛子</h4>
-                <p class="text-sm leading-relaxed" style="color:#5A9A90;">在评估通中设置您的AI筛选标准，让参与通自动展示匹配机会</p>
+                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;">Configure Your Sieves</h4>
+                <p class="text-sm leading-relaxed" style="color:#5A9A90;">Set your AI filtering criteria in Assess to automatically display matching opportunities</p>
               </div>
             </div>
             <div class="rounded-2xl p-5 border" style="background: rgba(15,46,43,0.7); border-color: rgba(46,196,182,0.1);">
-              <h4 class="text-xs font-bold uppercase tracking-wider mb-4" style="color: #5A9A90;"><i class="fas fa-route mr-1.5" style="color: #5DC4B3;"></i>数据流向</h4>
+              <h4 class="text-xs font-bold uppercase tracking-wider mb-4" style="color: #5A9A90;"><i class="fas fa-route mr-1.5" style="color: #5DC4B3;"></i>Data Flow</h4>
               <div class="flex items-center justify-center gap-3 flex-wrap">
-                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><i class="fas fa-paper-plane" style="color:#fbbf24;"></i><span class="text-sm font-semibold" style="color:#fbbf24;">发起通</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);"><i class="fas fa-paper-plane" style="color:#fbbf24;"></i><span class="text-sm font-semibold" style="color:#fbbf24;">Originate</span></div>
                 <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><i class="fas fa-filter" style="color:#22d3ee;"></i><span class="text-sm font-semibold" style="color:#22d3ee;">评估通筛子</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.15);"><i class="fas fa-filter" style="color:#22d3ee;"></i><span class="text-sm font-semibold" style="color:#22d3ee;">Assess Sieves</span></div>
                 <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(46,196,182,0.12);border:2px solid rgba(46,196,182,0.3);"><i class="fas fa-hand-pointer" style="color:#3DD8CA;"></i><span class="text-sm font-bold" style="color:#3DD8CA;">参与通（此页）</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(46,196,182,0.12);border:2px solid rgba(46,196,182,0.3);"><i class="fas fa-hand-pointer" style="color:#3DD8CA;"></i><span class="text-sm font-bold" style="color:#3DD8CA;">Deal Connect (This Page)</span></div>
                 <i class="fas fa-long-arrow-alt-right" style="color:#2A5E58;"></i>
-                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(100,116,139,0.08);border:1px solid rgba(100,116,139,0.15);"><i class="fas fa-file-contract" style="color:#94a3b8;"></i><span class="text-sm font-semibold" style="color:#94a3b8;">条款通</span></div>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl" style="background:rgba(100,116,139,0.08);border:1px solid rgba(100,116,139,0.15);"><i class="fas fa-file-contract" style="color:#94a3b8;"></i><span class="text-sm font-semibold" style="color:#94a3b8;">Terms Connect</span></div>
               </div>
             </div>
-            <p class="mt-4 text-xs" style="color:#3D7A70;"><i class="fas fa-question-circle mr-1"></i>首次使用？<button onclick="showOnboarding()" class="underline font-medium" style="color:#3DD8CA;">查看新手引导</button></p>
+            <p class="mt-4 text-xs" style="color:#3D7A70;"><i class="fas fa-question-circle mr-1"></i>First time? <button onclick="showOnboarding()" class="underline font-medium" style="color:#3DD8CA;">View user guide</button></p>
           </div>
         </div>
       </div>
@@ -855,17 +855,17 @@ app.get('/', (c) => {
     <nav class="px-4 py-2.5 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goBack()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回</span></button>
+          <button onclick="goBack()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">Back</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
-            <div class="flex items-center space-x-2"><span id="detailMCN" class="font-mono text-xs font-bold tracking-wider px-2 py-0.5 rounded" style="background: rgba(46,196,182,0.1); color: #3DD8CA; border: 1px solid rgba(46,196,182,0.2);">MCN-XX-XX-0000-0000</span><h1 class="font-bold text-[#E8F5F3] text-sm" id="detailTitle">项目名称</h1><span id="detailStatus" class="badge badge-warning">待参与</span></div>
-            <p class="text-xs text-[#5A9A90]"><span class="source-tag source-originate"><i class="fas fa-paper-plane"></i>发起通</span> <span id="detailIndustry">行业</span> · <span id="detailDate">日期</span></p>
+            <div class="flex items-center space-x-2"><span id="detailMCN" class="font-mono text-xs font-bold tracking-wider px-2 py-0.5 rounded" style="background: rgba(46,196,182,0.1); color: #3DD8CA; border: 1px solid rgba(46,196,182,0.2);">MCN-XX-XX-0000-0000</span><h1 class="font-bold text-[#E8F5F3] text-sm" id="detailTitle">Project Name</h1><span id="detailStatus" class="badge badge-warning">Pending</span></div>
+            <p class="text-xs text-[#5A9A90]"><span class="source-tag source-originate"><i class="fas fa-paper-plane"></i>Originate</span> <span id="detailIndustry">Industry</span> · <span id="detailDate">Date</span></p>
           </div>
         </div>
         <div class="flex items-center space-x-1.5">
-          <button onclick="showToast('info','分享','分享链接已复制')" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="分享"><i class="fas fa-share-alt"></i></button>
-          <button onclick="showToast('info','收藏','已添加到收藏夹')" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="收藏"><i class="fas fa-bookmark"></i></button>
+          <button onclick="showToast('info','Share','Share link copied')" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="Share"><i class="fas fa-share-alt"></i></button>
+          <button onclick="showToast('info','Bookmark','Added to bookmarks')" class="tooltip p-1.5 hover:bg-[rgba(46,196,182,0.06)] rounded-lg text-[#5A9A90] text-sm" data-tip="Bookmark"><i class="fas fa-bookmark"></i></button>
           <div class="w-px h-6 bg-[rgba(46,196,182,0.1)] mx-1"></div>
-          <button onclick="expressIntent()" id="btnExpressIntent" class="btn-primary text-xs py-1.5 px-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);"><i class="fas fa-hand-point-up mr-1"></i>我要参与</button>
+          <button onclick="expressIntent()" id="btnExpressIntent" class="btn-primary text-xs py-1.5 px-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);"><i class="fas fa-hand-point-up mr-1"></i>Express Interest</button>
         </div>
       </div>
     </nav>
@@ -873,122 +873,122 @@ app.get('/', (c) => {
       <!-- Left: Deal Info -->
       <div class="w-2/5 border-r border-[rgba(46,196,182,0.12)] flex flex-col bg-[#0F2E2B] overflow-y-auto">
         <div class="p-5" id="detailLeft">
-          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">加载中...</p></div>
+          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">Loading...</p></div>
         </div>
       </div>
-      <!-- Right: Analysis (筛子评估结果) -->
+      <!-- Right: Analysis (Sieve Assessment Results) -->
       <div class="w-3/5 flex flex-col overflow-y-auto" style="background:rgba(11,30,28,0.95);">
         <div class="p-3 border-b border-[rgba(46,196,182,0.12)] bg-[#0F2E2B] flex items-center justify-between">
-          <div class="flex items-center space-x-2"><span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>合约评估</span></div>
+          <div class="flex items-center space-x-2"><span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>Contract Assessment</span></div>
           <div class="flex bg-[rgba(46,196,182,0.06)] rounded-lg p-0.5">
-            <button onclick="switchDetailView('sieve')" id="btnSieve" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#0F2E2B] shadow text-[#3DD8CA]"><i class="fas fa-crosshairs mr-1"></i>雷达评估</button>
-            <button onclick="switchDetailView('financials')" id="btnFinancials" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-calculator mr-1"></i>财务</button>
-            <button onclick="switchDetailView('timeline')" id="btnTimeline" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-stream mr-1"></i>时间线</button>
+            <button onclick="switchDetailView('sieve')" id="btnSieve" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#0F2E2B] shadow text-[#3DD8CA]"><i class="fas fa-crosshairs mr-1"></i>Radar Assessment</button>
+            <button onclick="switchDetailView('financials')" id="btnFinancials" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-calculator mr-1"></i>Financials</button>
+            <button onclick="switchDetailView('timeline')" id="btnTimeline" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-stream mr-1"></i>Timeline</button>
           </div>
         </div>
         <div class="flex-1 p-5" id="detailRight">
-          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">选择一个项目查看筛子评估报告</p></div>
+          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">Select a contract to view sieve assessment report</p></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== Page: 我的合约 ==================== -->
+  <!-- ==================== Page: My Contracts ==================== -->
   <div id="pageMyContracts" class="page flex-col min-h-screen grid-bg">
     <nav class="px-5 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">Back to Board</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
-            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-file-contract mr-1.5 text-emerald-500"></i>我的合约</h1>
-            <p class="text-xs text-[#3D7A70]" id="myContractsSubtitle">已认购 0 张 · 总投入 ¥0</p>
+            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-file-contract mr-1.5 text-emerald-500"></i>My Contracts</h1>
+            <p class="text-xs text-[#3D7A70]" id="myContractsSubtitle">Subscribed 0 contracts · Total investment ¥0</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <input type="text" id="mcSearchInput" placeholder="搜索合约名称/MCN…" class="search-input px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B] w-52" oninput="renderMyContracts()">
+          <input type="text" id="mcSearchInput" placeholder="Search contract/MCN..." class="search-input px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B] w-52" oninput="renderMyContracts()">
           <select class="px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B]" id="mcFilterIndustry" onchange="renderMyContracts()">
-            <option value="all">全部行业</option>
+            <option value="all">All Industries</option>
           </select>
           <select class="px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B]" id="mcSortBy" onchange="renderMyContracts()">
-            <option value="date">按认购时间</option>
-            <option value="score">按AI评分</option>
-            <option value="yield">按分成比例</option>
-            <option value="project">按项目分组</option>
+            <option value="date">By subscription date</option>
+            <option value="score">By AI score</option>
+            <option value="yield">By revenue share</option>
+            <option value="project">By project</option>
           </select>
         </div>
       </div>
     </nav>
     <div class="flex-1 p-4">
       <div class="max-w-7xl mx-auto">
-        <!-- 统计概览 -->
+        <!-- Stats Overview -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="mcStatsGrid"></div>
-        <!-- 合约列表 -->
+        <!-- Contract List -->
         <div id="mcGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-        <!-- 空状态 -->
+        <!-- Empty State -->
         <div id="mcEmpty" class="hidden text-center py-16">
           <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-file-contract"></i></div>
-          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2">暂无合约</h3>
-          <p class="text-sm text-[#5A9A90] mb-4">您还没有认购任何合约，去合约看板挑选吧</p>
-          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-[rgba(46,196,182,0.15)]"><i class="fas fa-shopping-cart mr-2"></i>去认购</button>
+          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2">No Contracts Yet</h3>
+          <p class="text-sm text-[#5A9A90] mb-4">You have not subscribed to any contracts yet. Browse the contract board to find opportunities.</p>
+          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-[rgba(46,196,182,0.15)]"><i class="fas fa-shopping-cart mr-2"></i>Subscribe Now</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== Page: 我的组合 ==================== -->
+  <!-- ==================== Page: My Portfolios ==================== -->
   <div id="pageMyPortfolios" class="page flex-col min-h-screen grid-bg">
     <nav class="px-5 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回看板</span></button>
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">Back to Board</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
-            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-object-group mr-1.5 text-[#8B5CF6]"></i>我的组合</h1>
-            <p class="text-xs text-[#3D7A70]" id="myPortfoliosSubtitle">共 0 个组合 · 0 张合约 · 总投入 ¥0</p>
+            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-object-group mr-1.5 text-[#8B5CF6]"></i>My Portfolios</h1>
+            <p class="text-xs text-[#3D7A70]" id="myPortfoliosSubtitle">0 portfolios · 0 contracts · Total investment ¥0</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <div class="px-3 py-1.5 bg-[rgba(139,92,246,0.06)] rounded-lg border border-[rgba(139,92,246,0.12)] text-xs text-[#A78BFA] font-medium"><i class="fas fa-info-circle mr-1"></i>跨项目基金型组合 · 按投资理念和主题智能配置</div>
+          <div class="px-3 py-1.5 bg-[rgba(139,92,246,0.06)] rounded-lg border border-[rgba(139,92,246,0.12)] text-xs text-[#A78BFA] font-medium"><i class="fas fa-info-circle mr-1"></i>Cross-project fund portfolios · Intelligently configured by investment philosophy and theme</div>
         </div>
       </div>
     </nav>
     <div class="flex-1 p-4">
       <div class="max-w-7xl mx-auto">
-        <!-- 组合筛选栏 -->
+        <!-- Portfolio Filter Bar -->
         <div class="flex items-center gap-2 mb-4 flex-wrap">
-          <button onclick="filterPortfoliosByCategory('all')" class="mp-filter-btn active px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="all"><i class="fas fa-th mr-1"></i>全部</button>
-          <button onclick="filterPortfoliosByCategory('稳健型')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="稳健型"><i class="fas fa-shield-alt mr-1"></i>稳健型</button>
-          <button onclick="filterPortfoliosByCategory('进取型')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="进取型"><i class="fas fa-rocket mr-1"></i>进取型</button>
-          <button onclick="filterPortfoliosByCategory('平衡型')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="平衡型"><i class="fas fa-balance-scale mr-1"></i>平衡型</button>
-          <button onclick="filterPortfoliosByCategory('主题型')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="主题型"><i class="fas fa-bullseye mr-1"></i>主题型</button>
-          <button onclick="filterPortfoliosByCategory('行业型')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="行业型"><i class="fas fa-industry mr-1"></i>行业型</button>
+          <button onclick="filterPortfoliosByCategory('all')" class="mp-filter-btn active px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="all"><i class="fas fa-th mr-1"></i>All</button>
+          <button onclick="filterPortfoliosByCategory('Conservative')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Conservative"><i class="fas fa-shield-alt mr-1"></i>Conservative</button>
+          <button onclick="filterPortfoliosByCategory('Aggressive')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Aggressive"><i class="fas fa-rocket mr-1"></i>Aggressive</button>
+          <button onclick="filterPortfoliosByCategory('Balanced')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Balanced"><i class="fas fa-balance-scale mr-1"></i>Balanced</button>
+          <button onclick="filterPortfoliosByCategory('Thematic')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Thematic"><i class="fas fa-bullseye mr-1"></i>Thematic</button>
+          <button onclick="filterPortfoliosByCategory('Industry')" class="mp-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium border transition-all" data-cat="Industry"><i class="fas fa-industry mr-1"></i>Industry</button>
         </div>
-        <!-- 组合统计 -->
+        <!-- Portfolio Stats -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5" id="mpStatsGrid"></div>
-        <!-- 组合列表 -->
+        <!-- Portfolio List -->
         <div id="mpGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-        <!-- 空状态 -->
+        <!-- Empty State -->
         <div id="mpEmpty" class="hidden text-center py-16">
           <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-object-group"></i></div>
-          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2">暂无组合</h3>
-          <p class="text-sm text-[#5A9A90] mb-4">认购合约后自动生成投资组合</p>
-          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-[rgba(46,196,182,0.15)]"><i class="fas fa-shopping-cart mr-2"></i>去认购合约</button>
+          <h3 class="text-xl font-bold text-[#E8F5F3] mb-2">No Portfolios Yet</h3>
+          <p class="text-sm text-[#5A9A90] mb-4">Portfolios are automatically generated after subscribing to contracts</p>
+          <button onclick="goToDashboard()" class="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl font-medium shadow-lg shadow-[rgba(46,196,182,0.15)]"><i class="fas fa-shopping-cart mr-2"></i>Subscribe to Contracts</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== Page: 组合详情 ==================== -->
+  <!-- ==================== Page: Portfolio Detail ==================== -->
   <div id="pagePortfolioDetail" class="page flex-col h-screen grid-bg">
     <nav class="px-4 py-2.5 flex-shrink-0">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToMyPortfolios()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">返回组合</span></button>
+          <button onclick="goToMyPortfolios()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium">Back to Portfolios</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
             <div class="flex items-center space-x-2">
               <div class="w-8 h-8 rounded-lg flex items-center justify-center" id="pdIconBox" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm" id="pdIcon"></i></div>
               <div>
-                <div class="flex items-center gap-2"><h1 class="font-bold text-[#E8F5F3] text-sm" id="pdTitle">组合名称</h1><span id="pdCategoryBadge" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:rgba(139,92,246,0.12);color:#a78bfa;">稳健型</span></div>
-                <p class="text-xs text-[#5A9A90]" id="pdSubtitle">0 张合约 · 0 个项目 · 总投入 ¥0</p>
+                <div class="flex items-center gap-2"><h1 class="font-bold text-[#E8F5F3] text-sm" id="pdTitle">Portfolio Name</h1><span id="pdCategoryBadge" class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:rgba(139,92,246,0.12);color:#a78bfa;">Conservative</span></div>
+                <p class="text-xs text-[#5A9A90]" id="pdSubtitle">0 contracts · 0 projects · Total ¥0</p>
               </div>
             </div>
           </div>
@@ -999,158 +999,158 @@ app.get('/', (c) => {
       </div>
     </nav>
     <div class="flex flex-1 overflow-hidden">
-      <!-- Left: 组合概览 -->
+      <!-- Left: Portfolio Overview -->
       <div class="w-2/5 border-r border-[rgba(46,196,182,0.12)] flex flex-col bg-[#0F2E2B] overflow-y-auto">
         <div class="p-5" id="pdLeft">
-          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">加载中...</p></div>
+          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">Loading...</p></div>
         </div>
       </div>
-      <!-- Right: 组合雷达图+合约列表 -->
+      <!-- Right: Portfolio Radar + Contract List -->
       <div class="w-3/5 flex flex-col overflow-y-auto" style="background:rgba(11,30,28,0.95);">
         <div class="p-3 border-b border-[rgba(46,196,182,0.12)] bg-[#0F2E2B] flex items-center justify-between">
-          <span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#8B5CF6]"></i>组合加权分析</span>
-          <span class="text-xs text-[#3D7A70]" id="pdWeightNote">跨项目合约等权重加权</span>
+          <span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#8B5CF6]"></i>Portfolio Weighted Analysis</span>
+          <span class="text-xs text-[#3D7A70]" id="pdWeightNote">Cross-project equal-weight analysis</span>
         </div>
         <div class="flex-1 p-5" id="pdRight">
-          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">加载组合加权分析...</p></div>
+          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">Loading portfolio analysis...</p></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== Page: AI 组合构建器 ==================== -->
+  <!-- ==================== Page: AI Portfolio Builder ==================== -->
   <div id="pageAIBuilder" class="page flex-col h-screen" style="background: #0B1E1C;">
     <!-- Nav -->
     <nav class="px-5 py-2.5 flex-shrink-0" style="background: rgba(13,36,34,0.95); backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(46,196,182,0.1);">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
-          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-all text-[#5A9A90] hover:text-[#3DD8CA]"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium" data-i18n="detailBack">返回看板</span></button>
+          <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 rounded-lg text-sm transition-all text-[#5A9A90] hover:text-[#3DD8CA]"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium" data-i18n="detailBack">Back to Board</span></button>
           <div class="border-l pl-3" style="border-color: rgba(46,196,182,0.12);">
             <div class="flex items-center gap-2">
               <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.35);"><i class="fas fa-magic text-white text-sm"></i></div>
-              <div><h1 class="text-sm font-bold text-[#E8F5F3]" data-i18n="abTitle">AI 组合构建器</h1><p class="text-xs" style="color: #5A9A90; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-size:9px;" data-i18n="abSub">PORTFOLIO ARCHITECT · PILOT</p></div>
+              <div><h1 class="text-sm font-bold text-[#E8F5F3]" data-i18n="abTitle">AI Portfolio Architect</h1><p class="text-xs" style="color: #5A9A90; font-family:'Montserrat',sans-serif; letter-spacing:0.05em; font-size:9px;" data-i18n="abSub">PORTFOLIO ARCHITECT · PILOT</p></div>
             </div>
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(245,158,11,0.1); color: #FBBF24; border: 1px solid rgba(245,158,11,0.2);"><i class="fas fa-flask mr-1"></i><span data-i18n="abPilot">试点功能</span></span>
-          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-[#3D7A70] hover:text-red-500 hover:border-[rgba(239,68,68,0.3)]" style="border: 1px solid rgba(46,196,182,0.12);"><i class="fas fa-redo mr-1"></i><span data-i18n="abRestart">重新选择</span></button>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background: rgba(245,158,11,0.1); color: #FBBF24; border: 1px solid rgba(245,158,11,0.2);"><i class="fas fa-flask mr-1"></i><span data-i18n="abPilot">PILOT</span></span>
+          <button onclick="resetAIBuilder()" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-[#3D7A70] hover:text-red-500 hover:border-[rgba(239,68,68,0.3)]" style="border: 1px solid rgba(46,196,182,0.12);"><i class="fas fa-redo mr-1"></i><span data-i18n="abRestart">Start Over</span></button>
         </div>
       </div>
     </nav>
 
-    <!-- Main Content: 左对话 + 右组合 -->
+    <!-- Main Content: Left Chat + Right Portfolio -->
     <div class="flex flex-1 overflow-hidden">
-      <!-- ===== 左侧: AI 对话区 ===== -->
+      <!-- ===== Left: AI Chat Area ===== -->
       <div class="w-2/5 flex flex-col bg-[#0F2E2B]" style="border-right: 1px solid rgba(46,196,182,0.1);">
-        <!-- 对话消息区 -->
+        <!-- Chat Messages Area -->
         <div class="flex-1 overflow-y-auto p-4 space-y-4" id="abMessages" style="scroll-behavior: smooth; background: linear-gradient(180deg, #0B1E1C 0%, #0D2422 100%);">
-          <!-- 初始欢迎 -->
+          <!-- Initial Welcome -->
           <div class="flex items-start gap-3 animate-fade-in" id="abWelcome">
             <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);"><i class="fas fa-robot text-white text-sm"></i></div>
             <div class="flex-1">
               <div class="p-4 rounded-2xl rounded-tl-md bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-                <p class="text-sm text-[#E8F5F3] leading-relaxed mb-3" data-i18n="abWelcome1">您好！我是 <span style="color: #3DD8CA; font-weight: 700;">参与通 AI 组合构建器</span>。</p>
-                <p class="text-sm leading-relaxed mb-3 text-[#5A9A90]" data-i18n="abWelcome2">我将通过对话，了解您的投资偏好和目标，从平台全部合约中为您智能构建个性化投资组合。</p>
-                <p class="text-sm leading-relaxed mb-4 text-[#5A9A90]">我们先从一个简单的问题开始 —</p>
+                <p class="text-sm text-[#E8F5F3] leading-relaxed mb-3" data-i18n="abWelcome1">Hello! I am the <span style="color: #3DD8CA; font-weight: 700;">Deal Connect AI Portfolio Architect</span>.</p>
+                <p class="text-sm leading-relaxed mb-3 text-[#5A9A90]" data-i18n="abWelcome2">Through our conversation, I will understand your investment preferences and goals, and intelligently build a personalized portfolio from all platform contracts.</p>
+                <p class="text-sm leading-relaxed mb-4 text-[#5A9A90]">Let's start with a simple question —</p>
                 <div class="p-3 rounded-xl" style="background: linear-gradient(135deg, rgba(93,196,179,0.08), rgba(46,196,182,0.06)); border: 1px solid rgba(93,196,179,0.2);">
-                  <p class="text-sm font-semibold" style="color: #3DD8CA;"><i class="fas fa-compass mr-1.5"></i>您这次投资最看重什么？</p>
+                  <p class="text-sm font-semibold" style="color: #3DD8CA;"><i class="fas fa-compass mr-1.5"></i>What matters most to you in this investment?</p>
                 </div>
               </div>
-              <!-- 快捷选项 -->
+              <!-- Quick Options -->
               <div class="flex flex-wrap gap-2 mt-3" id="abQuickOptions">
-                <button onclick="abSelectOption(t('abStep2Low'))" class="ab-quick-btn"><i class="fas fa-shield-alt mr-1.5 text-emerald-500"></i><span data-i18n="abStep2Low">稳健型</span></button>
-                <button onclick="abSelectOption(t('abStep2High'))" class="ab-quick-btn"><i class="fas fa-rocket mr-1.5 text-amber-500"></i><span data-i18n="abStep2High">进取型</span></button>
-                <button onclick="abSelectOption(t('abStep2Mid'))" class="ab-quick-btn"><i class="fas fa-balance-scale mr-1.5 text-blue-500"></i><span data-i18n="abStep2Mid">平衡型</span></button>
-                <button onclick="abSelectOption(t('catSector'))" class="ab-quick-btn"><i class="fas fa-bullseye mr-1.5 text-pink-500"></i><span data-i18n="catSector">行业型</span></button>
+                <button onclick="abSelectOption(t('abStep2Low'))" class="ab-quick-btn"><i class="fas fa-shield-alt mr-1.5 text-emerald-500"></i><span data-i18n="abStep2Low">Conservative</span></button>
+                <button onclick="abSelectOption(t('abStep2High'))" class="ab-quick-btn"><i class="fas fa-rocket mr-1.5 text-amber-500"></i><span data-i18n="abStep2High">Aggressive</span></button>
+                <button onclick="abSelectOption(t('abStep2Mid'))" class="ab-quick-btn"><i class="fas fa-balance-scale mr-1.5 text-blue-500"></i><span data-i18n="abStep2Mid">Balanced</span></button>
+                <button onclick="abSelectOption(t('catSector'))" class="ab-quick-btn"><i class="fas fa-bullseye mr-1.5 text-pink-500"></i><span data-i18n="catSector">Industry</span></button>
               </div>
             </div>
           </div>
         </div>
-        <!-- 输入区 -->
+        <!-- Input Area -->
         <div class="flex-shrink-0 p-4 bg-[#0F2E2B]" style="border-top: 1px solid rgba(46,196,182,0.1);">
           <div class="flex items-center gap-2">
             <div class="flex-1 relative">
-              <input type="text" id="abInput" data-i18n="abInputPlaceholder" data-i18n-attr="placeholder" placeholder="输入您的投资需求或偏好..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: #0F2E2B; border: 1px solid rgba(46,196,182,0.15); color: #E8F5F3;" onkeydown="if(event.key==='Enter')abSendMessage()">
+              <input type="text" id="abInput" data-i18n="abInputPlaceholder" data-i18n-attr="placeholder" placeholder="Describe your investment needs or preferences..." class="w-full px-4 py-3 pr-12 rounded-xl text-sm" style="background: #0F2E2B; border: 1px solid rgba(46,196,182,0.15); color: #E8F5F3;" onkeydown="if(event.key==='Enter')abSendMessage()">
             </div>
             <button onclick="abSendMessage()" class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83); box-shadow: 0 4px 12px rgba(93,196,179,0.3);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><i class="fas fa-paper-plane text-white text-sm"></i></button>
           </div>
-          <p class="text-xs mt-2 text-center text-[#3D7A70]">AI 实时分析您的需求，从 <span id="abTotalContracts" class="font-semibold text-[#3DD8CA]">0</span> 张合约中智能配置</p>
+          <p class="text-xs mt-2 text-center text-[#3D7A70]">AI analyzes your needs in real-time from <span id="abTotalContracts" class="font-semibold text-[#3DD8CA]">0</span> contracts</p>
         </div>
       </div>
 
-      <!-- ===== 右侧: 实时组合面板 ===== -->
+      <!-- ===== Right: Real-time Portfolio Panel ===== -->
       <div class="w-3/5 flex flex-col overflow-y-auto" style="background: rgba(11,30,28,0.95);">
-        <!-- 组合未生成时的等待状态 -->
+        <!-- Waiting state before portfolio generation -->
         <div id="abWaitingState" class="flex-1 flex items-center justify-center p-8">
           <div class="text-center max-w-md">
             <div class="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 ai-entry-icon" style="background: linear-gradient(135deg, rgba(93,196,179,0.1), rgba(46,196,182,0.06)); border: 1px dashed rgba(93,196,179,0.3);">
               <i class="fas fa-layer-group text-4xl" style="color: rgba(93,196,179,0.5);"></i>
             </div>
-            <h3 class="text-lg font-bold text-[#E8F5F3] mb-2" style="letter-spacing: -0.02em;" data-i18n="abWaitTitle">等待 AI 构建您的专属组合</h3>
-            <p class="text-sm leading-relaxed text-[#5A9A90]" data-i18n="abWaitDesc">在左侧与 AI 对话，描述您的投资偏好。AI 将根据您的需求从全平台合约中实时构建投资组合。</p>
+            <h3 class="text-lg font-bold text-[#E8F5F3] mb-2" style="letter-spacing: -0.02em;" data-i18n="abWaitTitle">Waiting for AI to Build Your Portfolio</h3>
+            <p class="text-sm leading-relaxed text-[#5A9A90]" data-i18n="abWaitDesc">Chat with AI on the left to describe your investment preferences. AI will build a portfolio from all platform contracts based on your needs.</p>
             <div class="flex items-center justify-center gap-4 mt-6">
-              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #5DC4B3;"></div><span class="text-xs" id="abFlowStep1">风格偏好</span></div>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #5DC4B3;"></div><span class="text-xs" id="abFlowStep1">Style Preference</span></div>
               <i class="fas fa-long-arrow-alt-right text-[#2A5E58]"></i>
-              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs" id="abFlowStep2">行业选择</span></div>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs" id="abFlowStep2">Industry Selection</span></div>
               <i class="fas fa-long-arrow-alt-right text-[#2A5E58]"></i>
-              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs" id="abFlowStep3">组合生成</span></div>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs" id="abFlowStep3">Portfolio Generation</span></div>
             </div>
           </div>
         </div>
 
-        <!-- 组合结果面板（初始隐藏） -->
+        <!-- Portfolio Result Panel (initially hidden) -->
         <div id="abPortfolioPanel" class="hidden flex-1 flex flex-col overflow-hidden">
-          <!-- ===== 固定顶部：仅认购按钮 ===== -->
+          <!-- ===== Fixed top: Subscribe button ===== -->
           <div class="flex-shrink-0 flex gap-3 px-5 py-3" style="background: rgba(11,30,28,0.98); border-bottom: 1px solid rgba(46,196,182,0.1); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i>一键认购此组合</button>
-            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i>继续调整</button>
+            <button onclick="abApplyPortfolio()" class="flex-1 py-3 rounded-xl text-sm font-bold transition-all btn-primary"><i class="fas fa-check-circle mr-2"></i>Subscribe to This Portfolio</button>
+            <button onclick="abRefine()" class="py-3 px-5 rounded-xl text-sm font-medium transition-all btn-secondary"><i class="fas fa-sliders-h mr-1"></i>Continue Adjusting</button>
           </div>
 
-          <!-- ===== 可滚动区域：Header + 雷达图 + 行业配比 + 合约清单 ===== -->
+          <!-- ===== Scrollable: Header + Radar + Sector Mix + Contracts ===== -->
           <div class="flex-1 overflow-y-auto p-5 space-y-4">
-            <!-- 组合 header -->
+            <!-- Portfolio header -->
             <div class="rounded-2xl overflow-hidden" id="abPortfolioHeader">
               <div class="p-5 relative" style="background: linear-gradient(135deg, #0a2e2a 0%, #0f3d36 40%, #164e47 100%);">
                 <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(93,196,179,0.35) 0%, transparent 50%);pointer-events:none;"></div>
                 <div class="relative z-10">
                   <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);"><i class="fas fa-magic mr-1"></i>AI 构建</span>
-                      <span class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioMeta">实时生成</span>
+                      <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);"><i class="fas fa-magic mr-1"></i>AI Built</span>
+                      <span class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioMeta">Real-time Generation</span>
                     </div>
-                    <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.2); color: #34d399;">A · 82分</span>
+                    <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.2); color: #34d399;">A · 82</span>
                   </div>
-                  <h2 class="text-xl font-bold text-white mb-1" id="abPortfolioName" style="letter-spacing:-0.02em;">AI 推荐组合</h2>
-                  <p class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioDesc">基于您的投资偏好智能生成</p>
-                  <!-- 核心数字 -->
+                  <h2 class="text-xl font-bold text-white mb-1" id="abPortfolioName" style="letter-spacing:-0.02em;">AI Recommended Portfolio</h2>
+                  <p class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioDesc">Intelligently generated based on your investment preferences</p>
+                  <!-- Core Numbers -->
                   <div class="grid grid-cols-4 gap-2 mt-4" id="abCoreStats">
                     <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                       <p class="text-lg font-black text-white" id="abStatContracts">0</p>
-                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">张合约</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">Contracts</p>
                     </div>
                     <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                       <p class="text-lg font-black text-cyan-200" id="abStatProjects">0</p>
-                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">个项目</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">Projects</p>
                     </div>
                     <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                       <p class="text-lg font-black text-amber-200" id="abStatValue">¥0</p>
-                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">总投入</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">Total Investment</p>
                     </div>
                     <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                       <p class="text-lg font-black text-emerald-200" id="abStatReturn">0%</p>
-                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">预期回报</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">Expected Return</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- 雷达图 -->
+            <!-- Radar Chart -->
             <div class="rounded-2xl overflow-hidden bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
               <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(46,196,182,0.08);">
-                <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>组合雷达评估</span>
-                <span class="text-xs text-[#3D7A70]">8维度量化</span>
+                <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>Portfolio Radar Assessment</span>
+                <span class="text-xs text-[#3D7A70]">8-Dimension Scoring</span>
               </div>
               <div class="flex items-center justify-center py-4 px-2">
                 <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
@@ -1160,17 +1160,17 @@ app.get('/', (c) => {
               </div>
             </div>
 
-            <!-- 行业配比 -->
+            <!-- Industry Mix -->
             <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-              <h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i>行业配比</h3>
+              <h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i>Sector Allocation</h3>
               <div id="abIndustryDistrib" class="space-y-2"></div>
             </div>
 
-            <!-- 合约清单 -->
+            <!-- Contract List -->
             <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
               <div class="flex items-center justify-between mb-3">
-                <h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list mr-1.5 text-emerald-500"></i>推荐合约清单</h3>
-                <span class="text-xs text-[#3D7A70]" id="abContractCount">0 张</span>
+                <h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list mr-1.5 text-emerald-500"></i>Recommended Contracts</h3>
+                <span class="text-xs text-[#3D7A70]" id="abContractCount">0</span>
               </div>
               <div class="space-y-2" id="abContractList"></div>
             </div>
@@ -1185,34 +1185,34 @@ app.get('/', (c) => {
     <div class="bg-[#0F2E2B] rounded-2xl max-w-sm w-full mx-4 overflow-hidden animate-scale-in">
       <div class="confirm-dialog" style="padding:32px; text-align:center;">
         <div id="confirmIcon" class="confirm-icon warning" style="width:56px;height:56px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(245,158,11,0.1);"><i class="fas fa-exclamation-triangle" style="color:#f59e0b;font-size:24px;"></i></div>
-        <h3 id="confirmTitle" class="text-lg font-bold text-[#E8F5F3] mb-2">确认操作</h3>
-        <p id="confirmMessage" class="text-sm text-[#5A9A90] mb-6">确定要执行此操作吗？</p>
-        <div class="flex gap-3 justify-center"><button onclick="hideConfirm()" class="btn-secondary rounded-xl px-5 py-2">取消</button><button id="confirmAction" onclick="hideConfirm()" class="btn-primary rounded-xl px-5 py-2">确认</button></div>
+        <h3 id="confirmTitle" class="text-lg font-bold text-[#E8F5F3] mb-2">Confirm Action</h3>
+        <p id="confirmMessage" class="text-sm text-[#5A9A90] mb-6">Are you sure you want to proceed?</p>
+        <div class="flex gap-3 justify-center"><button onclick="hideConfirm()" class="btn-secondary rounded-xl px-5 py-2">Cancel</button><button id="confirmAction" onclick="hideConfirm()" class="btn-primary rounded-xl px-5 py-2">Confirm</button></div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== AI Builder 全局浮动入口 ==================== -->
+  <!-- ==================== AI Builder Global FAB ==================== -->
   <div id="aiBuilderFab" class="ai-builder-fab hidden" onclick="goToAIBuilder()">
     <i class="fas fa-magic"></i>
     <span class="fab-badge">AI</span>
     <div class="fab-ring"></div>
     <div class="ai-builder-fab-tooltip">
-      <div style="font-size:12px;font-weight:700;color:#5eead4;">AI 智能组合构建器</div>
-      <div style="font-size:10px;color:#5A9A90;margin-top:2px;">与AI对话，一键构建投资组合</div>
+      <div style="font-size:12px;font-weight:700;color:#5eead4;">AI Portfolio Builder</div>
+      <div style="font-size:10px;color:#5A9A90;margin-top:2px;">Chat with AI, build portfolios in one click</div>
     </div>
   </div>
 
   <!-- ==================== AI Assistant FAB ==================== -->
   <div id="aiFab" class="ai-assistant-fab hidden" onclick="toggleAIChat()"><i class="fas fa-robot"></i></div>
   <div id="aiChat" class="ai-chat-window hidden">
-    <div class="ai-chat-header"><div class="flex items-center space-x-2"><i class="fas fa-robot text-white"></i><span class="text-white font-semibold text-sm">Deal Connect AI 助手</span></div><button onclick="toggleAIChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button></div>
+    <div class="ai-chat-header"><div class="flex items-center space-x-2"><i class="fas fa-robot text-white"></i><span class="text-white font-semibold text-sm">Deal Connect AI Assistant</span></div><button onclick="toggleAIChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button></div>
     <div class="ai-chat-messages" id="aiMessages">
-      <div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content">您好！我是参与通AI助手。您可以问我关于筛子模型、项目评估、参与流程等问题。</div></div>
+      <div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content">Hello! I am the Deal Connect AI Assistant. Ask me about sieve models, project assessments, or the participation process.</div></div>
     </div>
     <div class="ai-chat-input" style="padding:16px; border-top:1px solid rgba(46,196,182,0.1); background:#0F2E2B;">
       <div class="flex items-center gap-2">
-        <input type="text" id="aiInput" placeholder="例如：哪个筛子适合我？" class="flex-1 px-3 py-2 border border-[rgba(46,196,182,0.12)] rounded-xl text-sm" onkeydown="if(event.key==='Enter')sendAIMsg()">
+        <input type="text" id="aiInput" placeholder="e.g., Which sieve suits me?" class="flex-1 px-3 py-2 border border-[rgba(46,196,182,0.12)] rounded-xl text-sm" onkeydown="if(event.key==='Enter')sendAIMsg()">
         <button onclick="sendAIMsg()" class="btn-primary px-3 py-2 rounded-xl text-sm"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
@@ -1221,7 +1221,7 @@ app.get('/', (c) => {
   <!-- ==================== JavaScript ==================== -->
   <script>
     // ==================== i18n Internationalization System ====================
-    let currentLang = localStorage.getItem('dc_lang') || 'zh';
+    let currentLang = localStorage.getItem('dc_lang') || 'en';
 
     const i18n = {
       zh: {
@@ -1229,9 +1229,9 @@ app.get('/', (c) => {
         navDashboard: '看板', navContracts: '合约', navPortfolios: '组合', navAIBuilder: 'AI 组合',
         navProfile: '个人中心', navSievePrefs: '筛子偏好设置', navOnboarding: '新手引导', navLogout: '退出登录',
         // Ticker
-        tickerSourceVal: '发起通', tickerFilterVal: '评估通',
+        tickerSourceVal: 'Originate', tickerFilterVal: 'Assess',
         // Welcome
-        welcomeBack: '欢迎回来',
+        welcomeBack: 'Welcome back',
         welcomeSubDefault: '发起通的投资机会，经您的评估通筛子精选后展示于此',
         welcomeSubHolding: '持有 {mine} 张合约 · {portfolios} 个组合 · 使用筛子精选您的下一个投资机会',
         welcomeSubExplore: '{total} 张合约待您探索 · 使用筛子精选您的下一个投资机会',
@@ -1245,8 +1245,8 @@ app.get('/', (c) => {
         aiEntryContractsLabel: '可选合约', aiEntryProjectsLabel: '覆盖项目',
         aiEntryHint: '点击体验 AI 构建您的专属组合',
         // Spotlight
-        spotlightTitle: '✨ 试试 AI 智能组合构建器',
-        spotlightSub: '与 AI 对话 · 智能匹配 · 一键构建专属投资组合',
+        spotlightTitle: '✨ Try the AI Portfolio Builder',
+        spotlightSub: 'Chat with AI · Smart Matching · One-Click Portfolio Building',
         spotlightDismiss: '点击任意空白处继续浏览',
         // Sieve
         sieveTitle: '评估通 · AI筛子', sieveSub: '选择筛子模型过滤机会，不选则展示全部',
@@ -1261,11 +1261,11 @@ app.get('/', (c) => {
         filterSearch: '搜索项目、MCN编号...',
         filterAll: '全部状态', filterAvailable: '可认购', filterSold: '已认购', filterMine: '我的',
         // Deal Card
-        dealOrigin: '发起通', dealRSN: '收益分享合约',
+        dealOrigin: 'Originate', dealRSN: '收益分享合约',
         dealAIScore: 'AI评分', dealRevenueShare: '分成比例', dealPeriod: '合约期限',
         dealMonthlyIncome: '预估月收', dealFaceValue: '合约面值',
         dealAvailable: '可认购', dealSold: '已认购', dealMine: '已持有',
-        dealSubscribe: '认购', dealViewDetail: '查看详情',
+        dealSubscribe: 'Subscribe', dealViewDetail: '查看详情',
         // Detail
         detailBack: '返回看板', detailProjectInfo: '项目信息', detailContractInfo: '合约核心信息',
         detailRadarTitle: '多维雷达评估', detailRadar8Dim: '8维度量化',
@@ -1276,13 +1276,13 @@ app.get('/', (c) => {
         // Subscription
         subTitle: '确认认购', subContractInfo: '合约信息', subMCN: 'MCN合约编号',
         subFaceValue: '合约面值', subRevenueShare: '收益分享', subPeriod: '合约期限',
-        subAIScore: 'AI评分', subCancel: '取消', subConfirm: '确认认购',
-        subSuccess: '认购成功', subSuccessMsg: '合约已添加到您的持仓',
+        subAIScore: 'AI评分', subCancel: 'Cancel', subConfirm: '确认认购',
+        subSuccess: '认购成功', subSuccessMsg: 'Contract added to your holdings',
         // My Contracts
         myContractsTitle: '我的合约', myContractsSub: 'MY CONTRACTS',
         myContractsSummary: '合约摘要', myContractsTotal: '总持仓', myContractsValue: '总价值',
         myContractsAvgAI: '平均AI评分', myContractsAvgShare: '平均分成',
-        myContractsFilterAll: '全部', myContractsFilterActive: '生效中', myContractsFilterPending: '待生效',
+        myContractsFilterAll: 'All', myContractsFilterActive: 'Active', myContractsFilterPending: 'Pending',
         myContractsSortAI: 'AI评分', myContractsSortDate: '认购日期', myContractsSortShare: '分成比例',
         myContractsEmpty: '暂无持仓合约', myContractsEmptyAction: '前往看板认购',
         // My Portfolios
@@ -1301,7 +1301,7 @@ app.get('/', (c) => {
         abPilot: '试点功能', abReset: '重置',
         abWelcome1: '您好！我是 <span style="color:#3DD8CA;font-weight:700;">参与通 AI 组合构建器</span>。',
         abWelcome2: '我会通过几个简单的问题了解您的投资偏好，然后从全平台合约中智能筛选，为您构建个性化的投资组合。',
-        abWelcome3: '首先，您对哪些 <span style="color:#5eead4;">行业</span> 感兴趣？',
+        abWelcome3: '首先，您对哪些 <span style="color:#5eead4;">Industry</span> 感兴趣？',
         abTotalContracts: '全平台可匹配合约',
         abInputPlaceholder: '输入自由调整需求...',
         abStatus: '由参与通AI模型驱动 · 投资建议仅供参考',
@@ -1316,9 +1316,9 @@ app.get('/', (c) => {
         abStep1Q: '请选择您感兴趣的行业：',
         abStep1All: '全部行业',
         abStep2Q: '了解！接下来，您的 <span style="color:#5eead4;">风险偏好</span> 是？',
-        abStep2Low: '稳健型', abStep2LowD: '低风险·年化 7-10%',
-        abStep2Mid: '平衡型', abStep2MidD: '中等风险·年化 10-14%',
-        abStep2High: '进取型', abStep2HighD: '较高风险·年化 14%+',
+        abStep2Low: 'Conservative', abStep2LowD: '低风险·年化 7-10%',
+        abStep2Mid: 'Balanced', abStep2MidD: '中等风险·年化 10-14%',
+        abStep2High: 'Aggressive', abStep2HighD: '较高风险·年化 14%+',
         abStep3Q: '收到！您期望的 <span style="color:#5eead4;">投资期限</span> 是？',
         abStep3Short: '短期', abStep3ShortD: '≤24个月',
         abStep3Mid: '中期', abStep3MidD: '24-30个月',
@@ -1354,7 +1354,7 @@ app.get('/', (c) => {
         abPeriodShortLabel: '短期 ≤24个月', abPeriodMidLabel: '中期 24-30个月', abPeriodLongLabel: '长期 30个月+',
         abPortfolioDescTpl: '基于您的投资偏好从 {total} 张合约中智能生成',
         abPortfolioMetaTpl: 'Step {step}/5 · 实时演进',
-        abContractUnit: '张', abContractUnitMore: '张合约未展示',
+        abContractUnit: '', abContractUnitMore: '张合约未展示',
         abApplyEmptyTitle: '组合为空', abApplyEmptyMsg: '请先通过对话构建组合',
         abApplySuccessTitle: '一键认购成功！', abApplySuccessMsgFull: '已认购 {count} 张合约 · 总投入 ¥{total}，可在「我的合约」中查看',
         abRefineTitle: '继续调整', abRefineMsg: '在输入框中描述您的调整需求',
@@ -1364,7 +1364,7 @@ app.get('/', (c) => {
         abResetOpt1: '稳定收益，安全第一', abResetOpt2: '愿承担风险，追高回报', abResetOpt3: '攻守兼备，均衡配置', abResetOpt4: '看好特定行业，集中布局',
         // Portfolio detail more
         pdInvested: '总投入', pdAnnualYield: '年化收益率', pdWeightedShare: '加权分成 ',
-        pdAvgContract: '平均合约时长', pdDayUnit: '天', pdAboutMonths: '约 {n} 个月',
+        pdAvgContract: '平均合约时长', pdDayUnit: 'days', pdAboutMonths: '约 {n} 个月',
         pdAvgAIScore: 'AI评分均值', pdTargetHorizon: '目标期限',
         pdSectorAlloc: '行业配比 · {n} 个行业', pdSectorsLabel: '覆盖行业：',
         pdStrategyAcross: ' | 跨 {projects} 个项目配置 {contracts} 张合约',
@@ -1389,27 +1389,27 @@ app.get('/', (c) => {
         abIndDining: '餐饮美食', abIndTech: '科技创新', abIndHealth: '医疗健康', abIndRetail: '零售消费', abIndEdu: '教育培训', abIndEnter: '演艺娱乐',
         abIndAll: '不限行业，全面配置',
         // Radar Dims
-        dimYield: '收益率', dimDuration: '期限', dimStability: '稳定性', dimRiskCtrl: '风控',
-        dimLiquidity: '流动性', dimTeam: '团队', dimMarket: '市场', dimAIScore: 'AI评分',
+        dimYield: 'Yield', dimDuration: 'Duration', dimStability: 'Stability', dimRiskCtrl: 'Risk Mgmt',
+        dimLiquidity: 'Liquidity', dimTeam: 'Team', dimMarket: 'Market', dimAIScore: 'AI评分',
         // Industries
-        indDining: '餐饮', indRetail: '零售', indTech: '科技', indEducation: '教育', indHealth: '健康', indEntertainment: '演艺',
+        indDining: 'F&B', indRetail: 'Retail', indTech: 'Technology', indEducation: 'Education', indHealth: 'Healthcare', indEntertainment: 'Entertainment',
         // Portfolio Categories
-        catConservative: '稳健型', catAggressive: '进取型', catBalanced: '平衡型', catThematic: '主题型', catSector: '行业型',
+        catConservative: 'Conservative', catAggressive: 'Aggressive', catBalanced: 'Balanced', catThematic: 'Thematic', catSector: 'Industry',
         // Common
-        months: '个月', wan: '万',
-        confirmTitle: '确认操作', confirmMsg: '确定要执行此操作吗？', confirmCancel: '取消', confirmOk: '确认',
+        months: 'months', wan: '0K',
+        confirmTitle: '确认操作', confirmMsg: '确定要执行此操作吗？', confirmCancel: 'Cancel', confirmOk: 'Confirm',
         // Onboarding
         obTitle: '欢迎使用 参与通', obSkip: '跳过', obNext: '下一步', obStart: '开始探索',
         // Toast
         toastLoginSuccess: '登录成功', toastLogout: '已安全退出',
         toastGuestWelcome: '游客模式', toastGuestMsg: '已加载 {contracts} 张虚拟合约（{projects} 个项目），请自由体验',
-        toastSubscribeSuccess: '认购成功', toastSubscribeMsg: '合约已添加到您的持仓',
-        toastFeatureWIP: '功能开发中', toastSieveHint: '可在评估通中管理您的筛子模型',
+        toastSubscribeSuccess: '认购成功', toastSubscribeMsg: 'Contract added to your holdings',
+        toastFeatureWIP: 'Feature under development', toastSieveHint: 'Manage your sieve models in Assess',
         // Auth
-        authLogin: '登录', authRegister: '注册', authUsername: '用户名', authEmail: '邮箱',
-        authPassword: '密码', authDisplayName: '显示名称', authPhone: '手机号码',
-        authRoleInvestor: '投资者', authRoleManager: '管理者',
-        authLoginBtn: '登录', authRegisterBtn: '创建账户',
+        authLogin: 'Login', authRegister: 'Register', authUsername: '用户名', authEmail: 'Email',
+        authPassword: 'Password', authDisplayName: '显示名称', authPhone: '手机号码',
+        authRoleInvestor: 'Investor', authRoleManager: 'Manager',
+        authLoginBtn: 'Login', authRegisterBtn: '创建账户',
         authGuestBtn: '游客快速体验', authGuestHint: '无需注册，一键体验全部功能', authOr: '或者',
         // Empty
         emptyDeals: '未发现匹配机会', emptyDealsAction: '试试切换筛子或加载演示数据',
@@ -1421,14 +1421,14 @@ app.get('/', (c) => {
         aiAssistWelcome: '您好！我是参与通AI助手。您可以问我关于筛子模型、项目评估、参与流程等问题。',
         aiAssistPlaceholder: '例如：哪个筛子适合我？',
         // Data
-        monthlyRevenue: '月营收', employees: '员工', years: '年',
+        monthlyRevenue: '月营收', employees: '员工', years: 'yrs',
         totalAmount: '融资总额', issued: '发行', maturity: '到期',
         riskLow: '低', riskMedium: '中', riskHigh: '高',
         contractCount: '{n} 张', projectCount: '{n} 个项目',
         // Sieve Manager
         smTitle: '管理我的筛子', smSub: '从筛子库添加，或移除已有筛子',
         smLibrary: '筛子库', smAvailable: '{n} 个可用', smMySieves: '我的筛子', smAdded: '{n} 个已添加',
-        smAlreadyAdded: '已添加', smAdd: '添加', smRemove: '移除', smDone: '完成',
+        smAlreadyAdded: '已添加', smAdd: 'Add', smRemove: 'Remove', smDone: 'Done',
         smEmptyTitle: '暂无筛子', smEmptySub: '从左侧筛子库中添加',
         smBuiltinHint: '「全部机会」为内置项，始终可用无需添加',
         // Sieve names (dynamic)
@@ -1440,14 +1440,14 @@ app.get('/', (c) => {
         sieveTeamStrengthDesc: '优选员工>=50人、运营年限>=3年的成熟团队项目',
         sieveQuickReturnDesc: '聚焦分成期限<=24个月的快速回收项目',
         sieveSafeHavenDesc: '极保守策略：风控评级A及以上、AI评分>=9.0、金额<=500万',
-        sieveCatIndustry: '行业', sieveCatRisk: '风控', sieveCatReturn: '收益', sieveCatComposite: '综合',
-        sieveCatLocation: '区域', sieveCatGrowth: '成长', sieveCatScale: '规模', sieveCatTeam: '团队',
-        sieveCatCycle: '周期', sieveCatRiskCtrl: '风控',
+        sieveCatIndustry: '行业', sieveCatRisk: 'Risk Mgmt', sieveCatReturn: '收益', sieveCatComposite: '综合',
+        sieveCatLocation: '区域', sieveCatGrowth: '成长', sieveCatScale: '规模', sieveCatTeam: 'Team',
+        sieveCatCycle: '周期', sieveCatRiskCtrl: 'Risk Mgmt',
         sieveAllDesc: '不使用筛子，展示发起通的所有投资机会',
         // Deal card dynamic
         dealSearchEmpty: '未找到「{keyword}」相关合约', dealSearchEmptyHint: '尝试换个关键词，或清空搜索查看全部',
-        dealClearSearch: '清空搜索', dealOriginate: '发起通', dealSieve: '筛子',
-        dealStatusAvailable: '待售', dealStatusSold: '已售',
+        dealClearSearch: '清空搜索', dealOriginate: 'Originate', dealSieve: '筛子',
+        dealStatusAvailable: 'Available', dealStatusSold: 'Sold',
         dealStatusMine: '·我', dealScoreTitle: '合约综合评分',
         // Detail page
         detMCNLabel: '合约身份编号', detIndustryLabel: '行业', detCityLabel: '城市', detIssueLabel: '发行', detTypeLabel: '类型',
@@ -1456,39 +1456,39 @@ app.get('/', (c) => {
         detStatus: '状态', detHolder: '持有人', detNoHolder: '无（可认购）',
         detMyContract: '我的合约', detMyContractNote: '投入 ¥1,000 · MCN编号永久绑定',
         detProjectTotal: '项目总额', detShareRatio: '分成比例', detSharePeriod: '分成期限', detAIScoreLabel: 'AI评分',
-        detBizData: '经营数据（发起通提供）', detAvgRevenue: '月均营收', detNoData: '暂无',
-        detEmployeeCount: '员工人数', detOpYears: '运营年限', detRiskGrade: '风控评级', detMaturityDate: '到期日',
+        detBizData: '经营数据（发起通提供）', detAvgRevenue: 'Monthly avg revenue', detNoData: 'N/A',
+        detEmployeeCount: '员工人数', detOpYears: '运营年限', detRiskGrade: 'Risk Rating', detMaturityDate: '到期日',
         detRadarTitle: '合约多维评估', detRadar8Dim: '8维度量化分析 · 综合评级',
         detDimDetail: '维度详解', detExpandAll: '全部展开', detScoringBasis: '评分依据',
         detAbovePct: '优于{pct}%同类合约', detAroundMedian: '处于中位数附近', detBelowPct: '低于{pct}%同类合约',
         detCurrentSieveMatch: '当前筛子匹配度',
         detHighMatch: '高度匹配，建议重点关注', detMidMatch: '中等匹配，可进一步了解', detLowMatch: '匹配度较低',
-        detSieveEval: '筛子评估', detSievePass: '通过', detSieveFail: '未通过',
+        detSieveEval: '筛子评估', detSievePass: 'Pass', detSieveFail: 'Fail',
         detMatchPct: '{n}% 匹配度', detNoSieve: '暂未添加筛子', detGoManageSieve: '去管理筛子',
-        detIncomeTitle: '收入预测', detMonthPrefix: '月',
+        detIncomeTitle: '收入预测', detMonthPrefix: 'mo',
         detTimelineTitle: '项目流向',
         detTL1: '发起通 — 项目提交', detTL2: '评估通 — AI筛选', detTL3: '参与通 — 当前阶段', detTL4: '条款通 → 合约通',
         detTL2Desc: '通过 {match}', detTL2DescBasic: '基础审核',
-        detTL3Wait: '等待认购', detTL3Mine: '您已认购此合约', detTL3Sold: '已被认购',
+        detTL3Wait: '等待认购', detTL3Mine: 'You have subscribed to this contract', detTL3Sold: '已被认购',
         detTL4Desc: '确认参与后进入条款协商',
         // Subscribe modal
         subModalTitle: '认购合约', subFaceNote: '单张合约面值 · 不可分割',
         subShareLabel: '分成比例', subPeriodLabel: '分成期限',
         subNote: '认购后这张合约将归您所有，MCN编号永久绑定。在合约期内按约定比例分享收益。',
-        subCancelBtn: '取消', subConfirmBtn: '确认认购 ¥1,000',
-        subAlreadySold: '该合约已被认购', subSuccessDetail: '合约 {mcn} 已归您所有 · ¥1,000',
+        subCancelBtn: 'Cancel', subConfirmBtn: '确认认购 ¥1,000',
+        subAlreadySold: 'This contract has been subscribed', subSuccessDetail: '合约 {mcn} 已归您所有 · ¥1,000',
         // Express intent
         eiMyContract: '我的合约', eiMyContractMsg: '您持有此合约 · {mcn}',
-        eiSold: '已售出', eiSoldMsg: '该合约已被他人认购',
+        eiSold: '已售出', eiSoldMsg: 'This contract has been subscribed by another investor',
         // Detail button
         btnMyContract: '我的合约', btnSoldOut: '已售出', btnSubscribe: '认购此合约 ¥1,000',
         btnMyContractToast: '您持有此合约 · {mcn}',
         // Grade labels
-        gradeExcellent: '卓越', gradeGood: '优秀', gradeAboveAvg: '良好', gradeAverage: '中等', gradeBelowAvg: '偏低', gradeRisky: '风险',
+        gradeExcellent: 'Excellent', gradeGood: 'Outstanding', gradeAboveAvg: 'Good', gradeAverage: 'Average', gradeBelowAvg: 'Below Avg', gradeRisky: 'Risk',
         gradeLevelSuffix: '水平',
         // Radar dims (dynamic)
-        rdYield: 'YITO年化收益率', rdDuration: '合约时长适配度', rdStability: '收入稳定性', rdRiskCtrl: '风控评级',
-        rdLiquidity: '流动性', rdTeam: '团队实力', rdMarket: '市场潜力', rdAIScore: 'AI综合评分',
+        rdYield: 'YITO年化收益率', rdDuration: '合约时长适配度', rdStability: 'Income Stability', rdRiskCtrl: 'Risk Rating',
+        rdLiquidity: 'Liquidity', rdTeam: 'Team Strength', rdMarket: 'Market Potential', rdAIScore: 'AI综合评分',
         rdYieldDesc: '基于分成比例和期限折算的年化投资回报率（YITO模型）',
         rdDurationDesc: '合约期限合理性评估，12-30个月为最优区间',
         rdStabilityDesc: '基于月营收数据推算的收入波动系数，越低越稳',
@@ -1498,19 +1498,19 @@ app.get('/', (c) => {
         rdMarketDesc: '所在行业景气度与目标城市经济活力加权',
         rdAIScoreDesc: 'AI大模型对合约多维度因子的综合信用打分',
         // Radar sub-labels
-        rslYield: '年化收益', rslDuration: '合约时长', rslStability: '预估月收', rslRiskCtrl: '风控评级',
-        rslLiquidity: '流动性', rslTeam: '团队实力', rslMarket: '市场潜力', rslAIScore: 'AI综合',
+        rslYield: '年化收益', rslDuration: '合约时长', rslStability: '预估月收', rslRiskCtrl: 'Risk Rating',
+        rslLiquidity: 'Liquidity', rslTeam: 'Team Strength', rslMarket: 'Market Potential', rslAIScore: 'AI综合',
         // My Contracts dynamic
         mcSubtitle: '已认购 {count} 张 · 总投入 ¥{total}',
-        mcStatHolding: '持有合约', mcStatUnit: '张', mcStatInvest: '总投入', mcStatInvestNote: '面值合计',
+        mcStatHolding: '持有合约', mcStatUnit: '', mcStatInvest: '总投入', mcStatInvestNote: '面值合计',
         mcStatProjects: '覆盖项目', mcStatProjectsNote: '个不同项目', mcStatAvgAI: '平均AI评分', mcStatAvgAINote: '加权平均',
         mcSubscribed: '已认购 ¥1,000',
         // My Portfolios dynamic
         mpSubtitle: '共 {count} 个组合 · 覆盖 {contracts} 张合约',
         mpContracts: '合约', mpProjects: '项目', mpTargetReturn: '目标回报', mpPeriod: '投资周期',
         mpStrategy: '投资策略', mpContractCountLabel: '张合约',
-        mpCatConservative: '稳健型', mpCatAggressive: '进取型', mpCatBalanced: '平衡型', mpCatThematic: '主题型', mpCatSector: '行业型',
-        mpRiskLow: '低风险', mpRiskMedHigh: '较高风险', mpRiskHigh: '高风险', mpRiskMedium: '中等风险',
+        mpCatConservative: 'Conservative', mpCatAggressive: 'Aggressive', mpCatBalanced: 'Balanced', mpCatThematic: 'Thematic', mpCatSector: 'Industry',
+        mpRiskLow: 'Low Risk', mpRiskMedHigh: 'Higher Risk', mpRiskHigh: 'High Risk', mpRiskMedium: 'Moderate Risk',
         // Portfolio Detail dynamic
         pdSubtitle: '{contracts} 张合约 · 覆盖 {projects} 个项目',
         pdRadar8Dim: '8维度量化',
@@ -1878,18 +1878,18 @@ app.get('/', (c) => {
 
     // ==================== State ====================
     let currentUser = null;
-    let allDeals = [];  // 所有来自发起通的机会（原始数据）
-    let dealsList = []; // 当前筛子过滤后的机会
+    let allDeals = [];  // All opportunities from Originate (raw data)
+    let dealsList = []; // Filtered by current sieve
     let currentDeal = null;
-    let currentSieve = 'all'; // 当前选中的筛子
+    let currentSieve = 'all'; // Currently selected sieve
     let obStep = 0;
 
-    // ==================== 筛子库（全量可用筛子）====================
+    // ==================== Sieve Library (All Available Sieves) ====================
     const SIEVE_LIBRARY = {
       industry: {
-        name: '行业偏好筛子', icon: 'fa-brain', color: '#8b5cf6', category: '行业',
-        desc: '基于您的行业投资偏好（餐饮、零售、科技），筛选符合行业方向的项目',
-        preferredIndustries: ['餐饮', '零售', '科技'],
+        name: 'Industry Preference Sieve', icon: 'fa-brain', color: '#8b5cf6', category: 'Industry',
+        desc: 'Filter by your preferred industries (F&B, Retail, Tech)',
+        preferredIndustries: ['F&B', 'Retail', 'Technology'],
         filter: function(deals) {
           return deals.map(d => {
             const match = this.preferredIndustries.includes(d.industry);
@@ -1898,8 +1898,8 @@ app.get('/', (c) => {
         }
       },
       risk: {
-        name: '风控优先筛子', icon: 'fa-shield-alt', color: '#10b981', category: '风控',
-        desc: '严格风控标准：AI评分>=8.5、金额<=800万、有明确退出机制的低风险项目',
+        name: 'Risk-First Sieve', icon: 'fa-shield-alt', color: '#10b981', category: 'Risk Mgmt',
+        desc: 'Strict risk controls: AI Score>=8.5, Raise<=8M, clear exit mechanisms',
         filter: function(deals) {
           return deals.map(d => {
             const score = parseFloat(d.aiScore);
@@ -1910,8 +1910,8 @@ app.get('/', (c) => {
         }
       },
       'return': {
-        name: '高回报筛子', icon: 'fa-chart-line', color: '#f59e0b', category: '收益',
-        desc: '聚焦高回报项目：分成比例>=12%、AI评分>=8.0的高潜力机会',
+        name: 'High Return Sieve', icon: 'fa-chart-line', color: '#f59e0b', category: 'Return',
+        desc: 'Target high-return: Rev Share>=12%, AI Score>=8.0',
         filter: function(deals) {
           return deals.map(d => {
             const share = parseInt(d.revenueShare);
@@ -1922,9 +1922,9 @@ app.get('/', (c) => {
         }
       },
       location: {
-        name: '区域聚焦筛子', icon: 'fa-map-marker-alt', color: '#ef4444', category: '区域',
-        desc: '聚焦一线城市（北京、上海、深圳、杭州）的优质项目',
-        focusCities: ['北京', '上海', '深圳', '杭州'],
+        name: 'Regional Focus Sieve', icon: 'fa-map-marker-alt', color: '#ef4444', category: 'Location',
+        desc: 'Focus on Tier-1 cities (Beijing, Shanghai, Shenzhen, Hangzhou)',
+        focusCities: ['Beijing', 'Shanghai', 'Shenzhen', 'Hangzhou'],
         filter: function(deals) {
           return deals.map(d => {
             const match = this.focusCities.includes(d.location);
@@ -1933,8 +1933,8 @@ app.get('/', (c) => {
         }
       },
       composite: {
-        name: '综合评估筛子', icon: 'fa-layer-group', color: '#06b6d4', category: '综合',
-        desc: '多维度综合评估：AI评分、行业前景、风控等级、回报潜力的加权筛选',
+        name: 'Composite Assessment Sieve', icon: 'fa-layer-group', color: '#06b6d4', category: 'Composite',
+        desc: 'Multi-factor assessment: AI score, sector outlook, risk rating, return potential',
         filter: function(deals) {
           return deals.map(d => {
             const score = parseFloat(d.aiScore);
@@ -1945,10 +1945,10 @@ app.get('/', (c) => {
           }).filter(d => d.sieveResult === 'pass');
         }
       },
-      // ---- 筛子库扩展筛子 ----
+      // ---- Extended sieves from library ----
       growth: {
-        name: '高成长筛子', icon: 'fa-seedling', color: '#22c55e', category: '成长',
-        desc: '优选运营年限<=3年、月营收增速良好的高成长型早期项目',
+        name: 'High-Growth Sieve', icon: 'fa-seedling', color: '#22c55e', category: 'Growth',
+        desc: 'Target early-stage <=3yrs with strong monthly revenue growth',
         filter: function(deals) {
           return deals.map(d => {
             const years = parseFloat(d.operatingYears);
@@ -1959,8 +1959,8 @@ app.get('/', (c) => {
         }
       },
       largeScale: {
-        name: '大额项目筛子', icon: 'fa-gem', color: '#a855f7', category: '规模',
-        desc: '筛选投资金额>=500万的大体量、高门槛优质项目',
+        name: 'Large-Cap Sieve', icon: 'fa-gem', color: '#a855f7', category: 'Scale',
+        desc: 'Filter for large projects with raise >=5M',
         filter: function(deals) {
           return deals.map(d => {
             const amt = d.projectTotalAmount || 0;
@@ -1970,8 +1970,8 @@ app.get('/', (c) => {
         }
       },
       teamStrength: {
-        name: '团队实力筛子', icon: 'fa-users', color: '#0ea5e9', category: '团队',
-        desc: '优选员工>=50人、运营年限>=3年的成熟团队项目',
+        name: 'Team Strength Sieve', icon: 'fa-users', color: '#0ea5e9', category: 'Team',
+        desc: 'Mature teams with >=50 employees and >=3yrs operation',
         filter: function(deals) {
           return deals.map(d => {
             const emp = d.employeeCount || 0;
@@ -1982,8 +1982,8 @@ app.get('/', (c) => {
         }
       },
       quickReturn: {
-        name: '短周期筛子', icon: 'fa-bolt', color: '#eab308', category: '周期',
-        desc: '聚焦分成期限<=24个月的快速回收项目',
+        name: 'Short-Cycle Sieve', icon: 'fa-bolt', color: '#eab308', category: 'Cycle',
+        desc: 'Focus on short-duration <=24 months contracts',
         filter: function(deals) {
           return deals.map(d => {
             const months = parseInt(d.period);
@@ -1993,8 +1993,8 @@ app.get('/', (c) => {
         }
       },
       safeHaven: {
-        name: '稳健保守筛子', icon: 'fa-umbrella', color: '#64748b', category: '风控',
-        desc: '极保守策略：风控评级A及以上、AI评分>=9.0、金额<=500万',
+        name: 'Ultra-Conservative Sieve', icon: 'fa-umbrella', color: '#64748b', category: 'Risk Mgmt',
+        desc: 'Ultra-conservative: Grade A+, AI Score>=9.0, Raise<=5M',
         filter: function(deals) {
           return deals.map(d => {
             const score = parseFloat(d.aiScore);
@@ -2007,24 +2007,24 @@ app.get('/', (c) => {
       }
     };
 
-    // 「全部机会」内置筛子（不可删除）
+    // 'All opportunities' built-in sieve (cannot delete)
     const SIEVE_ALL = {
-      name: '全部机会', icon: 'fa-globe', color: '#3D7A70',
-      desc: '不使用筛子，展示发起通的所有投资机会',
+      name: 'All Opportunities', icon: 'fa-globe', color: '#3D7A70',
+      desc: 'Show all origination opportunities without filter',
       filter: (deals) => deals.map(d => ({ ...d, matchScore: null, sieveResult: 'all' }))
     };
 
-    // 用户面板筛子（从筛子库中选取的键名列表）
+    // User panel sieves (selected sieve keys from library)
     let mySieves = [];
 
-    // 初始化用户筛子面板
+    // Initialize user sieve panel
     function initMySieves() {
       const saved = localStorage.getItem('ec_mySieves');
       if (saved) {
         try { mySieves = JSON.parse(saved).filter(k => SIEVE_LIBRARY[k]); } catch(e) { mySieves = []; }
       }
       if (mySieves.length === 0) {
-        // 默认预装3个筛子
+        // Default 3 pre-installed sieves
         mySieves = ['industry', 'risk', 'composite'];
         saveMySieves();
       }
@@ -2033,7 +2033,7 @@ app.get('/', (c) => {
       localStorage.setItem('ec_mySieves', JSON.stringify(mySieves));
     }
 
-    // 构建当前可用的筛子模型（all + mySieves中的）
+    // Build available sieve models (all + user's mySieves)
     function getActiveSieveModels() {
       const models = { all: SIEVE_ALL };
       mySieves.forEach(key => {
@@ -2081,11 +2081,11 @@ app.get('/', (c) => {
       const page = document.getElementById(pageId); if (page) page.classList.add('active');
       const fab = document.getElementById('aiFab'); if (fab) fab.classList.toggle('hidden', pageId === 'pageAuth');
       const aiFab = document.getElementById('aiBuilderFab'); if (aiFab) aiFab.classList.toggle('hidden', pageId === 'pageAuth' || pageId === 'pageAIBuilder');
-      // 记住上一页用于返回
+      // Remember previous page for back navigation
       if (pageId !== 'pageDetail' && pageId !== 'pagePortfolioDetail') window._lastPage = pageId;
-      // 页面切换后滚动到顶部
+      // Scroll to top after page switch
       window.scrollTo(0, 0);
-      // 可滚动面板也重置到顶部
+      // Reset scrollable panels to top
       var scrollables = page ? page.querySelectorAll('.overflow-y-auto') : [];
       scrollables.forEach(function(el) { el.scrollTop = 0; });
     }
@@ -2108,13 +2108,13 @@ app.get('/', (c) => {
     async function handleLogin() {
       const username = document.getElementById('loginUsername').value.trim();
       const password = document.getElementById('loginPassword').value;
-      if (!username || !password) { showToast('warning', '请填写完整', '用户名和密码不能为空'); return; }
+      if (!username || !password) { showToast('warning', 'Incomplete', 'Username and password required'); return; }
       try {
         const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
         const data = await res.json();
         if (data.success) { currentUser = data.user; onLoginSuccess(); }
-        else { showToast('error', '登录失败', data.message); }
-      } catch (e) { showToast('error', '网络错误', '请检查网络连接'); }
+        else { showToast('error', 'Login Failed', data.message); }
+      } catch (e) { showToast('error', 'Network error', 'Please check network connection'); }
     }
 
     async function handleRegister() {
@@ -2123,25 +2123,25 @@ app.get('/', (c) => {
       const password = document.getElementById('regPassword').value;
       const displayName = document.getElementById('regDisplayName').value.trim();
       const phone = document.getElementById('regPhone').value.trim();
-      if (!username || !email || !password) { showToast('warning', '请填写必填项'); return; }
-      if (password.length < 6) { showToast('warning', '密码过短', '密码至少6位'); return; }
+      if (!username || !email || !password) { showToast('warning', 'Required fields missing'); return; }
+      if (password.length < 6) { showToast('warning', 'Password too short', 'Minimum 6 characters'); return; }
       try {
         const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, email, password, displayName, phone, role: 'investor' }) });
         const data = await res.json();
-        if (data.success) { showToast('success', '注册成功', '欢迎加入参与通！'); switchAuthTab('login'); document.getElementById('loginUsername').value = username; }
-        else { showToast('error', '注册失败', data.message); }
-      } catch (e) { showToast('error', '网络错误'); }
+        if (data.success) { showToast('success', 'Registration Successful', 'Welcome to Deal Connect!'); switchAuthTab('login'); document.getElementById('loginUsername').value = username; }
+        else { showToast('error', 'Registration Failed', data.message); }
+      } catch (e) { showToast('error', 'Network error'); }
     }
 
     function handleGuestLogin() {
-      currentUser = { id: 'guest', username: 'guest', displayName: currentLang === 'en' ? 'Guest' : '游客', email: 'guest@demo.com', role: 'investor' };
+      currentUser = { id: 'guest', username: 'guest', displayName: currentLang === 'en' ? 'Guest' : 'Guest', email: 'guest@demo.com', role: 'investor' };
       loadDemoData();
       onLoginSuccess();
       showToast('info', t('toastGuestWelcome'), t('toastGuestMsg', { contracts: totalVirtualContracts.toLocaleString(), projects: String(PROJECT_TEMPLATES.length) }));
     }
 
     function onLoginSuccess() {
-      const name = currentUser?.displayName || currentUser?.username || (currentLang === 'en' ? 'User' : '用户');
+      const name = currentUser?.displayName || currentUser?.username || (currentLang === 'en' ? 'User' : 'User');
       const initial = name.charAt(0).toUpperCase();
       document.getElementById('navAvatar').textContent = initial;
       document.getElementById('navName').textContent = name;
@@ -2150,16 +2150,16 @@ app.get('/', (c) => {
       document.getElementById('ddRole').textContent = t('authRoleInvestor');
       document.getElementById('welcomeText').textContent = t('welcomeBack') + (currentLang === 'zh' ? '，' : ', ') + name;
       initMySieves();
-      // 自动加载数据（如果还没加载）
+      // Auto-load data if not loaded yet
       if (allDeals.length === 0) loadDemoData();
-      // 恢复上次的筛子选择
+      // Restore last sieve selection
       var savedSieve = localStorage.getItem('ec_lastSieve') || 'all';
       renderSieveSelector();
       selectSieve(savedSieve);
-      // 登录后直接进入合约看板（首页）
+      // Go to contract board after login
       goToDashboard();
-      showToast('success', '登录成功', '欢迎回来，' + name);
-      // 延迟1.2秒后触发聚光灯引导效果（仅首次）
+      showToast('success', 'Login Successful', 'Welcome back, ' + name);
+      // Delay 1.2s for spotlight onboarding (first time only)
       if (!localStorage.getItem('ec_spotlightShown')) {
         setTimeout(function() { showSpotlight(); localStorage.setItem('ec_spotlightShown', '1'); }, 1200);
       }
@@ -2169,7 +2169,7 @@ app.get('/', (c) => {
       currentUser = null;
       allDeals = []; dealsList = []; projectSummaries = []; totalVirtualContracts = 0;
       switchPage('pageAuth');
-      showToast('info', '已退出', '您已安全退出账号');
+      showToast('info', 'Signed Out', 'You have been safely signed out');
     }
 
     // ==================== User Dropdown ====================
@@ -2177,16 +2177,16 @@ app.get('/', (c) => {
     function closeUserDD() { document.getElementById('userDropdown').classList.remove('show'); }
     document.addEventListener('click', (e) => { if (!e.target.closest('#navUserBtn') && !e.target.closest('#userDropdown')) closeUserDD(); });
 
-    // ==================== 全局键盘快捷键 ====================
+    // ==================== Global Keyboard Shortcuts ====================
     document.addEventListener('keydown', function(e) {
-      // Escape 关闭弹窗
+      // Escape to close modal
       if (e.key === 'Escape') {
         var modals = ['subscribeModal', 'sieveManagerModal', 'onboardingModal', 'confirmModal'];
         modals.forEach(function(id) { var m = document.getElementById(id); if (m && !m.classList.contains('hidden')) { m.remove ? m.remove() : m.classList.add('hidden'); } });
         closeUserDD();
         dismissSpotlight();
       }
-      // Cmd/Ctrl + K 聚焦搜索
+      // Cmd/Ctrl + K to focus search
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         var searchInput = document.getElementById('dealSearch');
@@ -2196,7 +2196,7 @@ app.get('/', (c) => {
       }
     });
 
-    // ==================== 浏览器历史导航 ====================
+    // ==================== Browser History Navigation ====================
     window.addEventListener('popstate', function(e) {
       if (e.state && e.state.page) {
         var pageId = e.state.page;
@@ -2209,12 +2209,12 @@ app.get('/', (c) => {
       history.pushState({ page: pageId }, '', '#' + pageId.replace('page', '').toLowerCase());
     }
 
-    // ==================== MCN 合约编号体系 ====================
+    // ==================== MCN Contract Numbering System ====================
     // MCN = Micro Connect Note
-    // 格式: MCN-{行业2位}-{城市2位}-{年月4位}-{序号4位}
-    // 例: MCN-FB-HZ-2602-0001
-    const INDUSTRY_CODES = { '餐饮': 'FB', '零售': 'RT', '演艺': 'EN', '教育': 'ED', '健康': 'HC', '科技': 'TC', '金融': 'FI', '地产': 'RE', '物流': 'LG', '农业': 'AG' };
-    const CITY_CODES = { '杭州': 'HZ', '深圳': 'SZ', '北京': 'BJ', '上海': 'SH', '成都': 'CD', '广州': 'GZ', '天津': 'TJ', '全国': 'CN', '香港': 'HK', '澳门': 'MO' };
+    // Format: MCN-{Industry2}-{City2}-{YYMM4}-{Seq4}
+    // Example: MCN-FB-HZ-2602-0001
+    const INDUSTRY_CODES = { 'F&B': 'FB', 'Retail': 'RT', 'Entertainment': 'EN', 'Education': 'ED', 'Healthcare': 'HC', 'Technology': 'TC', 'Finance': 'FI', 'Real Estate': 'RE', 'Logistics': 'LG', 'Agriculture': 'AG' };
+    const CITY_CODES = { 'Hangzhou': 'HZ', 'Shenzhen': 'SZ', 'Beijing': 'BJ', 'Shanghai': 'SH', 'Chengdu': 'CD', 'Guangzhou': 'GZ', 'Tianjin': 'TJ', 'Nationwide': 'CN', 'Hong Kong': 'HK', 'Macau': 'MO' };
 
     function generateMCN(industry, city, dateStr, seqNum) {
       const indCode = INDUSTRY_CODES[industry] || 'XX';
@@ -2225,62 +2225,62 @@ app.get('/', (c) => {
       return 'MCN-' + indCode + '-' + cityCode + '-' + yearMonth + '-' + seq;
     }
 
-    // 从MCN编号解析信息
+    // Parse info from MCN
     function parseMCN(mcn) {
       const parts = mcn.split('-');
       if (parts.length !== 5 || parts[0] !== 'MCN') return null;
-      const indName = Object.keys(INDUSTRY_CODES).find(k => INDUSTRY_CODES[k] === parts[1]) || '未知';
-      const cityName = Object.keys(CITY_CODES).find(k => CITY_CODES[k] === parts[2]) || '未知';
+      const indName = Object.keys(INDUSTRY_CODES).find(k => INDUSTRY_CODES[k] === parts[1]) || 'Unknown';
+      const cityName = Object.keys(CITY_CODES).find(k => CITY_CODES[k] === parts[2]) || 'Unknown';
       const ym = parts[3];
       return { prefix: 'MCN', industryCode: parts[1], cityCode: parts[2], yearMonth: ym, year: '20' + ym.slice(0,2), month: ym.slice(2), seq: parts[4], industryName: indName, cityName: cityName };
     }
 
-    // ==================== Demo Data (模拟发起通数据) ====================
-    // ★ 核心概念重构：
-    //   一个项目 = 多张合约，融资金额 = 合约张数 × ¥1,000/张
-    //   项目融资额范围：30万~200万（即300~2000张合约）
-    //   合约看板以项目为维度分组展示
+    // ==================== Demo Data (Simulated Originate Data) ====================
+    // ★ Core concept:
+    //   One project = multiple contracts, Raise = # contracts × ¥1,000/each
+    //   Project raise range: ¥300K~¥2M (i.e. 300~2,000 contracts)
+    //   Board displays grouped by project
     const PROJECT_TEMPLATES = [
-      // ——— 餐饮 F&B ———
-      { name: '星巴克杭州西溪天堂店', industry: '餐饮', location: '杭州', originator: '杭州星巴克运营有限公司', issueDate: '2026-01-10', totalAmount: 80, revenueShare: 12, period: 24, aiScore: 8.7, riskGrade: 'A+', monthlyRevenue: 120, employeeCount: 45, operatingYears: 3.5, desc: '星巴克臻选店，西溪湿地核心商圈，日均客流8000+' },
-      { name: '海底捞成都春熙路旗舰店', industry: '餐饮', location: '成都', originator: '海底捞成都运营总部', issueDate: '2026-01-18', totalAmount: 120, revenueShare: 11, period: 30, aiScore: 8.3, riskGrade: 'A', monthlyRevenue: 180, employeeCount: 85, operatingYears: 7.5, desc: '海底捞西南区旗舰店，春熙路核心位置，月均翻台率4.2' },
-      { name: '太二酸菜鱼广州天河城店', industry: '餐饮', location: '广州', originator: '太二餐饮管理有限公司', issueDate: '2026-02-01', totalAmount: 55, revenueShare: 9, period: 24, aiScore: 7.9, riskGrade: 'A-', monthlyRevenue: 85, employeeCount: 32, operatingYears: 3.0, desc: '九毛九旗下网红品牌，天河核心商圈，排队率高' },
-      { name: '喜茶上海南京西路概念店', industry: '餐饮', location: '上海', originator: '深圳美西西餐饮管理有限公司', issueDate: '2026-02-08', totalAmount: 65, revenueShare: 13, period: 24, aiScore: 8.5, riskGrade: 'A', monthlyRevenue: 140, employeeCount: 38, operatingYears: 2.8, desc: '喜茶LAB概念店，配备手冲茶实验室，日均出杯2000+' },
-      { name: '奈雪的茶深圳万象城旗舰店', industry: '餐饮', location: '深圳', originator: '深圳市品道餐饮管理有限公司', issueDate: '2025-12-20', totalAmount: 48, revenueShare: 10, period: 24, aiScore: 7.6, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 28, operatingYears: 2.2, desc: '奈雪PRO店型，精简高效模型，坪效领先同行业' },
-      // ——— 零售 RT ———
-      { name: '泡泡玛特北京三里屯旗舰店', industry: '零售', location: '北京', originator: '泡泡玛特国际集团', issueDate: '2026-01-25', totalAmount: 95, revenueShare: 8, period: 30, aiScore: 7.8, riskGrade: 'A-', monthlyRevenue: 60, employeeCount: 25, operatingYears: 1.5, desc: '盲盒零售标杆门店，IP矩阵丰富，会员复购率65%' },
-      { name: '名创优品上海环球港店', industry: '零售', location: '上海', originator: '名创优品集团控股有限公司', issueDate: '2026-02-05', totalAmount: 45, revenueShare: 7, period: 24, aiScore: 7.4, riskGrade: 'B+', monthlyRevenue: 55, employeeCount: 18, operatingYears: 4.0, desc: '全球化零售品牌，超200SKU月更，高周转低库存' },
-      { name: '瑞幸咖啡深圳科技园集群店', industry: '零售', location: '深圳', originator: '瑞幸咖啡(中国)有限公司', issueDate: '2026-02-10', totalAmount: 38, revenueShare: 8, period: 24, aiScore: 8.0, riskGrade: 'A', monthlyRevenue: 92, employeeCount: 15, operatingYears: 2.5, desc: '写字楼集群覆盖模式，3家联营门店打包，日均单量800+' },
-      // ——— 科技 TC ———
-      { name: '字节跳动AI Lab加速器', industry: '科技', location: '北京', originator: '字节跳动投融资管理部', issueDate: '2026-01-15', totalAmount: 200, revenueShare: 15, period: 36, aiScore: 9.2, riskGrade: 'A+', monthlyRevenue: 280, employeeCount: 120, operatingYears: 6.0, desc: 'AI大模型商业化项目，ToB SaaS收入稳定增长，月活用户500万+' },
-      { name: '商汤科技智慧城市项目', industry: '科技', location: '上海', originator: '商汤科技集团股份有限公司', issueDate: '2026-02-12', totalAmount: 150, revenueShare: 14, period: 36, aiScore: 8.8, riskGrade: 'A', monthlyRevenue: 210, employeeCount: 95, operatingYears: 5.5, desc: '智慧城市解决方案，已签约12个一线城市，政府采购订单稳定' },
-      { name: '大疆创新农业无人机项目', industry: '科技', location: '深圳', originator: '深圳市大疆创新科技有限公司', issueDate: '2025-12-28', totalAmount: 130, revenueShare: 12, period: 30, aiScore: 9.0, riskGrade: 'A+', monthlyRevenue: 185, employeeCount: 78, operatingYears: 8.0, desc: '农业植保无人机，覆盖全国15省，设备保有量行业第一' },
-      // ——— 教育 ED ———
-      { name: '新东方AI智慧学堂', industry: '教育', location: '北京', originator: '新东方教育科技集团', issueDate: '2026-02-01', totalAmount: 85, revenueShare: 10, period: 30, aiScore: 7.5, riskGrade: 'A-', monthlyRevenue: 65, employeeCount: 90, operatingYears: 5.2, desc: 'AI双师课堂，覆盖K12全学段，续课率85%，月增学员3000+' },
-      { name: '猿辅导天津线下中心', industry: '教育', location: '天津', originator: '北京猿力教育科技有限公司', issueDate: '2026-02-15', totalAmount: 60, revenueShare: 9, period: 30, aiScore: 7.2, riskGrade: 'B+', monthlyRevenue: 48, employeeCount: 55, operatingYears: 3.8, desc: 'OMO线上线下融合教育，社区化小班精品课，家长满意度92%' },
-      // ——— 健康 HC ———
-      { name: '美年大健康上海浦东旗舰中心', industry: '健康', location: '上海', originator: '美年大健康产业控股股份有限公司', issueDate: '2026-01-20', totalAmount: 110, revenueShare: 14, period: 24, aiScore: 8.9, riskGrade: 'A', monthlyRevenue: 165, employeeCount: 72, operatingYears: 6.0, desc: '高端体检+专科医疗，日均检量350人，企业团检客户200+' },
-      { name: '和睦家北京CBD诊所', industry: '健康', location: '北京', originator: '和睦家医疗集团', issueDate: '2026-02-18', totalAmount: 90, revenueShare: 16, period: 24, aiScore: 9.1, riskGrade: 'A+', monthlyRevenue: 195, employeeCount: 60, operatingYears: 8.0, desc: '高端私立医疗品牌，外籍医生团队，保险直付覆盖率95%' },
-      { name: '微医互联网医院杭州中心', industry: '健康', location: '杭州', originator: '微医集团(浙江)有限公司', issueDate: '2025-12-15', totalAmount: 70, revenueShare: 11, period: 30, aiScore: 7.8, riskGrade: 'A-', monthlyRevenue: 88, employeeCount: 45, operatingYears: 4.5, desc: '互联网+医疗，线上问诊月活120万，AI辅诊准确率92%' },
-      // ——— 演艺 EN ———
-      { name: '周杰伦2026全球巡回演唱会', industry: '演艺', location: '全国', originator: '杰威尔音乐有限公司', issueDate: '2026-01-08', totalAmount: 180, revenueShare: 18, period: 18, aiScore: 9.5, riskGrade: 'A+', monthlyRevenue: 350, employeeCount: 15, operatingYears: 12.0, desc: '亚洲顶级IP，20城巡演，场均4万人，衍生品收入占比30%' },
-      { name: '开心麻花全国巡演项目', industry: '演艺', location: '北京', originator: '北京开心麻花娱乐文化传媒', issueDate: '2026-02-20', totalAmount: 55, revenueShare: 12, period: 24, aiScore: 8.0, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 40, operatingYears: 10.0, desc: '话剧+电影双线收入，全国30城巡演，IP改编电影累计票房50亿+' },
-      // ——— 新增行业覆盖 ———
-      { name: '顺丰同城急送杭州运营中心', industry: '零售', location: '杭州', originator: '顺丰同城急送有限公司', issueDate: '2026-01-30', totalAmount: 75, revenueShare: 9, period: 24, aiScore: 8.1, riskGrade: 'A', monthlyRevenue: 130, employeeCount: 200, operatingYears: 3.0, desc: '同城配送头部品牌，日均单量12万，骑手团队规模5000+' },
-      { name: '蔚来汽车成都交付中心', industry: '科技', location: '成都', originator: '蔚来汽车科技(安徽)有限公司', issueDate: '2026-02-22', totalAmount: 160, revenueShare: 13, period: 36, aiScore: 8.4, riskGrade: 'A', monthlyRevenue: 220, employeeCount: 65, operatingYears: 5.0, desc: '新能源汽车交付+售后一体化，月均交付300台，NPS行业领先' }
+      // ——— F&B ———
+      { name: 'Starbucks Hangzhou Xixi Paradise', industry: 'F&B', location: 'Hangzhou', originator: 'Hangzhou Starbucks Operations Co., Ltd.', issueDate: '2026-01-10', totalAmount: 80, revenueShare: 12, period: 24, aiScore: 8.7, riskGrade: 'A+', monthlyRevenue: 120, employeeCount: 45, operatingYears: 3.5, desc: 'Starbucks Reserve store, Xixi Wetland prime district, 8,000+ daily footfall' },
+      { name: 'Haidilao Chengdu Chunxi Rd Flagship', industry: 'F&B', location: 'Chengdu', originator: 'Haidilao Chengdu Operations HQ', issueDate: '2026-01-18', totalAmount: 120, revenueShare: 11, period: 30, aiScore: 8.3, riskGrade: 'A', monthlyRevenue: 180, employeeCount: 85, operatingYears: 7.5, desc: 'Haidilao SW flagship, prime Chunxi Rd location, 4.2 avg monthly table turnover' },
+      { name: 'Tai Er Fish Guangzhou Tianhe City', industry: 'F&B', location: 'Guangzhou', originator: 'Tai Er F&B Management Co., Ltd.', issueDate: '2026-02-01', totalAmount: 55, revenueShare: 9, period: 24, aiScore: 7.9, riskGrade: 'A-', monthlyRevenue: 85, employeeCount: 32, operatingYears: 3.0, desc: 'Jiumaojiu sub-brand, Tianhe prime district, high queue rate' },
+      { name: 'HEYTEA Shanghai Nanjing W Rd Concept Store', industry: 'F&B', location: 'Shanghai', originator: 'Shenzhen Meixi F&B Management Co., Ltd.', issueDate: '2026-02-08', totalAmount: 65, revenueShare: 13, period: 24, aiScore: 8.5, riskGrade: 'A', monthlyRevenue: 140, employeeCount: 38, operatingYears: 2.8, desc: 'HEYTEA LAB concept store with hand-brew tea lab, 2,000+ cups daily' },
+      { name: 'Nayuki Shenzhen MixC Flagship', industry: 'F&B', location: 'Shenzhen', originator: 'Shenzhen Pindao F&B Management Co., Ltd.', issueDate: '2025-12-20', totalAmount: 48, revenueShare: 10, period: 24, aiScore: 7.6, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 28, operatingYears: 2.2, desc: 'Nayuki PRO format, lean & efficient model, industry-leading revenue per sqft' },
+      // ——— Retail ———
+      { name: 'Pop Mart Beijing Sanlitun Flagship', industry: 'Retail', location: 'Beijing', originator: 'Pop Mart International Group', issueDate: '2026-01-25', totalAmount: 95, revenueShare: 8, period: 30, aiScore: 7.8, riskGrade: 'A-', monthlyRevenue: 60, employeeCount: 25, operatingYears: 1.5, desc: 'Benchmark blind-box retail store, rich IP portfolio, 65% member repurchase rate' },
+      { name: 'MINISO Shanghai Global Harbor', industry: 'Retail', location: 'Shanghai', originator: 'MINISO Group Holdings Ltd.', issueDate: '2026-02-05', totalAmount: 45, revenueShare: 7, period: 24, aiScore: 7.4, riskGrade: 'B+', monthlyRevenue: 55, employeeCount: 18, operatingYears: 4.0, desc: 'Global retail brand, 200+ SKU monthly refresh, high turnover low inventory' },
+      { name: 'Luckin Coffee Shenzhen Tech Park Cluster', industry: 'Retail', location: 'Shenzhen', originator: 'Luckin Coffee (China) Co., Ltd.', issueDate: '2026-02-10', totalAmount: 38, revenueShare: 8, period: 24, aiScore: 8.0, riskGrade: 'A', monthlyRevenue: 92, employeeCount: 15, operatingYears: 2.5, desc: 'Office cluster coverage model, 3 franchise stores bundled, 800+ daily orders' },
+      // ——— Technology ———
+      { name: 'ByteDance AI Lab Accelerator', industry: 'Technology', location: 'Beijing', originator: 'ByteDance Investment Management', issueDate: '2026-01-15', totalAmount: 200, revenueShare: 15, period: 36, aiScore: 9.2, riskGrade: 'A+', monthlyRevenue: 280, employeeCount: 120, operatingYears: 6.0, desc: 'AI large model commercialization, stable B2B SaaS revenue growth, 5M+ MAU' },
+      { name: 'SenseTime Smart City Project', industry: 'Technology', location: 'Shanghai', originator: 'SenseTime Group Inc.', issueDate: '2026-02-12', totalAmount: 150, revenueShare: 14, period: 36, aiScore: 8.8, riskGrade: 'A', monthlyRevenue: 210, employeeCount: 95, operatingYears: 5.5, desc: 'Smart city solutions, contracted with 12 tier-1 cities, stable govt procurement' },
+      { name: 'DJI Agriculture Drone Project', industry: 'Technology', location: 'Shenzhen', originator: 'Shenzhen DJI Innovation Technology Co., Ltd.', issueDate: '2025-12-28', totalAmount: 130, revenueShare: 12, period: 30, aiScore: 9.0, riskGrade: 'A+', monthlyRevenue: 185, employeeCount: 78, operatingYears: 8.0, desc: 'Agricultural drones, covering 15 provinces nationwide, #1 fleet size in industry' },
+      // ——— Education ———
+      { name: 'New Oriental AI Smart School', industry: 'Education', location: 'Beijing', originator: 'New Oriental Education & Technology Group', issueDate: '2026-02-01', totalAmount: 85, revenueShare: 10, period: 30, aiScore: 7.5, riskGrade: 'A-', monthlyRevenue: 65, employeeCount: 90, operatingYears: 5.2, desc: 'AI dual-teacher classroom, K12 full coverage, 85% renewal rate, 3,000+ new students/month' },
+      { name: 'Yuanfudao Tianjin Offline Center', industry: 'Education', location: 'Tianjin', originator: 'Beijing Yuanli Education Technology Co., Ltd.', issueDate: '2026-02-15', totalAmount: 60, revenueShare: 9, period: 30, aiScore: 7.2, riskGrade: 'B+', monthlyRevenue: 48, employeeCount: 55, operatingYears: 3.8, desc: 'OMO blended education, community-based boutique classes, 92% parent satisfaction' },
+      // ——— Healthcare ———
+      { name: 'Meinian Onehealth Shanghai Pudong Flagship', industry: 'Healthcare', location: 'Shanghai', originator: 'Meinian Onehealth Industry Holdings Co., Ltd.', issueDate: '2026-01-20', totalAmount: 110, revenueShare: 14, period: 24, aiScore: 8.9, riskGrade: 'A', monthlyRevenue: 165, employeeCount: 72, operatingYears: 6.0, desc: 'Premium checkup + specialty care, 350 daily exams, 200+ corporate clients' },
+      { name: 'United Family Beijing CBD Clinic', industry: 'Healthcare', location: 'Beijing', originator: 'United Family Healthcare Group', issueDate: '2026-02-18', totalAmount: 90, revenueShare: 16, period: 24, aiScore: 9.1, riskGrade: 'A+', monthlyRevenue: 195, employeeCount: 60, operatingYears: 8.0, desc: 'Premium private healthcare brand, expat physician team, 95% direct insurance coverage' },
+      { name: 'WeDoctor Internet Hospital Hangzhou Center', industry: 'Healthcare', location: 'Hangzhou', originator: 'WeDoctor Group (Zhejiang) Co., Ltd.', issueDate: '2025-12-15', totalAmount: 70, revenueShare: 11, period: 30, aiScore: 7.8, riskGrade: 'A-', monthlyRevenue: 88, employeeCount: 45, operatingYears: 4.5, desc: 'Internet + healthcare, 1.2M monthly online consultations, 92% AI-assisted diagnosis accuracy' },
+      // ——— Entertainment ———
+      { name: 'Jay Chou 2026 World Tour', industry: 'Entertainment', location: 'Nationwide', originator: 'JVR Music Co., Ltd.', issueDate: '2026-01-08', totalAmount: 180, revenueShare: 18, period: 18, aiScore: 9.5, riskGrade: 'A+', monthlyRevenue: 350, employeeCount: 15, operatingYears: 12.0, desc: 'Top Asian IP, 20-city tour, avg 40K per show, 30% merch revenue share' },
+      { name: 'Mahua FunAge National Tour Project', industry: 'Entertainment', location: 'Beijing', originator: 'Beijing Mahua FunAge Entertainment & Culture Media', issueDate: '2026-02-20', totalAmount: 55, revenueShare: 12, period: 24, aiScore: 8.0, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 40, operatingYears: 10.0, desc: 'Theater + film dual revenue, 30-city national tour, IP film adaptations CNY 5B+ total box office' },
+      // ——— Additional Industry Coverage ———
+      { name: 'SF Same-City Express Hangzhou Center', industry: 'Retail', location: 'Hangzhou', originator: 'SF Same-City Express Co., Ltd.', issueDate: '2026-01-30', totalAmount: 75, revenueShare: 9, period: 24, aiScore: 8.1, riskGrade: 'A', monthlyRevenue: 130, employeeCount: 200, operatingYears: 3.0, desc: 'Leading same-city delivery brand, 120K daily orders, 5,000+ rider fleet' },
+      { name: 'NIO Chengdu Delivery Center', industry: 'Technology', location: 'Chengdu', originator: 'NIO Technology (Anhui) Co., Ltd.', issueDate: '2026-02-22', totalAmount: 160, revenueShare: 13, period: 36, aiScore: 8.4, riskGrade: 'A', monthlyRevenue: 220, employeeCount: 65, operatingYears: 5.0, desc: 'NEV delivery + after-sales integration, 300 monthly deliveries, industry-leading NPS' }
     ];
 
-    // ★ 虚拟合约生成器 — 按需生成合约对象，避免一次性创建数万条记录导致浏览器卡死
-    // 核心思路：只存项目级元数据 + 每个项目生成少量代表性合约用于展示
-    // 全量数字（如 19,110 张）仅用于统计显示，不实际创建对象
+    // ★ Virtual contract generator — on-demand to avoid creating tens of thousands of records
+    // Core approach: store project metadata + generate limited representative contracts for display
+    // Total numbers (e.g., 19,110) for statistics display only, no actual objects created
 
     const STATUS_POOL = ['available', 'available', 'available', 'sold', 'available', 'sold', 'available', 'mine', 'available', 'sold'];
-    const HOLDER_NAMES = ['张三', '李四', '王五', '赵六', '陈七', '机构A', '基金B', '投资人C', '信托D', '私募E', '家办F', '资管G'];
-    const MAX_CONTRACTS_PER_PROJECT = 60; // 每项目实际生成的合约上限（用于展示和交互）
+    const HOLDER_NAMES = ['J. Smith', 'L. Chen', 'W. Zhang', 'M. Liu', 'K. Yang', 'Inst. Alpha', 'Fund Beta', 'Investor C', 'Trust Delta', 'PE Epsilon', 'FO Foxtrot', 'AM Golf'];
+    const MAX_CONTRACTS_PER_PROJECT = 60; // Max contracts generated per project (for display)
 
-    // 项目级汇总缓存（用于快速统计）
+    // Project-level summary cache
     let projectSummaries = [];
-    let totalVirtualContracts = 0; // 全部项目的虚拟合约总数（真实融资额 × 10）
+    let totalVirtualContracts = 0; // Total virtual contracts across all projects
 
     function buildContractForProject(proj, pi, ci, globalSeq, totalContracts) {
       var mcn = generateMCN(proj.industry, proj.location, proj.issueDate, globalSeq);
@@ -2289,7 +2289,7 @@ app.get('/', (c) => {
       var holder = null;
       var isMine = false;
       if (statusRand === 'mine') {
-        holder = currentUser ? (currentUser.displayName || currentUser.username) : '游客';
+        holder = currentUser ? (currentUser.displayName || currentUser.username) : 'Guest';
         isMine = true;
         statusRand = 'sold';
       } else if (statusRand === 'sold') {
@@ -2317,10 +2317,10 @@ app.get('/', (c) => {
         holder: holder,
         isMine: isMine,
         revenueShare: proj.revenueShare + '%',
-        period: proj.period + '个月',
+        period: proj.period + 'months',
         aiScore: finalScore.toFixed(1),
         riskGrade: proj.riskGrade,
-        monthlyRevenue: proj.monthlyRevenue + '万',
+        monthlyRevenue: proj.monthlyRevenue + '0K',
         employeeCount: proj.employeeCount,
         operatingYears: proj.operatingYears.toFixed(1),
         contractType: 'RSN',
@@ -2329,27 +2329,27 @@ app.get('/', (c) => {
         totalInProject: totalContracts,
         projectTotalAmount: proj.totalAmount,
         projectDesc: proj.desc || '',
-        description: '由「' + proj.originator + '」通过发起通发行的' + proj.industry + '行业标准合约。面值 ¥1,000 · 收益分享合约(RSN)。项目融资总额 ¥' + proj.totalAmount + '万（' + totalContracts + '张合约）。'
+        description: 'Standard ' + proj.industry + ' sector contract issued by "' + proj.originator + '" via Originate. Face value ¥1,000 · Revenue Share Note (RSN). Project total raise ¥' + proj.totalAmount + '0K (' + totalContracts + ' contracts).'
       };
     }
 
     function loadDemoData() {
-      // 显示骨架屏加载效果
+      // Show skeleton loading
       showDealGridSkeleton();
-      // ★ 性能优化：每个项目只生成 MAX_CONTRACTS_PER_PROJECT 张代表性合约
-      //   项目的真实合约总数 = totalAmount × 10（仅用于统计展示）
-      //   例：星巴克80万 = 虚拟800张，但实际只生成60张供浏览
+      // ★ Performance: only generate MAX_CONTRACTS_PER_PROJECT representative contracts per project
+      //   Real total = totalAmount × 10 (for stats display only)
+      //   e.g., Starbucks ¥800K = virtual 800, but only 60 generated for browsing
       allDeals = [];
       projectSummaries = [];
       totalVirtualContracts = 0;
       var globalSeq = 1;
 
       PROJECT_TEMPLATES.forEach(function(proj, pi) {
-        var virtualTotal = proj.totalAmount * 10; // 虚拟总数（真实融资额映射）
-        var actualGen = Math.min(virtualTotal, MAX_CONTRACTS_PER_PROJECT); // 实际生成数
+        var virtualTotal = proj.totalAmount * 10; // Virtual total (mapped from real raise amount)
+        var actualGen = Math.min(virtualTotal, MAX_CONTRACTS_PER_PROJECT); // Actual generated count
         totalVirtualContracts += virtualTotal;
 
-        // 统计虚拟总分布（确定性计算，不需要生成全部对象）
+        // Deterministic virtual distribution calc
         var vAvail = 0, vSold = 0, vMine = 0;
         for (var vi = 0; vi < virtualTotal; vi++) {
           var sIdx = (pi * 7 + vi * 3 + Math.floor(vi / 10)) % STATUS_POOL.length;
@@ -2378,25 +2378,25 @@ app.get('/', (c) => {
           desc: proj.desc || ''
         });
 
-        // 只生成 actualGen 张合约（均匀采样）
+        // Only generate actualGen contracts (uniform sampling)
         for (var ci = 0; ci < actualGen; ci++) {
-          // 均匀采样：从虚拟总数中按比例选取序号
+          // Uniform sampling: select by proportion from virtual total
           var sampledIdx = actualGen < virtualTotal
             ? Math.floor(ci * (virtualTotal / actualGen))
             : ci;
           var contract = buildContractForProject(proj, pi, sampledIdx, globalSeq, virtualTotal);
-          // 覆盖 seqInProject 为采样序号+1，保留 totalInProject 为虚拟总数
+          // Override seqInProject as sampled index+1, keep totalInProject as virtual total
           contract.seqInProject = sampledIdx + 1;
           allDeals.push(contract);
           globalSeq++;
         }
       });
 
-      // 不再写入 localStorage（19K+ 对象会超过 5MB 配额导致卡死）
+      // Skip localStorage (19K+ objects exceed 5MB quota and freeze browser)
     }
 
-    // ==================== 合约多维度评估体系 ====================
-    // 8个维度：YITO年化收益率、合约时长适配度、收入稳定性、风控评级、流动性、团队实力、市场潜力、AI综合评分
+    // ==================== Contract Multi-Dimension Assessment System ====================
+    // 8 dimensions: Annual Yield, Duration Fit, Income Stability, Risk Control, Liquidity, Team Strength, Market Potential, AI Composite Score
     const RADAR_DIMENSIONS = [
       { key: 'yield', labelKey: 'rdYield', icon: 'fa-percentage', color: '#f59e0b', descKey: 'rdYieldDesc' },
       { key: 'duration', labelKey: 'rdDuration', icon: 'fa-clock', color: '#06b6d4', descKey: 'rdDurationDesc' },
@@ -2411,95 +2411,95 @@ app.get('/', (c) => {
     function getDimLabel(dim) { return t(dim.labelKey); }
     function getDimDesc(dim) { return t(dim.descKey); }
 
-    // 根据deal数据计算各维度分数 (0-100)
+    // Calculate dimension scores from deal data (0-100)
     function calcRadarScores(deal) {
       if (!deal) return RADAR_DIMENSIONS.map(() => 50);
 
-      // 1. YITO年化收益率 — revenueShare 直接就是年化收益率(%)
+      // 1. Annual Yield — revenueShare directly maps to annual yield (%)
       const shareNum = parseInt(deal.revenueShare) || 10;
       const periodNum = parseInt(deal.period) || 24;
-      const annualYield = shareNum; // revenueShare 本身就是年化收益率
+      const annualYield = shareNum; // revenueShare is the annual yield
       const yieldScore = Math.min(100, Math.max(15, Math.round(annualYield * 5 + 15)));
 
-      // 2. 合约时长适配度 — 12-30个月为最优，偏离扣分
+      // 2. Duration Fit — 12-30 months optimal, penalty for deviation
       let durationScore;
       if (periodNum >= 12 && periodNum <= 30) durationScore = 75 + Math.round((1 - Math.abs(periodNum - 21) / 9) * 25);
       else if (periodNum < 12) durationScore = Math.max(30, 75 - (12 - periodNum) * 5);
       else durationScore = Math.max(25, 75 - (periodNum - 30) * 3);
 
-      // 3. 收入稳定性 — 用月营收和行业推算
+      // 3. Income Stability — from monthly revenue and industry
       const revenue = parseInt(deal.monthlyRevenue) || 100;
-      const stableIndustries = ['餐饮', '健康', '教育'];
+      const stableIndustries = ['F&B', 'Healthcare', 'Education'];
       const isStable = stableIndustries.includes(deal.industry);
       const stabilityScore = Math.min(95, Math.max(30, Math.round(50 + (isStable ? 20 : -5) + (revenue > 100 ? 15 : revenue > 50 ? 8 : 0) + Math.random() * 12)));
 
-      // 4. 风控评级 — 直接映射
+      // 4. Risk Control — direct mapping
       const riskMap = { 'A+': 95, 'A': 82, 'A-': 72, 'B+': 58, 'B': 45, 'B-': 35, 'C': 20 };
       const riskCtrlScore = riskMap[deal.riskGrade] || 50;
 
-      // 5. 流动性 — 基于合约状态和项目热度
+      // 5. Liquidity — based on contract status and project popularity
       var idNum = parseInt((deal.id || '0').replace(/\\D/g, '')) || 0;
       var liquidityScore;
       if (deal.status === 'sold' || deal.isMine) liquidityScore = 70 + (idNum % 20);
       else liquidityScore = 45 + (idNum % 25);
       liquidityScore = Math.min(95, Math.max(25, liquidityScore));
 
-      // 6. 团队实力 — 员工数+运营年限
+      // 6. Team Strength — headcount + operating years
       const emp = deal.employeeCount || 30;
       const years = parseFloat(deal.operatingYears) || 2;
       const teamScore = Math.min(95, Math.max(20, Math.round(
         (Math.min(emp, 100) / 100) * 45 + (Math.min(years, 8) / 8) * 45 + 10
       )));
 
-      // 7. 市场潜力 — 行业+城市
-      const hotIndustries = { '科技': 92, '健康': 85, '教育': 78, '餐饮': 72, '零售': 65, '演艺': 60 };
-      const hotCities = { '北京': 15, '上海': 14, '深圳': 13, '杭州': 12, '广州': 10, '成都': 8, '全国': 11, '天津': 7 };
+      // 7. Market Potential — industry + city
+      const hotIndustries = { 'Technology': 92, 'Healthcare': 85, 'Education': 78, 'F&B': 72, 'Retail': 65, 'Entertainment': 60 };
+      const hotCities = { 'Beijing': 15, 'Shanghai': 14, 'Shenzhen': 13, 'Hangzhou': 12, 'Guangzhou': 10, 'Chengdu': 8, 'Nationwide': 11, 'Tianjin': 7 };
       const marketScore = Math.min(98, Math.max(30, (hotIndustries[deal.industry] || 60) + (hotCities[deal.location] || 5)));
 
-      // 8. AI综合评分 — 直接用aiScore*10
+      // 8. AI Composite Score — aiScore × 10
       const aiScoreVal = Math.min(100, Math.max(20, Math.round(parseFloat(deal.aiScore) * 10)));
 
       return [yieldScore, durationScore, stabilityScore, riskCtrlScore, liquidityScore, teamScore, marketScore, aiScoreVal];
     }
 
-    // 计算单张合约的预估月收（基于项目实际月营收 × 分成比例 ÷ 项目总合约数）
+    // Calculate per-contract est. monthly income (project monthly rev × share ÷ total contracts)
     function calcContractMonthlyIncome(deal) {
-      const monthlyRev = parseInt(deal.monthlyRevenue) || 50; // 项目月营收（万元）
-      const shareNum = parseInt(deal.revenueShare) || 10;     // 分成比例(%)
-      const totalAmt = deal.projectTotalAmount || 50;          // 项目融资总额（万元）
-      const totalContracts = totalAmt * 10;                    // 项目总合约数（每张¥1000）
-      // 每张合约月收 = 月营收(万) × 10000 × 分成(%) / 100 / 总合约数
+      const monthlyRev = parseInt(deal.monthlyRevenue) || 50; // Monthly revenue (10K CNY)
+      const shareNum = parseInt(deal.revenueShare) || 10;     // Revenue share (%)
+      const totalAmt = deal.projectTotalAmount || 50;          // Project total raise (10K CNY)
+      const totalContracts = totalAmt * 10;                    // Total contracts (¥1,000 each)
+      // Per-contract monthly = revenue(10K) × 10000 × share(%) / 100 / total contracts
       return monthlyRev * 10000 * shareNum / 100 / totalContracts;
     }
 
-    // 计算单个合约的实际展示值（用于维度卡片 — 让投资者一眼看懂组合长什么样）
+    // Calculate per-contract display values (for dimension cards)
     function calcDealDisplayValues(deal) {
       if (!deal) return ['—', '—', '—', '—', '—', '—', '—', '—'];
       const shareNum = parseInt(deal.revenueShare) || 10;
       const periodNum = parseInt(deal.period) || 24;
-      const annualYield = shareNum; // revenueShare 本身就是年化收益率(%)
-      // 单张合约预估月收 = 基于项目实际月营收推算
+      const annualYield = shareNum; // revenueShare is the annual yield (%)
+      // Per-contract est. monthly income from project revenue
       const dealMonthlyIncome = calcContractMonthlyIncome(deal);
-      const dealIncomeStr = dealMonthlyIncome >= 10000 ? (dealMonthlyIncome / 10000).toFixed(1) + '万' : '¥' + Math.round(dealMonthlyIncome).toLocaleString();
+      const dealIncomeStr = dealMonthlyIncome >= 10000 ? (dealMonthlyIncome / 10000).toFixed(1) + '0K' : '¥' + Math.round(dealMonthlyIncome).toLocaleString();
       return [
-        annualYield.toFixed(1) + '%',                // YITO年化收益率
-        (periodNum * 30) + '天',                      // 合约时长（转天数）
-        dealIncomeStr + '/月',                         // 收入 → 每张合约每月预估收入
-        deal.riskGrade || 'B',                         // 风控评级
-        deal.status === 'sold' ? '已售' : '可购',       // 流动性
-        (parseFloat(deal.operatingYears) || 0).toFixed(1) + '年', // 团队实力 → 运营年限
-        deal.industry || '—',                          // 市场潜力 → 行业
-        parseFloat(deal.aiScore).toFixed(1)            // AI综合评分
+        annualYield.toFixed(1) + '%',                // Annual yield
+        (periodNum * 30) + 'days',                      // Duration (in days)
+        dealIncomeStr + '/mo',                         // Income — est. monthly income per contract
+        deal.riskGrade || 'B',                         // Risk grade
+        deal.status === 'sold' ? 'Sold' : 'Available',       // Liquidity
+        (parseFloat(deal.operatingYears) || 0).toFixed(1) + 'yrs', // Team strength — operating years
+        deal.industry || '—',                          // Market potential — industry
+        parseFloat(deal.aiScore).toFixed(1)            // AI composite score
       ];
     }
 
-    // 计算组合级别的实际展示值（加权汇总 — 投资者一眼看懂组合画像）
+    // Calculate portfolio-level display values (weighted aggregation)
     function calcPortfolioDisplayValues(contracts) {
       if (!contracts || contracts.length === 0) return ['—', '—', '—', '—', '—', '—', '—', '—'];
       const n = contracts.length;
 
-      // 1. 年化收益率（加权平均，面值相同故等于简单平均）
-      // revenueShare 本身就是年化收益率(%)
+      // 1. Annual Yield (weighted avg, equal face values = simple avg)
+      // revenueShare is the annual yield (%)
       let totalYield = 0;
       contracts.forEach(c => {
         const shareNum = parseInt(c.revenueShare) || 10;
@@ -2507,71 +2507,71 @@ app.get('/', (c) => {
       });
       const avgYield = totalYield / n;
 
-      // 2. 平均合约时长（月→天，加权平均）
+      // 2. Avg duration (months→days, weighted avg)
       let totalMonths = 0;
       contracts.forEach(c => { totalMonths += parseInt(c.period) || 24; });
       const avgMonths = totalMonths / n;
       const avgDays = Math.round(avgMonths * 30);
 
-      // 3. 组合每月预估收入 — 所有底层合约预估月收的加总
-      // 每张合约月收 = 项目月营收(万) × 10000 × 分成比例(%) / 100 / 项目总合约数
+      // 3. Portfolio est. monthly income — sum of all underlying contract income
+      // Per-contract monthly = project revenue(10K) × 10000 × share(%) / 100 / total contracts
       let monthlyIncome = 0;
       contracts.forEach(c => {
         monthlyIncome += calcContractMonthlyIncome(c);
       });
-      const incomeDisplay = monthlyIncome >= 10000 ? (monthlyIncome / 10000).toFixed(1) + '万' : '¥' + Math.round(monthlyIncome).toLocaleString();
+      const incomeDisplay = monthlyIncome >= 10000 ? (monthlyIncome / 10000).toFixed(1) + '0K' : '¥' + Math.round(monthlyIncome).toLocaleString();
 
-      // 4. 风控评级 — 取众数
+      // 4. Risk Control — mode
       const riskCounts = {};
       contracts.forEach(c => { const g = c.riskGrade || 'B'; riskCounts[g] = (riskCounts[g] || 0) + 1; });
       let topRisk = 'B', topCount = 0;
       Object.keys(riskCounts).forEach(g => { if (riskCounts[g] > topCount) { topRisk = g; topCount = riskCounts[g]; } });
 
-      // 5. 流动性 — 已售比例
+      // 5. Liquidity — sold ratio
       const soldCount = contracts.filter(c => c.status === 'sold' || c.isMine).length;
       const soldPct = Math.round(soldCount / n * 100);
 
-      // 6. 平均运营年限
+      // 6. Avg operating years
       let totalYears = 0;
       contracts.forEach(c => { totalYears += parseFloat(c.operatingYears) || 0; });
       const avgYears = (totalYears / n).toFixed(1);
 
-      // 7. 行业分布
+      // 7. Industry distribution
       const industries = {};
       contracts.forEach(c => { industries[c.industry] = (industries[c.industry] || 0) + 1; });
       const topIndustry = Object.keys(industries).sort((a, b) => industries[b] - industries[a])[0] || '—';
       const indCount = Object.keys(industries).length;
 
-      // 8. 平均AI评分
+      // 8. Avg AI score
       let totalAI = 0;
       contracts.forEach(c => { totalAI += parseFloat(c.aiScore) || 0; });
       const avgAI = (totalAI / n).toFixed(1);
 
       return [
-        avgYield.toFixed(1) + '%',          // 年化收益
-        avgDays + '天',                      // 合约时长
-        incomeDisplay + '/月',               // 收入（基于合约面值×分成的每月预估收入）
-        topRisk,                             // 风控评级
-        soldPct + '%已售',                   // 流动性
-        avgYears + '年',                     // 团队（运营年限）
-        indCount > 1 ? topIndustry + '等' + indCount + '业' : topIndustry, // 市场
-        avgAI + '/10'                        // AI评分
+        avgYield.toFixed(1) + '%',          // Annual yield
+        avgDays + 'days',                      // Duration
+        incomeDisplay + '/mo',               // Income (est. monthly based on face value × share)
+        topRisk,                             // Risk grade
+        soldPct + '% sold',                   // Liquidity
+        avgYears + 'yrs',                     // Team (operating years)
+        indCount > 1 ? topIndustry + ' +' + (indCount-1) + ' more' : topIndustry, // Market
+        avgAI + '/10'                        // AI score
       ];
     }
 
-    // 维度卡片的副标签（简短描述实际值的含义）
+    // Dimension card sub-labels
     const RADAR_DIM_SUBLABEL_KEYS = ['rslYield','rslDuration','rslStability','rslRiskCtrl','rslLiquidity','rslTeam','rslMarket','rslAIScore'];
     function getRadarSubLabel(i) { return t(RADAR_DIM_SUBLABEL_KEYS[i]); }
 
-    // 计算综合得分（加权平均）
+    // Calculate composite score (weighted avg)
     function calcOverallScore(scores) {
-      const weights = [0.20, 0.08, 0.15, 0.18, 0.08, 0.10, 0.10, 0.11]; // 权重：收益>风控>稳定性>AI>团队=市场>时长=流动
+      const weights = [0.20, 0.08, 0.15, 0.18, 0.08, 0.10, 0.10, 0.11]; // Weights: Yield>Risk>Stability>AI>Team=Market>Duration=Liquidity
       let total = 0, wSum = 0;
       scores.forEach((s, i) => { total += s * weights[i]; wSum += weights[i]; });
       return Math.round(total / wSum);
     }
 
-    // 评分等级判定
+    // Score grade determination
     function getScoreGrade(score) {
       if (score >= 85) return { grade: 'S', label: t('gradeExcellent'), color: '#059669', bg: 'rgba(5,150,105,0.1)' };
       if (score >= 75) return { grade: 'A', label: t('gradeGood'), color: '#0d9488', bg: 'rgba(13,148,136,0.1)' };
@@ -2581,7 +2581,7 @@ app.get('/', (c) => {
       return { grade: 'D', label: t('gradeRisky'), color: '#991b1b', bg: 'rgba(153,27,27,0.1)' };
     }
 
-    // ==================== Canvas 雷达图绘制 ====================
+    // ==================== Canvas Radar Chart Drawing ====================
     function drawRadarChart(canvasId, scores, options = {}) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
@@ -2600,12 +2600,12 @@ app.get('/', (c) => {
       const dims = RADAR_DIMENSIONS;
       const n = dims.length;
       const angleStep = (Math.PI * 2) / n;
-      const startAngle = -Math.PI / 2; // 从顶部开始
+      const startAngle = -Math.PI / 2; // Start from top
 
-      // 清空
+      // Clear
       ctx.clearRect(0, 0, size, size);
 
-      // 绘制背景网格（5层）
+      // Draw background grid (5 layers)
       for (let ring = 1; ring <= 5; ring++) {
         const r = maxR * (ring / 5);
         ctx.beginPath();
@@ -2621,7 +2621,7 @@ app.get('/', (c) => {
         ctx.lineWidth = ring === 5 ? 1.2 : 0.8;
         ctx.stroke();
 
-        // 20/40/60/80/100 标注
+        // 20/40/60/80/100 labels
         if (ring % 2 === 0 || ring === 1) {
           ctx.fillStyle = 'rgba(142,189,181,0.4)';
           ctx.font = '9px Inter, sans-serif';
@@ -2630,7 +2630,7 @@ app.get('/', (c) => {
         }
       }
 
-      // 绘制轴线
+      // Draw axis lines
       for (let i = 0; i < n; i++) {
         const angle = startAngle + i * angleStep;
         ctx.beginPath();
@@ -2641,7 +2641,7 @@ app.get('/', (c) => {
         ctx.stroke();
       }
 
-      // 绘制数据区域（渐变填充）
+      // Draw data area (gradient fill)
       ctx.beginPath();
       for (let i = 0; i <= n; i++) {
         const idx = i % n;
@@ -2655,19 +2655,19 @@ app.get('/', (c) => {
       }
       ctx.closePath();
 
-      // 渐变填充
+      // Gradient fill
       const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
       gradient.addColorStop(0, 'rgba(46,196,182,0.35)');
       gradient.addColorStop(1, 'rgba(46,196,182,0.08)');
       ctx.fillStyle = gradient;
       ctx.fill();
 
-      // 描边
+      // Stroke
       ctx.strokeStyle = 'rgba(46,196,182,0.8)';
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // 绘制数据点
+      // Draw data points
       for (let i = 0; i < n; i++) {
         const angle = startAngle + i * angleStep;
         const val = (scores[i] || 0) / 100;
@@ -2675,7 +2675,7 @@ app.get('/', (c) => {
         const x = cx + r * Math.cos(angle);
         const y = cy + r * Math.sin(angle);
 
-        // 外圈
+        // Outer circle
         ctx.beginPath();
         ctx.arc(x, y, 5, 0, Math.PI * 2);
         ctx.fillStyle = '#0B1E1C';
@@ -2684,35 +2684,35 @@ app.get('/', (c) => {
         ctx.lineWidth = 2.5;
         ctx.stroke();
 
-        // 内点
+        // Inner dot
         ctx.beginPath();
         ctx.arc(x, y, 2, 0, Math.PI * 2);
         ctx.fillStyle = dims[i].color;
         ctx.fill();
       }
 
-      // 绘制维度标签
+      // Draw dimension labels
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      const displayLabels = options.displayValues || null; // 实际值标签（如 "12.0%", "540天"）
+      const displayLabels = options.displayValues || null; // Actual display labels (e.g., "12.0%", "540days")
       for (let i = 0; i < n; i++) {
         const angle = startAngle + i * angleStep;
         const labelR = maxR + 25;
         const x = cx + labelR * Math.cos(angle);
         const y = cy + labelR * Math.sin(angle);
 
-        // 显示实际值（优先）或分数
+        // Show actual value (preferred) or score
         ctx.font = 'bold 11px Inter, sans-serif';
         ctx.fillStyle = dims[i].color;
         const scoreY = angle < 0 ? y - 7 : (angle > Math.PI * 0.8 ? y - 7 : y + 7);
         const labelText = displayLabels ? displayLabels[i] : scores[i].toString();
         ctx.fillText(labelText, x, i === 0 ? y - 5 : scoreY);
 
-        // 标签名
+        // Label name
         ctx.font = '9px Inter, sans-serif';
         ctx.fillStyle = '#5A9A90';
         const nameY = i === 0 ? y + 6 : (angle < 0 ? y + 4 : (angle > Math.PI * 0.8 ? y + 4 : y - 4));
-        // 对于左右两侧的标签，文字对齐方式调整
+        // Adjust text alignment for left/right labels
         const cosA = Math.cos(angle);
         if (cosA < -0.3) ctx.textAlign = 'right';
         else if (cosA > 0.3) ctx.textAlign = 'left';
@@ -2722,7 +2722,7 @@ app.get('/', (c) => {
       }
     }
 
-    // 小型雷达图（用于卡片预览）
+    // Mini radar chart (for card preview)
     function drawMiniRadar(canvasId, scores) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
@@ -2740,7 +2740,7 @@ app.get('/', (c) => {
       const angleStep = (Math.PI * 2) / n;
       const startAngle = -Math.PI / 2;
 
-      // 背景网格
+      // Background grid
       ctx.beginPath();
       for (let i = 0; i <= n; i++) {
         const angle = startAngle + (i % n) * angleStep;
@@ -2753,7 +2753,7 @@ app.get('/', (c) => {
       ctx.lineWidth = 0.5;
       ctx.stroke();
 
-      // 数据
+      // Data
       ctx.beginPath();
       for (let i = 0; i <= n; i++) {
         const idx = i % n;
@@ -2774,7 +2774,7 @@ app.get('/', (c) => {
       ctx.stroke();
     }
 
-    // ==================== 动态渲染筛子选择器 ====================
+    // ==================== Dynamic Sieve Selector Rendering ====================
     function getSieveName(key) {
       var map = { industry: 'sieveIndustry', risk: 'sieveRisk', 'return': 'sieveReturn', composite: 'sieveComposite', location: 'sieveLocation', growth: 'sieveGrowth', largeScale: 'sieveLargeScale', teamStrength: 'sieveTeamStrength', quickReturn: 'sieveQuickReturn', safeHaven: 'sieveSafeHaven' };
       return map[key] ? t(map[key]) : (SIEVE_LIBRARY[key] ? SIEVE_LIBRARY[key].name : key);
@@ -2785,7 +2785,7 @@ app.get('/', (c) => {
     }
     function getSieveCat(key) {
       var s = SIEVE_LIBRARY[key]; if (!s) return '';
-      var map = { '行业': 'sieveCatIndustry', '风控': 'sieveCatRisk', '收益': 'sieveCatReturn', '综合': 'sieveCatComposite', '区域': 'sieveCatLocation', '成长': 'sieveCatGrowth', '规模': 'sieveCatScale', '团队': 'sieveCatTeam', '周期': 'sieveCatCycle' };
+      var map = { 'Industry': 'sieveCatIndustry', 'Risk Mgmt': 'sieveCatRisk', 'Return': 'sieveCatReturn', 'Composite': 'sieveCatComposite', 'Location': 'sieveCatLocation', 'Growth': 'sieveCatGrowth', 'Scale': 'sieveCatScale', 'Team': 'sieveCatTeam', 'Cycle': 'sieveCatCycle' };
       return map[s.category] ? t(map[s.category]) : s.category;
     }
 
@@ -2802,9 +2802,9 @@ app.get('/', (c) => {
       container.innerHTML = html;
     }
 
-    // ==================== 筛子管理弹窗 ====================
+    // ==================== Sieve Manager Modal ====================
     function showSieveManager() {
-      // 移除旧弹窗
+      // Remove old modal
       const old = document.getElementById('sieveManagerModal'); if (old) old.remove();
 
       const libraryKeys = Object.keys(SIEVE_LIBRARY);
@@ -2824,16 +2824,16 @@ app.get('/', (c) => {
             '<button onclick="closeSieveManager()" class="w-8 h-8 rounded-full bg-[rgba(46,196,182,0.06)] hover:bg-[rgba(46,196,182,0.1)] flex items-center justify-center text-[#5A9A90] transition-colors"><i class="fas fa-times"></i></button>' +
           '</div>' +
         '</div>' +
-        // Body — 双栏
+        // Body — two columns
         '<div class="flex" style="min-height: 380px; max-height: 70vh;">' +
-          // 左栏：筛子库
+          // Left column: sieve library
           '<div class="w-1/2 border-r border-[rgba(46,196,182,0.08)] flex flex-col">' +
             '<div class="p-4 border-b border-gray-50 flex items-center justify-between"><h3 class="text-sm font-bold text-[#B0D5CF]"><i class="fas fa-warehouse mr-1.5 text-cyan-500"></i>' + t('smLibrary') + '</h3><span class="text-xs text-[#3D7A70]">' + t('smAvailable', {n: libraryKeys.length}) + '</span></div>' +
             '<div class="flex-1 overflow-y-auto p-3 space-y-2" id="sieveLibraryList">' +
               renderLibraryItems(libraryKeys) +
             '</div>' +
           '</div>' +
-          // 右栏：我的筛子
+          // Right column: my sieves
           '<div class="w-1/2 flex flex-col" style="background: #fafbfc;">' +
             '<div class="p-4 border-b border-gray-50 flex items-center justify-between"><h3 class="text-sm font-bold text-[#B0D5CF]"><i class="fas fa-star mr-1.5 text-amber-500"></i>' + t('smMySieves') + '</h3><span class="text-xs text-[#3D7A70]" id="mySieveCount">' + t('smAdded', {n: mySieves.length}) + '</span></div>' +
             '<div class="flex-1 overflow-y-auto p-3 space-y-2" id="mySieveList">' +
@@ -2894,20 +2894,20 @@ app.get('/', (c) => {
       saveMySieves();
       refreshSieveManager();
       renderSieveSelector();
-      showToast('success', '已添加', SIEVE_LIBRARY[key].name + ' 已添加到您的筛子面板');
+      showToast('success', 'Added', SIEVE_LIBRARY[key].name + ' has been added to your sieve panel');
     }
 
     function removeSieve(key) {
       mySieves = mySieves.filter(k => k !== key);
       saveMySieves();
-      // 如果移除的是当前选中的筛子，回到全部
+      // If removed sieve is current, reset to all
       if (currentSieve === key) {
         currentSieve = 'all';
         selectSieve('all');
       }
       refreshSieveManager();
       renderSieveSelector();
-      showToast('info', '已移除', SIEVE_LIBRARY[key].name + ' 已从您的面板移除');
+      showToast('info', 'Removed', SIEVE_LIBRARY[key].name + ' has been removed from your panel');
     }
 
     function refreshSieveManager() {
@@ -2916,7 +2916,7 @@ app.get('/', (c) => {
       const myCount = document.getElementById('mySieveCount');
       if (libList) libList.innerHTML = renderLibraryItems();
       if (myList) myList.innerHTML = renderMySieveItems();
-      if (myCount) myCount.textContent = mySieves.length + ' 个已添加';
+      if (myCount) myCount.textContent = mySieves.length + ' added';
     }
 
     function closeSieveManager() {
@@ -2924,21 +2924,21 @@ app.get('/', (c) => {
       if (modal) { modal.style.opacity = '0'; setTimeout(() => modal.remove(), 200); }
     }
 
-    // ==================== 筛子选择 ====================
+    // ==================== Sieve Selection ====================
     function selectSieve(sieveKey) {
       currentSieve = sieveKey;
-      // 持久化筛子选择
+      // Persist sieve selection
       try { localStorage.setItem('ec_lastSieve', sieveKey); } catch(e) {}
-      // 更新UI（安全处理，因为可能从非 dashboard 页面调用）
+      // Update UI (safe handling, may be called from non-dashboard pages)
       document.querySelectorAll('#sieveSelector .sieve-chip').forEach(el => {
         el.classList.toggle('active', el.dataset.sieve === sieveKey);
       });
-      // 获取当前可用筛子模型
+      // Get current available sieve models
       const models = getActiveSieveModels();
       const sieve = models[sieveKey];
       if (sieve) {
         dealsList = sieve.filter(allDeals);
-        // 更新筛子说明（安全null检查）
+        // Update sieve description (safe null check)
         const descEl = document.getElementById('sieveDescription');
         const descText = document.getElementById('sieveDescText');
         if (descEl) {
@@ -2949,7 +2949,7 @@ app.get('/', (c) => {
             if (descText) descText.textContent = getSieveDesc(Object.keys(SIEVE_LIBRARY).find(k => SIEVE_LIBRARY[k] === sieve) || '');
           }
         }
-        // 更新标签
+        // Update labels
         const label = document.getElementById('filterLabel');
         if (label) {
           if (sieveKey === 'all') {
@@ -2973,7 +2973,7 @@ app.get('/', (c) => {
     function renderDeals() {
       const grid = document.getElementById('dealGrid');
       const empty = document.getElementById('emptyState');
-      if (!grid) return; // 安全检查：非 dashboard 页面时不渲染
+      if (!grid) return; // Safety check: skip if not on dashboard page
       const searchVal = (document.getElementById('dealSearch')?.value || '').toLowerCase();
       const filterVal = document.getElementById('filterStatus')?.value || 'all';
 
@@ -2989,17 +2989,17 @@ app.get('/', (c) => {
         return true;
       });
 
-      // Update stats — 客观维度总结（不做任何预设判断）
+      // Update stats — objective dimension summary (no preset judgments)
       var dashVTotal = totalVirtualContracts || allDeals.length;
       var dashVMine = 0;
-      var dashVSold = 0; // 总交易（已售出）
+      var dashVSold = 0; // Total deals (sold)
       projectSummaries.forEach(function(ps) {
         dashVMine += ps.mine;
         dashVSold += ps.sold;
       });
       if (dashVMine === 0) dashVMine = allDeals.filter(d => d.isMine).length;
       if (dashVSold === 0) dashVSold = allDeals.filter(d => d.status === 'sold').length;
-      // 我的组合 = 基金型跨项目组合数量
+      // My portfolios = cross-project fund portfolio count
       var fundPortfolios = getMyPortfolios();
       var dashVPortfolios = fundPortfolios.length;
       var el;
@@ -3007,18 +3007,18 @@ app.get('/', (c) => {
       el = document.getElementById('statTotalTransactions'); animateNumber(el, dashVSold);
       el = document.getElementById('statMyContracts'); animateNumber(el, dashVMine);
       el = document.getElementById('statMyPortfolios'); animateNumber(el, dashVPortfolios);
-      // Bloomberg Ticker 同步更新
+      // Bloomberg Ticker sync update
       el = document.getElementById('tickerTotalContracts'); animateNumber(el, dashVTotal);
       el = document.getElementById('tickerTotalTransactions'); animateNumber(el, dashVSold);
       el = document.getElementById('tickerMyContracts'); animateNumber(el, dashVMine);
       el = document.getElementById('tickerMyPortfolios'); animateNumber(el, dashVPortfolios);
-      // 更新AI入口卡片统计
+      // Update AI entry card stats
       el = document.getElementById('aiEntryContracts'); if (el) el.textContent = dashVTotal.toLocaleString();
       el = document.getElementById('aiEntryProjects'); if (el) el.textContent = allDeals.length.toLocaleString();
-      // 更新AI统计卡片
+      // Update AI stats cards
       var aiReadyEl = document.getElementById('statAIReady');
       if (aiReadyEl && dashVTotal > 0) { aiReadyEl.innerHTML = '<span style="font-family:SF Mono,Fira Code,monospace;">' + dashVTotal.toLocaleString() + '</span>'; }
-      // 动态更新欢迎副标题
+      // Dynamic update welcome subtitle
       var subText = document.getElementById('welcomeSubText');
       if (subText) {
         if (dashVMine > 0) {
@@ -3049,7 +3049,7 @@ app.get('/', (c) => {
         const hasMatch = d.matchScore !== null && d.matchScore !== undefined;
         const matchColor = hasMatch ? (d.matchScore >= 80 ? '#10b981' : d.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#3D7A70';
 
-        // 计算雷达评分用于卡片展示
+        // Calculate radar scores for card display
         const cardScores = calcRadarScores(d);
         const cardOverall = calcOverallScore(cardScores);
         const cardGrade = getScoreGrade(cardOverall);
@@ -3106,7 +3106,7 @@ app.get('/', (c) => {
         '</div>';
       }).join('');
 
-      // 延迟绘制卡片上的小雷达图
+      // Delay draw mini radars on cards
       setTimeout(() => {
         filtered.forEach(d => {
           const scores = calcRadarScores(d);
@@ -3120,7 +3120,7 @@ app.get('/', (c) => {
       if (sel) { sel.value = status; renderDeals(); }
     }
 
-    // ==================== 认购弹窗 (单张合约) ====================
+    // ==================== Subscribe Modal (Single Contract) ====================
     function showSubscribeModal() {
       if (!currentDeal) return;
       if (currentDeal.status === 'sold') { showToast('warning', t('eiSold'), t('subAlreadySold')); return; }
@@ -3166,29 +3166,29 @@ app.get('/', (c) => {
       if (!currentDeal) return;
       if (currentDeal.status === 'sold') { showToast('error', t('eiSold'), t('subAlreadySold')); return; }
 
-      // 更新数据：这张合约归当前用户
-      const userName = currentUser ? (currentUser.displayName || currentUser.username) : (currentLang === 'en' ? 'Guest' : '游客');
+      // Update data: assign this contract to current user
+      const userName = currentUser ? (currentUser.displayName || currentUser.username) : (currentLang === 'en' ? 'Guest' : 'Guest');
       currentDeal.status = 'sold';
       currentDeal.holder = userName;
       currentDeal.isMine = true;
 
-      // 同步回 allDeals
+      // Sync back to allDeals
       const original = allDeals.find(d => d.id === currentDeal.id);
       if (original) {
         original.status = currentDeal.status;
         original.holder = currentDeal.holder;
         original.isMine = currentDeal.isMine;
       }
-      // 更新 projectSummaries 中对应项目的 mine 计数
+      // Update mine count in projectSummaries for this project
       var ps = projectSummaries.find(function(s) { return s.projectId === currentDeal.projectId; });
       if (ps) { ps.mine++; ps.available = Math.max(0, ps.available - 1); }
 
-      // 关闭弹窗
+      // Close modal
       const modal = document.getElementById('subscribeModal');
       if (modal) modal.remove();
 
       showToast('success', t('toastSubscribeSuccess'), t('subSuccessDetail', {mcn: currentDeal.mcn}));
-      openDetail(currentDeal.id); // 刷新详情
+      openDetail(currentDeal.id); // Refresh details
     }
 
     // ==================== Detail Page ====================
@@ -3204,7 +3204,7 @@ app.get('/', (c) => {
       document.getElementById('detailIndustry').textContent = currentDeal.industry;
       document.getElementById('detailDate').textContent = currentDeal.originateDate;
 
-      // 更新参与按钮
+      // Update subscribe button
       const btn = document.getElementById('btnExpressIntent');
       if (currentDeal.isMine) {
         btn.innerHTML = '<i class="fas fa-check-circle mr-1"></i>' + t('btnMyContract');
@@ -3220,10 +3220,10 @@ app.get('/', (c) => {
         btn.onclick = function() { showSubscribeModal(); };
       }
 
-      // Left panel — 项目信息（来自发起通）
+      // Left panel — project info (from Originate)
       document.getElementById('detailLeft').innerHTML =
         '<div class="mb-5">' +
-          // MCN 编号卡片
+          // MCN code card
           '<div class="p-4 rounded-2xl mb-4" style="background: linear-gradient(135deg, #0c2d4a 0%, #0f3d36 40%, #164e47 100%); position: relative; overflow: hidden;">' +
             '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(6,182,212,0.25) 0%, transparent 50%);pointer-events:none;"></div>' +
             '<div class="relative z-10">' +
@@ -3241,7 +3241,7 @@ app.get('/', (c) => {
           '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">' + currentDeal.name + '</h2><p class="text-sm text-[#5A9A90]">' + currentDeal.industry + ' · ' + currentDeal.location + '</p></div></div>' +
           '<p class="text-sm text-[#8EBDB5] leading-relaxed mb-4">' + currentDeal.description + '</p>' +
         '</div>' +
-        // ==== 单张合约核心信息 ====
+        // ==== Single contract core info ====
         '<div class="p-4 rounded-2xl mb-5" style="background: linear-gradient(135deg, rgba(46,196,182,0.06), rgba(6,182,212,0.04)); border: 1.5px solid rgba(46,196,182,0.2);">' +
           '<div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-[#2EC4B6]"></i><h3 class="text-sm font-bold text-[#E8F5F3]">' + t('detContractInfo') + '</h3><span class="font-mono text-xs text-[#3D7A70]">' + (currentDeal.mcn || '') + '</span></div>' +
           '<div class="text-center p-4 bg-[#0F2E2B] rounded-xl mb-3">' +
@@ -3268,16 +3268,16 @@ app.get('/', (c) => {
           '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]"><div class="flex items-center justify-between"><span class="text-xs font-medium text-[#8EBDB5]">' + t('detMaturityDate') + '</span><span class="text-xs font-bold text-[#E8F5F3]">' + (currentDeal.maturityDate || '—') + '</span></div></div>' +
         '</div>';
 
-      // Right panel — 雷达图评估 + 筛子结果
+      // Right panel — radar assessment + sieve results
       const hasMatch = currentDeal.matchScore !== null && currentDeal.matchScore !== undefined;
       const matchColor = hasMatch ? (currentDeal.matchScore >= 80 ? '#10b981' : currentDeal.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#3D7A70';
 
-      // 计算雷达评分
+      // Calculate radar scores
       const radarScores = calcRadarScores(currentDeal);
       const overallScore = calcOverallScore(radarScores);
       const gradeInfo = getScoreGrade(overallScore);
 
-      // 生成各筛子的评估结果
+      // Generate assessment results for each sieve
       let sieveResults = '';
       mySieves.forEach(key => {
         const sieve = SIEVE_LIBRARY[key];
@@ -3298,7 +3298,7 @@ app.get('/', (c) => {
         sieveResults = '<div class="text-center py-4"><p class="text-sm text-[#3D7A70]">' + t('detNoSieve') + '</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-[#06B6D4] mt-1 hover:underline">' + t('detGoManageSieve') + '</button></div>';
       }
 
-      // 维度详细列表 HTML
+      // Dimension detail list HTML
       let dimensionDetails = '';
       RADAR_DIMENSIONS.forEach((dim, i) => {
         const score = radarScores[i];
@@ -3331,9 +3331,9 @@ app.get('/', (c) => {
 
       document.getElementById('detailRight').innerHTML =
         '<div class="space-y-4">' +
-          // ===== 合约雷达图评估 =====
+          // ===== Contract radar assessment =====
           '<div class="bg-[#0F2E2B] rounded-2xl border border-[rgba(46,196,182,0.08)] overflow-hidden">' +
-            // 头部：综合评分 + 等级
+            // Header: composite score + grade
             '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(46,196,182,0.04), rgba(6,182,212,0.03)); border-bottom: 1px solid rgba(46,196,182,0.08);">' +
               '<div class="flex items-center gap-3">' +
                 '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4); box-shadow: 0 4px 12px rgba(46,196,182,0.3);"><i class="fas fa-radar text-white text-sm" style="font-size:16px;">&#x25CE;</i></div>' +
@@ -3349,11 +3349,11 @@ app.get('/', (c) => {
                 '</div>' +
               '</div>' +
             '</div>' +
-            // 雷达图
+            // Radar chart
             '<div class="flex items-center justify-center py-4 px-2">' +
               '<canvas id="radarCanvas" style="max-width:100%;"></canvas>' +
             '</div>' +
-            // 维度缩略指标条 — 显示实际值
+            // Dimension indicator bars — show actual values
             '<div class="px-4 pb-4">' +
               '<div class="grid grid-cols-4 gap-2">' +
                 (function() {
@@ -3371,7 +3371,7 @@ app.get('/', (c) => {
               '</div>' +
             '</div>' +
           '</div>' +
-          // ===== 维度详解（可展开） =====
+          // ===== Dimension details (expandable) =====
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
             '<div class="flex items-center justify-between mb-3">' +
               '<h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list-ul mr-1.5 text-[#2EC4B6]"></i>' + t('detDimDetail') + '</h3>' +
@@ -3379,15 +3379,15 @@ app.get('/', (c) => {
             '</div>' +
             '<div class="space-y-2">' + dimensionDetails + '</div>' +
           '</div>' +
-          // 筛子匹配概览
+          // Sieve match overview
           (hasMatch ? '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-bullseye mr-1.5" style="color:' + matchColor + ';"></i>' + t('detCurrentSieveMatch') + '</h3><div class="flex items-center gap-4"><div class="w-16 h-16 rounded-full border-4 flex items-center justify-center" style="border-color:' + matchColor + ';"><span class="text-xl font-bold" style="color:' + matchColor + ';">' + currentDeal.matchScore + '%</span></div><div class="flex-1"><p class="text-sm font-semibold text-[#B0D5CF]">' + (currentDeal.sieveName || t('dealSieve')) + '</p><p class="text-xs text-[#5A9A90] mt-1">' + (currentDeal.matchScore >= 80 ? t('detHighMatch') : currentDeal.matchScore >= 60 ? t('detMidMatch') : t('detLowMatch')) + '</p><div class="match-bar mt-2" style="height:4px;"><div class="match-bar-fill" style="width:' + currentDeal.matchScore + '%; background:' + matchColor + ';"></div></div></div></div></div>' : '') +
-          // 各筛子评估结果
+          // Individual sieve assessment results
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-filter mr-1.5 text-cyan-500"></i>' + t('detSieveEval') + '</h3><div class="space-y-2">' + sieveResults + '</div></div>' +
-          // 收入预测
+          // Revenue forecast
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-line mr-1.5 text-[#2EC4B6]"></i>' + t('detIncomeTitle') + '</h3><div class="h-36 flex items-end justify-around gap-1.5">' +
           [65,78,82,70,88,92,85,90,95,88,92,98].map((v,i) => '<div class="flex flex-col items-center flex-1"><div class="w-full rounded-t-md" style="height:' + v + '%; background: linear-gradient(180deg, #5DC4B3 0%, #49A89A 100%); opacity:' + (0.5+i*0.04) + ';"></div><span class="text-xs text-[#3D7A70] mt-1" style="font-size:9px;">' + t('detMonthPrefix') + (i+1) + '</span></div>').join('') +
           '</div></div>' +
-          // 项目流向
+          // Project flow
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-route mr-1.5 text-amber-500"></i>' + t('detTimelineTitle') + '</h3><div class="space-y-3">' +
           [
             { icon: 'fa-paper-plane', bg: 'rgba(245,158,11,0.1)', ic: '#FBBF24', title: t('detTL1'), desc: currentDeal.originator + ' · ' + currentDeal.originateDate },
@@ -3398,7 +3398,7 @@ app.get('/', (c) => {
           '</div></div>' +
         '</div>';
 
-      // 延迟绘制雷达图（等DOM渲染完成）
+      // Delay draw radar chart (wait for DOM render)
       setTimeout(() => {
         drawRadarChart('radarCanvas', radarScores, { size: 320, displayValues: calcDealDisplayValues(currentDeal) });
       }, 50);
@@ -3429,7 +3429,7 @@ app.get('/', (c) => {
       }
     }
 
-    // 维度详解展开/折叠
+    // Dimension detail expand/collapse
     function toggleDimDetail(el) {
       const detail = el.querySelector('.dim-detail');
       const arrow = el.querySelector('.dim-arrow');
@@ -3494,7 +3494,7 @@ app.get('/', (c) => {
       msgs.innerHTML += '<div class="ai-message user"><div class="ai-message-avatar"><i class="fas fa-user"></i></div><div class="ai-message-content">' + msg + '</div></div>';
       input.value = '';
       setTimeout(() => {
-        var sieveName = getSieveName(currentSieve) || (currentLang === 'en' ? 'All' : '全部');
+        var sieveName = getSieveName(currentSieve) || (currentLang === 'en' ? 'All' : 'All');
         var responses = currentLang === 'en' ? [
           'Current sieve "' + sieveName + '" filtered ' + dealsList.length + ' opportunities. Switch sieves or manage them in Assess to adjust criteria.',
           'The "Risk Priority Sieve" suits conservative investors — requires AI score ≥8.5 and raise ≤¥8M. The "High Return Sieve" focuses on revenue share ≥12%.',
@@ -3502,25 +3502,25 @@ app.get('/', (c) => {
           'Tip: Start with the "Composite Assessment Sieve" for broad screening, then switch to "Risk Priority" for safety verification on shortlisted deals.',
           'After expressing interest, deals flow to Term for negotiation. The entire process is transparent and trackable.'
         ] : [
-          '当前筛子「' + sieveName + '」筛选出 ' + dealsList.length + ' 个机会。如需调整标准，可切换其他筛子模型或在「管理筛子」中添加新筛子。',
-          '「风控优先筛子」适合保守型投资者，它要求AI评分>=8.5、金额<=800万。「高回报筛子」则聚焦分成>=12%的高潜力项目。',
-          '所有机会均来自发起通，经过平台基础审核。评估通筛子在此基础上做二次精筛，帮您找到最匹配的项目。',
-          '建议先用「综合评估筛子」做全面筛选，再针对感兴趣的项目切换「风控优先」做安全性验证。',
-          '表达参与意向后，项目将流向条款通进行交易条款协商。整个过程透明可追踪。'
+          'The current sieve "' + sieveName + '" found ' + dealsList.length + ' opportunities. Switch sieves or add new ones in Manage Sieves.',
+          'The Risk Priority Sieve suits conservative investors — requires AI Score ≥8.5, raise ≤¥8M. The High Return Sieve focuses on revenue share ≥12%.',
+          'All opportunities come from Originate with basic platform review. Assess sieves provide secondary filtering to find your best matches.',
+          'Tip: Use the Composite Assessment Sieve for broad screening, then switch to Risk Priority for safety verification.',
+          'After expressing interest, deals flow to Term for negotiation. The entire process is transparent and trackable.'
         ];
         msgs.innerHTML += '<div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content">' + responses[Math.floor(Math.random() * responses.length)] + '</div></div>';
         msgs.scrollTop = msgs.scrollHeight;
       }, 800);
     }
 
-    // ==================== 搜索防抖 ====================
+    // ==================== Search Debounce ====================
     var _debounceTimer = null;
     function debounceRenderDeals() {
       clearTimeout(_debounceTimer);
       _debounceTimer = setTimeout(renderDeals, 200);
     }
 
-    // ==================== 数字动态过渡 ====================
+    // ==================== Number Transition Animation ====================
     function animateNumber(el, newVal) {
       if (!el) return;
       var text = typeof newVal === 'number' ? newVal.toLocaleString() : newVal;
@@ -3535,7 +3535,7 @@ app.get('/', (c) => {
       }, 150);
     }
 
-    // ==================== 骨架屏加载效果 ====================
+    // ==================== Skeleton Loading Effect ====================
     function showDealGridSkeleton() {
       var grid = document.getElementById('dealGrid');
       if (!grid) return;
@@ -3590,7 +3590,7 @@ app.get('/', (c) => {
         }
       }
       // Page title updates
-      document.title = currentLang === 'en' ? 'Deal Connect' : '参与通 Deal Connect';
+      document.title = 'Deal Connect';
       // AI Builder flow steps
       var abF1 = document.getElementById('abFlowStep1');
       var abF2 = document.getElementById('abFlowStep2');
@@ -3616,7 +3616,7 @@ app.get('/', (c) => {
       var bar = document.getElementById('loadingBar');
       var status = document.getElementById('loadingStatus');
       if (!bar || !status) {
-        // DOM 未就绪时延迟重试
+        // Retry with delay when DOM not ready
         setTimeout(initApp, 50);
         return;
       }
@@ -3644,9 +3644,9 @@ app.get('/', (c) => {
         stepIdx++;
       }, 350);
 
-      // 合约数据由 loadDemoData() 按需生成（游客登录时调用）
+      // Contract data generated by loadDemoData() on demand (called on guest login)
 
-      // Bloomberg风格实时时钟
+      // Bloomberg-style real-time clock
       function updateTerminalClock() {
         var now = new Date();
         var hh = String(now.getHours()).padStart(2, '0');
@@ -3664,7 +3664,7 @@ app.get('/', (c) => {
       applyLanguage();
     }
 
-    // ==================== 「我的合约」页面 ====================
+    // ==================== My Contracts Page ====================
     function getMyContracts() {
       return allDeals.filter(d => d.isMine);
     }
@@ -3681,7 +3681,7 @@ app.get('/', (c) => {
       const industry = document.getElementById('mcFilterIndustry')?.value || 'all';
       const sortBy = document.getElementById('mcSortBy')?.value || 'date';
 
-      // 填充行业筛选
+      // Populate industry filter
       const indSelect = document.getElementById('mcFilterIndustry');
       if (indSelect && indSelect.options.length <= 1) {
         const inds = [...new Set(myDeals.map(d => d.industry))];
@@ -3694,12 +3694,12 @@ app.get('/', (c) => {
         return true;
       });
 
-      // 排序
+      // Sort
       if (sortBy === 'score') filtered.sort((a, b) => parseFloat(b.aiScore) - parseFloat(a.aiScore));
       else if (sortBy === 'yield') filtered.sort((a, b) => parseInt(b.revenueShare) - parseInt(a.revenueShare));
       else if (sortBy === 'project') filtered.sort((a, b) => a.projectId.localeCompare(b.projectId) || a.seqInProject - b.seqInProject);
 
-      // 统计
+      // Stats
       const totalInvest = myDeals.length * 1000;
       const avgScore = myDeals.length > 0 ? (myDeals.reduce((s, d) => s + parseFloat(d.aiScore), 0) / myDeals.length).toFixed(1) : '0';
       const projectCount = [...new Set(myDeals.map(d => d.projectId))].length;
@@ -3756,150 +3756,150 @@ app.get('/', (c) => {
       }, 50);
     }
 
-    // ==================== 「我的组合」页面 ====================
-    // ★ 全新设计：跨项目基金型组合 — 像公募基金一样，按投资理念/主题/风格配置
-    // 每个组合从不同项目中抽取合约，形成多元化投资组合
+    // ==================== My Portfolios Page ====================
+    // ★ Cross-project fund portfolios — like mutual funds, configured by investment philosophy/theme/style
+    // Each portfolio draws contracts from different projects, forming diversified investments
 
-    // 组合风格色彩映射
+    // Portfolio style color mapping
     const PORTFOLIO_CATEGORY_STYLES = {
-      '稳健型': { icon: 'fa-shield-alt', gradient: 'linear-gradient(135deg, #10b981, #059669)', color: '#34d399', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)', label: 'Conservative' },
-      '进取型': { icon: 'fa-rocket', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#fbbf24', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', label: 'Aggressive' },
-      '平衡型': { icon: 'fa-balance-scale', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: '#818cf8', bg: 'rgba(99,102,241,0.08)', border: 'rgba(99,102,241,0.25)', label: 'Balanced' },
-      '主题型': { icon: 'fa-bullseye', gradient: 'linear-gradient(135deg, #ec4899, #db2777)', color: '#f472b6', bg: 'rgba(236,72,153,0.08)', border: 'rgba(236,72,153,0.25)', label: 'Thematic' },
-      '行业型': { icon: 'fa-industry', gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)', color: '#22d3ee', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.25)', label: 'Sector' }
+      'Conservative': { icon: 'fa-shield-alt', gradient: 'linear-gradient(135deg, #10b981, #059669)', color: '#34d399', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.25)', label: 'Conservative' },
+      'Aggressive': { icon: 'fa-rocket', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#fbbf24', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.25)', label: 'Aggressive' },
+      'Balanced': { icon: 'fa-balance-scale', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: '#818cf8', bg: 'rgba(99,102,241,0.08)', border: 'rgba(99,102,241,0.25)', label: 'Balanced' },
+      'Thematic': { icon: 'fa-bullseye', gradient: 'linear-gradient(135deg, #ec4899, #db2777)', color: '#f472b6', bg: 'rgba(236,72,153,0.08)', border: 'rgba(236,72,153,0.25)', label: 'Thematic' },
+      'Industry': { icon: 'fa-industry', gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)', color: '#22d3ee', bg: 'rgba(6,182,212,0.08)', border: 'rgba(6,182,212,0.25)', label: 'Sector' }
     };
 
-    // ★ 20个预定义的跨项目基金型组合
-    // projectFilter: 函数，接收合约返回是否纳入该组合
+    // ★ 20 predefined cross-project fund portfolios
+    // projectFilter: function, takes contract and returns inclusion boolean
     const FUND_PORTFOLIOS = [
-      // === 稳健型 (4个) ===
+      // === Conservative (4) ===
       {
-        id: 'FUND_S01', name: '餐饮稳健S26', category: '稳健型', riskLevel: '低风险',
-        strategy: '精选头部餐饮品牌合约，聚焦现金流稳定的成熟门店，追求稳定分红收益',
-        targetIndustries: ['餐饮'], targetReturn: '8-12%', targetPeriod: '24个月',
-        filter: function(c) { return c.industry === '餐饮' && parseFloat(c.aiScore) >= 7.5 && c.riskGrade !== 'B+'; }
+        id: 'FUND_S01', name: 'F&B Steady Income S26', category: 'Conservative', riskLevel: 'Low Risk',
+        strategy: 'Select top F&B brand contracts, focus on mature stores with stable cash flow, target steady dividend income',
+        targetIndustries: ['F&B'], targetReturn: '8-12%', targetPeriod: '24 months',
+        filter: function(c) { return c.industry === 'F&B' && parseFloat(c.aiScore) >= 7.5 && c.riskGrade !== 'B+'; }
       },
       {
-        id: 'FUND_S02', name: '传统行业保守型', category: '稳健型', riskLevel: '低风险',
-        strategy: '配置餐饮+零售等传统消费行业合约，优选运营年限长、评级A-以上的低波动项目',
-        targetIndustries: ['餐饮', '零售'], targetReturn: '7-10%', targetPeriod: '24个月',
-        filter: function(c) { return (c.industry === '餐饮' || c.industry === '零售') && parseFloat(c.operatingYears) >= 2.5 && c.riskGrade !== 'B+'; }
+        id: 'FUND_S02', name: 'Traditional Industry Conservative', category: 'Conservative', riskLevel: 'Low Risk',
+        strategy: 'Allocate F&B + Retail consumer sector contracts, prefer long operating history, A- or above rating, low volatility',
+        targetIndustries: ['F&B', 'Retail'], targetReturn: '7-10%', targetPeriod: '24 months',
+        filter: function(c) { return (c.industry === 'F&B' || c.industry === 'Retail') && parseFloat(c.operatingYears) >= 2.5 && c.riskGrade !== 'B+'; }
       },
       {
-        id: 'FUND_S03', name: '医疗健康稳健1号', category: '稳健型', riskLevel: '低风险',
-        strategy: '聚焦医疗健康赛道，配置高端医疗和体检龙头，享受大健康产业的确定性红利',
-        targetIndustries: ['健康'], targetReturn: '11-16%', targetPeriod: '24-30个月',
-        filter: function(c) { return c.industry === '健康'; }
+        id: 'FUND_S03', name: 'Healthcare Steady No.1', category: 'Conservative', riskLevel: 'Low Risk',
+        strategy: 'Focus on healthcare sector, allocate premium medical and checkup leaders, capture health industry certainty dividends',
+        targetIndustries: ['Healthcare'], targetReturn: '11-16%', targetPeriod: '24-30 months',
+        filter: function(c) { return c.industry === 'Healthcare'; }
       },
       {
-        id: 'FUND_S04', name: '蓝筹价值守护者', category: '稳健型', riskLevel: '低风险',
-        strategy: '全行业精选A+评级蓝筹合约，只投最优质项目，以安全边际为第一原则',
-        targetIndustries: ['全行业'], targetReturn: '10-15%', targetPeriod: '18-36个月',
+        id: 'FUND_S04', name: 'Blue Chip Value Guardian', category: 'Conservative', riskLevel: 'Low Risk',
+        strategy: 'Cross-sector A+ rated blue-chip contracts only, invest in best-quality projects, safety margin as top priority',
+        targetIndustries: ['All Sectors'], targetReturn: '10-15%', targetPeriod: '18-36 months',
         filter: function(c) { return c.riskGrade === 'A+' && parseFloat(c.aiScore) >= 8.5; }
       },
 
-      // === 进取型 (4个) ===
+      // === Aggressive (4) ===
       {
-        id: 'FUND_A01', name: '全行业Alpha高收益型', category: '进取型', riskLevel: '高风险',
-        strategy: '全行业扫描高分成比例合约，追求绝对回报Alpha，适合风险承受能力强的投资者',
-        targetIndustries: ['全行业'], targetReturn: '13-18%', targetPeriod: '18-36个月',
+        id: 'FUND_A01', name: 'All-Sector Alpha High Yield', category: 'Aggressive', riskLevel: 'High Risk',
+        strategy: 'Scan all sectors for high revenue-share contracts, pursue absolute return Alpha, suitable for risk-tolerant investors',
+        targetIndustries: ['All Sectors'], targetReturn: '13-18%', targetPeriod: '18-36 months',
         filter: function(c) { return parseInt(c.revenueShare) >= 12 && parseFloat(c.aiScore) >= 8.0; }
       },
       {
-        id: 'FUND_A02', name: '科技创新进取号', category: '进取型', riskLevel: '较高风险',
-        strategy: '重仓AI、智能硬件、新能源科技合约，押注下一个十年的技术浪潮',
-        targetIndustries: ['科技'], targetReturn: '12-15%', targetPeriod: '30-36个月',
-        filter: function(c) { return c.industry === '科技'; }
+        id: 'FUND_A02', name: 'Tech Innovation Aggressive', category: 'Aggressive', riskLevel: 'Higher Risk',
+        strategy: 'Heavy allocation in AI, smart hardware, and NEV tech contracts — betting on the next decade of technology waves',
+        targetIndustries: ['Technology'], targetReturn: '12-15%', targetPeriod: '30-36 months',
+        filter: function(c) { return c.industry === 'Technology'; }
       },
       {
-        id: 'FUND_A03', name: '演艺IP爆发型', category: '进取型', riskLevel: '高风险',
-        strategy: '配置顶流IP演艺项目，高分成+短周期，博取IP经济的爆发性收益',
-        targetIndustries: ['演艺'], targetReturn: '12-18%', targetPeriod: '18-24个月',
-        filter: function(c) { return c.industry === '演艺'; }
+        id: 'FUND_A03', name: 'Entertainment IP Burst', category: 'Aggressive', riskLevel: 'High Risk',
+        strategy: 'Allocate top-tier IP entertainment projects, high share + short cycle, capture explosive IP economy returns',
+        targetIndustries: ['Entertainment'], targetReturn: '12-18%', targetPeriod: '18-24 months',
+        filter: function(c) { return c.industry === 'Entertainment'; }
       },
       {
-        id: 'FUND_A04', name: '高成长新锐猎手', category: '进取型', riskLevel: '较高风险',
-        strategy: '聚焦运营3年内的新锐品牌，以高成长性换取超额收益，适合长期持有',
-        targetIndustries: ['全行业'], targetReturn: '8-13%', targetPeriod: '24-30个月',
+        id: 'FUND_A04', name: 'High-Growth Newcomer Hunter', category: 'Aggressive', riskLevel: 'Higher Risk',
+        strategy: 'Focus on brands <3 yrs operating, high growth for excess returns, suitable for long-term hold',
+        targetIndustries: ['All Sectors'], targetReturn: '8-13%', targetPeriod: '24-30 months',
         filter: function(c) { return parseFloat(c.operatingYears) <= 3.0 && parseFloat(c.aiScore) >= 7.5; }
       },
 
-      // === 平衡型 (4个) ===
+      // === Balanced (4) ===
       {
-        id: 'FUND_B01', name: '消费+科技双轮驱动', category: '平衡型', riskLevel: '中风险',
-        strategy: '50%配置稳定消费类（餐饮零售）+ 50%科技成长类，攻守兼备的经典组合',
-        targetIndustries: ['餐饮', '零售', '科技'], targetReturn: '9-14%', targetPeriod: '24-36个月',
-        filter: function(c) { return (c.industry === '餐饮' || c.industry === '零售' || c.industry === '科技') && parseFloat(c.aiScore) >= 7.5; }
+        id: 'FUND_B01', name: 'Consumer + Tech Dual Engine', category: 'Balanced', riskLevel: 'Moderate Risk',
+        strategy: '50% stable consumer (F&B, Retail) + 50% tech growth — classic offensive-defensive balanced portfolio',
+        targetIndustries: ['F&B', 'Retail', 'Technology'], targetReturn: '9-14%', targetPeriod: '24-36 months',
+        filter: function(c) { return (c.industry === 'F&B' || c.industry === 'Retail' || c.industry === 'Technology') && parseFloat(c.aiScore) >= 7.5; }
       },
       {
-        id: 'FUND_B02', name: '全天候均衡配置', category: '平衡型', riskLevel: '中风险',
-        strategy: '横跨餐饮、零售、科技、健康、教育、演艺六大行业，通过分散化降低波动',
-        targetIndustries: ['全行业'], targetReturn: '9-13%', targetPeriod: '24-30个月',
+        id: 'FUND_B02', name: 'All-Weather Balanced', category: 'Balanced', riskLevel: 'Moderate Risk',
+        strategy: 'Span F&B, Retail, Tech, Healthcare, Education, Entertainment — reduce volatility through diversification',
+        targetIndustries: ['All Sectors'], targetReturn: '9-13%', targetPeriod: '24-30 months',
         filter: function(c) { return parseFloat(c.aiScore) >= 7.0; }
       },
       {
-        id: 'FUND_B03', name: '一线城市核心资产', category: '平衡型', riskLevel: '中低风险',
-        strategy: '锁定北上广深杭五大核心城市优质项目，享受城市化和消费升级红利',
-        targetIndustries: ['全行业'], targetReturn: '8-14%', targetPeriod: '24-30个月',
-        filter: function(c) { return ['北京','上海','深圳','广州','杭州'].indexOf(c.location) >= 0; }
+        id: 'FUND_B03', name: 'Tier-1 City Core Assets', category: 'Balanced', riskLevel: 'Low-Moderate Risk',
+        strategy: 'Lock in top 5 tier-1 cities quality projects, capture urbanization and consumer upgrade dividends',
+        targetIndustries: ['All Sectors'], targetReturn: '8-14%', targetPeriod: '24-30 months',
+        filter: function(c) { return ['Beijing','Shanghai','Shenzhen','Guangzhou','Hangzhou'].indexOf(c.location) >= 0; }
       },
       {
-        id: 'FUND_B04', name: '中等回报稳增长', category: '平衡型', riskLevel: '中风险',
-        strategy: '筛选分成比例9-13%的中等回报区间，兼顾收益与安全，适合大多数投资者',
-        targetIndustries: ['全行业'], targetReturn: '9-13%', targetPeriod: '24-30个月',
+        id: 'FUND_B04', name: 'Moderate Return Steady Growth', category: 'Balanced', riskLevel: 'Moderate Risk',
+        strategy: 'Select 9-13% revenue share mid-return range, balance yield and safety, suitable for most investors',
+        targetIndustries: ['All Sectors'], targetReturn: '9-13%', targetPeriod: '24-30 months',
         filter: function(c) { var rs = parseInt(c.revenueShare); return rs >= 9 && rs <= 13 && parseFloat(c.aiScore) >= 7.5; }
       },
 
-      // === 主题型 (4个) ===
+      // === Thematic (4) ===
       {
-        id: 'FUND_T01', name: 'AI智能浪潮主题', category: '主题型', riskLevel: '较高风险',
-        strategy: '捕捉AI产业链机会：从AI Lab到智慧城市到AI教育，一键布局人工智能全生态',
-        targetIndustries: ['科技', '教育'], targetReturn: '10-15%', targetPeriod: '30-36个月',
-        filter: function(c) { return (c.industry === '科技' || c.industry === '教育') && (c.name.indexOf('AI') >= 0 || c.name.indexOf('智') >= 0 || c.name.indexOf('科技') >= 0); }
+        id: 'FUND_T01', name: 'AI Wave Thematic', category: 'Thematic', riskLevel: 'Higher Risk',
+        strategy: 'Capture AI value chain: from AI Lab to Smart City to AI Education — one-click AI ecosystem allocation',
+        targetIndustries: ['Technology', 'Education'], targetReturn: '10-15%', targetPeriod: '30-36 months',
+        filter: function(c) { return (c.industry === 'Technology' || c.industry === 'Education') && (c.name.indexOf('AI') >= 0 || c.name.indexOf('AI') >= 0 || c.name.indexOf('Technology') >= 0); }
       },
       {
-        id: 'FUND_T02', name: '新消费趋势精选', category: '主题型', riskLevel: '中风险',
-        strategy: '精选新茶饮、潮玩、新零售等Z世代消费品牌，把握年轻人消费升级浪潮',
-        targetIndustries: ['餐饮', '零售'], targetReturn: '8-13%', targetPeriod: '24-30个月',
-        filter: function(c) { return (c.industry === '餐饮' || c.industry === '零售') && parseFloat(c.operatingYears) <= 4.0; }
+        id: 'FUND_T02', name: 'New Consumer Trend Select', category: 'Thematic', riskLevel: 'Moderate Risk',
+        strategy: 'Select new tea, blind box, new retail Gen-Z consumer brands — ride the youth consumer upgrade wave',
+        targetIndustries: ['F&B', 'Retail'], targetReturn: '8-13%', targetPeriod: '24-30 months',
+        filter: function(c) { return (c.industry === 'F&B' || c.industry === 'Retail') && parseFloat(c.operatingYears) <= 4.0; }
       },
       {
-        id: 'FUND_T03', name: '短周期快回收', category: '主题型', riskLevel: '中风险',
-        strategy: '仅配置24个月及以下短期合约，追求资金快速周转，灵活把握市场机会',
-        targetIndustries: ['全行业'], targetReturn: '7-13%', targetPeriod: '≤24个月',
+        id: 'FUND_T03', name: 'Short-Cycle Quick Return', category: 'Thematic', riskLevel: 'Moderate Risk',
+        strategy: 'Only ≤24-month short-term contracts, pursue fast capital turnover, flexibly seize market opportunities',
+        targetIndustries: ['All Sectors'], targetReturn: '7-13%', targetPeriod: '≤24 months',
         filter: function(c) { var months = parseInt(c.period); return months <= 24; }
       },
       {
-        id: 'FUND_T04', name: '大额旗舰项目精选', category: '主题型', riskLevel: '中低风险',
-        strategy: '只配置融资额100万以上的大型旗舰项目，规模效应带来的稳定性溢价',
-        targetIndustries: ['全行业'], targetReturn: '11-16%', targetPeriod: '24-36个月',
+        id: 'FUND_T04', name: 'Large Flagship Select', category: 'Thematic', riskLevel: 'Low-Moderate Risk',
+        strategy: 'Only ¥1M+ large flagship projects, capture stability premium from scale effect',
+        targetIndustries: ['All Sectors'], targetReturn: '11-16%', targetPeriod: '24-36 months',
         filter: function(c) { return (c.projectTotalAmount || 0) >= 100; }
       },
 
-      // === 行业型 (4个) ===
+      // === Industry (4) ===
       {
-        id: 'FUND_I01', name: '教育产业深耕者', category: '行业型', riskLevel: '中风险',
-        strategy: '深度布局教育赛道，从K12到职教到AI教育，享受知识经济长期红利',
-        targetIndustries: ['教育'], targetReturn: '9-10%', targetPeriod: '30个月',
-        filter: function(c) { return c.industry === '教育'; }
+        id: 'FUND_I01', name: 'Deep-Rooted Education Industry Player', category: 'Industry', riskLevel: 'Moderate Risk',
+        strategy: 'Deep education sector play: K12 to vocational to AI education — capture knowledge economy long-term dividends',
+        targetIndustries: ['Education'], targetReturn: '9-10%', targetPeriod: '30 months',
+        filter: function(c) { return c.industry === 'Education'; }
       },
       {
-        id: 'FUND_I02', name: '零售消费领航者', category: '行业型', riskLevel: '中低风险',
-        strategy: '布局零售消费全品类：从潮玩到日用到咖啡到物流，消费永不眠',
-        targetIndustries: ['零售'], targetReturn: '7-9%', targetPeriod: '24-30个月',
-        filter: function(c) { return c.industry === '零售'; }
+        id: 'FUND_I02', name: 'Retail Consumer Navigator', category: 'Industry', riskLevel: 'Low-Moderate Risk',
+        strategy: 'Full retail spectrum: from blind boxes to daily goods to coffee to logistics — consumption never sleeps',
+        targetIndustries: ['Retail'], targetReturn: '7-9%', targetPeriod: '24-30 months',
+        filter: function(c) { return c.industry === 'Retail'; }
       },
       {
-        id: 'FUND_I03', name: '大消费产业链ETF', category: '行业型', riskLevel: '中风险',
-        strategy: '餐饮+零售双行业联动，从上游品牌到下游渠道，覆盖消费产业全链条',
-        targetIndustries: ['餐饮', '零售'], targetReturn: '7-12%', targetPeriod: '24-30个月',
-        filter: function(c) { return c.industry === '餐饮' || c.industry === '零售'; }
+        id: 'FUND_I03', name: 'Consumer Chain ETF', category: 'Industry', riskLevel: 'Moderate Risk',
+        strategy: 'F&B + Retail dual-sector synergy, from upstream brands to downstream channels — full consumer chain coverage',
+        targetIndustries: ['F&B', 'Retail'], targetReturn: '7-12%', targetPeriod: '24-30 months',
+        filter: function(c) { return c.industry === 'F&B' || c.industry === 'Retail'; }
       },
       {
-        id: 'FUND_I04', name: '科技+健康未来组合', category: '行业型', riskLevel: '中风险',
-        strategy: '双引擎驱动：科技代表效率革命，健康代表消费升级，两大确定性赛道叠加',
-        targetIndustries: ['科技', '健康'], targetReturn: '11-16%', targetPeriod: '24-36个月',
-        filter: function(c) { return c.industry === '科技' || c.industry === '健康'; }
+        id: 'FUND_I04', name: 'Tech + Healthcare Future', category: 'Industry', riskLevel: 'Moderate Risk',
+        strategy: 'Dual-engine: tech = efficiency revolution, healthcare = consumer upgrade — two certainty sectors combined',
+        targetIndustries: ['Technology', 'Healthcare'], targetReturn: '11-16%', targetPeriod: '24-36 months',
+        filter: function(c) { return c.industry === 'Technology' || c.industry === 'Healthcare'; }
       }
     ];
 
@@ -3927,8 +3927,8 @@ app.get('/', (c) => {
       FUND_I04: { name: 'Tech + Health Future Blend', strategy: 'Dual engine: Tech = efficiency revolution, Health = consumption upgrade — two high-conviction sectors' }
     };
     // Portfolio category EN map
-    const CAT_EN = { '稳健型': 'Conservative', '进取型': 'Aggressive', '平衡型': 'Balanced', '主题型': 'Thematic', '行业型': 'Sector' };
-    const RISK_EN = { '低风险': 'Low Risk', '高风险': 'High Risk', '较高风险': 'Med-High Risk', '中风险': 'Moderate Risk', '中低风险': 'Low-Med Risk' };
+    const CAT_EN = { 'Conservative': 'Conservative', 'Aggressive': 'Aggressive', 'Balanced': 'Balanced', 'Thematic': 'Thematic', 'Industry': 'Sector' };
+    const RISK_EN = { 'Low Risk': 'Low Risk', 'High Risk': 'High Risk', 'Higher Risk': 'Med-High Risk', 'Moderate Risk': 'Moderate Risk', 'Low-Moderate Risk': 'Low-Med Risk' };
     function getFundName(fund) { return currentLang === 'en' && FUND_EN[fund.id] ? FUND_EN[fund.id].name : fund.name; }
     function getFundStrategy(fund) { return currentLang === 'en' && FUND_EN[fund.id] ? FUND_EN[fund.id].strategy : fund.strategy; }
     function getFundCategory(fund) { return currentLang === 'en' ? (CAT_EN[fund.category] || fund.category) : fund.category; }
@@ -3944,7 +3944,7 @@ app.get('/', (c) => {
         var contracts = myDeals.filter(fund.filter);
         if (contracts.length === 0) return null;
         
-        // 统计涉及的项目和行业
+        // Count projects and industries involved
         var projectSet = {};
         var industrySet = {};
         contracts.forEach(function(c) {
@@ -3970,7 +3970,7 @@ app.get('/', (c) => {
       }).filter(function(p) { return p !== null; });
     }
 
-    // 计算组合的加权平均雷达评分
+    // Calculate portfolio weighted-average radar scores
     function calcPortfolioRadarScores(contracts) {
       if (!contracts || contracts.length === 0) return RADAR_DIMENSIONS.map(() => 50);
       const allScores = contracts.map(c => calcRadarScores(c));
@@ -4022,7 +4022,7 @@ app.get('/', (c) => {
         portfolios = allPortfolios.filter(function(p) { return p.category === currentPortfolioFilter; });
       }
 
-      // 总统计（基于全部，不受筛选影响）
+      // Overall stats (based on all, unaffected by filter)
       var totalContracts = allPortfolios.reduce(function(s, p) { return s + p.contracts.length; }, 0);
       var uniqueContracts = {};
       allPortfolios.forEach(function(p) { p.contracts.forEach(function(c) { uniqueContracts[c.id] = true; }); });
@@ -4031,20 +4031,20 @@ app.get('/', (c) => {
 
       document.getElementById('myPortfoliosSubtitle').textContent = t('mpSubtitle', {count: allPortfolios.length, contracts: uniqueCount});
 
-      // 组合统计
+      // Portfolio stats
       var categoryCount = {};
       allPortfolios.forEach(function(p) { categoryCount[p.category] = (categoryCount[p.category] || 0) + 1; });
       var allPortScores = portfolios.map(function(p) { var s = calcPortfolioRadarScores(p.contracts); return calcOverallScore(s); });
       var avgOverall = allPortScores.length > 0 ? Math.round(allPortScores.reduce(function(a, b) { return a + b; }, 0) / allPortScores.length) : 0;
       var allIndustries = {};
       allPortfolios.forEach(function(p) { p.industries.forEach(function(ind) { allIndustries[ind] = true; }); });
-      var indDisplay = currentLang === 'en' ? Object.keys(allIndustries).map(function(i) { var m = {'餐饮':'F&B','零售':'Retail','科技':'Tech','教育':'Edu','健康':'Health','演艺':'Ent'}; return m[i] || i; }).join(' · ') : Object.keys(allIndustries).join('·');
+      var indDisplay = Object.keys(allIndustries).map(function(i) { var m = {'F&B':'F&B','Retail':'Retail','Technology':'Tech','Education':'Edu','Healthcare':'Health','Entertainment':'Ent'}; return m[i] || i; }).join(' · ');
 
       document.getElementById('mpStatsGrid').innerHTML =
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">' + (currentLang === 'en' ? 'Portfolios' : '组合数量') + '</p><p class="stat-value">' + allPortfolios.length + '</p><p class="text-xs text-[#3D7A70] mt-0.5">' + Object.keys(categoryCount).length + (currentLang === 'en' ? ' strategy types' : ' 种策略类型') + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">' + (currentLang === 'en' ? 'Unique Contracts' : '去重合约') + '</p><p class="stat-value">' + uniqueCount + '</p><p class="text-xs text-[#3D7A70] mt-0.5">¥' + totalInvest.toLocaleString() + (currentLang === 'en' ? ' invested' : ' 总投入') + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-file-contract text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">' + (currentLang === 'en' ? 'Sectors' : '覆盖行业') + '</p><p class="stat-value">' + Object.keys(allIndustries).length + '</p><p class="text-xs text-[#3D7A70] mt-0.5">' + indDisplay + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-th-large text-white text-sm"></i></div></div></div>' +
-        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">' + (currentLang === 'en' ? 'Avg Score' : '平均评分') + '</p><p class="stat-value">' + avgOverall + '</p><p class="text-xs text-[#3D7A70] mt-0.5">' + (currentLang === 'en' ? 'Overall portfolio score' : '组合综合评分') + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"><i class="fas fa-chart-line text-white text-sm"></i></div></div></div>';
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">' + ('Portfolios') + '</p><p class="stat-value">' + allPortfolios.length + '</p><p class="text-xs text-[#3D7A70] mt-0.5">' + Object.keys(categoryCount).length + (' strategy types') + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-object-group text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">' + ('Unique Contracts') + '</p><p class="stat-value">' + uniqueCount + '</p><p class="text-xs text-[#3D7A70] mt-0.5">¥' + totalInvest.toLocaleString() + (' invested') + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-file-contract text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">' + ('Sectors') + '</p><p class="stat-value">' + Object.keys(allIndustries).length + '</p><p class="text-xs text-[#3D7A70] mt-0.5">' + indDisplay + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-th-large text-white text-sm"></i></div></div></div>' +
+        '<div class="stat-card"><div class="flex items-center justify-between"><div><p class="stat-label">' + ('Avg Score') + '</p><p class="stat-value">' + avgOverall + '</p><p class="text-xs text-[#3D7A70] mt-0.5">' + ('Overall portfolio score') + '</p></div><div class="icon-container icon-container-sm" style="background: linear-gradient(135deg, #06b6d4, #0891b2);"><i class="fas fa-chart-line text-white text-sm"></i></div></div></div>';
 
       const grid = document.getElementById('mpGrid');
       const empty = document.getElementById('mpEmpty');
@@ -4058,10 +4058,10 @@ app.get('/', (c) => {
         var totalValue = p.contracts.length * 1000;
         var avgAI = (p.contracts.reduce(function(s, c) { return s + parseFloat(c.aiScore); }, 0) / p.contracts.length).toFixed(1);
         var canvasId = 'mpRadar_' + idx;
-        var catStyle = PORTFOLIO_CATEGORY_STYLES[p.category] || PORTFOLIO_CATEGORY_STYLES['平衡型'];
+        var catStyle = PORTFOLIO_CATEGORY_STYLES[p.category] || PORTFOLIO_CATEGORY_STYLES['Balanced'];
 
         return '<div class="project-card group cursor-pointer animate-fade-in" onclick="openPortfolioDetail(&#39;' + p.id + '&#39;)">' +
-          // Header — 基金名称和类型
+          // Header — fund name and type
           '<div class="flex items-center justify-between mb-3">' +
             '<div class="flex items-center gap-2 min-w-0">' +
               '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="' + catStyle.gradient + ';"><i class="fas ' + catStyle.icon + ' text-white text-sm"></i></div>' +
@@ -4072,12 +4072,12 @@ app.get('/', (c) => {
               '<div class="text-right"><p class="text-sm font-black leading-none" style="color:' + grade.color + ';">' + overall + '</p><p class="font-bold leading-none" style="font-size:9px; color:' + grade.color + ';">' + grade.grade + '</p></div>' +
             '</div>' +
           '</div>' +
-          // 策略说明
+          // Strategy description
           '<p class="text-xs text-[#3D7A70] mb-2 leading-relaxed line-clamp-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + getFundStrategy(p) + '</p>' +
-          // 组合配置信息
+          // Portfolio config info
           '<div class="p-3 rounded-xl mb-2" style="background:' + catStyle.bg + '; border: 1px solid ' + catStyle.border + ';">' +
             '<div class="flex items-center justify-between mb-2">' +
-              '<span class="text-xs font-bold" style="color:' + catStyle.color + ';"><i class="fas fa-layer-group mr-1"></i>' + p.contracts.length + t('mpContractCountLabel') + ' · ' + p.projectCount + (currentLang === 'en' ? ' projects' : ' 个项目') + '</span>' +
+              '<span class="text-xs font-bold" style="color:' + catStyle.color + ';"><i class="fas fa-layer-group mr-1"></i>' + p.contracts.length + t('mpContractCountLabel') + ' · ' + p.projectCount + (' projects') + '</span>' +
               '<span class="text-sm font-black" style="color:' + catStyle.color + ';">¥' + totalValue.toLocaleString() + '</span>' +
             '</div>' +
             '<div class="flex flex-wrap gap-1">' +
@@ -4086,7 +4086,7 @@ app.get('/', (c) => {
               (p.projectCount > 3 ? '<span class="text-xs text-[#3D7A70] self-center">+' + (p.projectCount - 3) + '</span>' : '') +
             '</div>' +
           '</div>' +
-          // 关键指标
+          // Key metrics
           '<div class="grid grid-cols-3 gap-2 mb-2">' +
             '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-[#F59E0B]">' + p.targetReturn + '</p><p style="font-size:9px;" class="text-[#3D7A70]">' + t('mpTargetReturn') + '</p></div>' +
             '<div class="text-center p-2 bg-[#0B2624] rounded-lg"><p class="text-xs font-bold text-[#06B6D4]">' + p.targetPeriod + '</p><p style="font-size:9px;" class="text-[#3D7A70]">' + t('mpPeriod') + '</p></div>' +
@@ -4106,7 +4106,7 @@ app.get('/', (c) => {
         });
       }, 50);
 
-      // 初始化筛选按钮激活状态
+      // Initialize filter button active state
       document.querySelectorAll('.mp-filter-btn').forEach(function(btn) {
         btn.style.background = '';
         btn.style.color = '';
@@ -4129,7 +4129,7 @@ app.get('/', (c) => {
       });
     }
 
-    // ==================== 组合详情页 ====================
+    // ==================== Portfolio Detail Page ====================
     let currentPortfolio = null;
 
     function openPortfolioDetail(fundId) {
@@ -4144,15 +4144,15 @@ app.get('/', (c) => {
       const totalValue = contracts.length * 1000;
       const avgAI = (contracts.reduce(function(s, c) { return s + parseFloat(c.aiScore); }, 0) / contracts.length).toFixed(1);
       const avgShare = (contracts.reduce(function(s, c) { return s + parseInt(c.revenueShare); }, 0) / contracts.length).toFixed(1);
-      // 计算年化收益率（revenueShare 本身就是年化%，加权平均）
+      // Calculate annual yield (revenueShare is annual %, weighted avg)
       let pdTotalYield = 0;
       contracts.forEach(function(c) { var sn = parseInt(c.revenueShare) || 10; pdTotalYield += sn; });
       const pdAvgYield = (pdTotalYield / contracts.length).toFixed(1);
-      // 计算平均合约时长（月→天）
+      // Calculate avg contract duration (months→days)
       let pdTotalMonths = 0;
       contracts.forEach(function(c) { pdTotalMonths += parseInt(c.period) || 24; });
       const pdAvgDays = Math.round((pdTotalMonths / contracts.length) * 30);
-      const catStyle = PORTFOLIO_CATEGORY_STYLES[currentPortfolio.category] || PORTFOLIO_CATEGORY_STYLES['平衡型'];
+      const catStyle = PORTFOLIO_CATEGORY_STYLES[currentPortfolio.category] || PORTFOLIO_CATEGORY_STYLES['Balanced'];
 
       document.getElementById('pdTitle').textContent = getFundName(currentPortfolio);
       document.getElementById('pdSubtitle').textContent = t('pdSubtitle', {contracts: contracts.length, projects: currentPortfolio.projectCount});
@@ -4163,8 +4163,8 @@ app.get('/', (c) => {
       document.getElementById('pdIconBox').style.background = catStyle.gradient;
       document.getElementById('pdIcon').className = 'fas ' + catStyle.icon + ' text-white text-sm';
 
-      // === Left panel — 组合概览 ===
-      // 按项目分组展示合约
+      // === Left panel — portfolio overview ===
+      // Display contracts grouped by project
       var projectGroups = {};
       contracts.forEach(function(c) {
         if (!projectGroups[c.projectId]) {
@@ -4201,24 +4201,24 @@ app.get('/', (c) => {
         '</div>';
       }).join('');
 
-      // 行业配比饼图数据
+      // Industry allocation pie chart data
       var industryDistrib = {};
       contracts.forEach(function(c) { industryDistrib[c.industry] = (industryDistrib[c.industry] || 0) + 1; });
       var distribHTML = Object.keys(industryDistrib).map(function(ind) {
         var pct = (industryDistrib[ind] / contracts.length * 100).toFixed(1);
-        var indColors = { '餐饮': '#f59e0b', '零售': '#06b6d4', '科技': '#8b5cf6', '教育': '#10b981', '健康': '#ef4444', '演艺': '#ec4899' };
+        var indColors = { 'F&B': '#f59e0b', 'Retail': '#06b6d4', 'Technology': '#8b5cf6', 'Education': '#10b981', 'Healthcare': '#ef4444', 'Entertainment': '#ec4899' };
         var c = indColors[ind] || '#3D7A70';
         return '<div class="flex items-center gap-2">' +
           '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
           '<span class="text-xs text-[#8EBDB5] flex-1">' + ind + '</span>' +
-          '<span class="text-xs font-bold text-[#B0D5CF]">' + industryDistrib[ind] + (currentLang === 'en' ? '' : '张') + '</span>' +
+          '<span class="text-xs font-bold text-[#B0D5CF]">' + industryDistrib[ind] + (currentLang === 'en' ? '' : '') + '</span>' +
           '<span class="text-xs text-[#3D7A70]">' + pct + '%</span>' +
         '</div>';
       }).join('');
 
       document.getElementById('pdLeft').innerHTML =
         '<div class="mb-5">' +
-          // 组合基本信息
+          // Portfolio basic info
           '<div class="p-4 rounded-2xl mb-4" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%); position: relative; overflow: hidden;">' +
             '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(139,92,246,0.25) 0%, transparent 50%);pointer-events:none;"></div>' +
             '<div class="relative z-10">' +
@@ -4233,34 +4233,34 @@ app.get('/', (c) => {
               '</div>' +
             '</div>' +
           '</div>' +
-          // 关键参数 — 显示年化收益率和实际天数
+          // Key params — show annual yield and actual days
           '<div class="grid grid-cols-2 gap-3 mb-4">' +
             '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdAnnualYield') + '</p><p class="text-lg font-bold text-[#F59E0B]">' + pdAvgYield + '%</p><p class="text-xs text-[#3D7A70]">' + t('pdWeightedShare') + avgShare + '%</p></div>' +
             '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdAvgContract') + '</p><p class="text-lg font-bold text-[#06B6D4]">' + pdAvgDays + t('pdDayUnit') + '</p><p class="text-xs text-[#3D7A70]">' + t('pdAboutMonths', {n: (pdTotalMonths / contracts.length).toFixed(0)}) + '</p></div>' +
             '<div class="p-3 bg-[rgba(16,185,129,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdAvgAIScore') + '</p><p class="text-lg font-bold text-[#10B981]">' + avgAI + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
             '<div class="p-3 bg-[rgba(139,92,246,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('pdTargetHorizon') + '</p><p class="text-lg font-bold text-[#8B5CF6]">' + currentPortfolio.targetPeriod + '</p></div>' +
           '</div>' +
-          // 行业配比
+          // Industry allocation
           '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] mb-4">' +
             '<p class="text-xs font-bold text-[#B0D5CF] mb-2"><i class="fas fa-chart-pie mr-1.5 text-[#8B5CF6]"></i>' + t('pdSectorAlloc', {n: currentPortfolio.industryCount}) + '</p>' +
             '<div class="space-y-1.5">' + distribHTML + '</div>' +
           '</div>' +
-          // 投资策略说明
+          // Investment strategy description
           '<div class="p-3 bg-[rgba(139,92,246,0.06)] rounded-xl border border-[rgba(139,92,246,0.12)] mb-4">' +
             '<div class="flex items-start gap-2"><i class="fas fa-lightbulb text-[#8B5CF6] mt-0.5"></i><div><p class="text-xs font-bold text-[#A78BFA] mb-1">' + t('mpStrategy') + '</p><p class="text-xs text-[#8B5CF6] leading-relaxed">' + getFundStrategy(currentPortfolio) + '</p><p class="text-xs text-[#A78BFA] mt-1">' + t('pdSectorsLabel') + currentPortfolio.targetIndustries.join(currentLang === 'en' ? ', ' : '、') + t('pdStrategyAcross', {projects: currentPortfolio.projectCount, contracts: contracts.length}) + '</p></div></div>' +
           '</div>' +
         '</div>' +
-        // 按项目分组的合约清单
+        // Contract list grouped by project
         '<div><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-sitemap mr-1.5 text-[#8B5CF6]"></i>' + t('pdHoldings') + ' (' + contracts.length + ')</h3>' +
         '<div>' + projectGroupsHTML + '</div>' +
         '</div>';
 
-      // Right panel — 加权雷达图 + 维度分析
+      // Right panel — weighted radar + dimension analysis
       let dimensionDetails = '';
       RADAR_DIMENSIONS.forEach((dim, i) => {
         const score = scores[i];
         const dGrade = getScoreGrade(score);
-        // 各合约在此维度的分数
+        // Each contract's score in this dimension
         const contractScoresForDim = contracts.map(c => calcRadarScores(c)[i]);
         const minS = Math.min(...contractScoresForDim);
         const maxS = Math.max(...contractScoresForDim);
@@ -4282,7 +4282,7 @@ app.get('/', (c) => {
 
       document.getElementById('pdRight').innerHTML =
         '<div class="space-y-4">' +
-          // 组合雷达图
+          // Portfolio radar chart
           '<div class="bg-[#0F2E2B] rounded-2xl border border-[rgba(46,196,182,0.08)] overflow-hidden">' +
             '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(139,92,246,0.04), rgba(124,58,237,0.03)); border-bottom: 1px solid rgba(139,92,246,0.08);">' +
               '<div class="flex items-center gap-3">' +
@@ -4318,18 +4318,18 @@ app.get('/', (c) => {
               '</div>' +
             '</div>' +
           '</div>' +
-          // 维度详解
+          // Dimension details
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
             '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-list-ul mr-1.5 text-[#8B5CF6]"></i>' + t('pdDimWeightedDetail') + '</h3>' +
             '<div class="space-y-2">' + dimensionDetails + '</div>' +
           '</div>' +
-          // 合约分布
+          // Contract distribution
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
             '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-[#2EC4B6]"></i>' + t('pdScoreDist') + '</h3>' +
             '<div class="h-32 flex items-end justify-around gap-1">' +
               contracts.map((c, i) => {
                 const cs = calcRadarScores(c); const co = calcOverallScore(cs); const cg = getScoreGrade(co);
-                return '<div class="flex flex-col items-center flex-1" title="' + (c.mcn || '') + ' — ' + co + '分">' +
+                return '<div class="flex flex-col items-center flex-1" title="' + (c.mcn || '') + ' — ' + co + ' pts">' +
                   '<div class="w-full rounded-t-md cursor-pointer hover:opacity-80 transition-opacity" style="height:' + co + '%; background: linear-gradient(180deg, ' + cg.color + ', ' + cg.color + '88); min-height:8px;" onclick="openDetail(&#39;' + c.id + '&#39;)"></div>' +
                   '<span class="text-xs text-[#3D7A70] mt-1" style="font-size:8px;">#' + (i + 1) + '</span>' +
                 '</div>';
@@ -4346,40 +4346,40 @@ app.get('/', (c) => {
       pushPageState('pagePortfolioDetail');
     }
 
-    // ==================== AI 组合构建器 (Portfolio Architect) ====================
-    // 核心逻辑：通过多轮对话逐步了解投资者需求，从宽泛到具体
-    // 每轮对话后，AI 实时更新右侧推荐组合
+    // ==================== AI Portfolio Builder ====================
+    // Core Logic: multi-round dialog to gradually understand investor needs, from broad to specific
+    // After each round, AI updates the right-panel recommended portfolio in real-time
 
     let abState = {
-      step: 0,  // 对话阶段: 0=风格 1=行业 2=参数 3=生成完成 4=调整
-      style: null,       // 投资风格: conservative / aggressive / balanced / sector
-      industries: [],    // 偏好行业列表
+      step: 0,  // Dialog step: 0=style 1=industry 2=params 3=generated 4=adjust
+      style: null,       // Investment style
+      industries: [],    // Preferred industries
       riskTolerance: null, // low / medium / high
-      targetReturn: null,  // 目标回报
-      budget: null,      // 预算（张数）
-      period: null,      // 期限偏好
-      extraPrefs: [],    // 额外偏好（自然语言记录）
-      portfolio: [],     // 当前推荐的合约列表
-      portfolioName: '', // 组合名称
+      targetReturn: null,  // Target return
+      budget: null,      // Budget (contracts)
+      period: null,      // Period preference
+      extraPrefs: [],    // Extra preferences (NL)
+      portfolio: [],     // Current recommended contracts
+      portfolioName: '', // Portfolio name
     };
 
-    // 对话引导流程
+    // Conversation flow steps
     function getABFlow() { return [
-      // Step 0: 投资风格（已通过初始快捷选项触发）
-      // Step 1: 行业偏好
+      // Step 0: Investment style (triggered by initial quick-select)
+      // Step 1: Industry preference
       {
         question: t('abIndustryQ'),
         options: [
-          { text: t('abIndDining'), icon: 'fa-utensils', color: '#f59e0b', value: '餐饮' },
-          { text: t('abIndTech'), icon: 'fa-microchip', color: '#8b5cf6', value: '科技' },
-          { text: t('abIndHealth'), icon: 'fa-heartbeat', color: '#ef4444', value: '健康' },
-          { text: t('abIndRetail'), icon: 'fa-shopping-bag', color: '#06b6d4', value: '零售' },
-          { text: t('abIndEdu'), icon: 'fa-graduation-cap', color: '#10b981', value: '教育' },
-          { text: t('abIndEnter'), icon: 'fa-music', color: '#ec4899', value: '演艺' },
+          { text: t('abIndDining'), icon: 'fa-utensils', color: '#f59e0b', value: 'F&B' },
+          { text: t('abIndTech'), icon: 'fa-microchip', color: '#8b5cf6', value: 'Technology' },
+          { text: t('abIndHealth'), icon: 'fa-heartbeat', color: '#ef4444', value: 'Healthcare' },
+          { text: t('abIndRetail'), icon: 'fa-shopping-bag', color: '#06b6d4', value: 'Retail' },
+          { text: t('abIndEdu'), icon: 'fa-graduation-cap', color: '#10b981', value: 'Education' },
+          { text: t('abIndEnter'), icon: 'fa-music', color: '#ec4899', value: 'Entertainment' },
           { text: t('abIndAll'), icon: 'fa-globe', color: '#3D7A70', value: 'all' },
         ]
       },
-      // Step 2: 风险与回报参数
+      // Step 2: Risk and return parameters
       {
         question: t('abRiskQ'),
         options: [
@@ -4388,7 +4388,7 @@ app.get('/', (c) => {
           { text: t('abStep2HighD'), icon: 'fa-fire-alt', color: '#f59e0b', value: 'high' },
         ]
       },
-      // Step 3: 投资期限
+      // Step 3: Investment horizon
       {
         question: t('abPeriodQ'),
         options: [
@@ -4397,7 +4397,7 @@ app.get('/', (c) => {
           { text: t('abStep3LongD'), icon: 'fa-hourglass-half', color: '#8b5cf6', value: 'long' },
         ]
       },
-      // Step 4: 预算规模
+      // Step 4: Budget scale
       {
         question: t('abBudgetQ'),
         options: [
@@ -4415,31 +4415,31 @@ app.get('/', (c) => {
         hint.style.opacity = '0';
         hint.style.transform = 'translateX(-50%) translateY(8px)';
         setTimeout(function() { hint.remove(); }, 300);
-        // 调整wrapper的margin
+        // Adjust wrapper margin
         var wrapper = document.getElementById('aiEntryWrapper');
         if (wrapper) { wrapper.style.transition = 'margin-bottom 0.4s ease'; wrapper.style.marginBottom = '20px'; }
       }
     }
 
-    // ===== 聚光灯效果 =====
+    // ===== Spotlight Effect =====
     var _spotlightShown = false;
 
     function showSpotlight() {
       if (_spotlightShown) return;
       _spotlightShown = true;
-      // 给 dashboard 加标记让 AI卡片z-index提高
+      // Mark dashboard to elevate AI card z-index
       var dashboard = document.getElementById('pageDashboard');
       if (dashboard) dashboard.classList.add('spotlight-active');
-      // 激活遮罩
+      // Activate overlay
       var overlay = document.getElementById('spotlightOverlay');
       if (overlay) overlay.classList.add('active');
-      // 显示顶部提示标签
+      // Show top hint label
       var label = document.getElementById('spotlightLabel');
       if (label) setTimeout(function() { label.classList.add('active'); }, 100);
-      // 显示底部 dismiss 提示
+      // Show bottom dismiss hint
       var dismiss = document.getElementById('spotlightDismissHint');
       if (dismiss) setTimeout(function() { dismiss.classList.add('active'); }, 100);
-      // 10秒后自动关闭（如果用户没手动关）
+      // Auto-close after 10s (if user hasn't dismissed)
       setTimeout(function() { dismissSpotlight(); }, 10000);
     }
 
@@ -4451,7 +4451,7 @@ app.get('/', (c) => {
       if (overlay) { overlay.classList.remove('active'); }
       if (label) { label.classList.remove('active'); }
       if (dismiss) { dismiss.classList.remove('active'); }
-      // 延迟移除 class，让过渡动画完成
+      // Delay class removal for transition animation
       setTimeout(function() {
         if (dashboard) dashboard.classList.remove('spotlight-active');
       }, 500);
@@ -4459,10 +4459,10 @@ app.get('/', (c) => {
 
     function goToAIBuilder() {
       if (allDeals.length === 0) {
-        // 确保筛子已初始化
+        // Ensure sieves are initialized
         if (mySieves.length === 0) initMySieves();
         loadDemoData();
-        // 只设置 dealsList，不渲染 dashboard（避免 null 引用）
+        // Only set dealsList, don't render dashboard (avoid null reference)
         var models = getActiveSieveModels();
         var sieve = models['all'];
         if (sieve) dealsList = sieve.filter(allDeals);
@@ -4478,14 +4478,14 @@ app.get('/', (c) => {
     function resetAIBuilder() {
       abState = { step: 0, style: null, industries: [], riskTolerance: null, targetReturn: null, budget: null, period: null, extraPrefs: [], portfolio: [], portfolioName: '' };
       abSelectedIndustries = [];
-      // 重置UI
+      // Reset UI
       var msgs = document.getElementById('abMessages');
       if (msgs) msgs.innerHTML = '';
       var waitEl = document.getElementById('abWaitingState');
       if (waitEl) waitEl.classList.remove('hidden');
       var panelEl = document.getElementById('abPortfolioPanel');
       if (panelEl) panelEl.classList.add('hidden');
-      // 重新生成欢迎消息
+      // Regenerate welcome message
       abAddAIMessage(
         '<p class="text-sm text-[#E8F5F3] leading-relaxed mb-3">' + t('abResetWelcome') + '</p>' +
         '<p class="text-sm leading-relaxed mb-4" style="color: #5A9A90;">' + t('abResetQ') + '</p>',
@@ -4513,7 +4513,7 @@ app.get('/', (c) => {
       const msgs = document.getElementById('abMessages');
       if (!msgs) return;
 
-      // 打字动画
+      // Typing animation
       const typing = document.createElement('div');
       typing.className = 'ab-msg-ai';
       typing.innerHTML = '<div class="ab-avatar"><i class="fas fa-robot"></i></div><div class="ab-content"><div class="ab-typing"><span></span><span></span><span></span></div></div>';
@@ -4540,9 +4540,9 @@ app.get('/', (c) => {
 
     function abSelectOption(text) {
       abAddUserMessage(text);
-      // 移除当前快捷按钮（已点击）
+      // Remove current quick buttons (already clicked)
       const lastMsg = document.getElementById('abMessages').lastElementChild;
-      // 解析用户选择并推进对话
+      // Parse user selection and advance dialog
       abProcessUserInput(text);
     }
 
@@ -4560,17 +4560,17 @@ app.get('/', (c) => {
       const AB_FLOW = getABFlow();
 
       if (abState.step === 0) {
-        // Step 0: 解析投资风格 (support both zh + en keywords)
-        if (lower.includes('稳定') || lower.includes('安全') || lower.includes('保守') || lower.includes('conservative') || lower.includes('stable') || lower.includes('safety')) {
+        // Step 0: Parse investment style (supports both zh + en keywords)
+        if (lower.includes('stable') || lower.includes('safe') || lower.includes('Conservative') || lower.includes('conservative') || lower.includes('stable') || lower.includes('safety')) {
           abState.style = 'conservative';
           abState.riskTolerance = 'low';
-        } else if (lower.includes('风险') || lower.includes('高回报') || lower.includes('激进') || lower.includes('进取') || lower.includes('aggressive') || lower.includes('high return')) {
+        } else if (lower.includes('Risk') || lower.includes('high return') || lower.includes('Aggressive') || lower.includes('Aggressive') || lower.includes('aggressive') || lower.includes('high return')) {
           abState.style = 'aggressive';
           abState.riskTolerance = 'high';
-        } else if (lower.includes('均衡') || lower.includes('攻守') || lower.includes('平衡') || lower.includes('balanced') || lower.includes('moderate')) {
+        } else if (lower.includes('balanced') || lower.includes('balanced') || lower.includes('Balanced') || lower.includes('balanced') || lower.includes('moderate')) {
           abState.style = 'balanced';
           abState.riskTolerance = 'medium';
-        } else if (lower.includes('行业') || lower.includes('集中') || lower.includes('看好') || lower.includes('sector') || lower.includes('bullish') || lower.includes('specific')) {
+        } else if (lower.includes('sector') || lower.includes('concentrate') || lower.includes('bullish') || lower.includes('sector') || lower.includes('bullish') || lower.includes('specific')) {
           abState.style = 'sector';
           abState.riskTolerance = 'medium';
         } else {
@@ -4602,8 +4602,8 @@ app.get('/', (c) => {
         );
         abBuildPortfolio();
       } else if (abState.step === 2) {
-        if (lower.includes('低') || lower.includes('7') || lower.includes('安全') || lower.includes('low') || lower.includes('conservative')) abState.riskTolerance = 'low';
-        else if (lower.includes('高') || lower.includes('14') || lower.includes('承受') || lower.includes('high') || lower.includes('aggressive')) abState.riskTolerance = 'high';
+        if (lower.includes('low') || lower.includes('7') || lower.includes('safe') || lower.includes('low') || lower.includes('conservative')) abState.riskTolerance = 'low';
+        else if (lower.includes('high') || lower.includes('14') || lower.includes('tolerate') || lower.includes('high') || lower.includes('aggressive')) abState.riskTolerance = 'high';
         else abState.riskTolerance = 'medium';
         abState.step = 3;
         abAddAIMessage(
@@ -4616,8 +4616,8 @@ app.get('/', (c) => {
         );
         abBuildPortfolio();
       } else if (abState.step === 3) {
-        if (lower.includes('短') || lower.includes('快') || lower.includes('24') || lower.includes('short')) abState.period = 'short';
-        else if (lower.includes('长') || lower.includes('30') || lower.includes('long')) abState.period = 'long';
+        if (lower.includes('short') || lower.includes('quick') || lower.includes('24') || lower.includes('short')) abState.period = 'short';
+        else if (lower.includes('long') || lower.includes('30') || lower.includes('long')) abState.period = 'long';
         else abState.period = 'medium';
         abState.step = 4;
         abAddAIMessage(
@@ -4631,7 +4631,7 @@ app.get('/', (c) => {
         abBuildPortfolio();
       } else if (abState.step === 4) {
         if (lower.includes('5') && !lower.includes('50')) abState.budget = 10;
-        else if (lower.includes('50') || lower.includes('以上') || lower.includes('大') || lower.includes('heavy')) abState.budget = 60;
+        else if (lower.includes('50') || lower.includes('above') || lower.includes('large') || lower.includes('heavy')) abState.budget = 60;
         else abState.budget = 35;
         abState.step = 5;
         abBuildPortfolio();
@@ -4648,36 +4648,36 @@ app.get('/', (c) => {
           ]
         );
       } else {
-        // Step 5+: 自由调整阶段
+        // Step 5+: Free adjustment phase
         abState.extraPrefs.push(text);
-        if (lower.includes('科技') || lower.includes('ai') || lower.includes('人工智能') || lower.includes('tech')) {
-          if (!abState.industries.includes('科技')) abState.industries.push('科技');
+        if (lower.includes('Technology') || lower.includes('ai') || lower.includes('AI') || lower.includes('tech')) {
+          if (!abState.industries.includes('Technology')) abState.industries.push('Technology');
         }
-        if (lower.includes('餐饮') || lower.includes('美食') || lower.includes('f&b') || lower.includes('dining')) {
-          if (!abState.industries.includes('餐饮')) abState.industries.push('餐饮');
+        if (lower.includes('F&B') || lower.includes('food') || lower.includes('f&b') || lower.includes('dining')) {
+          if (!abState.industries.includes('F&B')) abState.industries.push('F&B');
         }
-        if (lower.includes('减少风险') || lower.includes('降低风险') || lower.includes('更安全') || lower.includes('reduce risk') || lower.includes('lower risk')) {
+        if (lower.includes('reduce risk') || lower.includes('lower risk') || lower.includes('safer') || lower.includes('reduce risk') || lower.includes('lower risk')) {
           abState.riskTolerance = 'low';
         }
-        if (lower.includes('提高回报') || lower.includes('更激进') || lower.includes('更高') || lower.includes('higher return') || lower.includes('more aggressive')) {
+        if (lower.includes('higher return') || lower.includes('more aggressive') || lower.includes('higher') || lower.includes('higher return') || lower.includes('more aggressive')) {
           abState.riskTolerance = 'high';
         }
-        if (lower.includes('减少') && lower.includes('餐饮') || lower.includes('reduce') && lower.includes('f&b')) {
-          abState.industries = abState.industries.filter(i => i !== '餐饮');
+        if (lower.includes('reduce') && lower.includes('F&B') || lower.includes('reduce') && lower.includes('f&b')) {
+          abState.industries = abState.industries.filter(i => i !== 'F&B');
           if (abState.industries.length === 0) abState.industries = ['all'];
         }
-        if (lower.includes('短期') || lower.includes('快速') || lower.includes('short')) abState.period = 'short';
-        if (lower.includes('健康') || lower.includes('医疗') || lower.includes('health')) {
-          if (!abState.industries.includes('健康')) abState.industries.push('健康');
+        if (lower.includes('short term') || lower.includes('quick') || lower.includes('short')) abState.period = 'short';
+        if (lower.includes('Healthcare') || lower.includes('Healthcare') || lower.includes('health')) {
+          if (!abState.industries.includes('Healthcare')) abState.industries.push('Healthcare');
         }
-        if (lower.includes('演艺') || lower.includes('娱乐') || lower.includes('entertainment')) {
-          if (!abState.industries.includes('演艺')) abState.industries.push('演艺');
+        if (lower.includes('Entertainment') || lower.includes('entertainment') || lower.includes('entertainment')) {
+          if (!abState.industries.includes('Entertainment')) abState.industries.push('Entertainment');
         }
-        if (lower.includes('教育') || lower.includes('education')) {
-          if (!abState.industries.includes('教育')) abState.industries.push('教育');
+        if (lower.includes('Education') || lower.includes('education')) {
+          if (!abState.industries.includes('Education')) abState.industries.push('Education');
         }
-        if (lower.includes('零售') || lower.includes('retail')) {
-          if (!abState.industries.includes('零售')) abState.industries.push('零售');
+        if (lower.includes('Retail') || lower.includes('retail')) {
+          if (!abState.industries.includes('Retail')) abState.industries.push('Retail');
         }
 
         abBuildPortfolio();
@@ -4694,7 +4694,7 @@ app.get('/', (c) => {
       }
     }
 
-    // 行业选择（支持多选）
+    // Industry selection (supports multi-select)
     let abSelectedIndustries = [];
     function abSelectIndustry(value) {
       const AB_FLOW = getABFlow();
@@ -4717,7 +4717,7 @@ app.get('/', (c) => {
       if (abSelectedIndustries.includes(value)) return;
       abSelectedIndustries.push(value);
       abState.industries = [...abSelectedIndustries];
-      var indNameMap = {'餐饮': t('indDining'), '科技': t('indTech'), '健康': t('indHealth'), '零售': t('indRetail'), '教育': t('indEducation'), '演艺': t('indEntertainment')};
+      var indNameMap = {'F&B': t('indDining'), 'Technology': t('indTech'), 'Healthcare': t('indHealth'), 'Retail': t('indRetail'), 'Education': t('indEducation'), 'Entertainment': t('indEntertainment')};
       var displayNames = abSelectedIndustries.map(function(v) { return indNameMap[v] || v; });
       abAddUserMessage(t('abSelected') + displayNames.join(currentLang === 'en' ? ', ' : '、'));
       abBuildPortfolio();
@@ -4777,7 +4777,7 @@ app.get('/', (c) => {
     }
 
     function abParseIndustryInput(text) {
-      const mapping = { '餐饮': '餐饮', '美食': '餐饮', '科技': '科技', 'ai': '科技', '健康': '健康', '医疗': '健康', '零售': '零售', '消费': '零售', '教育': '教育', '演艺': '演艺', '娱乐': '演艺' };
+      const mapping = { 'F&B': 'F&B', 'food': 'F&B', 'Technology': 'Technology', 'ai': 'Technology', 'Healthcare': 'Healthcare', 'Healthcare': 'Healthcare', 'Retail': 'Retail', 'consumer': 'Retail', 'Education': 'Education', 'Entertainment': 'Entertainment', 'enter': 'Entertainment' };
       Object.keys(mapping).forEach(key => {
         if (text.includes(key) && !abState.industries.includes(mapping[key])) {
           abState.industries.push(mapping[key]);
@@ -4786,16 +4786,16 @@ app.get('/', (c) => {
       if (abState.industries.length === 0) abState.industries = ['all'];
     }
 
-    // ★ 核心：根据当前状态从全部合约中构建组合
+    // ★ Core: Build portfolio from all contracts based on current state
     function abBuildPortfolio() {
       let pool = allDeals.filter(d => d.status === 'available' || d.isMine);
 
-      // 1. 行业筛选
+      // 1. Industry filter
       if (abState.industries.length > 0 && !abState.industries.includes('all')) {
         pool = pool.filter(c => abState.industries.includes(c.industry));
       }
 
-      // 2. 风险筛选
+      // 2. Risk filter
       if (abState.riskTolerance === 'low') {
         pool = pool.filter(c => parseFloat(c.aiScore) >= 8.0 && (c.riskGrade === 'A+' || c.riskGrade === 'A'));
       } else if (abState.riskTolerance === 'high') {
@@ -4804,23 +4804,23 @@ app.get('/', (c) => {
         pool = pool.filter(c => parseFloat(c.aiScore) >= 7.0);
       }
 
-      // 3. 期限筛选
+      // 3. Duration filter
       if (abState.period === 'short') {
         pool = pool.filter(c => parseInt(c.period) <= 24);
       } else if (abState.period === 'long') {
         pool = pool.filter(c => parseInt(c.period) >= 30);
       }
 
-      // 4. 排序（按 AI 评分降序 + 多样性）
+      // 4. Sort (by AI score desc + diversity)
       pool.sort((a, b) => parseFloat(b.aiScore) - parseFloat(a.aiScore));
 
-      // 5. 预算限制 & 多样性选择
+      // 5. Budget limit & diversity selection
       const budget = abState.budget || 25;
       const selected = [];
       const projectSeen = {};
       for (const c of pool) {
         if (selected.length >= budget) break;
-        // 每个项目最多选 N 张，保证多样性
+        // Max N contracts per project for diversity
         const maxPerProject = Math.max(3, Math.ceil(budget / 5));
         if (!projectSeen[c.projectId]) projectSeen[c.projectId] = 0;
         if (projectSeen[c.projectId] >= maxPerProject) continue;
@@ -4830,13 +4830,13 @@ app.get('/', (c) => {
 
       abState.portfolio = selected;
 
-      // 生成组合名称
+      // Generate portfolio name
       const styleNames = { conservative: t('abStyleConservative'), aggressive: t('abStyleAggressive'), balanced: t('abStyleBalanced'), sector: t('abStyleSector') };
-      var indNameMap = {'餐饮': t('indDining'), '科技': t('indTech'), '健康': t('indHealth'), '零售': t('indRetail'), '教育': t('indEducation'), '演艺': t('indEntertainment'), 'all': t('abStep1All')};
+      var indNameMap = {'F&B': t('indDining'), 'Technology': t('indTech'), 'Healthcare': t('indHealth'), 'Retail': t('indRetail'), 'Education': t('indEducation'), 'Entertainment': t('indEntertainment'), 'all': t('abStep1All')};
       var indDisplay = abState.industries.includes('all') ? t('abStep1All') : abState.industries.map(function(v) { return indNameMap[v] || v; }).join('+');
       abState.portfolioName = (styleNames[abState.style] || t('abStyleAIDefault')) + ' · ' + indDisplay + ' S26';
 
-      // 更新右侧面板
+      // Update right panel
       abRenderPortfolio();
     }
 
@@ -4844,7 +4844,7 @@ app.get('/', (c) => {
       const p = abState.portfolio;
       if (p.length === 0) return;
 
-      // 显示面板（安全检查）
+      // Show panel (safety check)
       var waitEl = document.getElementById('abWaitingState');
       var panelEl = document.getElementById('abPortfolioPanel');
       if (waitEl) waitEl.classList.add('hidden');
@@ -4854,14 +4854,14 @@ app.get('/', (c) => {
         setTimeout(function() { panelEl.classList.remove('ab-portfolio-evolve'); }, 600);
       }
 
-      // 计算统计
+      // Calculate stats
       const scores = calcPortfolioRadarScores(p);
       const overall = calcOverallScore(scores);
       const grade = getScoreGrade(overall);
       const projects = [...new Set(p.map(c => c.projectId))];
       const totalValue = p.length * 1000;
       const avgShare = (p.reduce((s, c) => s + parseInt(c.revenueShare), 0) / p.length).toFixed(1);
-      // 计算年化收益率（revenueShare 本身就是年化%，加权平均）
+      // Calculate annual yield (revenueShare is annual %, weighted avg)
       let abTotalYield = 0;
       p.forEach(c => { const sn = parseInt(c.revenueShare) || 10; abTotalYield += sn; });
       const abAvgYield = (abTotalYield / p.length).toFixed(1);
@@ -4870,19 +4870,19 @@ app.get('/', (c) => {
       document.getElementById('abPortfolioName').textContent = abState.portfolioName;
       document.getElementById('abPortfolioDesc').textContent = t('abPortfolioDescTpl', {total: allDeals.length});
       document.getElementById('abPortfolioMeta').textContent = t('abPortfolioMetaTpl', {step: Math.min(abState.step, 5)});
-      document.getElementById('abGradeBadge').textContent = grade.grade + ' · ' + overall + '分';
+      document.getElementById('abGradeBadge').textContent = grade.grade + ' · ' + overall + ' pts';
       document.getElementById('abGradeBadge').style.cssText = 'background:' + grade.bg + '; color:' + grade.color + '; padding:4px 14px; border-radius:12px; font-size:13px; font-weight:700;';
 
-      // 核心数字
+      // Core numbers
       document.getElementById('abStatContracts').textContent = p.length;
       document.getElementById('abStatProjects').textContent = projects.length;
       document.getElementById('abStatValue').textContent = '¥' + totalValue.toLocaleString();
       document.getElementById('abStatReturn').textContent = abAvgYield + '%';
 
-      // 雷达图
+      // Radar chart
       setTimeout(() => { drawRadarChart('abRadarCanvas', scores, { size: 300, displayValues: calcPortfolioDisplayValues(p) }); }, 100);
 
-      // 维度网格 — 显示实际值而非评分，让投资者一眼看懂组合画像
+      // Dimension grid — show actual values, not scores, for instant investor comprehension
       const displayVals = calcPortfolioDisplayValues(p);
       document.getElementById('abDimGrid').innerHTML = RADAR_DIMENSIONS.map((dim, i) => {
         const s = scores[i]; const g = getScoreGrade(s);
@@ -4893,10 +4893,10 @@ app.get('/', (c) => {
         '</div>';
       }).join('');
 
-      // 行业配比
+      // Industry allocation
       const industryDistrib = {};
       p.forEach(c => { industryDistrib[c.industry] = (industryDistrib[c.industry] || 0) + 1; });
-      const indColors = { '餐饮': '#f59e0b', '零售': '#06b6d4', '科技': '#8b5cf6', '教育': '#10b981', '健康': '#ef4444', '演艺': '#ec4899' };
+      const indColors = { 'F&B': '#f59e0b', 'Retail': '#06b6d4', 'Technology': '#8b5cf6', 'Education': '#10b981', 'Healthcare': '#ef4444', 'Entertainment': '#ec4899' };
       document.getElementById('abIndustryDistrib').innerHTML = Object.keys(industryDistrib).map(ind => {
         const count = industryDistrib[ind];
         const pct = (count / p.length * 100).toFixed(1);
@@ -4910,8 +4910,8 @@ app.get('/', (c) => {
         '</div>';
       }).join('');
 
-      // 合约清单
-      document.getElementById('abContractCount').textContent = p.length + (currentLang === 'en' ? '' : ' 张');
+      // Contract list
+      document.getElementById('abContractCount').textContent = p.length + ('');
       document.getElementById('abContractList').innerHTML = p.slice(0, 30).map(c => {
         const cs = calcRadarScores(c); const co = calcOverallScore(cs); const cg = getScoreGrade(co);
         return '<div class="flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ab-contract-item" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
@@ -4925,12 +4925,12 @@ app.get('/', (c) => {
             '<p style="font-size:9px; color:' + cg.color + ';">' + cg.grade + '</p>' +
           '</div>' +
         '</div>';
-      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2 text-[#3D7A70]">' + (currentLang === 'en' ? (p.length - 30) + t('abContractUnitMore') : '还有 ' + (p.length - 30) + ' 张合约未展示') + '</p>' : '');
+      }).join('') + (p.length > 30 ? '<p class="text-xs text-center py-2 text-[#3D7A70]">' + ((p.length - 30) + t('abContractUnitMore') : '... ' + (p.length - 30) + ' more contracts not shown') + '</p>' : '');
     }
 
     function abApplyPortfolio() {
       if (abState.portfolio.length === 0) { showToast('warning', t('abApplyEmptyTitle'), t('abApplyEmptyMsg')); return; }
-      const userName = currentUser ? (currentUser.displayName || currentUser.username) : '游客';
+      const userName = currentUser ? (currentUser.displayName || currentUser.username) : 'Guest';
       let count = 0;
       abState.portfolio.forEach(c => {
         if (c.status === 'available' && !c.isMine) {
@@ -4943,7 +4943,7 @@ app.get('/', (c) => {
         }
       });
       showToast('success', t('abApplySuccessTitle'), t('abApplySuccessMsgFull', {count: count, total: (count * 1000).toLocaleString()}));
-      abBuildPortfolio(); // 刷新面板
+      abBuildPortfolio(); // Refresh panel
     }
 
     function abRefine() {
@@ -4951,11 +4951,11 @@ app.get('/', (c) => {
       showToast('info', t('abRefineTitle'), t('abRefineMsg'));
     }
 
-    // ==================== 初始化入口 ====================
-    // 立即启动初始化（不等待 DOMContentLoaded，因为 script 在 body 末尾）
+    // ==================== Initialization Entry ====================
+    // Initialize immediately (no DOMContentLoaded needed, script is at body end)
     initApp();
   </script>
-  <!-- Tailwind CSS CDN 放在最后异步加载，不阻塞页面渲染和JS执行 -->
+  <!-- Tailwind CSS CDN loaded last, async to not block rendering -->
   <script src="https://cdn.tailwindcss.com"></script>
 </body>
 </html>`)
