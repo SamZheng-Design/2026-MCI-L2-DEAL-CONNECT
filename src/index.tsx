@@ -638,11 +638,11 @@ app.get('/', (c) => {
           </div>
           <div class="flex items-center" style="gap:12px;">
             <div class="hidden sm:flex items-center" style="gap:6px;">
-              <span style="font-size:10px;color:#3D7A70;font-weight:500;">SOURCE</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:500;" data-i18n="tickerSourceLabel">SOURCE</span>
               <span style="font-size:10px;font-weight:700;color:#fbbf24;"><i class="fas fa-paper-plane" style="font-size:8px;margin-right:2px;"></i><span data-i18n="tickerSourceVal">Originate</span></span>
             </div>
             <div class="hidden sm:flex items-center" style="gap:6px;">
-              <span style="font-size:10px;color:#3D7A70;font-weight:500;">FILTER</span>
+              <span style="font-size:10px;color:#3D7A70;font-weight:500;" data-i18n="tickerFilterLabel">FILTER</span>
               <span style="font-size:10px;font-weight:700;color:#22d3ee;"><i class="fas fa-filter" style="font-size:8px;margin-right:2px;"></i><span data-i18n="tickerFilterVal">Assess</span></span>
             </div>
             <div class="flex items-center" style="gap:4px;">
@@ -787,7 +787,7 @@ app.get('/', (c) => {
           <!-- Sieve description -->
           <div id="sieveDescription" class="mt-3 p-3 rounded-xl text-xs hidden" style="background:rgba(11,30,28,0.6);color:#5A9A90;">
             <i class="fas fa-info-circle text-cyan-500 mr-1"></i>
-            <span id="sieveDescText">Select a sieve to view description</span>
+            <span id="sieveDescText" data-i18n="sieveSelectHint">Select a sieve to view description</span>
           </div>
         </div>
 
@@ -816,19 +816,19 @@ app.get('/', (c) => {
           <div class="max-w-3xl mx-auto">
             <div class="text-center mb-6">
               <div class="empty-state-icon mx-auto animate-float"><i class="fas fa-filter"></i></div>
-              <h3 class="text-xl font-bold mb-2" style="color:#E8F5F3;letter-spacing:-0.02em;">Awaiting Investment Opportunities from Originate</h3>
-              <p class="text-sm" style="color:#5A9A90;">Opportunities are uploaded by fundraisers via Originate, filtered by Assess sieves and displayed here</p>
+              <h3 class="text-xl font-bold mb-2" style="color:#E8F5F3;letter-spacing:-0.02em;" data-i18n="emptyTitle">Awaiting Investment Opportunities from Originate</h3>
+              <p class="text-sm" style="color:#5A9A90;" data-i18n="emptyDesc">Opportunities are uploaded by fundraisers via Originate, filtered by Assess sieves and displayed here</p>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
               <button onclick="loadDemoData()" class="group text-left p-5 rounded-2xl border transition-all" style="background: rgba(15,46,43,0.8); border-color: rgba(46,196,182,0.1);" onmouseover="this.style.borderColor='rgba(52,199,89,0.3)';this.style.boxShadow='0 8px 32px rgba(52,199,89,0.08)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='rgba(46,196,182,0.1)';this.style.boxShadow='none';this.style.transform='none'">
                 <div class="w-12 h-12 icon-container icon-container-lg icon-gradient-success mb-4 group-hover:scale-105 transition-transform" style="border-radius:16px;"><i class="fas fa-database text-white text-lg"></i></div>
-                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;">Load Demo Data</h4>
-                <p class="text-sm leading-relaxed" style="color:#5A9A90;">Experience full features with simulated Originate projects filtered by sieves</p>
+                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;" data-i18n="emptyLoadDemo">Load Demo Data</h4>
+                <p class="text-sm leading-relaxed" style="color:#5A9A90;" data-i18n="emptyLoadDemoDesc">Experience full features with simulated Originate projects filtered by sieves</p>
               </button>
               <div class="text-left p-5 rounded-2xl border" style="background: rgba(15,46,43,0.8); border-color: rgba(46,196,182,0.1);">
                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background: linear-gradient(135deg, rgba(6,182,212,0.15), rgba(14,165,233,0.15));"><i class="fas fa-filter text-lg" style="color:#22d3ee;"></i></div>
-                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;">Configure Your Sieves</h4>
-                <p class="text-sm leading-relaxed" style="color:#5A9A90;">Set your AI filtering criteria in Assess to automatically display matching opportunities</p>
+                <h4 class="font-bold mb-1 text-base" style="color:#E8F5F3;" data-i18n="emptySieveConfig">Configure Your Sieves</h4>
+                <p class="text-sm leading-relaxed" style="color:#5A9A90;" data-i18n="emptySieveConfigDesc">Set your AI filtering criteria in Assess to automatically display matching opportunities</p>
               </div>
             </div>
             <div class="rounded-2xl p-5 border" style="background: rgba(15,46,43,0.7); border-color: rgba(46,196,182,0.1);">
@@ -873,17 +873,17 @@ app.get('/', (c) => {
       <!-- Left: Deal Info -->
       <div class="w-2/5 border-r border-[rgba(46,196,182,0.12)] flex flex-col bg-[#0F2E2B] overflow-y-auto">
         <div class="p-5" id="detailLeft">
-          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">Loading...</p></div>
+          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm" data-i18n="loadingText">Loading...</p></div>
         </div>
       </div>
       <!-- Right: Analysis (Sieve Assessment Results) -->
       <div class="w-3/5 flex flex-col overflow-y-auto" style="background:rgba(11,30,28,0.95);">
         <div class="p-3 border-b border-[rgba(46,196,182,0.12)] bg-[#0F2E2B] flex items-center justify-between">
-          <div class="flex items-center space-x-2"><span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>Contract Assessment</span></div>
+          <div class="flex items-center space-x-2"><span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i><span data-i18n="detAssessTitle">Contract Assessment</span></span></div>
           <div class="flex bg-[rgba(46,196,182,0.06)] rounded-lg p-0.5">
-            <button onclick="switchDetailView('sieve')" id="btnSieve" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#0F2E2B] shadow text-[#3DD8CA]"><i class="fas fa-crosshairs mr-1"></i>Radar Assessment</button>
-            <button onclick="switchDetailView('financials')" id="btnFinancials" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-calculator mr-1"></i>Financials</button>
-            <button onclick="switchDetailView('timeline')" id="btnTimeline" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-stream mr-1"></i>Timeline</button>
+            <button onclick="switchDetailView('sieve')" id="btnSieve" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#0F2E2B] shadow text-[#3DD8CA]"><i class="fas fa-crosshairs mr-1"></i><span data-i18n="detTabRadar">Radar Assessment</span></button>
+            <button onclick="switchDetailView('financials')" id="btnFinancials" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-calculator mr-1"></i><span data-i18n="detTabFinancials">Financials</span></button>
+            <button onclick="switchDetailView('timeline')" id="btnTimeline" class="px-2.5 py-1 rounded-md text-xs font-semibold text-[#8EBDB5]"><i class="fas fa-stream mr-1"></i><span data-i18n="detTabTimeline">Timeline</span></button>
           </div>
         </div>
         <div class="flex-1 p-5" id="detailRight">
@@ -900,12 +900,12 @@ app.get('/', (c) => {
         <div class="flex items-center space-x-3">
           <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium" data-i18n="navBackBoard">Back to Board</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
-            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-file-contract mr-1.5 text-emerald-500"></i>My Contracts</h1>
+            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-file-contract mr-1.5 text-emerald-500"></i><span data-i18n="myContractsTitle">My Contracts</span></h1>
             <p class="text-xs text-[#3D7A70]" id="myContractsSubtitle">Subscribed 0 contracts · Total investment ¥0</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <input type="text" id="mcSearchInput" placeholder="Search contract/MCN..." class="search-input px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B] w-52" oninput="renderMyContracts()">
+          <input type="text" id="mcSearchInput" placeholder="Search contract/MCN..." data-i18n="mcSearchPlaceholder" data-i18n-attr="placeholder" class="search-input px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B] w-52" oninput="renderMyContracts()">
           <select class="px-3 py-1.5 border border-[rgba(46,196,182,0.12)] rounded-lg text-xs bg-[#0F2E2B]" id="mcFilterIndustry" onchange="renderMyContracts()">
             <option value="all" data-i18n="abStep1All">All Industries</option>
           </select>
@@ -942,12 +942,12 @@ app.get('/', (c) => {
         <div class="flex items-center space-x-3">
           <button onclick="goToDashboard()" class="back-btn flex items-center px-2.5 py-1.5 text-[#8EBDB5] hover:text-[#3DD8CA] rounded-lg text-sm"><i class="fas fa-arrow-left mr-1.5"></i><span class="font-medium" data-i18n="navBackBoard">Back to Board</span></button>
           <div class="border-l border-[rgba(46,196,182,0.12)] pl-3">
-            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-object-group mr-1.5 text-[#8B5CF6]"></i>My Portfolios</h1>
+            <h1 class="text-base font-bold text-[#E8F5F3]"><i class="fas fa-object-group mr-1.5 text-[#8B5CF6]"></i><span data-i18n="myPortfoliosTitle">My Portfolios</span></h1>
             <p class="text-xs text-[#3D7A70]" id="myPortfoliosSubtitle">0 portfolios · 0 contracts · Total investment ¥0</p>
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <div class="px-3 py-1.5 bg-[rgba(139,92,246,0.06)] rounded-lg border border-[rgba(139,92,246,0.12)] text-xs text-[#A78BFA] font-medium"><i class="fas fa-info-circle mr-1"></i>Cross-project fund portfolios · Intelligently configured by investment philosophy and theme</div>
+          <div class="px-3 py-1.5 bg-[rgba(139,92,246,0.06)] rounded-lg border border-[rgba(139,92,246,0.12)] text-xs text-[#A78BFA] font-medium"><i class="fas fa-info-circle mr-1"></i><span data-i18n="mpInfoBar">Cross-project fund portfolios · Intelligently configured by investment philosophy and theme</span></div>
         </div>
       </div>
     </nav>
@@ -1002,17 +1002,17 @@ app.get('/', (c) => {
       <!-- Left: Portfolio Overview -->
       <div class="w-2/5 border-r border-[rgba(46,196,182,0.12)] flex flex-col bg-[#0F2E2B] overflow-y-auto">
         <div class="p-5" id="pdLeft">
-          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm">Loading...</p></div>
+          <div class="text-center py-8 text-[#3D7A70]"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p class="text-sm" data-i18n="loadingText">Loading...</p></div>
         </div>
       </div>
       <!-- Right: Portfolio Radar + Contract List -->
       <div class="w-3/5 flex flex-col overflow-y-auto" style="background:rgba(11,30,28,0.95);">
         <div class="p-3 border-b border-[rgba(46,196,182,0.12)] bg-[#0F2E2B] flex items-center justify-between">
-          <span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#8B5CF6]"></i>Portfolio Weighted Analysis</span>
+          <span class="text-sm font-semibold text-[#B0D5CF]"><i class="fas fa-chart-pie mr-1.5 text-[#8B5CF6]"></i><span data-i18n="pdWeightedTitle">Portfolio Weighted Analysis</span></span>
           <span class="text-xs text-[#3D7A70]" id="pdWeightNote" data-i18n="pdWeightNote">Cross-project equal-weight analysis</span>
         </div>
         <div class="flex-1 p-5" id="pdRight">
-          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm">Loading portfolio analysis...</p></div>
+          <div class="text-center py-16 text-[#3D7A70]"><i class="fas fa-chart-area text-4xl mb-3 opacity-40"></i><p class="text-sm" data-i18n="loadingPortfolio">Loading portfolio analysis...</p></div>
         </div>
       </div>
     </div>
@@ -1052,9 +1052,9 @@ app.get('/', (c) => {
               <div class="p-4 rounded-2xl rounded-tl-md bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
                 <p class="text-sm text-[#E8F5F3] leading-relaxed mb-3" data-i18n="abWelcome1">Hello! I am the <span style="color: #3DD8CA; font-weight: 700;">Deal Connect AI Portfolio Architect</span>.</p>
                 <p class="text-sm leading-relaxed mb-3 text-[#5A9A90]" data-i18n="abWelcome2">Through our conversation, I will understand your investment preferences and goals, and intelligently build a personalized portfolio from all platform contracts.</p>
-                <p class="text-sm leading-relaxed mb-4 text-[#5A9A90]">Let's start with a simple question —</p>
+                <p class="text-sm leading-relaxed mb-4 text-[#5A9A90]" data-i18n="abWelcome2Q">Let's start with a simple question —</p>
                 <div class="p-3 rounded-xl" style="background: linear-gradient(135deg, rgba(93,196,179,0.08), rgba(46,196,182,0.06)); border: 1px solid rgba(93,196,179,0.2);">
-                  <p class="text-sm font-semibold" style="color: #3DD8CA;"><i class="fas fa-compass mr-1.5"></i>What matters most to you in this investment?</p>
+                  <p class="text-sm font-semibold" style="color: #3DD8CA;"><i class="fas fa-compass mr-1.5"></i><span data-i18n="abResetQ">What matters most to you in this investment?</span></p>
                 </div>
               </div>
               <!-- Quick Options -->
@@ -1090,11 +1090,11 @@ app.get('/', (c) => {
             <h3 class="text-lg font-bold text-[#E8F5F3] mb-2" style="letter-spacing: -0.02em;" data-i18n="abWaitTitle">Waiting for AI to Build Your Portfolio</h3>
             <p class="text-sm leading-relaxed text-[#5A9A90]" data-i18n="abWaitDesc">Chat with AI on the left to describe your investment preferences. AI will build a portfolio from all platform contracts based on your needs.</p>
             <div class="flex items-center justify-center gap-4 mt-6">
-              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #5DC4B3;"></div><span class="text-xs" id="abFlowStep1">Style Preference</span></div>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #5DC4B3;"></div><span id="abFlowStep1" class="text-xs" data-i18n="abFlowStep1">Style Preference</span></div>
               <i class="fas fa-long-arrow-alt-right text-[#2A5E58]"></i>
               <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #06b6d4;"></div><span class="text-xs" id="abFlowStep2" data-i18n="abFlowStep2">Industry Selection</span></div>
               <i class="fas fa-long-arrow-alt-right text-[#2A5E58]"></i>
-              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span class="text-xs" id="abFlowStep3">Portfolio Generation</span></div>
+              <div class="flex items-center gap-1.5 text-[#3D7A70]"><div class="w-2 h-2 rounded-full" style="background: #10b981;"></div><span id="abFlowStep3" class="text-xs" data-i18n="abFlowStep3">Portfolio Generation</span></div>
             </div>
           </div>
         </div>
@@ -1116,30 +1116,30 @@ app.get('/', (c) => {
                 <div class="relative z-10">
                   <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);"><i class="fas fa-magic mr-1"></i>AI Built</span>
-                      <span class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioMeta">Real-time Generation</span>
+                      <span class="px-2 py-0.5 rounded text-xs font-bold" style="background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);"><i class="fas fa-magic mr-1"></i><span data-i18n="abAIBuilt">AI Built</span></span>
+                      <span class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioMeta" data-i18n="abPortfolioMetaDefault">Real-time Generation</span>
                     </div>
                     <span class="px-3 py-1 rounded-xl text-sm font-bold" id="abGradeBadge" style="background: rgba(16,185,129,0.2); color: #34d399;">A · 82</span>
                   </div>
-                  <h2 class="text-xl font-bold text-white mb-1" id="abPortfolioName" style="letter-spacing:-0.02em;">AI Recommended Portfolio</h2>
-                  <p class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioDesc">Intelligently generated based on your investment preferences</p>
+                  <h2 class="text-xl font-bold text-white mb-1" id="abPortfolioName" style="letter-spacing:-0.02em;" data-i18n="abPortfolioTitle">AI Recommended Portfolio</h2>
+                  <p class="text-xs" style="color: rgba(255,255,255,0.5);" id="abPortfolioDesc" data-i18n="abPortfolioDescDefault">Intelligently generated based on your investment preferences</p>
                   <!-- Core Numbers -->
                   <div class="grid grid-cols-4 gap-2 mt-4" id="abCoreStats">
                     <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                       <p class="text-lg font-black text-white" id="abStatContracts">0</p>
-                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">Contracts</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);" data-i18n="abStatContractsLabel">Contracts</p>
                     </div>
                     <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                       <p class="text-lg font-black text-cyan-200" id="abStatProjects">0</p>
-                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">Projects</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);" data-i18n="abStatProjectsLabel">Projects</p>
                     </div>
                     <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                       <p class="text-lg font-black text-amber-200" id="abStatValue">¥0</p>
-                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">Total Investment</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);" data-i18n="abStatValueLabel">Total Investment</p>
                     </div>
                     <div class="text-center p-2 rounded-lg" style="background: rgba(255,255,255,0.1);">
                       <p class="text-lg font-black text-emerald-200" id="abStatReturn">0%</p>
-                      <p style="font-size:9px; color: rgba(255,255,255,0.5);">Expected Return</p>
+                      <p style="font-size:9px; color: rgba(255,255,255,0.5);" data-i18n="abStatReturnLabel">Expected Return</p>
                     </div>
                   </div>
                 </div>
@@ -1149,8 +1149,8 @@ app.get('/', (c) => {
             <!-- Radar Chart -->
             <div class="rounded-2xl overflow-hidden bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
               <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(46,196,182,0.08);">
-                <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i>Portfolio Radar Assessment</span>
-                <span class="text-xs text-[#3D7A70]">8-Dimension Scoring</span>
+                <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i><span data-i18n="abRadarTitle">Portfolio Radar Assessment</span></span>
+                <span class="text-xs text-[#3D7A70]" data-i18n="abRadar8Dim">8-Dimension Scoring</span>
               </div>
               <div class="flex items-center justify-center py-4 px-2">
                 <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
@@ -1162,14 +1162,14 @@ app.get('/', (c) => {
 
             <!-- Industry Mix -->
             <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-              <h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i>Sector Allocation</h3>
+              <h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-cyan-500"></i><span data-i18n="abIndustryTitle">Sector Allocation</span></h3>
               <div id="abIndustryDistrib" class="space-y-2"></div>
             </div>
 
             <!-- Contract List -->
             <div class="rounded-2xl p-4 bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
               <div class="flex items-center justify-between mb-3">
-                <h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list mr-1.5 text-emerald-500"></i>Recommended Contracts</h3>
+                <h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list mr-1.5 text-emerald-500"></i><span data-i18n="abContractListTitle">Recommended Contracts</span></h3>
                 <span class="text-xs text-[#3D7A70]" id="abContractCount">0</span>
               </div>
               <div class="space-y-2" id="abContractList"></div>
@@ -1198,8 +1198,8 @@ app.get('/', (c) => {
     <span class="fab-badge">AI</span>
     <div class="fab-ring"></div>
     <div class="ai-builder-fab-tooltip">
-      <div style="font-size:12px;font-weight:700;color:#5eead4;">AI Portfolio Builder</div>
-      <div style="font-size:10px;color:#5A9A90;margin-top:2px;">Chat with AI, build portfolios in one click</div>
+      <div style="font-size:12px;font-weight:700;color:#5eead4;" data-i18n="fabTitle">AI Portfolio Builder</div>
+      <div style="font-size:10px;color:#5A9A90;margin-top:2px;" data-i18n="fabDesc">Chat with AI, build portfolios in one click</div>
     </div>
   </div>
 
@@ -1208,11 +1208,11 @@ app.get('/', (c) => {
   <div id="aiChat" class="ai-chat-window hidden">
     <div class="ai-chat-header"><div class="flex items-center space-x-2"><i class="fas fa-robot text-white"></i><span class="text-white font-semibold text-sm" data-i18n="aiChatTitle">Deal Connect AI Assistant</span></div><button onclick="toggleAIChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button></div>
     <div class="ai-chat-messages" id="aiMessages">
-      <div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content">Hello! I am the Deal Connect AI Assistant. Ask me about sieve models, project assessments, or the participation process.</div></div>
+      <div class="ai-message assistant"><div class="ai-message-avatar"><i class="fas fa-robot"></i></div><div class="ai-message-content" data-i18n="aiChatWelcome">Hello! I am the Deal Connect AI Assistant. Ask me about sieve models, project assessments, or the participation process.</div></div>
     </div>
     <div class="ai-chat-input" style="padding:16px; border-top:1px solid rgba(46,196,182,0.1); background:#0F2E2B;">
       <div class="flex items-center gap-2">
-        <input type="text" id="aiInput" placeholder="e.g., Which sieve suits me?" class="flex-1 px-3 py-2 border border-[rgba(46,196,182,0.12)] rounded-xl text-sm" onkeydown="if(event.key==='Enter')sendAIMsg()">
+        <input type="text" id="aiInput" placeholder="e.g., Which sieve suits me?" data-i18n="aiAssistPlaceholder" data-i18n-attr="placeholder" class="flex-1 px-3 py-2 border border-[rgba(46,196,182,0.12)] rounded-xl text-sm" onkeydown="if(event.key==='Enter')sendAIMsg()">
         <button onclick="sendAIMsg()" class="btn-primary px-3 py-2 rounded-xl text-sm"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
@@ -1440,13 +1440,10 @@ app.get('/', (c) => {
         toastShare: '分享', toastShareMsg: '分享链接已复制', toastBookmark: '收藏', toastBookmarkMsg: '已添加到收藏夹',
         // Empty
         emptyDeals: '未发现匹配机会', emptyDealsAction: '试试切换筛子或加载演示数据',
-        emptyLoadDemo: '加载演示数据', emptyConfigSieve: '配置筛子',
-        // FAB
-        fabTitle: 'AI 智能组合构建器', fabDesc: '与AI对话，一键构建投资组合',
+        emptyConfigSieve: '配置筛子',
         // AI Assistant
         aiAssistTitle: 'Deal Connect AI 助手',
         aiAssistWelcome: '您好！我是参与通AI助手。您可以问我关于筛子模型、项目评估、参与流程等问题。',
-        aiAssistPlaceholder: '例如：哪个筛子适合我？',
         // Data
         monthlyRevenue: '月营收', employees: '员工', years: '年',
         totalAmount: '融资总额', issued: '发行', maturity: '到期',
@@ -1570,6 +1567,34 @@ app.get('/', (c) => {
         // Search
         searchPlaceholder: '搜索项目名称...',
         sortByProject: '按项目',
+        // Ticker bar
+        tickerSourceLabel: '来源', tickerFilterLabel: '筛选',
+        // Empty state (no data)
+        emptyTitle: '等待来自发起通的投资机会', emptyDesc: '融资方通过发起通上传项目，经评估通AI筛选后在此展示',
+        emptyLoadDemo: '加载演示数据', emptyLoadDemoDesc: '使用模拟数据体验全部功能，感受筛子筛选后的项目',
+        emptySieveConfig: '配置您的筛子', emptySieveConfigDesc: '在评估通中设置AI筛选标准，自动展示匹配的投资机会',
+        // Detail page tabs
+        detAssessTitle: '合约评估', detTabRadar: '雷达评估', detTabFinancials: '财务分析', detTabTimeline: '时间线',
+        // My Contracts search
+        mcSearchPlaceholder: '搜索合约/MCN编号...',
+        // Portfolio info bar
+        mpInfoBar: '跨项目基金组合 · 按投资理念与主题智能配置',
+        // Portfolio weighted
+        pdWeightedTitle: '组合加权分析',
+        // AI Builder stats labels
+        abStatContractsLabel: '合约数', abStatProjectsLabel: '覆盖项目', abStatValueLabel: '总投资额', abStatReturnLabel: '预期回报',
+        // FAB tooltip
+        fabTitle: 'AI 组合构建器', fabDesc: '与AI对话，一键构建投资组合',
+        // AI Chat
+        aiChatWelcome: '您好！我是 Deal Connect AI 助手。可以询问我关于筛子模型、项目评估或参与流程的问题。',
+        aiAssistPlaceholder: '例如：哪个筛子适合我？',
+        // AI Builder welcome Q
+        abWelcome2Q: '我们从一个简单的问题开始 ——',
+        sieveSelectHint: '选择筛子查看描述',
+        abPortfolioMetaDefault: '实时生成',
+        abPortfolioDescDefault: '基于您的投资偏好智能生成',
+        loadingText: '加载中...', loadingPortfolio: '正在加载组合分析...',
+        abAIBuilt: 'AI 构建',
       },
       en: {
         // Nav
@@ -1787,13 +1812,10 @@ app.get('/', (c) => {
         toastShare: 'Share', toastShareMsg: 'Share link copied', toastBookmark: 'Bookmark', toastBookmarkMsg: 'Added to bookmarks',
         // Empty
         emptyDeals: 'No matching opportunities found', emptyDealsAction: 'Try switching sieves or loading demo data',
-        emptyLoadDemo: 'Load Demo Data', emptyConfigSieve: 'Configure Sieves',
-        // FAB
-        fabTitle: 'AI Portfolio Architect', fabDesc: 'Converse with AI, build portfolios in one click',
+        emptyConfigSieve: 'Configure Sieves',
         // AI Assistant
         aiAssistTitle: 'Deal Connect AI Assistant',
         aiAssistWelcome: "Hello! I'm the Deal Connect AI Assistant. Ask me about sieve models, project assessments, or the subscription process.",
-        aiAssistPlaceholder: 'e.g., Which sieve suits me?',
         // Data
         monthlyRevenue: 'Monthly Rev.', employees: 'Employees', years: 'yrs',
         totalAmount: 'Total Raise', issued: 'Issued', maturity: 'Maturity',
@@ -1917,6 +1939,34 @@ app.get('/', (c) => {
         // Search
         searchPlaceholder: 'Search project name...',
         sortByProject: 'By project',
+        // Ticker bar
+        tickerSourceLabel: 'SOURCE', tickerFilterLabel: 'FILTER',
+        // Empty state (no data)
+        emptyTitle: 'Awaiting Investment Opportunities from Originate', emptyDesc: 'Opportunities are uploaded by fundraisers via Originate, filtered by Assess sieves and displayed here',
+        emptyLoadDemo: 'Load Demo Data', emptyLoadDemoDesc: 'Experience full features with simulated Originate projects filtered by sieves',
+        emptySieveConfig: 'Configure Your Sieves', emptySieveConfigDesc: 'Set your AI filtering criteria in Assess to automatically display matching opportunities',
+        // Detail page tabs
+        detAssessTitle: 'Contract Assessment', detTabRadar: 'Radar Assessment', detTabFinancials: 'Financials', detTabTimeline: 'Timeline',
+        // My Contracts search
+        mcSearchPlaceholder: 'Search contract/MCN...',
+        // Portfolio info bar
+        mpInfoBar: 'Cross-project fund portfolios · Intelligently configured by investment philosophy and theme',
+        // Portfolio weighted
+        pdWeightedTitle: 'Portfolio Weighted Analysis',
+        // AI Builder stats labels
+        abStatContractsLabel: 'Contracts', abStatProjectsLabel: 'Projects', abStatValueLabel: 'Total Investment', abStatReturnLabel: 'Expected Return',
+        // FAB tooltip
+        fabTitle: 'AI Portfolio Builder', fabDesc: 'Chat with AI, build portfolios in one click',
+        // AI Chat
+        aiChatWelcome: 'Hello! I am the Deal Connect AI Assistant. Ask me about sieve models, project assessments, or the participation process.',
+        aiAssistPlaceholder: 'e.g., Which sieve suits me?',
+        // AI Builder welcome Q
+        abWelcome2Q: "Let's start with a simple question —",
+        sieveSelectHint: 'Select a sieve to view description',
+        abPortfolioMetaDefault: 'Real-time Generation',
+        abPortfolioDescDefault: 'Intelligently generated based on your investment preferences',
+        loadingText: 'Loading...', loadingPortfolio: 'Loading portfolio analysis...',
+        abAIBuilt: 'AI Built',
       }
     };
 
@@ -3711,6 +3761,15 @@ app.get('/', (c) => {
       var confMsg = document.getElementById('confirmMessage');
       if (confTitle) confTitle.textContent = t('confirmTitle');
       if (confMsg) confMsg.textContent = t('confirmMsg');
+      // My Contracts search placeholder
+      var mcSearch = document.getElementById('mcSearchInput');
+      if (mcSearch) mcSearch.placeholder = t('mcSearchPlaceholder');
+      // AI Chat welcome message
+      var aiWelcome = document.querySelector('#aiMessages .ai-message.assistant .ai-message-content');
+      if (aiWelcome) aiWelcome.textContent = t('aiChatWelcome');
+      // AI Assistant input placeholder
+      var aiIn = document.getElementById('aiInput');
+      if (aiIn) aiIn.placeholder = t('aiAssistPlaceholder');
     }
 
     function initApp() {
