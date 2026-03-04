@@ -602,8 +602,8 @@ app.get('/', (c) => {
             <div id="userDropdown" class="user-dropdown">
               <div class="user-dropdown-header"><div class="flex items-center space-x-3"><div id="ddAvatar" class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(135deg, #5DC4B3, #3D8F83);">U</div><div><div id="ddName" class="font-semibold text-sm" style="color:#E8F5F3;">User</div><div id="ddRole" class="text-xs" style="color:#5A9A90;">Investor</div></div></div></div>
               <div class="py-1">
-                <button class="user-dropdown-item" onclick="showToast('info','Profile','Feature under development'); closeUserDD();"><i class="fas fa-user-circle"></i>Profile</button>
-                <button class="user-dropdown-item" onclick="showToast('info','Sieve Preferences','Manage your sieve models in Assess'); closeUserDD();"><i class="fas fa-sliders-h"></i>Sieve Preferences</button>
+                <button class="user-dropdown-item" onclick="showToast('info', t('navProfile'), currentLang === 'zh' ? '功能开发中' : 'Feature under development'); closeUserDD();"><i class="fas fa-user-circle"></i>Profile</button>
+                <button class="user-dropdown-item" onclick="showToast('info', t('navSievePrefs'), currentLang === 'zh' ? '在评估通中管理您的筛子模型' : 'Manage your sieve models in Assess'); closeUserDD();"><i class="fas fa-sliders-h"></i>Sieve Preferences</button>
                 <button class="user-dropdown-item" onclick="showOnboarding(); closeUserDD();"><i class="fas fa-graduation-cap"></i>User Guide</button>
                 <div class="user-dropdown-divider"></div>
                 <button class="user-dropdown-item danger" onclick="closeUserDD(); handleLogout();"><i class="fas fa-sign-out-alt"></i>Sign Out</button>
@@ -2255,6 +2255,18 @@ app.get('/', (c) => {
       return { prefix: 'MCN', industryCode: parts[1], cityCode: parts[2], yearMonth: ym, year: '20' + ym.slice(0,2), month: ym.slice(2), seq: parts[4], industryName: indName, cityName: cityName };
     }
 
+    // ==================== i18n: Industry / City / Data Translation Maps ====================
+    const INDUSTRY_ZH = { 'F&B': '餐饮', 'Retail': '零售', 'Technology': '科技', 'Education': '教育', 'Healthcare': '医疗', 'Entertainment': '娱乐', 'Finance': '金融', 'Real Estate': '房地产', 'Logistics': '物流', 'Agriculture': '农业' };
+    const CITY_ZH = { 'Hangzhou': '杭州', 'Shenzhen': '深圳', 'Beijing': '北京', 'Shanghai': '上海', 'Chengdu': '成都', 'Guangzhou': '广州', 'Tianjin': '天津', 'Nationwide': '全国', 'Hong Kong': '香港', 'Macau': '澳门' };
+
+    function getIndustryName(ind) { return currentLang === 'zh' ? (INDUSTRY_ZH[ind] || ind) : ind; }
+    function getCityName(city) { return currentLang === 'zh' ? (CITY_ZH[city] || city) : city; }
+    function getProjectName(d) { return currentLang === 'zh' && d.name_zh ? d.name_zh : d.name; }
+    function getOriginatorName(d) { return currentLang === 'zh' && d.originator_zh ? d.originator_zh : d.originator; }
+    function getProjectDesc(d) { return currentLang === 'zh' && d.desc_zh ? d.desc_zh : (d.projectDesc || d.desc || ''); }
+    function getContractDescription(d) { return currentLang === 'zh' && d.description_zh ? d.description_zh : (d.description || ''); }
+    function getPeriodDisplay(d) { var p = d.period || d.periodDisplay || ''; return (typeof p === 'number' ? p : parseInt(p) || p) + (currentLang === 'zh' ? '个月' : 'mo'); }
+
     // ==================== Demo Data (Simulated Originate Data) ====================
     // ★ Core concept:
     //   One project = multiple contracts, Raise = # contracts × ¥1,000/each
@@ -2262,32 +2274,32 @@ app.get('/', (c) => {
     //   Board displays grouped by project
     const PROJECT_TEMPLATES = [
       // ——— F&B ———
-      { name: 'Starbucks Hangzhou Xixi Paradise', industry: 'F&B', location: 'Hangzhou', originator: 'Hangzhou Starbucks Operations Co., Ltd.', issueDate: '2026-01-10', totalAmount: 80, revenueShare: 12, period: 24, aiScore: 8.7, riskGrade: 'A+', monthlyRevenue: 120, employeeCount: 45, operatingYears: 3.5, desc: 'Starbucks Reserve store, Xixi Wetland prime district, 8,000+ daily footfall' },
-      { name: 'Haidilao Chengdu Chunxi Rd Flagship', industry: 'F&B', location: 'Chengdu', originator: 'Haidilao Chengdu Operations HQ', issueDate: '2026-01-18', totalAmount: 120, revenueShare: 11, period: 30, aiScore: 8.3, riskGrade: 'A', monthlyRevenue: 180, employeeCount: 85, operatingYears: 7.5, desc: 'Haidilao SW flagship, prime Chunxi Rd location, 4.2 avg monthly table turnover' },
-      { name: 'Tai Er Fish Guangzhou Tianhe City', industry: 'F&B', location: 'Guangzhou', originator: 'Tai Er F&B Management Co., Ltd.', issueDate: '2026-02-01', totalAmount: 55, revenueShare: 9, period: 24, aiScore: 7.9, riskGrade: 'A-', monthlyRevenue: 85, employeeCount: 32, operatingYears: 3.0, desc: 'Jiumaojiu sub-brand, Tianhe prime district, high queue rate' },
-      { name: 'HEYTEA Shanghai Nanjing W Rd Concept Store', industry: 'F&B', location: 'Shanghai', originator: 'Shenzhen Meixi F&B Management Co., Ltd.', issueDate: '2026-02-08', totalAmount: 65, revenueShare: 13, period: 24, aiScore: 8.5, riskGrade: 'A', monthlyRevenue: 140, employeeCount: 38, operatingYears: 2.8, desc: 'HEYTEA LAB concept store with hand-brew tea lab, 2,000+ cups daily' },
-      { name: 'Nayuki Shenzhen MixC Flagship', industry: 'F&B', location: 'Shenzhen', originator: 'Shenzhen Pindao F&B Management Co., Ltd.', issueDate: '2025-12-20', totalAmount: 48, revenueShare: 10, period: 24, aiScore: 7.6, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 28, operatingYears: 2.2, desc: 'Nayuki PRO format, lean & efficient model, industry-leading revenue per sqft' },
+      { name: 'Starbucks Hangzhou Xixi Paradise', name_zh: '星巴克杭州西溪天堂店', industry: 'F&B', location: 'Hangzhou', originator: 'Hangzhou Starbucks Operations Co., Ltd.', originator_zh: '杭州星巴克运营有限公司', issueDate: '2026-01-10', totalAmount: 80, revenueShare: 12, period: 24, aiScore: 8.7, riskGrade: 'A+', monthlyRevenue: 120, employeeCount: 45, operatingYears: 3.5, desc: 'Starbucks Reserve store, Xixi Wetland prime district, 8,000+ daily footfall', desc_zh: '星巴克臻选门店，西溪湿地核心商圈，日均客流8,000+' },
+      { name: 'Haidilao Chengdu Chunxi Rd Flagship', name_zh: '海底捞成都春熙路旗舰店', industry: 'F&B', location: 'Chengdu', originator: 'Haidilao Chengdu Operations HQ', originator_zh: '海底捞成都运营总部', issueDate: '2026-01-18', totalAmount: 120, revenueShare: 11, period: 30, aiScore: 8.3, riskGrade: 'A', monthlyRevenue: 180, employeeCount: 85, operatingYears: 7.5, desc: 'Haidilao SW flagship, prime Chunxi Rd location, 4.2 avg monthly table turnover', desc_zh: '海底捞西南旗舰店，春熙路黄金地段，月均翻台率4.2次' },
+      { name: 'Tai Er Fish Guangzhou Tianhe City', name_zh: '太二酸菜鱼广州天河城店', industry: 'F&B', location: 'Guangzhou', originator: 'Tai Er F&B Management Co., Ltd.', originator_zh: '太二餐饮管理有限公司', issueDate: '2026-02-01', totalAmount: 55, revenueShare: 9, period: 24, aiScore: 7.9, riskGrade: 'A-', monthlyRevenue: 85, employeeCount: 32, operatingYears: 3.0, desc: 'Jiumaojiu sub-brand, Tianhe prime district, high queue rate', desc_zh: '九毛九旗下品牌，天河核心商圈，排队率领先同行' },
+      { name: 'HEYTEA Shanghai Nanjing W Rd Concept Store', name_zh: '喜茶上海南京西路概念店', industry: 'F&B', location: 'Shanghai', originator: 'Shenzhen Meixi F&B Management Co., Ltd.', originator_zh: '深圳美西餐饮管理有限公司', issueDate: '2026-02-08', totalAmount: 65, revenueShare: 13, period: 24, aiScore: 8.5, riskGrade: 'A', monthlyRevenue: 140, employeeCount: 38, operatingYears: 2.8, desc: 'HEYTEA LAB concept store with hand-brew tea lab, 2,000+ cups daily', desc_zh: '喜茶LAB概念店，手冲茶实验室，日均出杯2,000+' },
+      { name: 'Nayuki Shenzhen MixC Flagship', name_zh: '奈雪的茶深圳万象城旗舰店', industry: 'F&B', location: 'Shenzhen', originator: 'Shenzhen Pindao F&B Management Co., Ltd.', originator_zh: '深圳品道餐饮管理有限公司', issueDate: '2025-12-20', totalAmount: 48, revenueShare: 10, period: 24, aiScore: 7.6, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 28, operatingYears: 2.2, desc: 'Nayuki PRO format, lean & efficient model, industry-leading revenue per sqft', desc_zh: '奈雪PRO店型，精简高效模式，坪效行业领先' },
       // ——— Retail ———
-      { name: 'Pop Mart Beijing Sanlitun Flagship', industry: 'Retail', location: 'Beijing', originator: 'Pop Mart International Group', issueDate: '2026-01-25', totalAmount: 95, revenueShare: 8, period: 30, aiScore: 7.8, riskGrade: 'A-', monthlyRevenue: 60, employeeCount: 25, operatingYears: 1.5, desc: 'Benchmark blind-box retail store, rich IP portfolio, 65% member repurchase rate' },
-      { name: 'MINISO Shanghai Global Harbor', industry: 'Retail', location: 'Shanghai', originator: 'MINISO Group Holdings Ltd.', issueDate: '2026-02-05', totalAmount: 45, revenueShare: 7, period: 24, aiScore: 7.4, riskGrade: 'B+', monthlyRevenue: 55, employeeCount: 18, operatingYears: 4.0, desc: 'Global retail brand, 200+ SKU monthly refresh, high turnover low inventory' },
-      { name: 'Luckin Coffee Shenzhen Tech Park Cluster', industry: 'Retail', location: 'Shenzhen', originator: 'Luckin Coffee (China) Co., Ltd.', issueDate: '2026-02-10', totalAmount: 38, revenueShare: 8, period: 24, aiScore: 8.0, riskGrade: 'A', monthlyRevenue: 92, employeeCount: 15, operatingYears: 2.5, desc: 'Office cluster coverage model, 3 franchise stores bundled, 800+ daily orders' },
+      { name: 'Pop Mart Beijing Sanlitun Flagship', name_zh: '泡泡玛特北京三里屯旗舰店', industry: 'Retail', location: 'Beijing', originator: 'Pop Mart International Group', originator_zh: '泡泡玛特国际集团', issueDate: '2026-01-25', totalAmount: 95, revenueShare: 8, period: 30, aiScore: 7.8, riskGrade: 'A-', monthlyRevenue: 60, employeeCount: 25, operatingYears: 1.5, desc: 'Benchmark blind-box retail store, rich IP portfolio, 65% member repurchase rate', desc_zh: '标杆潮玩零售门店，IP矩阵丰富，会员复购率65%' },
+      { name: 'MINISO Shanghai Global Harbor', name_zh: '名创优品上海环球港店', industry: 'Retail', location: 'Shanghai', originator: 'MINISO Group Holdings Ltd.', originator_zh: '名创优品集团控股有限公司', issueDate: '2026-02-05', totalAmount: 45, revenueShare: 7, period: 24, aiScore: 7.4, riskGrade: 'B+', monthlyRevenue: 55, employeeCount: 18, operatingYears: 4.0, desc: 'Global retail brand, 200+ SKU monthly refresh, high turnover low inventory', desc_zh: '全球零售品牌，月均上新200+ SKU，高周转低库存' },
+      { name: 'Luckin Coffee Shenzhen Tech Park Cluster', name_zh: '瑞幸咖啡深圳科技园集群店', industry: 'Retail', location: 'Shenzhen', originator: 'Luckin Coffee (China) Co., Ltd.', originator_zh: '瑞幸咖啡（中国）有限公司', issueDate: '2026-02-10', totalAmount: 38, revenueShare: 8, period: 24, aiScore: 8.0, riskGrade: 'A', monthlyRevenue: 92, employeeCount: 15, operatingYears: 2.5, desc: 'Office cluster coverage model, 3 franchise stores bundled, 800+ daily orders', desc_zh: '写字楼集群覆盖模式，3家联营门店捆绑，日均订单800+' },
       // ——— Technology ———
-      { name: 'ByteDance AI Lab Accelerator', industry: 'Technology', location: 'Beijing', originator: 'ByteDance Investment Management', issueDate: '2026-01-15', totalAmount: 200, revenueShare: 15, period: 36, aiScore: 9.2, riskGrade: 'A+', monthlyRevenue: 280, employeeCount: 120, operatingYears: 6.0, desc: 'AI large model commercialization, stable B2B SaaS revenue growth, 5M+ MAU' },
-      { name: 'SenseTime Smart City Project', industry: 'Technology', location: 'Shanghai', originator: 'SenseTime Group Inc.', issueDate: '2026-02-12', totalAmount: 150, revenueShare: 14, period: 36, aiScore: 8.8, riskGrade: 'A', monthlyRevenue: 210, employeeCount: 95, operatingYears: 5.5, desc: 'Smart city solutions, contracted with 12 tier-1 cities, stable govt procurement' },
-      { name: 'DJI Agriculture Drone Project', industry: 'Technology', location: 'Shenzhen', originator: 'Shenzhen DJI Innovation Technology Co., Ltd.', issueDate: '2025-12-28', totalAmount: 130, revenueShare: 12, period: 30, aiScore: 9.0, riskGrade: 'A+', monthlyRevenue: 185, employeeCount: 78, operatingYears: 8.0, desc: 'Agricultural drones, covering 15 provinces nationwide, #1 fleet size in industry' },
+      { name: 'ByteDance AI Lab Accelerator', name_zh: '字节跳动AI实验室加速器', industry: 'Technology', location: 'Beijing', originator: 'ByteDance Investment Management', originator_zh: '字节跳动投资管理', issueDate: '2026-01-15', totalAmount: 200, revenueShare: 15, period: 36, aiScore: 9.2, riskGrade: 'A+', monthlyRevenue: 280, employeeCount: 120, operatingYears: 6.0, desc: 'AI large model commercialization, stable B2B SaaS revenue growth, 5M+ MAU', desc_zh: 'AI大模型商业化，B2B SaaS收入稳健增长，MAU 500万+' },
+      { name: 'SenseTime Smart City Project', name_zh: '商汤科技智慧城市项目', industry: 'Technology', location: 'Shanghai', originator: 'SenseTime Group Inc.', originator_zh: '商汤科技集团股份有限公司', issueDate: '2026-02-12', totalAmount: 150, revenueShare: 14, period: 36, aiScore: 8.8, riskGrade: 'A', monthlyRevenue: 210, employeeCount: 95, operatingYears: 5.5, desc: 'Smart city solutions, contracted with 12 tier-1 cities, stable govt procurement', desc_zh: '智慧城市解决方案，已签约12个一线城市，政府采购稳定' },
+      { name: 'DJI Agriculture Drone Project', name_zh: '大疆农业无人机项目', industry: 'Technology', location: 'Shenzhen', originator: 'Shenzhen DJI Innovation Technology Co., Ltd.', originator_zh: '深圳市大疆创新科技有限公司', issueDate: '2025-12-28', totalAmount: 130, revenueShare: 12, period: 30, aiScore: 9.0, riskGrade: 'A+', monthlyRevenue: 185, employeeCount: 78, operatingYears: 8.0, desc: 'Agricultural drones, covering 15 provinces nationwide, #1 fleet size in industry', desc_zh: '农业无人机，覆盖全国15省，机队规模行业第一' },
       // ——— Education ———
-      { name: 'New Oriental AI Smart School', industry: 'Education', location: 'Beijing', originator: 'New Oriental Education & Technology Group', issueDate: '2026-02-01', totalAmount: 85, revenueShare: 10, period: 30, aiScore: 7.5, riskGrade: 'A-', monthlyRevenue: 65, employeeCount: 90, operatingYears: 5.2, desc: 'AI dual-teacher classroom, K12 full coverage, 85% renewal rate, 3,000+ new students/month' },
-      { name: 'Yuanfudao Tianjin Offline Center', industry: 'Education', location: 'Tianjin', originator: 'Beijing Yuanli Education Technology Co., Ltd.', issueDate: '2026-02-15', totalAmount: 60, revenueShare: 9, period: 30, aiScore: 7.2, riskGrade: 'B+', monthlyRevenue: 48, employeeCount: 55, operatingYears: 3.8, desc: 'OMO blended education, community-based boutique classes, 92% parent satisfaction' },
+      { name: 'New Oriental AI Smart School', name_zh: '新东方AI智慧学堂', industry: 'Education', location: 'Beijing', originator: 'New Oriental Education & Technology Group', originator_zh: '新东方教育科技集团', issueDate: '2026-02-01', totalAmount: 85, revenueShare: 10, period: 30, aiScore: 7.5, riskGrade: 'A-', monthlyRevenue: 65, employeeCount: 90, operatingYears: 5.2, desc: 'AI dual-teacher classroom, K12 full coverage, 85% renewal rate, 3,000+ new students/month', desc_zh: 'AI双师课堂，K12全覆盖，续费率85%，月均新增学员3,000+' },
+      { name: 'Yuanfudao Tianjin Offline Center', name_zh: '猿辅导天津线下学习中心', industry: 'Education', location: 'Tianjin', originator: 'Beijing Yuanli Education Technology Co., Ltd.', originator_zh: '北京猿力教育科技有限公司', issueDate: '2026-02-15', totalAmount: 60, revenueShare: 9, period: 30, aiScore: 7.2, riskGrade: 'B+', monthlyRevenue: 48, employeeCount: 55, operatingYears: 3.8, desc: 'OMO blended education, community-based boutique classes, 92% parent satisfaction', desc_zh: 'OMO融合教育模式，社区精品小班，家长满意度92%' },
       // ——— Healthcare ———
-      { name: 'Meinian Onehealth Shanghai Pudong Flagship', industry: 'Healthcare', location: 'Shanghai', originator: 'Meinian Onehealth Industry Holdings Co., Ltd.', issueDate: '2026-01-20', totalAmount: 110, revenueShare: 14, period: 24, aiScore: 8.9, riskGrade: 'A', monthlyRevenue: 165, employeeCount: 72, operatingYears: 6.0, desc: 'Premium checkup + specialty care, 350 daily exams, 200+ corporate clients' },
-      { name: 'United Family Beijing CBD Clinic', industry: 'Healthcare', location: 'Beijing', originator: 'United Family Healthcare Group', issueDate: '2026-02-18', totalAmount: 90, revenueShare: 16, period: 24, aiScore: 9.1, riskGrade: 'A+', monthlyRevenue: 195, employeeCount: 60, operatingYears: 8.0, desc: 'Premium private healthcare brand, expat physician team, 95% direct insurance coverage' },
-      { name: 'WeDoctor Internet Hospital Hangzhou Center', industry: 'Healthcare', location: 'Hangzhou', originator: 'WeDoctor Group (Zhejiang) Co., Ltd.', issueDate: '2025-12-15', totalAmount: 70, revenueShare: 11, period: 30, aiScore: 7.8, riskGrade: 'A-', monthlyRevenue: 88, employeeCount: 45, operatingYears: 4.5, desc: 'Internet + healthcare, 1.2M monthly online consultations, 92% AI-assisted diagnosis accuracy' },
+      { name: 'Meinian Onehealth Shanghai Pudong Flagship', name_zh: '美年大健康上海浦东旗舰店', industry: 'Healthcare', location: 'Shanghai', originator: 'Meinian Onehealth Industry Holdings Co., Ltd.', originator_zh: '美年大健康产业控股股份有限公司', issueDate: '2026-01-20', totalAmount: 110, revenueShare: 14, period: 24, aiScore: 8.9, riskGrade: 'A', monthlyRevenue: 165, employeeCount: 72, operatingYears: 6.0, desc: 'Premium checkup + specialty care, 350 daily exams, 200+ corporate clients', desc_zh: '高端体检+专科医疗，日均体检350人次，200+家企业客户' },
+      { name: 'United Family Beijing CBD Clinic', name_zh: '和睦家北京CBD诊所', industry: 'Healthcare', location: 'Beijing', originator: 'United Family Healthcare Group', originator_zh: '和睦家医疗集团', issueDate: '2026-02-18', totalAmount: 90, revenueShare: 16, period: 24, aiScore: 9.1, riskGrade: 'A+', monthlyRevenue: 195, employeeCount: 60, operatingYears: 8.0, desc: 'Premium private healthcare brand, expat physician team, 95% direct insurance coverage', desc_zh: '高端私立医疗品牌，外籍医师团队，95%直付保险覆盖' },
+      { name: 'WeDoctor Internet Hospital Hangzhou Center', name_zh: '微医互联网医院杭州中心', industry: 'Healthcare', location: 'Hangzhou', originator: 'WeDoctor Group (Zhejiang) Co., Ltd.', originator_zh: '微医集团（浙江）有限公司', issueDate: '2025-12-15', totalAmount: 70, revenueShare: 11, period: 30, aiScore: 7.8, riskGrade: 'A-', monthlyRevenue: 88, employeeCount: 45, operatingYears: 4.5, desc: 'Internet + healthcare, 1.2M monthly online consultations, 92% AI-assisted diagnosis accuracy', desc_zh: '互联网+医疗，月均线上问诊120万次，AI辅助诊断准确率92%' },
       // ——— Entertainment ———
-      { name: 'Jay Chou 2026 World Tour', industry: 'Entertainment', location: 'Nationwide', originator: 'JVR Music Co., Ltd.', issueDate: '2026-01-08', totalAmount: 180, revenueShare: 18, period: 18, aiScore: 9.5, riskGrade: 'A+', monthlyRevenue: 350, employeeCount: 15, operatingYears: 12.0, desc: 'Top Asian IP, 20-city tour, avg 40K per show, 30% merch revenue share' },
-      { name: 'Mahua FunAge National Tour Project', industry: 'Entertainment', location: 'Beijing', originator: 'Beijing Mahua FunAge Entertainment & Culture Media', issueDate: '2026-02-20', totalAmount: 55, revenueShare: 12, period: 24, aiScore: 8.0, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 40, operatingYears: 10.0, desc: 'Theater + film dual revenue, 30-city national tour, IP film adaptations CNY 5B+ total box office' },
+      { name: 'Jay Chou 2026 World Tour', name_zh: '周杰伦2026世界巡回演唱会', industry: 'Entertainment', location: 'Nationwide', originator: 'JVR Music Co., Ltd.', originator_zh: '杰威尔音乐有限公司', issueDate: '2026-01-08', totalAmount: 180, revenueShare: 18, period: 18, aiScore: 9.5, riskGrade: 'A+', monthlyRevenue: 350, employeeCount: 15, operatingYears: 12.0, desc: 'Top Asian IP, 20-city tour, avg 40K per show, 30% merch revenue share', desc_zh: '亚洲顶级IP，20城巡演，场均4万人，周边收入分成30%' },
+      { name: 'Mahua FunAge National Tour Project', name_zh: '开心麻花全国巡演项目', industry: 'Entertainment', location: 'Beijing', originator: 'Beijing Mahua FunAge Entertainment & Culture Media', originator_zh: '北京开心麻花娱乐文化传媒', issueDate: '2026-02-20', totalAmount: 55, revenueShare: 12, period: 24, aiScore: 8.0, riskGrade: 'A-', monthlyRevenue: 75, employeeCount: 40, operatingYears: 10.0, desc: 'Theater + film dual revenue, 30-city national tour, IP film adaptations CNY 5B+ total box office', desc_zh: '话剧+电影双收入引擎，30城全国巡演，IP电影改编累计票房50亿+' },
       // ——— Additional Industry Coverage ———
-      { name: 'SF Same-City Express Hangzhou Center', industry: 'Retail', location: 'Hangzhou', originator: 'SF Same-City Express Co., Ltd.', issueDate: '2026-01-30', totalAmount: 75, revenueShare: 9, period: 24, aiScore: 8.1, riskGrade: 'A', monthlyRevenue: 130, employeeCount: 200, operatingYears: 3.0, desc: 'Leading same-city delivery brand, 120K daily orders, 5,000+ rider fleet' },
-      { name: 'NIO Chengdu Delivery Center', industry: 'Technology', location: 'Chengdu', originator: 'NIO Technology (Anhui) Co., Ltd.', issueDate: '2026-02-22', totalAmount: 160, revenueShare: 13, period: 36, aiScore: 8.4, riskGrade: 'A', monthlyRevenue: 220, employeeCount: 65, operatingYears: 5.0, desc: 'NEV delivery + after-sales integration, 300 monthly deliveries, industry-leading NPS' }
+      { name: 'SF Same-City Express Hangzhou Center', name_zh: '顺丰同城急送杭州中心', industry: 'Retail', location: 'Hangzhou', originator: 'SF Same-City Express Co., Ltd.', originator_zh: '顺丰同城急送有限公司', issueDate: '2026-01-30', totalAmount: 75, revenueShare: 9, period: 24, aiScore: 8.1, riskGrade: 'A', monthlyRevenue: 130, employeeCount: 200, operatingYears: 3.0, desc: 'Leading same-city delivery brand, 120K daily orders, 5,000+ rider fleet', desc_zh: '同城配送头部品牌，日均订单12万单，骑手团队5,000+' },
+      { name: 'NIO Chengdu Delivery Center', name_zh: '蔚来汽车成都交付中心', industry: 'Technology', location: 'Chengdu', originator: 'NIO Technology (Anhui) Co., Ltd.', originator_zh: '蔚来汽车科技（安徽）有限公司', issueDate: '2026-02-22', totalAmount: 160, revenueShare: 13, period: 36, aiScore: 8.4, riskGrade: 'A', monthlyRevenue: 220, employeeCount: 65, operatingYears: 5.0, desc: 'NEV delivery + after-sales integration, 300 monthly deliveries, industry-leading NPS', desc_zh: '新能源交付+售后一体化，月交付300台，用户满意度行业领先' }
     ];
 
     // ★ Virtual contract generator — on-demand to avoid creating tens of thousands of records
@@ -2326,9 +2338,11 @@ app.get('/', (c) => {
         mcn: mcn,
         projectId: 'P_' + (pi + 1),
         name: proj.name,
+        name_zh: proj.name_zh || proj.name,
         industry: proj.industry,
         location: proj.location,
         originator: proj.originator,
+        originator_zh: proj.originator_zh || proj.originator,
         originateDate: proj.issueDate,
         issueDate: proj.issueDate,
         maturityDate: matDate.toISOString().slice(0, 10),
@@ -2337,7 +2351,8 @@ app.get('/', (c) => {
         holder: holder,
         isMine: isMine,
         revenueShare: proj.revenueShare + '%',
-        period: proj.period + 'months',
+        period: proj.period,
+        periodDisplay: proj.period + (currentLang === 'zh' ? '个月' : 'mo'),
         aiScore: finalScore.toFixed(1),
         riskGrade: proj.riskGrade,
         monthlyRevenue: proj.monthlyRevenue + '0K',
@@ -2349,7 +2364,9 @@ app.get('/', (c) => {
         totalInProject: totalContracts,
         projectTotalAmount: proj.totalAmount,
         projectDesc: proj.desc || '',
-        description: 'Standard ' + proj.industry + ' sector contract issued by "' + proj.originator + '" via Originate. Face value ¥1,000 · Revenue Share Note (RSN). Project total raise ¥' + proj.totalAmount + '0K (' + totalContracts + ' contracts).'
+        desc_zh: proj.desc_zh || '',
+        description: 'Standard ' + proj.industry + ' sector contract issued by "' + proj.originator + '" via Originate. Face value ¥1,000 · Revenue Share Note (RSN). Project total raise ¥' + proj.totalAmount + '0K (' + totalContracts + ' contracts).',
+        description_zh: '标准' + (INDUSTRY_ZH[proj.industry] || proj.industry) + '行业合约，由「' + (proj.originator_zh || proj.originator) + '」通过发起通发行。合约面值 ¥1,000 · 收益分享合约（RSN）。项目总融资 ¥' + proj.totalAmount + '万（' + totalContracts + ' 张合约）。'
       };
     }
 
@@ -2569,12 +2586,12 @@ app.get('/', (c) => {
 
       return [
         avgYield.toFixed(1) + '%',          // Annual yield
-        avgDays + 'days',                      // Duration
-        incomeDisplay + '/mo',               // Income (est. monthly based on face value × share)
+        avgDays + (currentLang === 'zh' ? '天' : 'days'),       // Duration
+        incomeDisplay + (currentLang === 'zh' ? '/月' : '/mo'),  // Income
         topRisk,                             // Risk grade
-        soldPct + '% sold',                   // Liquidity
-        avgYears + 'yrs',                     // Team (operating years)
-        indCount > 1 ? topIndustry + ' +' + (indCount-1) + ' more' : topIndustry, // Market
+        soldPct + (currentLang === 'zh' ? '% 已售' : '% sold'),  // Liquidity
+        avgYears + (currentLang === 'zh' ? '年' : 'yrs'),        // Team (operating years)
+        indCount > 1 ? getIndustryName(topIndustry) + ' +' + (indCount-1) : getIndustryName(topIndustry), // Market
         avgAI + '/10'                        // AI score
       ];
     }
@@ -2998,7 +3015,7 @@ app.get('/', (c) => {
       const filterVal = document.getElementById('filterStatus')?.value || 'all';
 
       let filtered = dealsList.filter(d => {
-        if (searchVal && !d.name.toLowerCase().includes(searchVal) && !d.industry.includes(searchVal)) return false;
+        if (searchVal && !getProjectName(d).toLowerCase().includes(searchVal) && !d.name.toLowerCase().includes(searchVal) && !(d.name_zh || '').toLowerCase().includes(searchVal) && !d.industry.includes(searchVal) && !getIndustryName(d.industry).includes(searchVal)) return false;
         if (filterVal === 'mine') {
           if (!d.isMine) return false;
         } else if (filterVal === 'available') {
@@ -3093,7 +3110,7 @@ app.get('/', (c) => {
           // Project Name Row
           '<div class="flex items-center space-x-2 mb-2">' +
             '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(93,196,179,0.1);"><i class="fas fa-briefcase" style="color: #5DC4B3; font-size:12px;"></i></div>' +
-            '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
+            '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + getProjectName(d) + '</h3><p class="text-xs text-[#5A9A90]">' + getIndustryName(d.industry) + ' · ' + getCityName(d.location) + '</p></div>' +
           '</div>' +
           // Source + Sieve Tags
           (hasMatch ? '<div class="flex items-center gap-1.5 mb-2">' +
@@ -3106,7 +3123,7 @@ app.get('/', (c) => {
           '<div class="grid grid-cols-4 gap-1 mb-2">' +
             '<div class="text-center p-1.5 rounded-md" style="background:rgba(46,196,182,0.05); border:1px solid rgba(46,196,182,0.08);"><p class="font-mono text-sm font-black text-[#3DD8CA]">¥1K</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardFace') + '</p></div>' +
             '<div class="text-center p-1.5 rounded-md" style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.08);"><p class="font-mono text-sm font-bold text-[#FBBF24]">' + d.revenueShare + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardYield') + '</p></div>' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + d.period + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardTerm') + '</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + getPeriodDisplay(d) + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardTerm') + '</p></div>' +
             '<div class="text-center p-1.5 rounded-md" style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.08);"><p class="font-mono text-sm font-bold text-[#34D399]">' + d.riskGrade + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardRisk') + '</p></div>' +
           '</div>' +
           // Footer — Date + AI Score + Action
@@ -3116,9 +3133,9 @@ app.get('/', (c) => {
               '<span class="font-mono text-xs font-bold text-[#B0D5CF]"><i class="fas fa-robot mr-1 text-[#2EC4B6]" style="font-size:9px;"></i>' + d.aiScore + '</span>' +
             '</div>' +
             (d.isMine
-              ? '<span class="text-xs font-semibold text-[#10B981]"><i class="fas fa-check-circle mr-1"></i>MINE</span>'
+              ? '<span class="text-xs font-semibold text-[#10B981]"><i class="fas fa-check-circle mr-1"></i>' + (currentLang === 'zh' ? '我的' : 'MINE') + '</span>'
               : d.status === 'sold'
-                ? '<span class="text-xs text-[#3D7A70] font-mono">SOLD</span>'
+                ? '<span class="text-xs text-[#3D7A70] font-mono">' + (currentLang === 'zh' ? '已售' : 'SOLD') + '</span>'
                 : d.holder
                   ? '<span class="text-xs text-[#5A9A90]">' + d.holder + '</span>'
                   : '<button onclick="event.stopPropagation(); openDetail(&#39;' + d.id + '&#39;)" class="text-xs font-mono font-bold text-[#2EC4B6] hover:text-[#3DD8CA] transition-colors"><i class="fas fa-shopping-cart mr-1"></i>' + t('cardBuy') + '</button>') +
@@ -3153,7 +3170,7 @@ app.get('/', (c) => {
 
       modal.innerHTML = '<div class="bg-[#0F2E2B] rounded-3xl max-w-md w-full mx-4 overflow-hidden" style="box-shadow: 0 24px 80px rgba(0,0,0,0.2); animation: scaleIn 0.25s cubic-bezier(0.28,0.11,0.32,1);">' +
         '<div class="p-5 border-b border-[rgba(46,196,182,0.08)]" style="background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.04));">' +
-          '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #06b6d4);"><i class="fas fa-file-contract text-white"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">' + t('subModalTitle') + '</h2><p class="text-xs text-[#3D7A70]">' + currentDeal.name + '</p></div></div>' +
+          '<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #10b981, #06b6d4);"><i class="fas fa-file-contract text-white"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">' + t('subModalTitle') + '</h2><p class="text-xs text-[#3D7A70]">' + getProjectName(currentDeal) + '</p></div></div>' +
         '</div>' +
         '<div class="p-5">' +
           '<div class="p-4 bg-[rgba(11,30,28,0.6)] rounded-2xl mb-4 text-center">' +
@@ -3163,7 +3180,7 @@ app.get('/', (c) => {
           '</div>' +
           '<div class="grid grid-cols-2 gap-2 mb-4">' +
             '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl text-center"><p class="text-sm font-bold text-[#FBBF24]">' + currentDeal.revenueShare + '</p><p class="text-xs text-[#3D7A70]">' + t('subShareLabel') + '</p></div>' +
-            '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl text-center"><p class="text-sm font-bold text-[#22D3EE]">' + currentDeal.period + '</p><p class="text-xs text-[#3D7A70]">' + t('subPeriodLabel') + '</p></div>' +
+            '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl text-center"><p class="text-sm font-bold text-[#22D3EE]">' + getPeriodDisplay(currentDeal) + '</p><p class="text-xs text-[#3D7A70]">' + t('subPeriodLabel') + '</p></div>' +
           '</div>' +
           '<div class="p-3 bg-[rgba(16,185,129,0.06)] rounded-xl mb-4 border border-[rgba(16,185,129,0.12)]">' +
             '<div class="flex items-center gap-2"><i class="fas fa-info-circle text-emerald-500"></i><p class="text-xs text-[#34D399]">' + t('subNote') + '</p></div>' +
@@ -3215,13 +3232,13 @@ app.get('/', (c) => {
     function openDetail(id) {
       currentDeal = dealsList.find(d => d.id === id) || allDeals.find(d => d.id === id);
       if (!currentDeal) return;
-      document.getElementById('detailTitle').textContent = currentDeal.name;
+      document.getElementById('detailTitle').textContent = getProjectName(currentDeal);
       document.getElementById('detailMCN').textContent = currentDeal.mcn || 'MCN-XX-XX-0000-0000';
       const statusMap = { available: { label: t('dealStatusAvailable'), cls: 'badge-warning' }, sold: { label: t('dealStatusSold'), cls: 'badge-success' } };
       const st = statusMap[currentDeal.status] || statusMap.available;
       document.getElementById('detailStatus').className = 'badge ' + st.cls;
       document.getElementById('detailStatus').textContent = st.label + (currentDeal.isMine ? ' · ' + t('detMyContract') : '');
-      document.getElementById('detailIndustry').textContent = currentDeal.industry;
+      document.getElementById('detailIndustry').textContent = getIndustryName(currentDeal.industry);
       document.getElementById('detailDate').textContent = currentDeal.originateDate;
 
       // Update subscribe button
@@ -3257,9 +3274,9 @@ app.get('/', (c) => {
               '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl border border-[rgba(245,158,11,0.12)] mb-4 flex items-center gap-2"><i class="fas fa-paper-plane text-amber-500"></i><div><p class="text-xs font-bold text-[#FBBF24]">' + t('detFromOriginate') + '</p><p class="text-xs text-[#F59E0B]">' + t('detOriginator', {name: currentDeal.originator || 'N/A'}) + '</p></div></div>' +
-          '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">' + currentDeal.name + '</h2><p class="text-sm text-[#5A9A90]">' + currentDeal.industry + ' · ' + currentDeal.location + '</p></div></div>' +
-          '<p class="text-sm text-[#8EBDB5] leading-relaxed mb-4">' + currentDeal.description + '</p>' +
+          '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl border border-[rgba(245,158,11,0.12)] mb-4 flex items-center gap-2"><i class="fas fa-paper-plane text-amber-500"></i><div><p class="text-xs font-bold text-[#FBBF24]">' + t('detFromOriginate') + '</p><p class="text-xs text-[#F59E0B]">' + t('detOriginator', {name: getOriginatorName(currentDeal) || 'N/A'}) + '</p></div></div>' +
+          '<div class="flex items-center space-x-3 mb-4"><div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(93,196,179,0.15), rgba(73,168,154,0.15));"><i class="fas fa-briefcase text-2xl" style="color: #5DC4B3;"></i></div><div><h2 class="text-lg font-bold text-[#E8F5F3]">' + getProjectName(currentDeal) + '</h2><p class="text-sm text-[#5A9A90]">' + getIndustryName(currentDeal.industry) + ' · ' + getCityName(currentDeal.location) + '</p></div></div>' +
+          '<p class="text-sm text-[#8EBDB5] leading-relaxed mb-4">' + getContractDescription(currentDeal) + '</p>' +
         '</div>' +
         // ==== Single contract core info ====
         '<div class="p-4 rounded-2xl mb-5" style="background: linear-gradient(135deg, rgba(46,196,182,0.06), rgba(6,182,212,0.04)); border: 1.5px solid rgba(46,196,182,0.2);">' +
@@ -3277,7 +3294,7 @@ app.get('/', (c) => {
         '<div class="grid grid-cols-2 gap-3 mb-5">' +
           '<div class="p-3 bg-[rgba(20,184,166,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('detProjectTotal') + '</p><p class="text-lg font-bold text-[#3DD8CA]">¥' + (currentDeal.projectTotalAmount || 0) + t('wan') + '</p></div>' +
           '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('detShareRatio') + '</p><p class="text-lg font-bold text-[#F59E0B]">' + currentDeal.revenueShare + '</p></div>' +
-          '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('detSharePeriod') + '</p><p class="text-lg font-bold text-[#06B6D4]">' + currentDeal.period + '</p></div>' +
+          '<div class="p-3 bg-[rgba(6,182,212,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('detSharePeriod') + '</p><p class="text-lg font-bold text-[#06B6D4]">' + getPeriodDisplay(currentDeal) + '</p></div>' +
           '<div class="p-3 bg-[rgba(16,185,129,0.06)] rounded-xl"><p class="text-xs text-[#5A9A90] mb-1">' + t('detAIScoreLabel') + '</p><p class="text-lg font-bold text-[#10B981]">' + currentDeal.aiScore + '<span class="text-xs text-[#3D7A70]">/10</span></p></div>' +
         '</div>' +
         '<div class="space-y-3"><h3 class="text-sm font-semibold text-[#B0D5CF] mb-2"><i class="fas fa-store mr-1.5 text-amber-500"></i>' + t('detBizData') + '</h3>' +
@@ -3410,7 +3427,7 @@ app.get('/', (c) => {
           // Project flow
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-route mr-1.5 text-amber-500"></i>' + t('detTimelineTitle') + '</h3><div class="space-y-3">' +
           [
-            { icon: 'fa-paper-plane', bg: 'rgba(245,158,11,0.1)', ic: '#FBBF24', title: t('detTL1'), desc: currentDeal.originator + ' · ' + currentDeal.originateDate },
+            { icon: 'fa-paper-plane', bg: 'rgba(245,158,11,0.1)', ic: '#FBBF24', title: t('detTL1'), desc: getOriginatorName(currentDeal) + ' · ' + currentDeal.originateDate },
             { icon: 'fa-filter', bg: 'rgba(6,182,212,0.1)', ic: '#22D3EE', title: t('detTL2'), desc: hasMatch ? t('detTL2Desc', {match: currentDeal.matchScore + '%'}) : t('detTL2DescBasic') },
             { icon: 'fa-hand-pointer', bg: 'rgba(46,196,182,0.1)', ic: '#3DD8CA', title: t('detTL3'), desc: currentDeal.status === 'available' ? t('detTL3Wait') : (currentDeal.isMine ? t('detTL3Mine') : t('detTL3Sold')) },
             { icon: 'fa-file-contract', bg: 'rgba(100,116,139,0.1)', ic: '#94A3B8', title: t('detTL4'), desc: t('detTL4Desc') }
@@ -3707,11 +3724,11 @@ app.get('/', (c) => {
       const indSelect = document.getElementById('mcFilterIndustry');
       if (indSelect && indSelect.options.length <= 1) {
         const inds = [...new Set(myDeals.map(d => d.industry))];
-        inds.forEach(ind => { const o = document.createElement('option'); o.value = ind; o.textContent = ind; indSelect.appendChild(o); });
+        inds.forEach(ind => { const o = document.createElement('option'); o.value = ind; o.textContent = getIndustryName(ind); indSelect.appendChild(o); });
       }
 
       let filtered = myDeals.filter(d => {
-        if (search && !d.name.toLowerCase().includes(search) && !(d.mcn || '').toLowerCase().includes(search)) return false;
+        if (search && !getProjectName(d).toLowerCase().includes(search) && !d.name.toLowerCase().includes(search) && !(d.name_zh || '').toLowerCase().includes(search) && !(d.mcn || '').toLowerCase().includes(search)) return false;
         if (industry !== 'all' && d.industry !== industry) return false;
         return true;
       });
@@ -3749,7 +3766,7 @@ app.get('/', (c) => {
           '<div class="flex items-center justify-between mb-2">' +
             '<div class="flex items-center gap-2">' +
               '<span class="font-mono text-xs font-bold tracking-wider px-1.5 py-0.5 rounded" style="background: rgba(46,196,182,0.08); color: #3DD8CA; border: 1px solid rgba(46,196,182,0.15); font-size: 10px;">' + (d.mcn || '') + '</span>' +
-              '<span class="badge badge-success flex-shrink-0"><i class="fas fa-user-check mr-1"></i>MINE</span>' +
+              '<span class="badge badge-success flex-shrink-0"><i class="fas fa-user-check mr-1"></i>' + (currentLang === 'zh' ? '我的' : 'MINE') + '</span>' +
             '</div>' +
             '<div class="flex items-center gap-1.5">' +
               '<canvas id="' + miniId + '" width="60" height="60" style="width:26px;height:26px;"></canvas>' +
@@ -3758,12 +3775,12 @@ app.get('/', (c) => {
           '</div>' +
           '<div class="flex items-center space-x-2 mb-2">' +
             '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: rgba(16,185,129,0.1);"><i class="fas fa-file-contract" style="color: #10b981; font-size:12px;"></i></div>' +
-            '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + d.name + '</h3><p class="text-xs text-[#5A9A90]">' + d.industry + ' · ' + d.location + '</p></div>' +
+            '<div class="min-w-0 flex-1"><h3 class="font-bold text-[#E8F5F3] text-sm group-hover:text-[#3DD8CA] transition-colors truncate">' + getProjectName(d) + '</h3><p class="text-xs text-[#5A9A90]">' + getIndustryName(d.industry) + ' · ' + getCityName(d.location) + '</p></div>' +
           '</div>' +
           '<div class="grid grid-cols-4 gap-1 mb-2">' +
             '<div class="text-center p-1.5 rounded-md" style="background:rgba(46,196,182,0.05); border:1px solid rgba(46,196,182,0.08);"><p class="font-mono text-sm font-black text-[#3DD8CA]">¥1K</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardFace') + '</p></div>' +
             '<div class="text-center p-1.5 rounded-md" style="background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.08);"><p class="font-mono text-sm font-bold text-[#FBBF24]">' + d.revenueShare + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardYield') + '</p></div>' +
-            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + d.period + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardTerm') + '</p></div>' +
+            '<div class="text-center p-1.5 rounded-md" style="background:rgba(6,182,212,0.05); border:1px solid rgba(6,182,212,0.08);"><p class="font-mono text-sm font-bold text-[#22D3EE]">' + getPeriodDisplay(d) + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardTerm') + '</p></div>' +
             '<div class="text-center p-1.5 rounded-md" style="background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.08);"><p class="font-mono text-sm font-bold text-[#34D399]">' + d.riskGrade + '</p><p style="font-size:8px;" class="text-[#3D7A70] uppercase tracking-wider">' + t('cardRisk') + '</p></div>' +
           '</div>' +
           '<div class="flex items-center justify-between pt-2 border-t border-[rgba(46,196,182,0.06)]">' +
@@ -3970,7 +3987,7 @@ app.get('/', (c) => {
         var projectSet = {};
         var industrySet = {};
         contracts.forEach(function(c) {
-          projectSet[c.projectId] = c.name;
+          projectSet[c.projectId] = { name: c.name, name_zh: c.name_zh };
           industrySet[c.industry] = true;
         });
         
@@ -4103,8 +4120,8 @@ app.get('/', (c) => {
               '<span class="text-sm font-black" style="color:' + catStyle.color + ';">¥' + totalValue.toLocaleString() + '</span>' +
             '</div>' +
             '<div class="flex flex-wrap gap-1">' +
-              p.industries.map(function(ind) { return '<span class="px-1.5 py-0.5 rounded text-xs font-medium bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#5A9A90;">' + ind + '</span>'; }).join('') +
-              Object.values(p.projects).slice(0, 3).map(function(name) { return '<span class="px-1.5 py-0.5 rounded text-xs bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#5A9A90;">' + (name.length > 8 ? name.substring(0, 8) + '…' : name) + '</span>'; }).join('') +
+              p.industries.map(function(ind) { return '<span class="px-1.5 py-0.5 rounded text-xs font-medium bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#5A9A90;">' + getIndustryName(ind) + '</span>'; }).join('') +
+              Object.values(p.projects).slice(0, 3).map(function(proj) { var displayName = getProjectName(typeof proj === 'object' ? proj : {name: proj}); return '<span class="px-1.5 py-0.5 rounded text-xs bg-[#0F2E2B] border border-[rgba(46,196,182,0.08)]" style="font-size:9px; color:#5A9A90;">' + (displayName.length > 8 ? displayName.substring(0, 8) + '…' : displayName) + '</span>'; }).join('') +
               (p.projectCount > 3 ? '<span class="text-xs text-[#3D7A70] self-center">+' + (p.projectCount - 3) + '</span>' : '') +
             '</div>' +
           '</div>' +
@@ -4190,7 +4207,7 @@ app.get('/', (c) => {
       var projectGroups = {};
       contracts.forEach(function(c) {
         if (!projectGroups[c.projectId]) {
-          projectGroups[c.projectId] = { name: c.name, industry: c.industry, location: c.location, contracts: [] };
+          projectGroups[c.projectId] = { name: c.name, name_zh: c.name_zh, industry: c.industry, location: c.location, contracts: [] };
         }
         projectGroups[c.projectId].contracts.push(c);
       });
@@ -4199,8 +4216,8 @@ app.get('/', (c) => {
         var pg = projectGroups[pid];
         return '<div class="mb-3">' +
           '<div class="flex items-center gap-2 mb-1.5">' +
-            '<span class="text-xs font-bold text-[#B0D5CF]"><i class="fas fa-building mr-1 text-[#3D7A70]"></i>' + pg.name + '</span>' +
-            '<span class="text-xs text-[#3D7A70]">' + pg.industry + ' · ' + pg.location + '</span>' +
+            '<span class="text-xs font-bold text-[#B0D5CF]"><i class="fas fa-building mr-1 text-[#3D7A70]"></i>' + getProjectName(pg) + '</span>' +
+            '<span class="text-xs text-[#3D7A70]">' + getIndustryName(pg.industry) + ' · ' + getCityName(pg.location) + '</span>' +
           '</div>' +
           '<div class="space-y-1.5">' +
             pg.contracts.map(function(c) {
@@ -4232,7 +4249,7 @@ app.get('/', (c) => {
         var c = indColors[ind] || '#3D7A70';
         return '<div class="flex items-center gap-2">' +
           '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
-          '<span class="text-xs text-[#8EBDB5] flex-1">' + ind + '</span>' +
+          '<span class="text-xs text-[#8EBDB5] flex-1">' + getIndustryName(ind) + '</span>' +
           '<span class="text-xs font-bold text-[#B0D5CF]">' + industryDistrib[ind] + (currentLang === 'en' ? '' : '') + '</span>' +
           '<span class="text-xs text-[#3D7A70]">' + pct + '%</span>' +
         '</div>';
@@ -4244,7 +4261,7 @@ app.get('/', (c) => {
           '<div class="p-4 rounded-2xl mb-4" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%); position: relative; overflow: hidden;">' +
             '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%, rgba(139,92,246,0.25) 0%, transparent 50%);pointer-events:none;"></div>' +
             '<div class="relative z-10">' +
-              '<div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.color + '33; color: rgba(167,139,250,0.8);">' + getFundCategory(currentPortfolio) + '</span><span class="text-xs" style="color: rgba(255,255,255,0.4);">' + catStyle.label + ' Fund</span><span class="px-2 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);">' + getFundRiskLevel(currentPortfolio) + '</span></div>' +
+              '<div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 rounded text-xs font-bold" style="background:' + catStyle.color + '33; color: rgba(167,139,250,0.8);">' + getFundCategory(currentPortfolio) + '</span><span class="text-xs" style="color: rgba(255,255,255,0.4);">' + catStyle.label + (currentLang === 'zh' ? ' 基金' : ' Fund') + '</span><span class="px-2 py-0.5 rounded text-xs" style="background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);">' + getFundRiskLevel(currentPortfolio) + '</span></div>' +
               '<h2 class="text-lg font-bold text-white mb-1">' + getFundName(currentPortfolio) + '</h2>' +
               '<p class="text-xs mb-3" style="color: rgba(255,255,255,0.5);">' + getFundStrategy(currentPortfolio) + '</p>' +
               '<div class="grid grid-cols-4 gap-2">' +
@@ -4269,7 +4286,7 @@ app.get('/', (c) => {
           '</div>' +
           // Investment strategy description
           '<div class="p-3 bg-[rgba(139,92,246,0.06)] rounded-xl border border-[rgba(139,92,246,0.12)] mb-4">' +
-            '<div class="flex items-start gap-2"><i class="fas fa-lightbulb text-[#8B5CF6] mt-0.5"></i><div><p class="text-xs font-bold text-[#A78BFA] mb-1">' + t('mpStrategy') + '</p><p class="text-xs text-[#8B5CF6] leading-relaxed">' + getFundStrategy(currentPortfolio) + '</p><p class="text-xs text-[#A78BFA] mt-1">' + t('pdSectorsLabel') + currentPortfolio.targetIndustries.join(currentLang === 'en' ? ', ' : '、') + t('pdStrategyAcross', {projects: currentPortfolio.projectCount, contracts: contracts.length}) + '</p></div></div>' +
+            '<div class="flex items-start gap-2"><i class="fas fa-lightbulb text-[#8B5CF6] mt-0.5"></i><div><p class="text-xs font-bold text-[#A78BFA] mb-1">' + t('mpStrategy') + '</p><p class="text-xs text-[#8B5CF6] leading-relaxed">' + getFundStrategy(currentPortfolio) + '</p><p class="text-xs text-[#A78BFA] mt-1">' + t('pdSectorsLabel') + currentPortfolio.targetIndustries.map(function(ind) { return getIndustryName(ind); }).join(currentLang === 'en' ? ', ' : '、') + t('pdStrategyAcross', {projects: currentPortfolio.projectCount, contracts: contracts.length}) + '</p></div></div>' +
           '</div>' +
         '</div>' +
         // Contract list grouped by project
@@ -4925,7 +4942,7 @@ app.get('/', (c) => {
         const c = indColors[ind] || '#3D7A70';
         return '<div class="flex items-center gap-3">' +
           '<div class="w-3 h-3 rounded-full flex-shrink-0" style="background:' + c + ';"></div>' +
-          '<span class="text-xs flex-1" style="color: rgba(255,255,255,0.6);">' + ind + '</span>' +
+          '<span class="text-xs flex-1" style="color: rgba(255,255,255,0.6);">' + getIndustryName(ind) + '</span>' +
           '<div class="flex-1 h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);"><div class="h-full rounded-full transition-all" style="width:' + pct + '%; background:' + c + ';"></div></div>' +
           '<span class="text-xs font-bold" style="color: #8EBDB5;">' + count + t('abContractUnit') + '</span>' +
           '<span class="text-xs" style="color: #5A9A90;">' + pct + '%</span>' +
@@ -4939,8 +4956,8 @@ app.get('/', (c) => {
         return '<div class="flex items-center gap-3 p-3 rounded-xl transition-all cursor-pointer ab-contract-item" onclick="openDetail(&#39;' + c.id + '&#39;)">' +
           '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + (indColors[c.industry] || '#3D7A70') + '18;"><i class="fas fa-file-contract" style="color:' + (indColors[c.industry] || '#3D7A70') + '; font-size:10px;"></i></div>' +
           '<div class="flex-1 min-w-0">' +
-            '<p class="text-xs font-bold text-[#E8F5F3] truncate">' + c.name + '</p>' +
-            '<p class="text-xs text-[#3D7A70]"><span class="font-mono">' + (c.mcn || '').substring(0, 16) + '</span> · ' + c.industry + ' · ' + c.revenueShare + '</p>' +
+            '<p class="text-xs font-bold text-[#E8F5F3] truncate">' + getProjectName(c) + '</p>' +
+            '<p class="text-xs text-[#3D7A70]"><span class="font-mono">' + (c.mcn || '').substring(0, 16) + '</span> · ' + getIndustryName(c.industry) + ' · ' + c.revenueShare + '</p>' +
           '</div>' +
           '<div class="text-right flex-shrink-0">' +
             '<p class="text-xs font-bold" style="color:' + cg.color + ';">' + co + '</p>' +
