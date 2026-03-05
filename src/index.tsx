@@ -3988,6 +3988,13 @@ app.get('/', (c) => {
         displayIndices: [5] }   // 生意的利润率(pos5,7:30)
     ];
 
+    // Helper: replace trailing opacity in rgba/hsla strings, e.g. "rgba(96,165,250,0.15)" → "rgba(96,165,250,0.06)"
+    function replaceOpacity(colorStr, newOpacity) {
+      var idx = colorStr.lastIndexOf(',');
+      if (idx === -1) return colorStr;
+      return colorStr.substring(0, idx + 1) + newOpacity + ')';
+    }
+
     function drawRadarChart(canvasId, scores, options = {}) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
@@ -4036,7 +4043,7 @@ app.get('/', (c) => {
         var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR + 4);
         grad.addColorStop(0, 'transparent');
         grad.addColorStop(0.6, 'transparent');
-        grad.addColorStop(1, quad.fillColor.replace(/[\d.]+\)$/, '0.06)'));
+        grad.addColorStop(1, replaceOpacity(quad.fillColor, '0.06'));
         ctx.fillStyle = grad;
         ctx.fill();
       });
@@ -4120,7 +4127,7 @@ app.get('/', (c) => {
           else ctx.lineTo(pt.x, pt.y);
         }
         // Stroke segment in quadrant color
-        ctx.strokeStyle = quad.strokeColor.replace(/[\d.]+\)$/, '0.55)');
+        ctx.strokeStyle = replaceOpacity(quad.strokeColor, '0.55');
         ctx.lineWidth = 2.5;
         ctx.stroke();
       });
@@ -4306,7 +4313,7 @@ app.get('/', (c) => {
           if (m === 0) ctx.moveTo(ptq.x, ptq.y);
           else ctx.lineTo(ptq.x, ptq.y);
         }
-        ctx.strokeStyle = quad.strokeColor.replace(/[\d.]+\)$/, '0.6)');
+        ctx.strokeStyle = replaceOpacity(quad.strokeColor, '0.6');
         ctx.lineWidth = 1.5;
         ctx.stroke();
       });
