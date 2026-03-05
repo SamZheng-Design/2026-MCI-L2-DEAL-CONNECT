@@ -3976,16 +3976,16 @@ app.get('/', (c) => {
     var RADAR_QUADRANTS = [
       { id: 'risk',     labelZH: '风险',     labelEN: 'Risk',       subZH: 'Risk',     subEN: 'Risk',
         color: '#f87171', fillColor: 'rgba(239,68,68,0.15)', strokeColor: 'rgba(239,68,68,0.7)',
-        displayIndices: [7, 0, 6] },  // 波动可控性(pos7), 现金流可靠性(pos0), 生命周期可见性(pos6) — top-left & left
+        displayIndices: [6, 7, 0] },  // 生命周期可见性(pos6,9点) → 波动可控性(pos7,10:30) → 现金流可靠性(pos0,12点)
       { id: 'return',   labelZH: '回报',     labelEN: 'Return',     subZH: 'Return',   subEN: 'Return',
         color: '#60a5fa', fillColor: 'rgba(96,165,250,0.15)', strokeColor: 'rgba(96,165,250,0.7)',
-        displayIndices: [1, 2] },  // 回报强度(pos1), 回报质量(pos2) — top-right
+        displayIndices: [1, 2] },  // 回报强度(pos1,1:30) → 回报质量(pos2,3点)
       { id: 'control',  labelZH: '管控够不够', labelEN: 'Control',  subZH: '管控够不够', subEN: 'Control',
         color: '#a78bfa', fillColor: 'rgba(167,139,250,0.15)', strokeColor: 'rgba(167,139,250,0.7)',
-        displayIndices: [3, 4] },  // Leverage管控力(pos3), 自动报数和打款(pos4) — bottom-right
+        displayIndices: [3, 4] },  // Leverage管控力(pos3,4:30) → 自动报数和打款(pos4,6点)
       { id: 'adequacy', labelZH: '收益够不够', labelEN: 'Adequacy', subZH: '收益够不够', subEN: 'Adequacy',
         color: '#4ade80', fillColor: 'rgba(74,222,128,0.15)', strokeColor: 'rgba(74,222,128,0.7)',
-        displayIndices: [5] }   // 生意的利润率(pos5) — bottom-left
+        displayIndices: [5] }   // 生意的利润率(pos5,7:30)
     ];
 
     function drawRadarChart(canvasId, scores, options = {}) {
@@ -4948,7 +4948,7 @@ app.get('/', (c) => {
 
       // Delay draw radar chart (wait for DOM render)
       setTimeout(() => {
-        drawRadarChart('radarCanvas', radarScores, { size: 320, displayValues: calcDealDisplayValues(currentDeal) });
+        drawRadarChart('radarCanvas', radarScores, { size: 380, displayValues: calcDealDisplayValues(currentDeal) });
       }, 50);
 
       switchPage('pageDetail');
@@ -6034,7 +6034,7 @@ app.get('/', (c) => {
         '</div>';
 
       setTimeout(() => {
-        drawRadarChart('pdRadarCanvas', scores, { size: 320, displayValues: calcPortfolioDisplayValues(contracts) });
+        drawRadarChart('pdRadarCanvas', scores, { size: 380, displayValues: calcPortfolioDisplayValues(contracts) });
       }, 50);
 
       switchPage('pagePortfolioDetail');
@@ -7273,7 +7273,7 @@ app.get('/', (c) => {
       document.getElementById('abStatReturn').textContent = abAvgYield + '%';
 
       // Radar chart
-      setTimeout(() => { drawRadarChart('abRadarCanvas', scores, { size: 300, displayValues: calcPortfolioDisplayValues(p) }); }, 100);
+      setTimeout(() => { drawRadarChart('abRadarCanvas', scores, { size: 360, displayValues: calcPortfolioDisplayValues(p) }); }, 100);
 
       // Dimension grid — grouped by PRIMARY_CATEGORIES
       const displayVals = calcPortfolioDisplayValues(p);
