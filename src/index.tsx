@@ -596,6 +596,56 @@ app.get('/', (c) => {
     @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
     /* Skeleton loading effect */
     .skeleton-card { background: rgba(15,46,43,0.6); border: 1px solid rgba(46,196,182,0.06); border-radius: 6px; padding: 14px; }
+    /* ===== Radar Label Formula Tooltip (hover on canvas labels) ===== */
+    .radar-label-overlay { pointer-events: auto; }
+    .radar-label-overlay:hover { z-index: 200 !important; }
+    .radar-formula-tooltip {
+      visibility: hidden; opacity: 0;
+      position: absolute; z-index: 200;
+      min-width: 220px; max-width: 280px;
+      padding: 10px 14px; border-radius: 10px;
+      font-size: 11px; line-height: 1.65; color: #E8F5F3;
+      background: rgba(8,24,22,0.98);
+      border: 1px solid rgba(46,196,182,0.3);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(46,196,182,0.1), 0 0 20px rgba(46,196,182,0.08);
+      pointer-events: none;
+      transition: all 0.2s cubic-bezier(0.28,0.11,0.32,1);
+      white-space: normal; text-align: left;
+      backdrop-filter: blur(12px);
+    }
+    .radar-formula-tooltip b { color: #3DD8CA; font-size: 12px; letter-spacing: 0.02em; }
+    .radar-formula-tooltip::after {
+      content: ''; position: absolute;
+      border-width: 6px; border-style: solid;
+    }
+    /* Position: above label */
+    .radar-formula-tooltip[data-pos="above"] { bottom: calc(100% + 8px); }
+    .radar-formula-tooltip[data-pos="above"]::after { top: 100%; border-color: rgba(8,24,22,0.98) transparent transparent transparent; }
+    /* Position: below label */
+    .radar-formula-tooltip[data-pos="below"] { top: calc(100% + 8px); }
+    .radar-formula-tooltip[data-pos="below"]::after { bottom: 100%; border-color: transparent transparent rgba(8,24,22,0.98) transparent; }
+    /* Align: center */
+    .radar-formula-tooltip[data-align="center"] { left: 50%; transform: translateX(-50%); }
+    .radar-formula-tooltip[data-align="center"]::after { left: 50%; transform: translateX(-50%); }
+    /* Align: left */
+    .radar-formula-tooltip[data-align="left"] { left: 0; }
+    .radar-formula-tooltip[data-align="left"]::after { left: 16px; }
+    /* Align: right */
+    .radar-formula-tooltip[data-align="right"] { right: 0; }
+    .radar-formula-tooltip[data-align="right"]::after { right: 16px; }
+    /* Show on parent hover */
+    .radar-label-overlay:hover .radar-formula-tooltip {
+      visibility: visible; opacity: 1;
+    }
+    .radar-formula-tooltip[data-pos="above"] { transform: translateY(4px); }
+    .radar-label-overlay:hover .radar-formula-tooltip[data-pos="above"] { transform: translateY(0); }
+    .radar-formula-tooltip[data-pos="below"] { transform: translateY(-4px); }
+    .radar-label-overlay:hover .radar-formula-tooltip[data-pos="below"] { transform: translateY(0); }
+    .radar-formula-tooltip[data-align="center"][data-pos="above"] { transform: translateX(-50%) translateY(4px); }
+    .radar-label-overlay:hover .radar-formula-tooltip[data-align="center"][data-pos="above"] { transform: translateX(-50%) translateY(0); }
+    .radar-formula-tooltip[data-align="center"][data-pos="below"] { transform: translateX(-50%) translateY(-4px); }
+    .radar-label-overlay:hover .radar-formula-tooltip[data-align="center"][data-pos="below"] { transform: translateX(-50%) translateY(0); }
+
     /* ===== Dim Tooltip (hover to show professional logic) ===== */
     .dim-tooltip-wrap { position: relative; display: inline-flex; align-items: center; gap: 4px; cursor: help; }
     .dim-tooltip-wrap .dim-tooltip-text { visibility: hidden; opacity: 0; position: absolute; z-index: 100; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); min-width: 260px; max-width: 340px; padding: 10px 14px; border-radius: 10px; font-size: 11px; line-height: 1.6; color: #E8F5F3; background: rgba(8,24,22,0.98); border: 1px solid rgba(46,196,182,0.25); box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(46,196,182,0.08); pointer-events: none; transition: all 0.2s cubic-bezier(0.28,0.11,0.32,1); white-space: normal; text-align: left; }
@@ -3817,6 +3867,18 @@ app.get('/', (c) => {
       lifecycle_tenor_fit:    { zh: '风险', en: 'Risk' },
       control_enforceability: { zh: '管控够不够', en: 'Control' }
     };
+    // 简洁计算公式tooltip — 二级标签悬停时显示
+    var V1_DIM_FORMULAS = {
+      return_level:           { zh: '<b>计算公式</b><br>年化收益率 = revenueShare%<br>含IRR / MOIC辅助修正<br><span style="color:#f59e0b;">↑ 越高越好</span>', en: '<b>Formula</b><br>Annual Yield = revenueShare%<br>Adjusted by IRR / MOIC if available<br><span style="color:#f59e0b;">↑ Higher is better</span>' },
+      payback_speed:          { zh: '<b>计算公式</b><br>回本天数 = 365 ÷ (年化收益%)<br>单位回报 = ROI ÷ CAPEX<br><span style="color:#10b981;">↓ 越快越好</span>', en: '<b>Formula</b><br>Payback Days = 365 ÷ (Annual Yield%)<br>Unit Return = ROI ÷ CAPEX<br><span style="color:#10b981;">↓ Faster is better</span>' },
+      frequency_continuity:   { zh: '<b>计算公式</b><br>综合评级 = 团队规模 × 运营年限<br>员工数/50 × min(年限/5, 1)<br><span style="color:#06b6d4;">↑ 越高越好</span>', en: '<b>Formula</b><br>Composite = Team Size × Op Years<br>Employees/50 × min(Years/5, 1)<br><span style="color:#06b6d4;">↑ Higher is better</span>' },
+      volatility:             { zh: '<b>计算公式</b><br>CV = 融资总额 ÷ (月营收 × 12)<br>杠杆比值，越低现金流越稳定<br><span style="color:#8b5cf6;">↓ 越低越好</span>', en: '<b>Formula</b><br>CV = Total Financing ÷ (Monthly Rev × 12)<br>Lower leverage = more stable cash flow<br><span style="color:#8b5cf6;">↓ Lower is better</span>' },
+      coverage_cushion:       { zh: '<b>计算公式</b><br>DSCR = 月分成收入 ÷ 月均本金<br>利润率 = 合约回报 ÷ 行业均值<br>&gt;1 表示优于行业平均<br><span style="color:#ef4444;">↑ 越高越好</span>', en: '<b>Formula</b><br>DSCR = Monthly Share Income ÷ Monthly Capital<br>Margin = Contract Return ÷ Industry Avg<br>&gt;1 = above average<br><span style="color:#ef4444;">↑ Higher is better</span>' },
+      default_loss:           { zh: '<b>计算公式</b><br>EL = PD × LGD<br>PD: 从riskGrade推算隐含违约率<br>LGD: 违约损失率(默认45%)<br><span style="color:#dc2626;">↓ 越低越好</span>', en: '<b>Formula</b><br>EL = PD × LGD<br>PD: Implied default rate from riskGrade<br>LGD: Loss Given Default (default 45%)<br><span style="color:#dc2626;">↓ Lower is better</span>' },
+      lifecycle_tenor_fit:    { zh: '<b>计算公式</b><br>期限覆盖 = 剩余天数 ÷ 回本天数<br>合约期 ÷ 行业平均寿命<br><span style="color:#0d9488;">↑ 越高越好</span>', en: '<b>Formula</b><br>Tenor Coverage = Remaining Days ÷ Payback Days<br>Contract Period ÷ Industry Avg Lifespan<br><span style="color:#0d9488;">↑ Higher is better</span>' },
+      control_enforceability: { zh: '<b>计算公式</b><br>管控综合 = AVG(4项评分)<br>① 分账自动化 ② 数据审计<br>③ 权限管控 ④ 执行预案<br><span style="color:#ec4899;">↑ 越高越好</span>', en: '<b>Formula</b><br>Control Score = AVG(4 sub-scores)<br>① Split-payment ② Data Audit<br>③ Permission Ctrl ④ Enforcement<br><span style="color:#ec4899;">↑ Higher is better</span>' }
+    };
+
     // 专业tooltip描述 — hover时显示
     var V1_DIM_DESCS = {
       return_level:           { zh: '回报强度：年化投资回报率（Annual ROI），基于收益分成比例折算；含IRR/MOIC等回报指标', en: 'Return Intensity: Annual ROI derived from revenue share ratio; includes IRR/MOIC metrics' },
@@ -3838,6 +3900,11 @@ app.get('/', (c) => {
     function getDimDesc(dim) {
       var descs = V1_DIM_DESCS[dim.key];
       if (descs) return currentLang === 'zh' ? descs.zh : descs.en;
+      return '';
+    }
+    function getDimFormula(dim) {
+      var f = V1_DIM_FORMULAS[dim.key];
+      if (f) return currentLang === 'zh' ? f.zh : f.en;
       return '';
     }
     // 获取维度分组标签（风险/收益/管控）
@@ -4234,6 +4301,68 @@ app.get('/', (c) => {
         ctx.fillText(dimLabel, lx, ly + nameOffsetY);
       }
       ctx.textAlign = 'start';
+
+      // ===== 9. HTML overlay tooltips for secondary labels =====
+      // Create hover zones over each label area for formula tooltips
+      var canvasEl = document.getElementById(canvasId);
+      if (canvasEl) {
+        var parent = canvasEl.parentElement;
+        // Ensure parent is positioned
+        if (parent && getComputedStyle(parent).position === 'static') {
+          parent.style.position = 'relative';
+        }
+        // Remove old overlays
+        var oldOverlays = parent ? parent.querySelectorAll('.radar-label-overlay') : [];
+        oldOverlays.forEach(function(el) { el.remove(); });
+
+        for (var oi = 0; oi < n; oi++) {
+          var oAngle = startAngle + oi * angleStep;
+          var oCosA = Math.cos(oAngle);
+          var oSinA = Math.sin(oAngle);
+          var oLabelR = maxR + 24;
+          var oLx = cx + oLabelR * oCosA;
+          var oLy = cy + oLabelR * oSinA;
+          var oDim = dispDims[oi];
+          var oFormula = getDimFormula(oDim);
+          if (!oFormula || !parent) continue;
+
+          var oDiv = document.createElement('div');
+          oDiv.className = 'radar-label-overlay';
+          // Size of the hover zone
+          var zoneW = 90, zoneH = 28;
+          // Position relative to canvas
+          var canvasRect = canvasEl.getBoundingClientRect();
+          var parentRect = parent.getBoundingClientRect();
+          var canvasOffX = canvasRect.left - parentRect.left;
+          var canvasOffY = canvasRect.top - parentRect.top;
+
+          var centerX = canvasOffX + oLx;
+          var centerY = canvasOffY + oLy;
+
+          // Alignment adjustments matching canvas text
+          var oScoreOffY = oSinA < -0.25 ? -7 : (oSinA > 0.25 ? 7 : 0);
+          var oNameOffY = oSinA < -0.25 ? 6 : (oSinA > 0.25 ? -6 : (oi === 0 ? 11 : -10));
+          // Center the zone between score and name label vertically
+          var midY = (oScoreOffY + oNameOffY) / 2;
+
+          oDiv.style.cssText = 'position:absolute;z-index:50;cursor:help;' +
+            'left:' + (centerX - zoneW / 2) + 'px;' +
+            'top:' + (centerY + midY - zoneH / 2) + 'px;' +
+            'width:' + zoneW + 'px;height:' + zoneH + 'px;';
+
+          // Tooltip element
+          var oTip = document.createElement('div');
+          oTip.className = 'radar-formula-tooltip';
+          // Position tooltip: prefer above for top half, below for bottom half
+          var tipPos = oSinA < 0 ? 'below' : 'above';
+          var tipAlign = oCosA < -0.25 ? 'right' : (oCosA > 0.25 ? 'left' : 'center');
+          oTip.setAttribute('data-pos', tipPos);
+          oTip.setAttribute('data-align', tipAlign);
+          oTip.innerHTML = oFormula;
+          oDiv.appendChild(oTip);
+          parent.appendChild(oDiv);
+        }
+      }
     }
 
     // Mini radar chart (for card preview) — unified polygon with quadrant coloring
