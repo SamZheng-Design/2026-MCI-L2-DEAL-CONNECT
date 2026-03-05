@@ -1703,7 +1703,7 @@ app.get('/', (c) => {
         dealSubscribe: '认购', dealViewDetail: '查看详情',
         // Detail
         detailBack: '返回看板', detailProjectInfo: '项目信息', detailContractInfo: '合约核心信息',
-        detailRadarTitle: '多维雷达评估', detailRadar8Dim: '8维度量化',
+        detailRadarTitle: '多维雷达评估', detailRadar8Dim: '3大维度·8指标',
         detailOverallScore: '综合评分', detailDimDetail: '维度详评',
         detailSieveOverview: '筛子匹配概览', detailSieveResults: '各筛子检验结果',
         detailIncomeTitle: '收入预测', detailTimeline: '项目流程时间线',
@@ -1743,7 +1743,7 @@ app.get('/', (c) => {
         abWaitTitle: '等待 AI 构建您的专属组合',
         abWaitDesc: '在左侧与 AI 对话后，您的专属投资组合将在此呈现',
         abPortfolioTitle: 'AI 推荐组合', abPortfolioGrade: '综合评级',
-        abRadarTitle: '组合雷达评估', abRadar8Dim: '8维度量化',
+        abRadarTitle: '组合雷达评估', abRadar8Dim: '3大维度·8指标',
         abIndustryTitle: '行业配比', abContractListTitle: '推荐合约清单',
         abApply: '一键认购全部', abRefine: '继续调整',
         abOneClickPurchase: '确认认购全部合约', abPurchaseHint: '左侧继续对话可实时调整组合',
@@ -1887,8 +1887,8 @@ app.get('/', (c) => {
         abIndDining: '餐饮美食', abIndTech: '科技创新', abIndHealth: '医疗健康', abIndRetail: '零售消费', abIndEdu: '教育培训', abIndEnter: '演艺娱乐',
         abIndAll: '不限行业，全面配置',
         // Radar Dims
-        dimYield: '收益率', dimDuration: '期限', dimStability: '稳定性', dimRiskCtrl: '风控',
-        dimLiquidity: '流动性', dimTeam: '团队', dimMarket: '市场', dimAIScore: 'AI评分',
+        dimRiskRating: '风险评级', dimHealthIndex: '健康度', dimAnnualROI: '年化回报', dimReturnAdequacy: '收益充足度',
+        dimUnitReturn: '单位收益', dimLeverage: '杠杆管控', dimLabour: '人力管控', dimLand: '场地管控',
         // Industries
         indDining: '餐饮', indRetail: '零售', indTech: '科技', indEducation: '教育', indHealth: '医疗', indEntertainment: '娱乐',
         // Portfolio Categories
@@ -1966,7 +1966,7 @@ app.get('/', (c) => {
         detProjectTotal: '项目总额', detShareRatio: '分成比例', detSharePeriod: '分成期限', detAIScoreLabel: 'AI评分',
         detBizData: '经营数据（发起通提供）', detAvgRevenue: '月均营收', detNoData: '暂无',
         detEmployeeCount: '员工人数', detOpYears: '运营年限', detRiskGrade: '风控评级', detMaturityDate: '到期日',
-        detRadarTitle: '合约多维评估', detRadar8Dim: '8维度量化分析 · 综合评级',
+        detRadarTitle: '合约多维评估', detRadar8Dim: '风险·收益·管控 3维8指标 · 综合评级',
         detDimDetail: '维度详解', detExpandAll: '全部展开', detScoringBasis: '评分依据',
         detAbovePct: '优于{pct}%同类合约', detAroundMedian: '处于中位数附近', detBelowPct: '低于{pct}%同类合约',
         detCurrentSieveMatch: '当前筛子匹配度',
@@ -1997,19 +1997,19 @@ app.get('/', (c) => {
         gradeExcellent: '卓越', gradeGood: '优秀', gradeAboveAvg: '良好', gradeAverage: '一般', gradeBelowAvg: '偏低', gradeRisky: '风险',
         gradeLevelSuffix: '水平',
         // Radar dims (dynamic)
-        rdYield: '年化收益率', rdDuration: '合约时长适配度', rdStability: '收入稳定性', rdRiskCtrl: '风控评级',
-        rdLiquidity: '流动性', rdTeam: '团队实力', rdMarket: '市场潜力', rdAIScore: 'AI综合评分',
-        rdYieldDesc: '基于分成比例和期限折算的年化投资回报率（YITO模型）',
-        rdDurationDesc: '合约期限合理性评估，12-30个月为最优区间',
-        rdStabilityDesc: '基于月营收数据推算的收入波动系数，越低越稳',
-        rdRiskCtrlDesc: '综合风控等级评估，含信用风险、运营风险、市场风险',
-        rdLiquidityDesc: '份额认购热度及二级市场潜在可转让性',
-        rdTeamDesc: '团队规模、运营年限、管理层经验综合评估',
-        rdMarketDesc: '所在行业景气度与目标城市经济活力加权',
-        rdAIScoreDesc: 'AI大模型对合约多维度因子的综合信用打分',
+        rdRiskRating: '风险总评级', rdHealthIndex: '合约健康度', rdAnnualROI: '年化回报率', rdReturnAdequacy: '收益充足度',
+        rdUnitReturn: '单位收益', rdLeverage: '杠杆管控', rdLabour: '人力管控', rdLand: '场地管控',
+        rdRiskRatingDesc: '综合风控等级评估，含信用风险、运营风险、市场风险（评级）',
+        rdHealthIndexDesc: '合约健康度Index = 合约时长 / 行业平均寿命，反映合约存续期合理性',
+        rdAnnualROIDesc: '年化投资回报率（Annual ROI），基于收益分成比例折算',
+        rdReturnAdequacyDesc: '收益够不够Index = 合约回报 / 行业平均回报，>1表示优于行业',
+        rdUnitReturnDesc: '单位收益Index = ROI / CAPEX，衡量资本使用效率',
+        rdLeverageDesc: 'Leverage评分：项目融资规模与月营收比值评级，越低杠杆越健康',
+        rdLabourDesc: 'Labour评分：团队规模与运营年限综合评级，反映人力治理水平',
+        rdLandDesc: 'Land评分：项目所在城市等级与行业地产敏感度综合评级',
         // Radar sub-labels
-        rslYield: '年化收益', rslDuration: '合约时长', rslStability: '预估月收', rslRiskCtrl: '风控评级',
-        rslLiquidity: '流动性', rslTeam: '团队实力', rslMarket: '市场潜力', rslAIScore: 'AI综合',
+        rslRiskRating: '风控评级', rslHealthIndex: '健康度', rslAnnualROI: '年化ROI', rslReturnAdequacy: '收益充足',
+        rslUnitReturn: '单位收益', rslLeverage: 'Leverage', rslLabour: 'Labour', rslLand: 'Land',
         // My Contracts dynamic
         mcSubtitle: '已认购 {count} 张 · 总投入 ¥{total}',
         mcStatHolding: '持有合约', mcStatUnit: '', mcStatInvest: '总投入', mcStatInvestNote: '面值合计',
@@ -2024,7 +2024,7 @@ app.get('/', (c) => {
         mpRiskLow: '低风险', mpRiskMedHigh: '中高风险', mpRiskHigh: '高风险', mpRiskMedium: '中等风险',
         // Portfolio Detail dynamic
         pdSubtitle: '{contracts} 张合约 · 覆盖 {projects} 个项目',
-        pdRadar8Dim: '8维度量化',
+        pdRadar8Dim: '3大维度·8指标',
         pdOverallScore: '综合评分',
         pdWeightedRadar: '组合加权雷达图',
         pdContractList: '组合内合约',
@@ -2130,7 +2130,7 @@ app.get('/', (c) => {
         dealSubscribe: 'Subscribe', dealViewDetail: 'View Details',
         // Detail
         detailBack: 'Back to Dashboard', detailProjectInfo: 'Project Information', detailContractInfo: 'Contract Key Metrics',
-        detailRadarTitle: 'Multi-Dimension Radar Analysis', detailRadar8Dim: '8-Dimension Scoring',
+        detailRadarTitle: 'Multi-Dimension Radar Analysis', detailRadar8Dim: '3 Dimensions · 8 Indicators',
         detailOverallScore: 'Overall Score', detailDimDetail: 'Dimension Breakdown',
         detailSieveOverview: 'Sieve Match Overview', detailSieveResults: 'Individual Sieve Results',
         detailIncomeTitle: 'Income Projection', detailTimeline: 'Project Timeline',
@@ -2170,7 +2170,7 @@ app.get('/', (c) => {
         abWaitTitle: 'Awaiting AI Portfolio Construction',
         abWaitDesc: 'Converse with AI on the left, and your personalized portfolio will appear here',
         abPortfolioTitle: 'AI Recommended Portfolio', abPortfolioGrade: 'Overall Rating',
-        abRadarTitle: 'Portfolio Radar Analysis', abRadar8Dim: '8-Dimension Scoring',
+        abRadarTitle: 'Portfolio Radar Analysis', abRadar8Dim: '3 Dimensions · 8 Indicators',
         abIndustryTitle: 'Sector Allocation', abContractListTitle: 'Recommended Contracts',
         abApply: 'Subscribe All Contracts', abRefine: 'Continue Refining',
         abOneClickPurchase: 'Confirm & Subscribe All', abPurchaseHint: 'Keep chatting on the left to adjust portfolio in real-time',
@@ -2314,8 +2314,8 @@ app.get('/', (c) => {
         abIndDining: 'F&B / Dining', abIndTech: 'Tech / Innovation', abIndHealth: 'Healthcare', abIndRetail: 'Retail / Consumer', abIndEdu: 'Education', abIndEnter: 'Entertainment',
         abIndAll: 'All sectors, diversified',
         // Radar Dims
-        dimYield: 'Yield', dimDuration: 'Duration', dimStability: 'Stability', dimRiskCtrl: 'Risk Mgmt',
-        dimLiquidity: 'Liquidity', dimTeam: 'Team', dimMarket: 'Market', dimAIScore: 'AI Score',
+        dimRiskRating: 'Risk Rating', dimHealthIndex: 'Health Idx', dimAnnualROI: 'Annual ROI', dimReturnAdequacy: 'Return Adeq.',
+        dimUnitReturn: 'Unit Return', dimLeverage: 'Leverage', dimLabour: 'Labour', dimLand: 'Land',
         // Industries
         indDining: 'F&B', indRetail: 'Retail', indTech: 'Technology', indEducation: 'Education', indHealth: 'Healthcare', indEntertainment: 'Entertainment',
         // Portfolio Categories
@@ -2393,7 +2393,7 @@ app.get('/', (c) => {
         detProjectTotal: 'Total Raise', detShareRatio: 'Revenue Share', detSharePeriod: 'Contract Term', detAIScoreLabel: 'AI Score',
         detBizData: 'Business Metrics (from Originate)', detAvgRevenue: 'Avg Monthly Revenue', detNoData: 'N/A',
         detEmployeeCount: 'Headcount', detOpYears: 'Yrs in Operation', detRiskGrade: 'Risk Rating', detMaturityDate: 'Maturity Date',
-        detRadarTitle: 'Multi-Dimension Assessment', detRadar8Dim: '8-Dimension Quantitative Analysis · Rating',
+        detRadarTitle: 'Multi-Dimension Assessment', detRadar8Dim: 'Risk·Return·Governance · 8 Indicators',
         detDimDetail: 'Dimension Breakdown', detExpandAll: 'Expand All', detScoringBasis: 'Scoring Basis',
         detAbovePct: 'Outperforms {pct}% of peers', detAroundMedian: 'Near median range', detBelowPct: 'Below {pct}% of peers',
         detCurrentSieveMatch: 'Current Sieve Match',
@@ -2424,19 +2424,19 @@ app.get('/', (c) => {
         gradeExcellent: 'Exceptional', gradeGood: 'Excellent', gradeAboveAvg: 'Above Avg', gradeAverage: 'Average', gradeBelowAvg: 'Below Avg', gradeRisky: 'At Risk',
         gradeLevelSuffix: ' level',
         // Radar dims (dynamic)
-        rdYield: 'YITO Annualized Yield', rdDuration: 'Term Suitability', rdStability: 'Revenue Stability', rdRiskCtrl: 'Risk Rating',
-        rdLiquidity: 'Liquidity', rdTeam: 'Team Strength', rdMarket: 'Market Potential', rdAIScore: 'AI Composite Score',
-        rdYieldDesc: 'Annualized investment return rate derived from revenue share and term (YITO model)',
-        rdDurationDesc: 'Contract term reasonableness assessment; 12-30 months is optimal',
-        rdStabilityDesc: 'Revenue volatility coefficient from monthly revenue data — lower is better',
-        rdRiskCtrlDesc: 'Comprehensive risk rating: credit, operational, and market risks',
-        rdLiquidityDesc: 'Subscription demand and potential secondary market transferability',
-        rdTeamDesc: 'Team size, years in operation, and management experience assessment',
-        rdMarketDesc: 'Industry cycle positioning weighted with target city economic dynamism',
-        rdAIScoreDesc: 'AI model multi-factor composite credit scoring for the contract',
+        rdRiskRating: 'Risk Rating', rdHealthIndex: 'Health Index', rdAnnualROI: 'Annual ROI', rdReturnAdequacy: 'Return Adequacy',
+        rdUnitReturn: 'Unit Return', rdLeverage: 'Leverage Score', rdLabour: 'Labour Score', rdLand: 'Land Score',
+        rdRiskRatingDesc: 'Comprehensive risk rating: credit, operational, and market risks (grade-based)',
+        rdHealthIndexDesc: 'Health Index = Contract Duration / Industry Avg Lifespan, reflects term reasonableness',
+        rdAnnualROIDesc: 'Annualized Return on Investment derived from revenue share ratio',
+        rdReturnAdequacyDesc: 'Return Adequacy Index = Contract Return / Industry Avg Return, >1 means above average',
+        rdUnitReturnDesc: 'Unit Return Index = ROI / CAPEX, measures capital efficiency',
+        rdLeverageDesc: 'Leverage Score: project raise vs monthly revenue ratio rating, lower is healthier',
+        rdLabourDesc: 'Labour Score: team size and operational maturity rating for governance quality',
+        rdLandDesc: 'Land Score: city tier quality and industry real-estate sensitivity composite rating',
         // Radar sub-labels
-        rslYield: 'Ann. Yield', rslDuration: 'Term', rslStability: 'Est. Income', rslRiskCtrl: 'Risk Grade',
-        rslLiquidity: 'Liquidity', rslTeam: 'Team', rslMarket: 'Market', rslAIScore: 'AI Score',
+        rslRiskRating: 'Risk Grade', rslHealthIndex: 'Health', rslAnnualROI: 'Ann. ROI', rslReturnAdequacy: 'Ret. Adeq.',
+        rslUnitReturn: 'Unit Ret.', rslLeverage: 'Leverage', rslLabour: 'Labour', rslLand: 'Land',
         // My Contracts dynamic
         mcSubtitle: '{count} contracts held · Total investment ¥{total}',
         mcStatHolding: 'Holdings', mcStatUnit: 'contracts', mcStatInvest: 'Total Invested', mcStatInvestNote: 'Aggregate face value',
@@ -2451,7 +2451,7 @@ app.get('/', (c) => {
         mpRiskLow: 'Low Risk', mpRiskMedHigh: 'Med-High Risk', mpRiskHigh: 'High Risk', mpRiskMedium: 'Moderate Risk',
         // Portfolio Detail dynamic
         pdSubtitle: '{contracts} contracts · {projects} projects',
-        pdRadar8Dim: '8-Dimension Scoring',
+        pdRadar8Dim: '3 Dimensions · 8 Indicators',
         pdOverallScore: 'Overall Score',
         pdWeightedRadar: 'Portfolio Weighted Radar',
         pdContractList: 'Portfolio Contracts',
@@ -3083,180 +3083,781 @@ app.get('/', (c) => {
       // Skip localStorage (19K+ objects exceed 5MB quota and freeze browser)
     }
 
-    // ==================== Contract Multi-Dimension Assessment System ====================
-    // 8 dimensions: Annual Yield, Duration Fit, Income Stability, Risk Control, Liquidity, Team Strength, Market Potential, AI Composite Score
-    const RADAR_DIMENSIONS = [
-      { key: 'yield', labelKey: 'rdYield', icon: 'fa-percentage', color: '#f59e0b', descKey: 'rdYieldDesc' },
-      { key: 'duration', labelKey: 'rdDuration', icon: 'fa-clock', color: '#06b6d4', descKey: 'rdDurationDesc' },
-      { key: 'stability', labelKey: 'rdStability', icon: 'fa-wave-square', color: '#8b5cf6', descKey: 'rdStabilityDesc' },
-      { key: 'riskCtrl', labelKey: 'rdRiskCtrl', icon: 'fa-shield-alt', color: '#10b981', descKey: 'rdRiskCtrlDesc' },
-      { key: 'liquidity', labelKey: 'rdLiquidity', icon: 'fa-exchange-alt', color: '#3b82f6', descKey: 'rdLiquidityDesc' },
-      { key: 'team', labelKey: 'rdTeam', icon: 'fa-users', color: '#ec4899', descKey: 'rdTeamDesc' },
-      { key: 'market', labelKey: 'rdMarket', icon: 'fa-chart-area', color: '#14b8a6', descKey: 'rdMarketDesc' },
-      { key: 'aiScore', labelKey: 'rdAIScore', icon: 'fa-robot', color: '#f97316', descKey: 'rdAIScoreDesc' }
+    // ╔══════════════════════════════════════════════════════════════════════════╗
+    // ║  RADAR V1 — 统一评估图谱引擎 (v1_20260305)                              ║
+    // ║  单张合约 8 维 DNA + 组合 2 维 = 10 维标准化雷达图谱                      ║
+    // ║  硬约束: 越靠外越好 / 全站统一来源 / 缺失字段显式标红                       ║
+    // ╚══════════════════════════════════════════════════════════════════════════╝
+
+    // ===== RADAR V1 §1: Schema — 维度协议定义 =====
+    const RADAR_V1_SCHEMA_VERSION = 'v1_20260305';
+
+    // 8 合约维度 + 2 组合维度，统一轴顺序（全站一致）
+    const V1_AXIS_DEFS = [
+      // ── 1. 回报水平 ──
+      {
+        id: 'return_level', order: 1,
+        nameCN: '回报水平', nameEN: 'Return Level',
+        direction: 'higherBetter',
+        icon: 'fa-percentage', color: '#f59e0b', group: 'return',
+        weight: 0.20,
+        requiredFields: ['revenueShare'],
+        optionalFields: ['irr', 'moic', 'unitReturn'],
+        rawExtract: function(deal) {
+          var annualYield = parseFloat(deal.revenueShare) || 0;
+          var irr = deal.irr != null ? parseFloat(deal.irr) : null;
+          var moic = deal.moic != null ? parseFloat(deal.moic) : null;
+          return { value: annualYield, irr: irr, moic: moic, unit: '%', formulaNotes: '年化收益率(revenueShare)', timeWindow: 'contract_life' };
+        },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier, ctx) {
+          var s = '\u5E74\u5316' + raw.value.toFixed(1) + '%';
+          if (raw.irr != null) s += ', IRR=' + raw.irr.toFixed(1) + '%';
+          s += ' \u2192 Tier' + tier + '(' + score + '\u5206)';
+          if (ctx.usedGlobal) s += '\uFF0C\u4F7F\u7528\u5168\u5C40\u9608\u503C';
+          return s;
+        }
+      },
+      // ── 2. 回本速度 ──
+      {
+        id: 'payback_speed', order: 2,
+        nameCN: '回本速度', nameEN: 'Payback Speed',
+        direction: 'lowerBetter',
+        icon: 'fa-tachometer-alt', color: '#10b981', group: 'return',
+        weight: 0.10,
+        requiredFields: ['revenueShare'],
+        optionalFields: ['paybackDaysBase', 'paybackDaysDownside', 'rampUpDays'],
+        rawExtract: function(deal) {
+          var yld = parseFloat(deal.revenueShare) || 10;
+          var pbBase = deal.paybackDaysBase != null ? parseInt(deal.paybackDaysBase) : Math.round(365 / (yld / 100));
+          var pbDown = deal.paybackDaysDownside != null ? parseInt(deal.paybackDaysDownside) : null;
+          var ramp = deal.rampUpDays != null ? parseInt(deal.rampUpDays) : null;
+          return { value: pbBase, paybackDaysDownside: pbDown, rampUpDays: ramp, unit: '\u5929', formulaNotes: pbDown == null ? '365/(annualYield%)\u4F30\u7B97' : '\u5B9E\u9645\u56DE\u672C\u5929\u6570', timeWindow: 'contract_life' };
+        },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier, ctx) {
+          var s = '\u56DE\u672C' + raw.value + '\u5929';
+          if (raw.paybackDaysDownside != null) s += '(\u60B2\u89C2' + raw.paybackDaysDownside + '\u5929)';
+          s += ' \u2192 Tier' + tier + '(' + score + '\u5206)';
+          if (ctx.usedGlobal) s += '\uFF0C\u5168\u5C40\u9608\u503C';
+          return s;
+        }
+      },
+      // ── 3. 频率与连续性 ──
+      {
+        id: 'frequency_continuity', order: 3,
+        nameCN: '频率与连续性', nameEN: 'Frequency & Continuity',
+        direction: 'higherBetter',
+        icon: 'fa-stream', color: '#06b6d4', group: 'cashflow',
+        weight: 0.10,
+        requiredFields: [],
+        optionalFields: ['cashflowPerMonth', 'avgIntervalDays', 'continuityRatio', 'maxGapDays'],
+        rawExtract: function(deal) {
+          var cfpm = deal.cashflowPerMonth != null ? parseFloat(deal.cashflowPerMonth) : null;
+          var interval = deal.avgIntervalDays != null ? parseFloat(deal.avgIntervalDays) : null;
+          var conti = deal.continuityRatio != null ? parseFloat(deal.continuityRatio) : null;
+          var maxGap = deal.maxGapDays != null ? parseInt(deal.maxGapDays) : null;
+          // 估算: 月度分配 → continuityRatio ≈ 0.9 (假设)
+          var estimatedConti = conti != null ? conti : 0.85;
+          var estimateFlag = conti == null;
+          return { value: estimatedConti, cashflowPerMonth: cfpm, avgIntervalDays: interval, maxGapDays: maxGap, unit: 'ratio', formulaNotes: estimateFlag ? '\u65E0\u5B9E\u9645\u6570\u636E\uFF0C\u9ED8\u8BA4\u4F30\u7B97\u503C0.85' : '\u5B9E\u9645\u8FDE\u7EED\u6027\u6BD4\u7387', timeWindow: 'trailing_12m', estimated: estimateFlag };
+        },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier, ctx) {
+          var s = '\u8FDE\u7EED\u6027' + (raw.value * 100).toFixed(0) + '%';
+          if (raw.estimated) s += '(\u4F30\u7B97\u503C)';
+          if (raw.cashflowPerMonth != null) s += ', \u6708\u5747' + raw.cashflowPerMonth + '\u7B14';
+          s += ' \u2192 Tier' + tier;
+          if (ctx.usedGlobal) s += '\uFF0C\u5168\u5C40\u9608\u503C';
+          return s;
+        }
+      },
+      // ── 4. 现金流波动性 ──
+      {
+        id: 'volatility', order: 4,
+        nameCN: '现金流波动性', nameEN: 'Cash Flow Volatility',
+        direction: 'lowerBetter',
+        icon: 'fa-wave-square', color: '#8b5cf6', group: 'cashflow',
+        weight: 0.10,
+        requiredFields: [],
+        optionalFields: ['cashflowCV', 'worstMonthOverMean', 'downsideMonthRatio'],
+        rawExtract: function(deal) {
+          var cv = deal.cashflowCV != null ? parseFloat(deal.cashflowCV) : null;
+          var worst = deal.worstMonthOverMean != null ? parseFloat(deal.worstMonthOverMean) : null;
+          var downRatio = deal.downsideMonthRatio != null ? parseFloat(deal.downsideMonthRatio) : null;
+          // 估算: 无月度序列时用行业经验值
+          var estimatedCV = cv != null ? cv : 0.35;
+          var estimateFlag = cv == null;
+          return { value: estimatedCV, worstMonthOverMean: worst, downsideMonthRatio: downRatio, unit: 'CV', formulaNotes: estimateFlag ? '\u65E0\u6708\u5E8F\u5217\uFF0C\u7ECF\u9A8C\u4F30\u503C0.35' : '\u5B9E\u9645\u53D8\u5F02\u7CFB\u6570', timeWindow: 'trailing_12m', estimated: estimateFlag };
+        },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier, ctx) {
+          var s = 'CV=' + raw.value.toFixed(2);
+          if (raw.estimated) s += '(\u4F30\u7B97)';
+          if (raw.worstMonthOverMean != null) s += ', \u6700\u5DEE\u6708/\u5747\u503C=' + raw.worstMonthOverMean.toFixed(2);
+          s += ' \u2192 Tier' + tier + '(\u8D8A\u4F4E\u8D8A\u597D)';
+          return s;
+        }
+      },
+      // ── 5. 收益充足性/安全垫 ──
+      {
+        id: 'coverage_cushion', order: 5,
+        nameCN: '安全垫', nameEN: 'Coverage Cushion',
+        direction: 'higherBetter',
+        icon: 'fa-shield-alt', color: '#ef4444', group: 'risk',
+        weight: 0.15,
+        requiredFields: ['monthlyRevenue', 'projectTotalAmount'],
+        optionalFields: ['coverageMultiple', 'fixedCostRatio', 'guaranteeCoverage', 'downsideBufferMonths'],
+        rawExtract: function(deal) {
+          var coverage = deal.coverageMultiple != null ? parseFloat(deal.coverageMultiple) : null;
+          var monthlyRev = parseInt(deal.monthlyRevenue) || 0;
+          var totalAmt = deal.projectTotalAmount || 0;
+          var shareNum = parseFloat(deal.revenueShare) || 10;
+          // 估算DSCR: 月营收*分成比 / (总额/期数)
+          var periodMonths = parseInt(deal.period) || 24;
+          var monthlyDebt = totalAmt * 10000 / periodMonths;
+          var monthlyIncome = monthlyRev * 10000 * (shareNum / 100);
+          var estimatedDSCR = coverage != null ? coverage : (monthlyDebt > 0 ? monthlyIncome / monthlyDebt : 1.0);
+          var estimateFlag = coverage == null;
+          var fixedCost = deal.fixedCostRatio != null ? parseFloat(deal.fixedCostRatio) : null;
+          return { value: estimatedDSCR, fixedCostRatio: fixedCost, guaranteeCoverage: deal.guaranteeCoverage || null, unit: 'x', formulaNotes: estimateFlag ? 'DSCR\u4F30\u7B97=\u6708\u5206\u6210\u6536\u5165/\u6708\u5747\u672C\u91D1' : '\u5B9E\u9645DSCR', timeWindow: 'contract_life', estimated: estimateFlag };
+        },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier, ctx) {
+          var s = 'DSCR=' + raw.value.toFixed(2) + 'x';
+          if (raw.estimated) s += '(\u4F30\u7B97)';
+          if (raw.fixedCostRatio != null) s += ', \u56FA\u5B9A\u6210\u672C\u5360\u6BD4' + (raw.fixedCostRatio * 100).toFixed(0) + '%';
+          s += ' \u2192 Tier' + tier;
+          return s;
+        }
+      },
+      // ── 6. 违约/闭店/损失 ──
+      {
+        id: 'default_loss', order: 6,
+        nameCN: '违约损失', nameEN: 'Default & Loss',
+        direction: 'lowerBetter',
+        icon: 'fa-exclamation-triangle', color: '#dc2626', group: 'risk',
+        weight: 0.15,
+        requiredFields: ['riskGrade'],
+        optionalFields: ['defaultRate', 'closeRate', 'lgd', 'recoveryRate', 'collectionCycleDays'],
+        rawExtract: function(deal) {
+          var defRate = deal.defaultRate != null ? parseFloat(deal.defaultRate) : null;
+          var closeRate = deal.closeRate != null ? parseFloat(deal.closeRate) : null;
+          var lgd = deal.lgd != null ? parseFloat(deal.lgd) : null;
+          var recovery = deal.recoveryRate != null ? parseFloat(deal.recoveryRate) : null;
+          // 从riskGrade推算隐含违约率
+          var gradeDefaults = { 'A+': 0.005, 'A': 0.01, 'A-': 0.02, 'B+': 0.05, 'B': 0.08, 'B-': 0.12, 'C': 0.20 };
+          var impliedDefault = defRate != null ? defRate : (gradeDefaults[deal.riskGrade] || 0.08);
+          var estimateFlag = defRate == null;
+          var impliedLGD = lgd != null ? lgd : 0.45;
+          var expectedLoss = impliedDefault * impliedLGD;
+          return { value: expectedLoss, defaultRate: impliedDefault, lgd: impliedLGD, recoveryRate: recovery, closeRate: closeRate, unit: 'EL', formulaNotes: estimateFlag ? '\u4ECEriskGrade\u63A8\u7B97\u9690\u542B\u8FDD\u7EA6\u7387' : '\u5B9E\u9645\u8FDD\u7EA6\u7387', timeWindow: 'historical', estimated: estimateFlag };
+        },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier, ctx) {
+          var s = 'EL=' + (raw.value * 100).toFixed(2) + '%(PD=' + (raw.defaultRate * 100).toFixed(1) + '%,LGD=' + (raw.lgd * 100).toFixed(0) + '%)';
+          if (raw.estimated) s += ' \u63A8\u7B97';
+          s += ' \u2192 Tier' + tier + '(\u8D8A\u4F4E\u8D8A\u597D)';
+          return s;
+        }
+      },
+      // ── 7. 生命周期与期限匹配 ──
+      {
+        id: 'lifecycle_tenor_fit', order: 7,
+        nameCN: '期限匹配', nameEN: 'Lifecycle Tenor Fit',
+        direction: 'higherBetter',
+        icon: 'fa-clock', color: '#0d9488', group: 'structure',
+        weight: 0.10,
+        requiredFields: ['period'],
+        optionalFields: ['remainingTenorDays', 'renewalProb', 'earlyTerminatePenalty'],
+        rawExtract: function(deal) {
+          var periodMonths = parseInt(deal.period) || 24;
+          var remainDays = deal.remainingTenorDays != null ? parseInt(deal.remainingTenorDays) : periodMonths * 30;
+          var yld = parseFloat(deal.revenueShare) || 10;
+          var pbDays = Math.round(365 / (yld / 100));
+          var tenorCoverage = remainDays / (pbDays || 365);
+          var renewProb = deal.renewalProb != null ? parseFloat(deal.renewalProb) : null;
+          return { value: tenorCoverage, remainingTenorDays: remainDays, paybackDaysRef: pbDays, renewalProb: renewProb, unit: 'x', formulaNotes: 'TenorCoverage=\u5269\u4F59\u5929\u6570/\u56DE\u672C\u5929\u6570', timeWindow: 'contract_life' };
+        },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier, ctx) {
+          var s = '\u671F\u9650\u8986\u76D6=' + raw.value.toFixed(2) + 'x(\u5269' + raw.remainingTenorDays + '\u5929/\u56DE\u672C' + raw.paybackDaysRef + '\u5929)';
+          if (raw.renewalProb != null) s += ', \u7EED\u7EA6\u6982\u7387' + (raw.renewalProb * 100).toFixed(0) + '%';
+          s += ' \u2192 Tier' + tier;
+          return s;
+        }
+      },
+      // ── 8. 管控强度与可执行性 ──
+      {
+        id: 'control_enforceability', order: 8,
+        nameCN: '管控执行', nameEN: 'Control & Enforceability',
+        direction: 'higherBetter',
+        icon: 'fa-lock', color: '#ec4899', group: 'structure',
+        weight: 0.10,
+        requiredFields: [],
+        optionalFields: ['splitPaymentAutomationLevel', 'dataAuditabilityLevel', 'permissionControlLevel', 'enforcementPlaybookLevel'],
+        rawExtract: function(deal) {
+          var levels = ['splitPaymentAutomationLevel', 'dataAuditabilityLevel', 'permissionControlLevel', 'enforcementPlaybookLevel'];
+          var levelMap = { 'none': 0, 'low': 25, 'medium': 50, 'high': 75, 'full': 100 };
+          var sum = 0, count = 0, missing = [];
+          levels.forEach(function(f) {
+            if (deal[f] != null && deal[f] !== '') {
+              var v = typeof deal[f] === 'number' ? deal[f] : (levelMap[deal[f]] != null ? levelMap[deal[f]] : 50);
+              sum += v; count++;
+            } else {
+              missing.push(f);
+            }
+          });
+          var avgLevel = count > 0 ? sum / count : 50;
+          return { value: avgLevel, detailLevels: levels.map(function(f) { return { field: f, val: deal[f] || null }; }), unit: 'score(0-100)', formulaNotes: count > 0 ? count + '/4\u9879\u6709\u6570\u636E' : '\u5168\u90E8\u7F3A\u5931\uFF0C\u9ED8\u8BA4\u4E2D\u4F4D50', timeWindow: 'current', estimated: count === 0 };
+        },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier, ctx) {
+          var s = '\u7BA1\u63A7\u7EFC\u5408=' + raw.value.toFixed(0) + '/100';
+          if (raw.estimated) s += '(\u5168\u7F3A\u5931\u9ED8\u8BA4\u503C)';
+          s += ' \u2192 Tier' + tier;
+          return s;
+        }
+      },
+      // ── 9. 单项目集中度 (组合专用) ──
+      {
+        id: 'single_name_concentration', order: 9,
+        nameCN: '单项目集中度', nameEN: 'Single Name Concentration',
+        direction: 'lowerBetter',
+        icon: 'fa-crosshairs', color: '#7c3aed', group: 'portfolio',
+        weight: 0.05,
+        isPortfolioOnly: true,
+        requiredFields: [], optionalFields: [],
+        rawExtract: function() { return { value: 0 }; },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier) { return 'Top1\u5360\u6BD4' + (raw.top1Share * 100).toFixed(1) + '%, HHI=' + raw.hhi.toFixed(4) + ' \u2192 Tier' + tier; }
+      },
+      // ── 10. 行业集中度 (组合专用) ──
+      {
+        id: 'sector_concentration', order: 10,
+        nameCN: '行业集中度', nameEN: 'Sector Concentration',
+        direction: 'lowerBetter',
+        icon: 'fa-industry', color: '#be185d', group: 'portfolio',
+        weight: 0.05,
+        isPortfolioOnly: true,
+        requiredFields: [], optionalFields: [],
+        rawExtract: function() { return { value: 0 }; },
+        primaryRawKey: 'value',
+        explanationTemplate: function(raw, score, tier) { return '\u884C\u4E1ATop1\u5360\u6BD4' + (raw.sectorTop1Share * 100).toFixed(1) + '% \u2192 Tier' + tier; }
+      }
     ];
-    // Accessor for localized labels
-    function getDimLabel(dim) { return t(dim.labelKey); }
-    function getDimDesc(dim) { return t(dim.descKey); }
 
-    // Calculate dimension scores from deal data (0-100)
+    // 合约维度（排除组合专用）
+    var V1_CONTRACT_AXES = V1_AXIS_DEFS.filter(function(a) { return !a.isPortfolioOnly; });
+
+    // ===== RADAR V1 §2: 阈值表 (thresholdsBySector) =====
+    // cuts: [tier1上界, tier2上界, tier3上界, tier4上界]
+    // tier1=最差(score 0-20), tier5=最好(score 80-100)
+    // lowerBetter 类型: cuts 从高到低（越小越好）
+    var v1GlobalThresholds = {
+      return_level:             { type: 'higherBetter', cuts: [5, 8, 12, 18],       clampMin: 0,    clampMax: 35 },
+      payback_speed:            { type: 'lowerBetter',  cuts: [2500, 1600, 900, 450], clampMin: 120,  clampMax: 3650 },
+      frequency_continuity:     { type: 'higherBetter', cuts: [0.5, 0.7, 0.85, 0.95], clampMin: 0,   clampMax: 1.0 },
+      volatility:               { type: 'lowerBetter',  cuts: [0.7, 0.5, 0.3, 0.15], clampMin: 0,    clampMax: 1.2 },
+      coverage_cushion:         { type: 'higherBetter', cuts: [0.8, 1.2, 1.8, 2.5],  clampMin: 0,    clampMax: 5.0 },
+      default_loss:             { type: 'lowerBetter',  cuts: [0.08, 0.04, 0.02, 0.005], clampMin: 0, clampMax: 0.15 },
+      lifecycle_tenor_fit:      { type: 'higherBetter', cuts: [0.5, 1.0, 1.5, 2.5],  clampMin: 0,    clampMax: 5.0 },
+      control_enforceability:   { type: 'higherBetter', cuts: [25, 45, 65, 85],      clampMin: 0,    clampMax: 100 },
+      single_name_concentration:{ type: 'lowerBetter',  cuts: [0.6, 0.4, 0.25, 0.1], clampMin: 0,    clampMax: 1.0 },
+      sector_concentration:     { type: 'lowerBetter',  cuts: [0.8, 0.6, 0.4, 0.2],  clampMin: 0,    clampMax: 1.0 }
+    };
+
+    var v1ThresholdsBySector = {
+      'F&B': {
+        return_level:        { type: 'higherBetter', cuts: [6, 10, 14, 20],      clampMin: 0, clampMax: 30 },
+        payback_speed:       { type: 'lowerBetter',  cuts: [2200, 1400, 800, 400], clampMin: 120, clampMax: 3650 },
+        coverage_cushion:    { type: 'higherBetter', cuts: [0.7, 1.1, 1.6, 2.2],  clampMin: 0, clampMax: 5.0 },
+        default_loss:        { type: 'lowerBetter',  cuts: [0.10, 0.05, 0.025, 0.008], clampMin: 0, clampMax: 0.18 }
+      },
+      'Retail': {
+        return_level:        { type: 'higherBetter', cuts: [4, 7, 11, 16],       clampMin: 0, clampMax: 25 },
+        payback_speed:       { type: 'lowerBetter',  cuts: [2800, 1800, 1000, 500], clampMin: 120, clampMax: 3650 },
+        default_loss:        { type: 'lowerBetter',  cuts: [0.12, 0.06, 0.03, 0.01], clampMin: 0, clampMax: 0.20 }
+      },
+      'Technology': {
+        return_level:        { type: 'higherBetter', cuts: [8, 14, 20, 28],      clampMin: 0, clampMax: 40 },
+        payback_speed:       { type: 'lowerBetter',  cuts: [1800, 1100, 650, 300], clampMin: 90, clampMax: 3000 },
+        coverage_cushion:    { type: 'higherBetter', cuts: [1.0, 1.5, 2.2, 3.0],  clampMin: 0, clampMax: 6.0 }
+      },
+      'Healthcare': {
+        return_level:        { type: 'higherBetter', cuts: [7, 11, 16, 22],      clampMin: 0, clampMax: 30 },
+        default_loss:        { type: 'lowerBetter',  cuts: [0.06, 0.03, 0.015, 0.005], clampMin: 0, clampMax: 0.12 }
+      },
+      'Education': {
+        return_level:        { type: 'higherBetter', cuts: [5, 9, 13, 18],       clampMin: 0, clampMax: 25 },
+        default_loss:        { type: 'lowerBetter',  cuts: [0.09, 0.05, 0.025, 0.008], clampMin: 0, clampMax: 0.15 }
+      },
+      'Entertainment': {
+        return_level:        { type: 'higherBetter', cuts: [9, 15, 22, 30],      clampMin: 0, clampMax: 40 },
+        volatility:          { type: 'lowerBetter',  cuts: [0.8, 0.55, 0.35, 0.2],  clampMin: 0, clampMax: 1.5 },
+        default_loss:        { type: 'lowerBetter',  cuts: [0.14, 0.08, 0.04, 0.015], clampMin: 0, clampMax: 0.25 }
+      },
+      'Finance': {
+        return_level:        { type: 'higherBetter', cuts: [6, 10, 15, 22],      clampMin: 0, clampMax: 30 }
+      },
+      'Logistics': {
+        return_level:        { type: 'higherBetter', cuts: [5, 8, 12, 17],       clampMin: 0, clampMax: 25 }
+      },
+      'Agriculture': {
+        return_level:        { type: 'higherBetter', cuts: [4, 7, 10, 15],       clampMin: 0, clampMax: 22 }
+      },
+      'Real Estate': {
+        return_level:        { type: 'higherBetter', cuts: [4, 7, 10, 14],       clampMin: 0, clampMax: 20 }
+      }
+    };
+
+    // ===== RADAR V1 §3: Scoring Engine 通用工具 =====
+    function v1Clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+    // rawValue → 0..100 分段线性插值
+    // lowerBetter 类型: 在函数内部做反向
+    function v1ScoreByThreshold(rawValue, thresholdConfig) {
+      var type = thresholdConfig.type;
+      var cuts = thresholdConfig.cuts;
+      var cMin = thresholdConfig.clampMin;
+      var cMax = thresholdConfig.clampMax;
+
+      if (type === 'lowerBetter') {
+        // lowerBetter: cuts从高到低 [worst, ..., best]
+        // 反向: 将 rawValue 映射为"越小越好"的score
+        // cuts[0]=差, cuts[3]=好 → rawValue <= cuts[3] → 高分
+        var v = v1Clamp(rawValue, cMin, cMax);
+        // 分段: v >= cuts[0] → score 0~20; v >= cuts[1] → 20~40; ...
+        if (v >= cuts[0]) return Math.round(Math.max(2, 20 * (1 - (v - cuts[0]) / (cMax - cuts[0] || 1))));
+        if (v >= cuts[1]) return Math.round(20 + (cuts[0] - v) / (cuts[0] - cuts[1] || 1) * 20);
+        if (v >= cuts[2]) return Math.round(40 + (cuts[1] - v) / (cuts[1] - cuts[2] || 1) * 20);
+        if (v >= cuts[3]) return Math.round(60 + (cuts[2] - v) / (cuts[2] - cuts[3] || 1) * 20);
+        return Math.round(Math.min(98, 80 + (cuts[3] - v) / (cuts[3] - cMin || 1) * 18));
+      } else {
+        // higherBetter: cuts从低到高 [worst, ..., best]
+        var v = v1Clamp(rawValue, cMin, cMax);
+        if (v <= cuts[0]) return Math.round(Math.max(2, 20 * v / (cuts[0] || 1)));
+        if (v <= cuts[1]) return Math.round(20 + (v - cuts[0]) / (cuts[1] - cuts[0] || 1) * 20);
+        if (v <= cuts[2]) return Math.round(40 + (v - cuts[1]) / (cuts[2] - cuts[1] || 1) * 20);
+        if (v <= cuts[3]) return Math.round(60 + (v - cuts[2]) / (cuts[3] - cuts[2] || 1) * 20);
+        return Math.round(Math.min(98, 80 + (v - cuts[3]) / (cMax - cuts[3] || 1) * 18));
+      }
+    }
+
+    function v1TierFromScore(score) {
+      if (score >= 80) return 5;
+      if (score >= 60) return 4;
+      if (score >= 40) return 3;
+      if (score >= 20) return 2;
+      return 1;
+    }
+
+    function v1ConfidenceFromEvidence(axisDef, deal) {
+      var req = axisDef.requiredFields || [];
+      var opt = axisDef.optionalFields || [];
+      if (req.length === 0 && opt.length === 0) return 30; // 全是估算
+      var totalWeight = req.length + opt.length * 0.4;
+      var have = 0;
+      req.forEach(function(f) { if (deal[f] != null && deal[f] !== '') have += 1; });
+      opt.forEach(function(f) { if (deal[f] != null && deal[f] !== '') have += 0.4; });
+      return Math.round(v1Clamp(have / (totalWeight || 1) * 100, 10, 100));
+    }
+
+    function v1GetMissingFields(fieldList, deal) {
+      return fieldList.filter(function(f) { return deal[f] == null || deal[f] === ''; });
+    }
+
+    // ===== RADAR V1 §4: calcContractRadarV1(deal, ctx) =====
+    var _v1RadarCache = {};
+    var _v1CacheVersion = 0;
+
+    function v1ClearCache() { _v1RadarCache = {}; _v1CacheVersion++; }
+
+    function _v1EmptyContractResult() {
+      return {
+        axes: V1_CONTRACT_AXES.map(function(a) {
+          return { id: a.id, nameCN: a.nameCN, raw: { value: 0 }, score: 50, tier: 3, explanation: '\u65E0\u6570\u636E', evidence: {}, missing: a.requiredFields.concat(a.optionalFields), confidence: 0 };
+        }),
+        radarPoints: V1_CONTRACT_AXES.map(function() { return 0.5; }),
+        overallScore: 50,
+        overallConfidence: 0,
+        missingFields: [],
+        lowConfidenceWarning: true,
+        schemaVersion: RADAR_V1_SCHEMA_VERSION
+      };
+    }
+
+    function calcContractRadarV1(deal, ctx) {
+      if (!deal) return _v1EmptyContractResult();
+      ctx = ctx || {};
+
+      var cacheKey = (deal.id || 'unknown') + '_' + _v1CacheVersion;
+      if (_v1RadarCache[cacheKey]) return _v1RadarCache[cacheKey];
+
+      var sector = deal.industry || deal.sector || 'default';
+      var sectorTh = v1ThresholdsBySector[sector] || {};
+
+      var axes = V1_CONTRACT_AXES.map(function(axisDef) {
+        var th = sectorTh[axisDef.id] || v1GlobalThresholds[axisDef.id];
+        var usedGlobal = !sectorTh[axisDef.id];
+
+        // 提取raw
+        var raw = axisDef.rawExtract(deal);
+
+        // 缺失字段
+        var missingReq = v1GetMissingFields(axisDef.requiredFields, deal);
+        var missingOpt = v1GetMissingFields(axisDef.optionalFields || [], deal);
+        var allMissing = missingReq.concat(missingOpt);
+
+        // 可信度
+        var confidence = v1ConfidenceFromEvidence(axisDef, deal);
+
+        // 评分
+        var score;
+        var primaryVal = raw[axisDef.primaryRawKey];
+        if (primaryVal == null || (missingReq.length === axisDef.requiredFields.length && axisDef.requiredFields.length > 0)) {
+          score = 50; // 全缺失给中位默认
+          confidence = Math.min(confidence, 20);
+        } else {
+          score = v1ScoreByThreshold(primaryVal, th);
+        }
+        score = Math.round(v1Clamp(score, 2, 98));
+
+        var tier = v1TierFromScore(score);
+
+        // 解释文案
+        var explanation = '';
+        try {
+          explanation = axisDef.explanationTemplate(raw, score, tier, { usedGlobal: usedGlobal, sector: sector });
+        } catch(e) {
+          explanation = axisDef.nameCN + ': ' + score + '\u5206(Tier' + tier + ')';
+        }
+        if (explanation.length > 120) explanation = explanation.substring(0, 117) + '...';
+
+        return {
+          id: axisDef.id,
+          nameCN: axisDef.nameCN,
+          nameEN: axisDef.nameEN,
+          icon: axisDef.icon,
+          color: axisDef.color,
+          raw: raw,
+          score: score,
+          tier: tier,
+          explanation: explanation,
+          evidence: {
+            source: 'deal_object',
+            auditedFlag: false,
+            sampleSize: 1,
+            dataWindow: ctx.dataWindow || 'latest',
+            lastUpdatedAt: new Date().toISOString()
+          },
+          missing: allMissing,
+          confidence: confidence
+        };
+      });
+
+      // 雷达点 (0~1)
+      var radarPoints = axes.map(function(a) { return v1Clamp(a.score / 100, 0, 1); });
+
+      // 综合评分 (加权)
+      var weightedSum = 0, weightTotal = 0;
+      axes.forEach(function(a, i) {
+        var w = V1_CONTRACT_AXES[i].weight;
+        weightedSum += a.score * w;
+        weightTotal += w;
+      });
+      var overallScore = Math.round(weightedSum / (weightTotal || 1));
+      var overallConfidence = Math.round(axes.reduce(function(s, a) { return s + a.confidence; }, 0) / axes.length);
+
+      // 低可信折扣
+      if (overallConfidence < 60) {
+        overallScore = Math.round(overallScore * (0.7 + overallConfidence / 200));
+      }
+      overallScore = Math.round(v1Clamp(overallScore, 5, 98));
+
+      var result = {
+        axes: axes,
+        radarPoints: radarPoints,
+        overallScore: overallScore,
+        overallConfidence: overallConfidence,
+        missingFields: axes.reduce(function(acc, a) { return acc.concat(a.missing); }, []),
+        lowConfidenceWarning: overallConfidence < 60,
+        schemaVersion: RADAR_V1_SCHEMA_VERSION
+      };
+
+      _v1RadarCache[cacheKey] = result;
+      return result;
+    }
+
+    // ===== RADAR V1 §5: calcPortfolioRadarV1(deals[], ctx) =====
+    function _v1EmptyPortfolioResult() {
+      var emptyAxes = V1_CONTRACT_AXES.map(function(a) {
+        return { id: a.id, nameCN: a.nameCN, weighted_mean: 50, tail_metric: 50, effective_value: 50 };
+      });
+      return {
+        contractAxes: emptyAxes,
+        portfolioAxes: [
+          { id: 'single_name_concentration', nameCN: '\u5355\u9879\u76EE\u96C6\u4E2D\u5EA6', score: 50, tier: 3, raw: { top1Share: 0, hhi: 0 }, explanation: '\u65E0\u6570\u636E' },
+          { id: 'sector_concentration', nameCN: '\u884C\u4E1A\u96C6\u4E2D\u5EA6', score: 50, tier: 3, raw: { sectorTop1Share: 0 }, explanation: '\u65E0\u6570\u636E' }
+        ],
+        radarPoints: new Array(10).fill(0.5),
+        overallScore: 50,
+        warnings: [],
+        contractResults: [],
+        schemaVersion: RADAR_V1_SCHEMA_VERSION
+      };
+    }
+
+    function calcPortfolioRadarV1(deals, ctx) {
+      if (!deals || deals.length === 0) return _v1EmptyPortfolioResult();
+      ctx = ctx || {};
+
+      // 每个deal先算合约8轴
+      var contractResults = deals.map(function(d) { return calcContractRadarV1(d, ctx); });
+
+      // 权重: 用 projectTotalAmount 或等权1000
+      var weights = deals.map(function(d) { return d.projectTotalAmount || d.faceValue || 1; });
+      var totalWeight = weights.reduce(function(s, w) { return s + w; }, 0) || 1;
+
+      // 8轴聚合: weighted_mean + tail_metric + effective_value
+      var aggregatedAxes = V1_CONTRACT_AXES.map(function(axisDef, axIdx) {
+        var scores = contractResults.map(function(r) { return r.axes[axIdx].score; });
+
+        // 加权平均
+        var wMean = 0;
+        scores.forEach(function(sc, i) { wMean += sc * weights[i]; });
+        wMean = Math.round(wMean / totalWeight);
+
+        // P10尾部
+        var sorted = scores.slice().sort(function(a, b) { return a - b; });
+        var p10Idx = Math.max(0, Math.ceil(sorted.length * 0.1) - 1);
+        var tailMetric = sorted[p10Idx];
+
+        return {
+          id: axisDef.id,
+          nameCN: axisDef.nameCN,
+          nameEN: axisDef.nameEN,
+          icon: axisDef.icon,
+          color: axisDef.color,
+          weighted_mean: wMean,
+          tail_metric: tailMetric,
+          effective_value: wMean, // 先设等于mean，后面做集中度惩罚
+          min: sorted[0],
+          max: sorted[sorted.length - 1]
+        };
+      });
+
+      // ── 组合新增轴 ── 单项目集中度
+      var top1Share = Math.max.apply(null, weights) / totalWeight;
+      var hhi = weights.reduce(function(s, w) { return s + Math.pow(w / totalWeight, 2); }, 0);
+      var concTh = v1GlobalThresholds['single_name_concentration'];
+      var concScore = v1ScoreByThreshold(top1Share, concTh);
+      var concTier = v1TierFromScore(concScore);
+
+      // ── 行业集中度
+      var sectorWeights = {};
+      deals.forEach(function(d, i) {
+        var ind = d.industry || 'Unknown';
+        sectorWeights[ind] = (sectorWeights[ind] || 0) + weights[i];
+      });
+      var sectorValues = Object.keys(sectorWeights).map(function(k) { return sectorWeights[k]; });
+      var sectorTop1Share = (Math.max.apply(null, sectorValues) || 0) / totalWeight;
+      var sectorHHI = sectorValues.reduce(function(s, w) { return s + Math.pow(w / totalWeight, 2); }, 0);
+      var sectorConcTh = v1GlobalThresholds['sector_concentration'];
+      var sectorConcScore = v1ScoreByThreshold(sectorTop1Share, sectorConcTh);
+      var sectorConcTier = v1TierFromScore(sectorConcScore);
+
+      // ── 集中度惩罚: 对风险相关轴做折扣
+      var riskAxesIds = ['volatility', 'default_loss', 'lifecycle_tenor_fit'];
+      var concPenalty = 1.0;
+      if (concScore < 40) concPenalty *= 0.92;
+      if (sectorConcScore < 40) concPenalty *= 0.93;
+      aggregatedAxes.forEach(function(a) {
+        if (riskAxesIds.indexOf(a.id) >= 0) {
+          a.effective_value = Math.round(a.weighted_mean * concPenalty);
+        } else {
+          a.effective_value = a.weighted_mean;
+        }
+      });
+
+      // ── 风险提示
+      var warnings = [];
+      if (top1Share > 0.4) warnings.push('\u96C6\u4E2D\u5EA6\u9884\u8B66\uFF1ATop1\u9879\u76EE\u5360\u6BD4' + (top1Share * 100).toFixed(1) + '%\uFF0C\u5EFA\u8BAE\u5206\u6563');
+      if (sectorTop1Share > 0.6) warnings.push('\u884C\u4E1A\u96C6\u4E2D\u5EA6\u9884\u8B66\uFF1ATop1\u884C\u4E1A\u5360\u6BD4' + (sectorTop1Share * 100).toFixed(1) + '%');
+      aggregatedAxes.forEach(function(a) {
+        if (a.weighted_mean - a.tail_metric > 20) {
+          warnings.push(a.nameCN + '\u5C3E\u90E8\u62D6\u7D2F\u660E\u663E(\u5747\u503C' + a.weighted_mean + ' vs P10=' + a.tail_metric + ')\uFF0C\u5E73\u5747\u6570\u53EF\u80FD\u6D17\u767D\u98CE\u9669');
+        }
+      });
+
+      // ── 组合综合评分 (10轴加权)
+      var pOverall = 0, pWeightSum = 0;
+      aggregatedAxes.forEach(function(a, i) {
+        var w = V1_CONTRACT_AXES[i].weight;
+        pOverall += a.effective_value * w;
+        pWeightSum += w;
+      });
+      // 组合2轴
+      var portfolioAxisDefs = V1_AXIS_DEFS.filter(function(a) { return a.isPortfolioOnly; });
+      pOverall += concScore * portfolioAxisDefs[0].weight;
+      pWeightSum += portfolioAxisDefs[0].weight;
+      pOverall += sectorConcScore * portfolioAxisDefs[1].weight;
+      pWeightSum += portfolioAxisDefs[1].weight;
+
+      var portfolioOverall = Math.round(v1Clamp(pOverall / (pWeightSum || 1), 5, 98));
+
+      // ── 10维雷达点
+      var radarPoints = aggregatedAxes.map(function(a) { return v1Clamp(a.effective_value / 100, 0, 1); });
+      radarPoints.push(v1Clamp(concScore / 100, 0, 1));
+      radarPoints.push(v1Clamp(sectorConcScore / 100, 0, 1));
+
+      // 组合新增轴的explanation
+      var concExpl = V1_AXIS_DEFS[8].explanationTemplate({ top1Share: top1Share, hhi: hhi }, concScore, concTier);
+      var sectorExpl = V1_AXIS_DEFS[9].explanationTemplate({ sectorTop1Share: sectorTop1Share }, sectorConcScore, sectorConcTier);
+
+      return {
+        contractAxes: aggregatedAxes,
+        portfolioAxes: [
+          { id: 'single_name_concentration', nameCN: '\u5355\u9879\u76EE\u96C6\u4E2D\u5EA6', nameEN: 'Single Name Conc.', icon: 'fa-crosshairs', color: '#7c3aed', score: concScore, tier: concTier, raw: { top1Share: top1Share, hhi: hhi }, explanation: concExpl },
+          { id: 'sector_concentration', nameCN: '\u884C\u4E1A\u96C6\u4E2D\u5EA6', nameEN: 'Sector Conc.', icon: 'fa-industry', color: '#be185d', score: sectorConcScore, tier: sectorConcTier, raw: { sectorTop1Share: sectorTop1Share, sectorHHI: sectorHHI }, explanation: sectorExpl }
+        ],
+        radarPoints: radarPoints,
+        overallScore: portfolioOverall,
+        warnings: warnings,
+        contractResults: contractResults,
+        displayMode: 'effective_value', // 默认展示模式
+        schemaVersion: RADAR_V1_SCHEMA_VERSION
+      };
+    }
+
+    // ╔══════════════════════════════════════════════════════════════════════════╗
+    // ║  END RADAR V1 ENGINE — 以下为旧系统兼容层                                ║
+    // ╚══════════════════════════════════════════════════════════════════════════╝
+
+    // ==================== Contract Multi-Dimension Assessment System (V1 Bridge) ====================
+    // V1 统一图谱: 8维合约DNA + 2维组合 → 全站统一来源
+    // 旧接口保留签名，内部代理到 RADAR V1 Engine
+    const RADAR_DIMENSIONS = V1_CONTRACT_AXES.map(function(a) {
+      return { key: a.id, labelKey: 'rdV1_' + a.id, icon: a.icon, color: a.color, descKey: 'rdV1Desc_' + a.id, group: a.group, nameCN: a.nameCN, nameEN: a.nameEN };
+    });
+
+    // V1 维度名称映射 (中/英双语)
+    var V1_DIM_LABELS = {
+      return_level:           { zh: '回报水平',       en: 'Return Level' },
+      payback_speed:          { zh: '回本速度',       en: 'Payback Speed' },
+      frequency_continuity:   { zh: '频率连续性',     en: 'Frequency & Continuity' },
+      volatility:             { zh: '现金流波动',     en: 'CF Volatility' },
+      coverage_cushion:       { zh: '安全垫',         en: 'Coverage Cushion' },
+      default_loss:           { zh: '违约损失',       en: 'Default & Loss' },
+      lifecycle_tenor_fit:    { zh: '期限匹配',       en: 'Tenor Fit' },
+      control_enforceability: { zh: '管控执行',       en: 'Control & Enforce' }
+    };
+    var V1_DIM_DESCS = {
+      return_level:           { zh: '年化收益率及IRR/MOIC等回报指标，基于赛道阈值评分',       en: 'Annualized yield, IRR/MOIC return metrics, scored by sector thresholds' },
+      payback_speed:          { zh: '投资回本所需天数，越短越好，反向映射为正向分数',           en: 'Days to payback, shorter is better, reverse-mapped to positive score' },
+      frequency_continuity:   { zh: '现金流入频率及连续性比率，衡量收入稳定度',                 en: 'Cash inflow frequency and continuity ratio, measures income stability' },
+      volatility:             { zh: '现金流变异系数CV，越低越好，反向映射',                     en: 'Cash flow coefficient of variation, lower is better, reverse-mapped' },
+      coverage_cushion:       { zh: 'DSCR偿债覆盖倍数及安全垫，衡量下行保护能力',              en: 'DSCR coverage multiple and safety cushion, measures downside protection' },
+      default_loss:           { zh: '预期损失EL=PD×LGD，越低越好，反向映射',                    en: 'Expected Loss EL=PD×LGD, lower is better, reverse-mapped' },
+      lifecycle_tenor_fit:    { zh: '剩余期限/回本天数覆盖倍数，衡量期限匹配度',                en: 'Remaining tenor / payback days coverage, measures tenor alignment' },
+      control_enforceability: { zh: '分账自动化/数据审计/权限控制/执行预案综合评分',             en: 'Split-payment automation, data audit, permission control, enforcement playbook' }
+    };
+
+    // 兼容旧代码的 getDimLabel / getDimDesc
+    function getDimLabel(dim) {
+      var labels = V1_DIM_LABELS[dim.key];
+      if (labels) return currentLang === 'zh' ? labels.zh : labels.en;
+      return dim.nameCN || dim.key;
+    }
+    function getDimDesc(dim) {
+      var descs = V1_DIM_DESCS[dim.key];
+      if (descs) return currentLang === 'zh' ? descs.zh : descs.en;
+      return '';
+    }
+
+    // 保留行业参考常量(用于其他地方)
+    const INDUSTRY_AVG_LIFESPAN = { 'F&B': 36, 'Retail': 30, 'Technology': 48, 'Education': 36, 'Healthcare': 42, 'Entertainment': 24, 'Finance': 48, 'Real Estate': 60, 'Logistics': 36, 'Agriculture': 48 };
+    const INDUSTRY_AVG_RETURN = { 'F&B': 10, 'Retail': 8, 'Technology': 14, 'Education': 9, 'Healthcare': 12, 'Entertainment': 16, 'Finance': 11, 'Real Estate': 8, 'Logistics': 9, 'Agriculture': 7 };
+
+    // ===== calcRadarScores → V1 代理 (返回8元素score数组，兼容旧调用) =====
     function calcRadarScores(deal) {
-      if (!deal) return RADAR_DIMENSIONS.map(() => 50);
-
-      // 1. Annual Yield — revenueShare directly maps to annual yield (%)
-      const shareNum = parseInt(deal.revenueShare) || 10;
-      const periodNum = parseInt(deal.period) || 24;
-      const annualYield = shareNum; // revenueShare is the annual yield
-      const yieldScore = Math.min(100, Math.max(15, Math.round(annualYield * 5 + 15)));
-
-      // 2. Duration Fit — 12-30 months optimal, penalty for deviation
-      let durationScore;
-      if (periodNum >= 12 && periodNum <= 30) durationScore = 75 + Math.round((1 - Math.abs(periodNum - 21) / 9) * 25);
-      else if (periodNum < 12) durationScore = Math.max(30, 75 - (12 - periodNum) * 5);
-      else durationScore = Math.max(25, 75 - (periodNum - 30) * 3);
-
-      // 3. Income Stability — from monthly revenue and industry
-      const revenue = parseInt(deal.monthlyRevenue) || 100;
-      const stableIndustries = ['F&B', 'Healthcare', 'Education'];
-      const isStable = stableIndustries.includes(deal.industry);
-      const stabilityScore = Math.min(95, Math.max(30, Math.round(50 + (isStable ? 20 : -5) + (revenue > 100 ? 15 : revenue > 50 ? 8 : 0) + Math.random() * 12)));
-
-      // 4. Risk Control — direct mapping
-      const riskMap = { 'A+': 95, 'A': 82, 'A-': 72, 'B+': 58, 'B': 45, 'B-': 35, 'C': 20 };
-      const riskCtrlScore = riskMap[deal.riskGrade] || 50;
-
-      // 5. Liquidity — based on contract status and project popularity
-      var idNum = parseInt((deal.id || '0').replace(/\\D/g, '')) || 0;
-      var liquidityScore;
-      if (deal.status === 'sold' || deal.isMine) liquidityScore = 70 + (idNum % 20);
-      else liquidityScore = 45 + (idNum % 25);
-      liquidityScore = Math.min(95, Math.max(25, liquidityScore));
-
-      // 6. Team Strength — headcount + operating years
-      const emp = deal.employeeCount || 30;
-      const years = parseFloat(deal.operatingYears) || 2;
-      const teamScore = Math.min(95, Math.max(20, Math.round(
-        (Math.min(emp, 100) / 100) * 45 + (Math.min(years, 8) / 8) * 45 + 10
-      )));
-
-      // 7. Market Potential — industry + city
-      const hotIndustries = { 'Technology': 92, 'Healthcare': 85, 'Education': 78, 'F&B': 72, 'Retail': 65, 'Entertainment': 60 };
-      const hotCities = { 'Beijing': 15, 'Shanghai': 14, 'Shenzhen': 13, 'Hangzhou': 12, 'Guangzhou': 10, 'Chengdu': 8, 'Nationwide': 11, 'Tianjin': 7 };
-      const marketScore = Math.min(98, Math.max(30, (hotIndustries[deal.industry] || 60) + (hotCities[deal.location] || 5)));
-
-      // 8. AI Composite Score — aiScore × 10
-      const aiScoreVal = Math.min(100, Math.max(20, Math.round(parseFloat(deal.aiScore) * 10)));
-
-      return [yieldScore, durationScore, stabilityScore, riskCtrlScore, liquidityScore, teamScore, marketScore, aiScoreVal];
+      if (!deal) return RADAR_DIMENSIONS.map(function() { return 50; });
+      var result = calcContractRadarV1(deal);
+      return result.axes.map(function(a) { return a.score; });
     }
 
     // Calculate per-contract est. monthly income (project monthly rev × share ÷ total contracts)
     function calcContractMonthlyIncome(deal) {
-      const monthlyRev = parseInt(deal.monthlyRevenue) || 50; // Monthly revenue (10K CNY)
-      const shareNum = parseInt(deal.revenueShare) || 10;     // Revenue share (%)
-      const totalAmt = deal.projectTotalAmount || 50;          // Project total raise (10K CNY)
-      const totalContracts = totalAmt * 10;                    // Total contracts (¥1,000 each)
-      // Per-contract monthly = revenue(10K) × 10000 × share(%) / 100 / total contracts
+      const monthlyRev = parseInt(deal.monthlyRevenue) || 50;
+      const shareNum = parseInt(deal.revenueShare) || 10;
+      const totalAmt = deal.projectTotalAmount || 50;
+      const totalContracts = totalAmt * 10;
       return monthlyRev * 10000 * shareNum / 100 / totalContracts;
     }
 
-    // Calculate per-contract display values (for dimension cards)
+    // ===== calcDealDisplayValues → 从V1 axes.raw提取关键显示值 =====
     function calcDealDisplayValues(deal) {
       if (!deal) return ['—', '—', '—', '—', '—', '—', '—', '—'];
-      const shareNum = parseInt(deal.revenueShare) || 10;
-      const periodNum = parseInt(deal.period) || 24;
-      const annualYield = shareNum; // revenueShare is the annual yield (%)
-      // Per-contract est. monthly income from project revenue
-      const dealMonthlyIncome = calcContractMonthlyIncome(deal);
-      const dealIncomeStr = dealMonthlyIncome >= 10000 ? (dealMonthlyIncome / 10000).toFixed(1) + '0K' : '¥' + Math.round(dealMonthlyIncome).toLocaleString();
-      return [
-        annualYield.toFixed(1) + '%',                // Annual yield
-        (periodNum * 30) + 'days',                      // Duration (in days)
-        dealIncomeStr + '/mo',                         // Income — est. monthly income per contract
-        deal.riskGrade || 'B',                         // Risk grade
-        deal.status === 'sold' ? 'Sold' : 'Available',       // Liquidity
-        (parseFloat(deal.operatingYears) || 0).toFixed(1) + 'yrs', // Team strength — operating years
-        deal.industry || '—',                          // Market potential — industry
-        parseFloat(deal.aiScore).toFixed(1)            // AI composite score
-      ];
+      var r = calcContractRadarV1(deal);
+      return r.axes.map(function(a) {
+        var raw = a.raw;
+        var v = raw.value;
+        switch (a.id) {
+          case 'return_level': return v.toFixed(1) + '%';
+          case 'payback_speed': return v + (currentLang === 'zh' ? '\u5929' : 'd');
+          case 'frequency_continuity': return (v * 100).toFixed(0) + '%';
+          case 'volatility': return 'CV ' + v.toFixed(2);
+          case 'coverage_cushion': return v.toFixed(2) + 'x';
+          case 'default_loss': return (raw.defaultRate * 100).toFixed(1) + '%';
+          case 'lifecycle_tenor_fit': return v.toFixed(1) + 'x';
+          case 'control_enforceability': return v.toFixed(0) + '/100';
+          default: return String(v);
+        }
+      });
     }
 
-    // Calculate portfolio-level display values (weighted aggregation)
+    // ===== calcPortfolioDisplayValues → 从V1组合结果提取 =====
     function calcPortfolioDisplayValues(contracts) {
       if (!contracts || contracts.length === 0) return ['—', '—', '—', '—', '—', '—', '—', '—'];
-      const n = contracts.length;
-
-      // 1. Annual Yield (weighted avg, equal face values = simple avg)
-      // revenueShare is the annual yield (%)
-      let totalYield = 0;
-      contracts.forEach(c => {
-        const shareNum = parseInt(c.revenueShare) || 10;
-        totalYield += shareNum;
+      var pr = calcPortfolioRadarV1(contracts);
+      return pr.contractAxes.map(function(a) {
+        switch (a.id) {
+          case 'return_level': return a.weighted_mean + (currentLang === 'zh' ? '\u5206' : 'pt');
+          case 'payback_speed': return a.weighted_mean + (currentLang === 'zh' ? '\u5206' : 'pt');
+          case 'frequency_continuity': return a.weighted_mean + (currentLang === 'zh' ? '\u5206' : 'pt');
+          case 'volatility': return a.weighted_mean + (currentLang === 'zh' ? '\u5206' : 'pt');
+          case 'coverage_cushion': return a.weighted_mean + (currentLang === 'zh' ? '\u5206' : 'pt');
+          case 'default_loss': return a.weighted_mean + (currentLang === 'zh' ? '\u5206' : 'pt');
+          case 'lifecycle_tenor_fit': return a.weighted_mean + (currentLang === 'zh' ? '\u5206' : 'pt');
+          case 'control_enforceability': return a.weighted_mean + (currentLang === 'zh' ? '\u5206' : 'pt');
+          default: return a.weighted_mean + '';
+        }
       });
-      const avgYield = totalYield / n;
-
-      // 2. Avg duration (months→days, weighted avg)
-      let totalMonths = 0;
-      contracts.forEach(c => { totalMonths += parseInt(c.period) || 24; });
-      const avgMonths = totalMonths / n;
-      const avgDays = Math.round(avgMonths * 30);
-
-      // 3. Portfolio est. monthly income — sum of all underlying contract income
-      // Per-contract monthly = project revenue(10K) × 10000 × share(%) / 100 / total contracts
-      let monthlyIncome = 0;
-      contracts.forEach(c => {
-        monthlyIncome += calcContractMonthlyIncome(c);
-      });
-      const incomeDisplay = monthlyIncome >= 10000 ? (monthlyIncome / 10000).toFixed(1) + '0K' : '¥' + Math.round(monthlyIncome).toLocaleString();
-
-      // 4. Risk Control — mode
-      const riskCounts = {};
-      contracts.forEach(c => { const g = c.riskGrade || 'B'; riskCounts[g] = (riskCounts[g] || 0) + 1; });
-      let topRisk = 'B', topCount = 0;
-      Object.keys(riskCounts).forEach(g => { if (riskCounts[g] > topCount) { topRisk = g; topCount = riskCounts[g]; } });
-
-      // 5. Liquidity — sold ratio
-      const soldCount = contracts.filter(c => c.status === 'sold' || c.isMine).length;
-      const soldPct = Math.round(soldCount / n * 100);
-
-      // 6. Avg operating years
-      let totalYears = 0;
-      contracts.forEach(c => { totalYears += parseFloat(c.operatingYears) || 0; });
-      const avgYears = (totalYears / n).toFixed(1);
-
-      // 7. Industry distribution
-      const industries = {};
-      contracts.forEach(c => { industries[c.industry] = (industries[c.industry] || 0) + 1; });
-      const topIndustry = Object.keys(industries).sort((a, b) => industries[b] - industries[a])[0] || '—';
-      const indCount = Object.keys(industries).length;
-
-      // 8. Avg AI score
-      let totalAI = 0;
-      contracts.forEach(c => { totalAI += parseFloat(c.aiScore) || 0; });
-      const avgAI = (totalAI / n).toFixed(1);
-
-      return [
-        avgYield.toFixed(1) + '%',          // Annual yield
-        avgDays + (currentLang === 'zh' ? '天' : 'days'),       // Duration
-        incomeDisplay + (currentLang === 'zh' ? '/月' : '/mo'),  // Income
-        topRisk,                             // Risk grade
-        soldPct + (currentLang === 'zh' ? '% 已售' : '% sold'),  // Liquidity
-        avgYears + (currentLang === 'zh' ? '年' : 'yrs'),        // Team (operating years)
-        indCount > 1 ? getIndustryName(topIndustry) + ' +' + (indCount-1) : getIndustryName(topIndustry), // Market
-        avgAI + '/10'                        // AI score
-      ];
     }
 
-    // Dimension card sub-labels
-    const RADAR_DIM_SUBLABEL_KEYS = ['rslYield','rslDuration','rslStability','rslRiskCtrl','rslLiquidity','rslTeam','rslMarket','rslAIScore'];
-    function getRadarSubLabel(i) { return t(RADAR_DIM_SUBLABEL_KEYS[i]); }
+    // ===== Dimension sub-labels → V1 维度短名 =====
+    function getRadarSubLabel(i) {
+      if (i < V1_CONTRACT_AXES.length) {
+        var a = V1_CONTRACT_AXES[i];
+        return currentLang === 'zh' ? a.nameCN : a.nameEN;
+      }
+      // 组合轴(9,10)
+      if (i === 8) return currentLang === 'zh' ? '\u5355\u9879\u76EE\u96C6\u4E2D' : 'Name Conc.';
+      if (i === 9) return currentLang === 'zh' ? '\u884C\u4E1A\u96C6\u4E2D' : 'Sector Conc.';
+      return '';
+    }
 
-    // Calculate composite score (weighted avg)
+    // ===== calcOverallScore → V1 代理 (兼容旧 score[] 入参) =====
     function calcOverallScore(scores) {
-      const weights = [0.20, 0.08, 0.15, 0.18, 0.08, 0.10, 0.10, 0.11]; // Weights: Yield>Risk>Stability>AI>Team=Market>Duration=Liquidity
-      let total = 0, wSum = 0;
-      scores.forEach((s, i) => { total += s * weights[i]; wSum += weights[i]; });
-      return Math.round(total / wSum);
+      // 如果传入的是V1 result对象
+      if (scores && scores.overallScore != null) return scores.overallScore;
+      // 兼容旧数组入参: 用V1权重
+      var weights = V1_CONTRACT_AXES.map(function(a) { return a.weight; });
+      var total = 0, wSum = 0;
+      scores.forEach(function(s, i) {
+        if (i < weights.length) { total += s * weights[i]; wSum += weights[i]; }
+      });
+      return Math.round(total / (wSum || 1));
     }
 
     // Score grade determination
@@ -4683,18 +5284,12 @@ app.get('/', (c) => {
       }).filter(function(p) { return p !== null; });
     }
 
-    // Calculate portfolio weighted-average radar scores
+    // Calculate portfolio weighted-average radar scores → V1 代理
     function calcPortfolioRadarScores(contracts) {
-      if (!contracts || contracts.length === 0) return RADAR_DIMENSIONS.map(() => 50);
-      const allScores = contracts.map(c => calcRadarScores(c));
-      const n = RADAR_DIMENSIONS.length;
-      const avg = [];
-      for (let i = 0; i < n; i++) {
-        let sum = 0;
-        allScores.forEach(s => { sum += s[i]; });
-        avg.push(Math.round(sum / allScores.length));
-      }
-      return avg;
+      if (!contracts || contracts.length === 0) return RADAR_DIMENSIONS.map(function() { return 50; });
+      var pr = calcPortfolioRadarV1(contracts);
+      // 返回8元素score数组(合约8轴的effective_value)，兼容旧调用
+      return pr.contractAxes.map(function(a) { return a.effective_value; });
     }
 
     function goToMyPortfolios() {
