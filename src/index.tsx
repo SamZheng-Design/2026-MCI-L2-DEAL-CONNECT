@@ -3959,12 +3959,41 @@ app.get('/', (c) => {
     }
 
     // ==================== Canvas Radar Chart Drawing ====================
+    // ===== Radar Display Order =====
+    // Maps drawing position (clockwise from top) → original scores[] index
+    // Reference image clockwise layout:
+    //   Top:         现金流可靠性(volatility=3)
+    //   Top-right:   回报强度(return_level=0)
+    //   Right:       回报质量(payback_speed=1)
+    //   Right-lower: Leverage管控力(frequency_continuity=2) 
+    //   Bottom:      自动报数和打款(control_enforceability=7)
+    //   Bottom-left: 生意的利润率(coverage_cushion=4)
+    //   Left:        生命周期可见性(lifecycle_tenor_fit=6)
+    //   Upper-left:  波动可控性(default_loss=5)
+    var RADAR_DISPLAY_ORDER = [3, 0, 1, 2, 7, 4, 6, 5];
+    // Quadrant definitions for the display-ordered axes
+    // Each quadrant: { id, label (zh/en), color, fillColor, strokeColor, axisIndices (indices into RADAR_DISPLAY_ORDER) }
+    var RADAR_QUADRANTS = [
+      { id: 'risk',     labelZH: '风险',     labelEN: 'Risk',       subZH: 'Risk',     subEN: 'Risk',
+        color: '#f87171', fillColor: 'rgba(239,68,68,0.15)', strokeColor: 'rgba(239,68,68,0.7)',
+        displayIndices: [7, 0, 6] },  // 波动可控性(pos7), 现金流可靠性(pos0), 生命周期可见性(pos6) — top-left & left
+      { id: 'return',   labelZH: '回报',     labelEN: 'Return',     subZH: 'Return',   subEN: 'Return',
+        color: '#60a5fa', fillColor: 'rgba(96,165,250,0.15)', strokeColor: 'rgba(96,165,250,0.7)',
+        displayIndices: [1, 2] },  // 回报强度(pos1), 回报质量(pos2) — top-right
+      { id: 'control',  labelZH: '管控够不够', labelEN: 'Control',  subZH: '管控够不够', subEN: 'Control',
+        color: '#a78bfa', fillColor: 'rgba(167,139,250,0.15)', strokeColor: 'rgba(167,139,250,0.7)',
+        displayIndices: [3, 4] },  // Leverage管控力(pos3), 自动报数和打款(pos4) — bottom-right
+      { id: 'adequacy', labelZH: '收益够不够', labelEN: 'Adequacy', subZH: '收益够不够', subEN: 'Adequacy',
+        color: '#4ade80', fillColor: 'rgba(74,222,128,0.15)', strokeColor: 'rgba(74,222,128,0.7)',
+        displayIndices: [5] }   // 生意的利润率(pos5) — bottom-left
+    ];
+
     function drawRadarChart(canvasId, scores, options = {}) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
-      const size = options.size || 280;
+      const size = options.size || 320;
       canvas.width = size * dpr;
       canvas.height = size * dpr;
       canvas.style.width = size + 'px';
@@ -3973,133 +4002,193 @@ app.get('/', (c) => {
 
       const cx = size / 2;
       const cy = size / 2;
-      const maxR = (size / 2) - 40;
-      const dims = RADAR_DIMENSIONS;
-      const n = dims.length;
+      const maxR = (size / 2) - 52;
+      const n = RADAR_DISPLAY_ORDER.length; // 8 axes
       const angleStep = (Math.PI * 2) / n;
-      const startAngle = -Math.PI / 2; // Start from top
+      const startAngle = -Math.PI / 2; // Start from top (12 o'clock)
+
+      // Reordered scores and dims for display
+      const dispScores = RADAR_DISPLAY_ORDER.map(function(origIdx) { return scores[origIdx] || 0; });
+      const dispDims = RADAR_DISPLAY_ORDER.map(function(origIdx) { return RADAR_DIMENSIONS[origIdx]; });
+      const displayLabels = options.displayValues ? RADAR_DISPLAY_ORDER.map(function(origIdx) { return options.displayValues[origIdx]; }) : null;
+
+      // Helper: get x,y for a display index at a given radius
+      function getXY(displayIdx, r) {
+        var angle = startAngle + displayIdx * angleStep;
+        return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+      }
 
       // Clear
       ctx.clearRect(0, 0, size, size);
 
-      // Draw background grid (5 layers)
+      // ===== 1. Draw quadrant background tints =====
+      var quadrantAngles = [
+        { startA: startAngle - angleStep * 0.5, endA: startAngle + angleStep * 0.5, color: 'rgba(239,68,68,0.03)' },    // Risk (top-left quadrant)
+        { startA: startAngle + angleStep * 0.5, endA: startAngle + angleStep * 2.5, color: 'rgba(96,165,250,0.03)' },    // Return (top-right)
+        { startA: startAngle + angleStep * 2.5, endA: startAngle + angleStep * 4.5, color: 'rgba(167,139,250,0.03)' },   // Control (bottom-right)
+        { startA: startAngle + angleStep * 4.5, endA: startAngle + angleStep * 6.5, color: 'rgba(74,222,128,0.03)' },    // Adequacy (bottom-left)
+      ];
+
+      // ===== 2. Draw concentric circular grid (5 rings, 0-10 scale → 0,2,4,6,8,10) =====
       for (let ring = 1; ring <= 5; ring++) {
         const r = maxR * (ring / 5);
         ctx.beginPath();
-        for (let i = 0; i <= n; i++) {
-          const angle = startAngle + i * angleStep;
-          const x = cx + r * Math.cos(angle);
-          const y = cy + r * Math.sin(angle);
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.closePath();
-        ctx.strokeStyle = ring === 5 ? 'rgba(46,196,182,0.2)' : 'rgba(46,196,182,0.08)';
-        ctx.lineWidth = ring === 5 ? 1.2 : 0.8;
+        ctx.strokeStyle = ring === 5 ? 'rgba(46,196,182,0.18)' : 'rgba(46,196,182,0.07)';
+        ctx.lineWidth = ring === 5 ? 1 : 0.6;
         ctx.stroke();
-
-        // 20/40/60/80/100 labels
-        if (ring % 2 === 0 || ring === 1) {
-          ctx.fillStyle = 'rgba(142,189,181,0.4)';
-          ctx.font = '9px Inter, sans-serif';
-          ctx.textAlign = 'left';
-          ctx.fillText((ring * 20).toString(), cx + 3, cy - r + 3);
-        }
       }
 
-      // Draw axis lines
+      // Scale labels along vertical axis (top side)
+      ctx.fillStyle = 'rgba(142,189,181,0.35)';
+      ctx.font = '8px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      for (let ring = 1; ring <= 5; ring++) {
+        const r = maxR * (ring / 5);
+        var scaleVal = ring * 2; // 2,4,6,8,10
+        ctx.fillText(scaleVal.toString(), cx + 3, cy - r + 1);
+      }
+
+      // ===== 3. Draw cross-hair dividers (vertical + horizontal through center) =====
+      ctx.strokeStyle = 'rgba(46,196,182,0.12)';
+      ctx.lineWidth = 0.8;
+      // Vertical
+      ctx.beginPath(); ctx.moveTo(cx, cy - maxR - 5); ctx.lineTo(cx, cy + maxR + 5); ctx.stroke();
+      // Horizontal
+      ctx.beginPath(); ctx.moveTo(cx - maxR - 5, cy); ctx.lineTo(cx + maxR + 5, cy); ctx.stroke();
+
+      // ===== 4. Draw axis spokes =====
       for (let i = 0; i < n; i++) {
-        const angle = startAngle + i * angleStep;
+        var angle = startAngle + i * angleStep;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx + maxR * Math.cos(angle), cy + maxR * Math.sin(angle));
-        ctx.strokeStyle = 'rgba(46,196,182,0.12)';
-        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = 'rgba(46,196,182,0.1)';
+        ctx.lineWidth = 0.6;
         ctx.stroke();
       }
 
-      // Draw data area (gradient fill)
-      ctx.beginPath();
-      for (let i = 0; i <= n; i++) {
-        const idx = i % n;
-        const angle = startAngle + idx * angleStep;
-        const val = (scores[idx] || 0) / 100;
-        const r = maxR * val;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
+      // ===== 5. Draw 4 separate quadrant data polygons =====
+      RADAR_QUADRANTS.forEach(function(quad) {
+        var indices = quad.displayIndices;
+        if (indices.length === 0) return;
 
-      // Gradient fill
-      const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
-      gradient.addColorStop(0, 'rgba(46,196,182,0.35)');
-      gradient.addColorStop(1, 'rgba(46,196,182,0.08)');
-      ctx.fillStyle = gradient;
-      ctx.fill();
+        ctx.beginPath();
+        // Start from center
+        ctx.moveTo(cx, cy);
+        // Line to first axis data point
+        var firstPt = getXY(indices[0], maxR * dispScores[indices[0]] / 100);
+        ctx.lineTo(firstPt.x, firstPt.y);
 
-      // Stroke
-      ctx.strokeStyle = 'rgba(46,196,182,0.8)';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+        // Connect through all axes in this quadrant
+        for (var k = 1; k < indices.length; k++) {
+          var pt = getXY(indices[k], maxR * dispScores[indices[k]] / 100);
+          ctx.lineTo(pt.x, pt.y);
+        }
 
-      // Draw data points
+        // Back to center
+        ctx.lineTo(cx, cy);
+        ctx.closePath();
+
+        // Fill
+        ctx.fillStyle = quad.fillColor;
+        ctx.fill();
+
+        // Stroke
+        ctx.strokeStyle = quad.strokeColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+
+      // ===== 6. Draw data points on each axis =====
       for (let i = 0; i < n; i++) {
-        const angle = startAngle + i * angleStep;
-        const val = (scores[i] || 0) / 100;
-        const r = maxR * val;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
+        var val = dispScores[i] / 100;
+        var pt = getXY(i, maxR * val);
+        var cat = DIM_TO_PRIMARY[dispDims[i].key];
+        var dotColor = cat ? cat.color : dispDims[i].color;
 
         // Outer circle
         ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
         ctx.fillStyle = '#0B1E1C';
         ctx.fill();
-        ctx.strokeStyle = dims[i].color;
-        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = dotColor;
+        ctx.lineWidth = 2;
         ctx.stroke();
 
         // Inner dot
         ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = dims[i].color;
+        ctx.arc(pt.x, pt.y, 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = dotColor;
         ctx.fill();
       }
 
-      // Draw dimension labels
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      const displayLabels = options.displayValues || null; // Actual display labels (e.g., "12.0%", "540days")
-      for (let i = 0; i < n; i++) {
-        const angle = startAngle + i * angleStep;
-        const labelR = maxR + 25;
-        const x = cx + labelR * Math.cos(angle);
-        const y = cy + labelR * Math.sin(angle);
-
-        // Show actual value (preferred) or score
-        ctx.font = 'bold 11px Inter, sans-serif';
-        ctx.fillStyle = dims[i].color;
-        const scoreY = angle < 0 ? y - 7 : (angle > Math.PI * 0.8 ? y - 7 : y + 7);
-        const labelText = displayLabels ? displayLabels[i] : scores[i].toString();
-        ctx.fillText(labelText, x, i === 0 ? y - 5 : scoreY);
-
-        // Label name
+      // ===== 7. Draw quadrant labels (回报/Return, 风险/Risk, etc.) =====
+      var quadLabelPositions = [
+        // Risk: top-left (3 axes spanning from top to left, so label goes left-center)
+        { x: cx - maxR * 0.78, y: cy - maxR * 0.55, align: 'right' },
+        // Return: top-right (2 axes)
+        { x: cx + maxR * 0.78, y: cy - maxR * 0.55, align: 'left' },
+        // Control: bottom-right (2 axes)
+        { x: cx + maxR * 0.78, y: cy + maxR * 0.58, align: 'left' },
+        // Adequacy: bottom-left (1 axis)
+        { x: cx - maxR * 0.78, y: cy + maxR * 0.58, align: 'right' }
+      ];
+      RADAR_QUADRANTS.forEach(function(quad, qi) {
+        var pos = quadLabelPositions[qi];
+        ctx.textAlign = pos.align;
+        ctx.textBaseline = 'middle';
+        // Primary label (Chinese)
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillStyle = quad.color;
+        var mainLabel = currentLang === 'zh' ? quad.labelZH : quad.labelEN;
+        ctx.fillText(mainLabel, pos.x, pos.y);
+        // Sub label (English/alternate)
         ctx.font = '9px Inter, sans-serif';
-        ctx.fillStyle = '#5A9A90';
-        const nameY = i === 0 ? y + 6 : (angle < 0 ? y + 4 : (angle > Math.PI * 0.8 ? y + 4 : y - 4));
-        // Adjust text alignment for left/right labels
-        const cosA = Math.cos(angle);
+        ctx.fillStyle = quad.color;
+        ctx.globalAlpha = 0.6;
+        var subLabel = currentLang === 'zh' ? quad.subEN : quad.subZH;
+        ctx.fillText(subLabel, pos.x, pos.y + 13);
+        ctx.globalAlpha = 1.0;
+      });
+
+      // ===== 8. Draw dimension labels (二级标签 + score values) =====
+      ctx.textBaseline = 'middle';
+      for (let i = 0; i < n; i++) {
+        var angle = startAngle + i * angleStep;
+        var labelR = maxR + 18;
+        var lx = cx + labelR * Math.cos(angle);
+        var ly = cy + labelR * Math.sin(angle);
+        var cat = DIM_TO_PRIMARY[dispDims[i].key];
+        var dimColor = cat ? cat.color : dispDims[i].color;
+
+        // Determine text alignment based on position
+        var cosA = Math.cos(angle);
+        var sinA = Math.sin(angle);
         if (cosA < -0.3) ctx.textAlign = 'right';
         else if (cosA > 0.3) ctx.textAlign = 'left';
         else ctx.textAlign = 'center';
-        ctx.fillText(getRadarSubLabel(i), x, nameY);
-        ctx.textAlign = 'center';
+
+        // Score value (number)
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillStyle = dimColor;
+        var scoreText = displayLabels ? displayLabels[i] : Math.round(dispScores[i] / 10).toString();
+        var scoreOffsetY = sinA < -0.3 ? -8 : (sinA > 0.3 ? 8 : 0);
+        ctx.fillText(scoreText, lx, ly + scoreOffsetY);
+
+        // Dimension name below/above the score
+        ctx.font = '9px Inter, sans-serif';
+        ctx.fillStyle = 'rgba(142,189,181,0.6)';
+        var nameOffsetY = sinA < -0.3 ? 4 : (sinA > 0.3 ? -4 : (i === 0 ? 10 : -8));
+        var dimLabel = getDimLabel(dispDims[i]);
+        ctx.fillText(dimLabel, lx, ly + nameOffsetY);
       }
+      ctx.textAlign = 'start';
     }
 
-    // Mini radar chart (for card preview)
+    // Mini radar chart (for card preview) — with quadrant coloring
     function drawMiniRadar(canvasId, scores) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
@@ -4113,42 +4202,47 @@ app.get('/', (c) => {
       ctx.scale(dpr, dpr);
 
       const cx = size / 2, cy = size / 2, maxR = 24;
-      const n = scores.length;
+      const n = RADAR_DISPLAY_ORDER.length;
       const angleStep = (Math.PI * 2) / n;
       const startAngle = -Math.PI / 2;
+      const dispScores = RADAR_DISPLAY_ORDER.map(function(origIdx) { return scores[origIdx] || 0; });
 
-      // Background grid
-      ctx.beginPath();
-      for (let i = 0; i <= n; i++) {
-        const angle = startAngle + (i % n) * angleStep;
-        const x = cx + maxR * Math.cos(angle);
-        const y = cy + maxR * Math.sin(angle);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      function miniXY(di, r) {
+        var a = startAngle + di * angleStep;
+        return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
       }
-      ctx.closePath();
-      ctx.strokeStyle = 'rgba(46,196,182,0.12)';
+
+      // Background circle
+      ctx.beginPath();
+      ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(46,196,182,0.1)';
       ctx.lineWidth = 0.5;
       ctx.stroke();
 
-      // Data
-      ctx.beginPath();
-      for (let i = 0; i <= n; i++) {
-        const idx = i % n;
-        const angle = startAngle + idx * angleStep;
-        const r = maxR * (scores[idx] / 100);
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
-      gradient.addColorStop(0, 'rgba(46,196,182,0.4)');
-      gradient.addColorStop(1, 'rgba(46,196,182,0.1)');
-      ctx.fillStyle = gradient;
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(46,196,182,0.7)';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+      // Cross-hair
+      ctx.strokeStyle = 'rgba(46,196,182,0.06)';
+      ctx.lineWidth = 0.4;
+      ctx.beginPath(); ctx.moveTo(cx, cy - maxR); ctx.lineTo(cx, cy + maxR); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx - maxR, cy); ctx.lineTo(cx + maxR, cy); ctx.stroke();
+
+      // 4 quadrant polygons
+      RADAR_QUADRANTS.forEach(function(quad) {
+        var indices = quad.displayIndices;
+        if (indices.length === 0) return;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        indices.forEach(function(di) {
+          var pt = miniXY(di, maxR * dispScores[di] / 100);
+          ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.lineTo(cx, cy);
+        ctx.closePath();
+        ctx.fillStyle = quad.fillColor;
+        ctx.fill();
+        ctx.strokeStyle = quad.strokeColor;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
     }
 
     // ==================== Dynamic Sieve Selector Rendering ====================
