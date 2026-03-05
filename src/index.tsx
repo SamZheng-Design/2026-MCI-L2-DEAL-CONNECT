@@ -1608,7 +1608,7 @@ app.get('/', (c) => {
                 <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
               </div>
               <div class="px-4 pb-4">
-                <div class="grid grid-cols-4 gap-2" id="abDimGrid"></div>
+                <div id="abDimGrid"></div>
               </div>
             </div>
 
@@ -4790,22 +4790,39 @@ app.get('/', (c) => {
             '<div class="flex items-center justify-center py-4 px-2">' +
               '<canvas id="radarCanvas" style="max-width:100%;"></canvas>' +
             '</div>' +
-            // Dimension indicator bars — show actual values
+            // Dimension indicator bars — grouped by PRIMARY_CATEGORIES
             '<div class="px-4 pb-4">' +
-              '<div class="grid grid-cols-4 gap-2">' +
-                (function() {
-                  var dealDisplayVals = calcDealDisplayValues(currentDeal);
-                  return RADAR_DIMENSIONS.map((dim, i) => {
-                    const s = radarScores[i];
-                    const g = getScoreGrade(s);
-                    return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
-                      '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
-                      '<p class="text-xs font-bold mt-1" style="color:' + dim.color + ';">' + dealDisplayVals[i] + '</p>' +
-                      '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + getRadarSubLabel(i) + '</p>' +
-                    '</div>';
-                  }).join('');
-                })() +
-              '</div>' +
+              (function() {
+                var dealDisplayVals = calcDealDisplayValues(currentDeal);
+                return PRIMARY_CATEGORIES.map(function(cat) {
+                  var catName = currentLang === 'zh' ? cat.zhName : cat.enName;
+                  var items = [];
+                  RADAR_DIMENSIONS.forEach(function(dim, i) {
+                    var belongCat = DIM_TO_PRIMARY[dim.key];
+                    if (belongCat && belongCat.id === cat.id) {
+                      items.push({ dim: dim, idx: i, score: radarScores[i] });
+                    }
+                  });
+                  if (items.length === 0) return '';
+                  var catAvg = Math.round(items.reduce(function(s, it) { return s + it.score; }, 0) / items.length);
+                  return '<div class="mb-3">' +
+                    '<div class="flex items-center gap-2 mb-1.5">' +
+                      '<i class="fas ' + cat.icon + '" style="color:' + cat.color + '; font-size:10px;"></i>' +
+                      '<span class="text-xs font-bold" style="color:' + cat.color + ';">' + catName + '</span>' +
+                      '<span class="text-xs font-mono font-bold" style="color:' + cat.color + '; margin-left:auto;">' + catAvg + '</span>' +
+                    '</div>' +
+                    '<div class="grid gap-2" style="grid-template-columns: repeat(' + items.length + ', 1fr);">' +
+                      items.map(function(it) {
+                        return '<div class="text-center p-2 rounded-xl" style="background:' + cat.color + '08; border: 1px solid ' + cat.color + '15;">' +
+                          '<i class="fas ' + it.dim.icon + '" style="color:' + cat.color + '; font-size:11px;"></i>' +
+                          '<p class="text-xs font-bold mt-1" style="color:' + cat.color + ';">' + dealDisplayVals[it.idx] + '</p>' +
+                          '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + getRadarSubLabel(it.idx) + '</p>' +
+                        '</div>';
+                      }).join('') +
+                    '</div>' +
+                  '</div>';
+                }).join('');
+              })() +
             '</div>' +
           '</div>' +
           // ===== Dimension details — 一级标签折叠展开 =====
@@ -5735,38 +5752,74 @@ app.get('/', (c) => {
         '</div>';
 
       // Right panel — V1 weighted radar + dimension analysis + concentration
+      // 组合维度详评: 按一级标签分组 → 二级维度卡片
       let dimensionDetails = '';
-      pv1.contractAxes.forEach(function(axis, i) {
-        var dim = RADAR_DIMENSIONS[i];
-        var effVal = axis.effective_value;
-        var dGrade = getScoreGrade(effVal);
-        var tailGap = axis.weighted_mean - axis.tail_metric;
-        var hasTailDrag = tailGap > 15;
-        var groupLabel = getDimGroup(dim);
-        var groupCls = getDimGroupCls(dim);
-        dimensionDetails += '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]">' +
-          '<div class="flex items-center gap-3">' +
-            '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + axis.color + '15;"><i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:13px;"></i></div>' +
-            '<div class="flex-1 min-w-0">' +
-              '<div class="flex items-center justify-between mb-1">' +
-                '<div class="flex items-center gap-1.5">' +
-                  '<span class="dim-group-tag ' + groupCls + '">' + groupLabel + '</span>' +
-                  '<span class="dim-tooltip-wrap"><span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span><i class="fas fa-info-circle" style="font-size:9px;color:#3D7A70;margin-left:2px;"></i><span class="dim-tooltip-text"><b style="color:' + axis.color + ';">' + getDimLabel(dim) + '</b><br>' + getDimDesc(dim) + '</span></span>' +
+      PRIMARY_CATEGORIES.forEach(function(cat) {
+        var catDims = [];
+        pv1.contractAxes.forEach(function(axis, i) {
+          var dim = RADAR_DIMENSIONS[i];
+          var belongCat = DIM_TO_PRIMARY[dim.key];
+          if (belongCat && belongCat.id === cat.id) {
+            catDims.push({ axis: axis, dim: dim, idx: i });
+          }
+        });
+        if (catDims.length === 0) return;
+        var catAvg = Math.round(catDims.reduce(function(s, it) { return s + it.axis.effective_value; }, 0) / catDims.length);
+        var catGrade = getScoreGrade(catAvg);
+        var catName = currentLang === 'zh' ? cat.zhName : cat.enName;
+
+        var innerHtml = '';
+        catDims.forEach(function(item) {
+          var axis = item.axis, dim = item.dim;
+          var effVal = axis.effective_value;
+          var dGrade = getScoreGrade(effVal);
+          var tailGap = axis.weighted_mean - axis.tail_metric;
+          var hasTailDrag = tailGap > 15;
+          innerHtml += '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]">' +
+            '<div class="flex items-center gap-3">' +
+              '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + axis.color + '15;"><i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:12px;"></i></div>' +
+              '<div class="flex-1 min-w-0">' +
+                '<div class="flex items-center justify-between mb-1">' +
+                  '<div class="flex items-center gap-1.5">' +
+                    '<span class="dim-tooltip-wrap"><span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span><i class="fas fa-info-circle" style="font-size:9px;color:#3D7A70;margin-left:2px;"></i><span class="dim-tooltip-text"><b style="color:' + axis.color + ';">' + getDimLabel(dim) + '</b><br>' + getDimDesc(dim) + '</span></span>' +
+                  '</div>' +
+                  '<div class="flex items-center gap-1.5">' +
+                    '<span class="text-xs text-[#3D7A70]" title="min~max">' + axis.min + '~' + axis.max + '</span>' +
+                    '<span class="text-xs text-[#5A9A90]" title="P10 tail">' + (currentLang === 'zh' ? 'P10:' : 'P10:') + axis.tail_metric + '</span>' +
+                    '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + effVal + '</span>' +
+                    '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">T' + v1TierFromScore(effVal) + '</span>' +
+                  '</div>' +
                 '</div>' +
-                '<div class="flex items-center gap-1.5">' +
-                  '<span class="text-xs text-[#3D7A70]" title="min~max">' + axis.min + '~' + axis.max + '</span>' +
-                  '<span class="text-xs text-[#5A9A90]" title="P10 tail">' + (currentLang === 'zh' ? 'P10:' : 'P10:') + axis.tail_metric + '</span>' +
-                  '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + effVal + '</span>' +
-                  '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">T' + v1TierFromScore(effVal) + '</span>' +
+                '<div class="relative h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden">' +
+                  '<div class="absolute h-full rounded-full opacity-40" style="width:' + axis.weighted_mean + '%; background:' + axis.color + ';"></div>' +
+                  '<div class="absolute h-full rounded-full" style="width:' + effVal + '%; background: linear-gradient(90deg, ' + axis.color + ', ' + axis.color + 'cc);"></div>' +
                 '</div>' +
+                (hasTailDrag ? '<p class="text-xs mt-1" style="color:#f59e0b;"><i class="fas fa-exclamation-circle mr-0.5" style="font-size:8px;"></i>' + (currentLang === 'zh' ? '\u5C3E\u90E8\u62D6\u7D2F: \u5747\u503C' + axis.weighted_mean + ' vs P10=' + axis.tail_metric : 'Tail drag: mean=' + axis.weighted_mean + ' vs P10=' + axis.tail_metric) + '</p>' : '') +
               '</div>' +
-              // 双层条: weighted_mean + effective_value
-              '<div class="relative h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden">' +
-                '<div class="absolute h-full rounded-full opacity-40" style="width:' + axis.weighted_mean + '%; background:' + axis.color + ';"></div>' +
-                '<div class="absolute h-full rounded-full" style="width:' + effVal + '%; background: linear-gradient(90deg, ' + axis.color + ', ' + axis.color + 'cc);"></div>' +
-              '</div>' +
-              (hasTailDrag ? '<p class="text-xs mt-1" style="color:#f59e0b;"><i class="fas fa-exclamation-circle mr-0.5" style="font-size:8px;"></i>' + (currentLang === 'zh' ? '\u5C3E\u90E8\u62D6\u7D2F: \u5747\u503C' + axis.weighted_mean + ' vs P10=' + axis.tail_metric : 'Tail drag: mean=' + axis.weighted_mean + ' vs P10=' + axis.tail_metric) + '</p>' : '') +
             '</div>' +
+          '</div>';
+        });
+
+        dimensionDetails += '<div class="primary-cat-card" style="background:' + cat.bgColor + '; border: 1px solid ' + cat.borderColor + ';">' +
+          '<div class="primary-cat-header" onclick="togglePrimaryCategory(this)">' +
+            '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:' + cat.color + '20;"><i class="fas ' + cat.icon + '" style="color:' + cat.color + '; font-size:16px;"></i></div>' +
+            '<div class="flex-1 min-w-0">' +
+              '<div class="flex items-center gap-2">' +
+                '<span class="text-sm font-bold" style="color:#E8F5F3;">' + catName + '</span>' +
+                '<span class="primary-cat-dims-count" style="background:' + cat.color + '20; color:' + cat.color + ';">' + catDims.length + '</span>' +
+              '</div>' +
+              '<div class="flex items-center gap-3 mt-1">' +
+                '<div class="flex-1 h-1.5 rounded-full overflow-hidden" style="background:' + cat.color + '15;"><div class="h-full rounded-full" style="width:' + catAvg + '%; background:' + cat.color + ';"></div></div>' +
+                '<span class="text-xs font-bold" style="color:' + cat.color + ';">' + catAvg + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="text-xs px-2 py-0.5 rounded-md font-bold" style="background:' + catGrade.bg + '; color:' + catGrade.color + ';">' + catGrade.grade + '</span>' +
+              '<i class="fas fa-chevron-down primary-cat-arrow" style="color:' + cat.color + '; font-size:12px;"></i>' +
+            '</div>' +
+          '</div>' +
+          '<div class="primary-cat-body">' +
+            '<div class="space-y-2">' + innerHtml + '</div>' +
           '</div>' +
         '</div>';
       });
@@ -5828,16 +5881,37 @@ app.get('/', (c) => {
               '<canvas id="pdRadarCanvas" style="max-width:100%;"></canvas>' +
             '</div>' +
             '<div class="px-4 pb-4">' +
-              '<div class="grid grid-cols-4 gap-2">' +
-                pv1.contractAxes.map(function(axis, i) {
-                  var g = getScoreGrade(axis.effective_value);
-                  return '<div class="text-center p-2 rounded-xl" style="background:' + axis.color + '08; border: 1px solid ' + axis.color + '15;">' +
-                    '<i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:11px;"></i>' +
-                    '<p class="text-xs font-bold mt-1" style="color:' + axis.color + ';">' + axis.effective_value + (currentLang === 'zh' ? '\u5206' : 'pt') + '</p>' +
-                    '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + getRadarSubLabel(i) + '</p>' +
+              (function() {
+                return PRIMARY_CATEGORIES.map(function(cat) {
+                  var catName = currentLang === 'zh' ? cat.zhName : cat.enName;
+                  var items = [];
+                  pv1.contractAxes.forEach(function(axis, i) {
+                    var dim = RADAR_DIMENSIONS[i];
+                    var belongCat = DIM_TO_PRIMARY[dim.key];
+                    if (belongCat && belongCat.id === cat.id) {
+                      items.push({ axis: axis, dim: dim, idx: i });
+                    }
+                  });
+                  if (items.length === 0) return '';
+                  var catAvg = Math.round(items.reduce(function(s, it) { return s + it.axis.effective_value; }, 0) / items.length);
+                  return '<div class="mb-3">' +
+                    '<div class="flex items-center gap-2 mb-1.5">' +
+                      '<i class="fas ' + cat.icon + '" style="color:' + cat.color + '; font-size:10px;"></i>' +
+                      '<span class="text-xs font-bold" style="color:' + cat.color + ';">' + catName + '</span>' +
+                      '<span class="text-xs font-mono font-bold" style="color:' + cat.color + '; margin-left:auto;">' + catAvg + '</span>' +
+                    '</div>' +
+                    '<div class="grid gap-2" style="grid-template-columns: repeat(' + items.length + ', 1fr);">' +
+                      items.map(function(it) {
+                        return '<div class="text-center p-2 rounded-xl" style="background:' + cat.color + '08; border: 1px solid ' + cat.color + '15;">' +
+                          '<i class="fas ' + it.dim.icon + '" style="color:' + cat.color + '; font-size:11px;"></i>' +
+                          '<p class="text-xs font-bold mt-1" style="color:' + cat.color + ';">' + it.axis.effective_value + (currentLang === 'zh' ? '\u5206' : 'pt') + '</p>' +
+                          '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + getRadarSubLabel(it.idx) + '</p>' +
+                        '</div>';
+                      }).join('') +
+                    '</div>' +
                   '</div>';
-                }).join('') +
-              '</div>' +
+                }).join('');
+              })() +
             '</div>' +
           '</div>' +
           // Concentration axes (2 new)
@@ -5845,10 +5919,10 @@ app.get('/', (c) => {
             '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-crosshairs mr-1.5 text-[#7c3aed]"></i>' + (currentLang === 'zh' ? '\u96C6\u4E2D\u5EA6\u8BC4\u4F30' : 'Concentration Assessment') + '</h3>' +
             '<div class="space-y-2">' + concCards + '</div>' +
           '</div>' +
-          // 8-dim weighted details
+          // 4-category weighted details
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
-            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-list-ul mr-1.5 text-[#8B5CF6]"></i>' + (currentLang === 'zh' ? '8\u7EF4\u52A0\u6743\u660E\u7EC6 (eff/mean/P10)' : '8-Dim Weighted Detail (eff/mean/P10)') + '</h3>' +
-            '<div class="space-y-2">' + dimensionDetails + '</div>' +
+            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-layer-group mr-1.5 text-[#8B5CF6]"></i>' + (currentLang === 'zh' ? '4\u7EF4\u52A0\u6743\u660E\u7EC6 (eff/mean/P10)' : '4-Dim Weighted Detail (eff/mean/P10)') + '</h3>' +
+            '<div class="space-y-3">' + dimensionDetails + '</div>' +
           '</div>' +
           // Contract distribution
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
@@ -7107,18 +7181,35 @@ app.get('/', (c) => {
       // Radar chart
       setTimeout(() => { drawRadarChart('abRadarCanvas', scores, { size: 300, displayValues: calcPortfolioDisplayValues(p) }); }, 100);
 
-      // Dimension grid — show actual values, not scores, for instant investor comprehension
+      // Dimension grid — grouped by PRIMARY_CATEGORIES
       const displayVals = calcPortfolioDisplayValues(p);
-      document.getElementById('abDimGrid').innerHTML = RADAR_DIMENSIONS.map((dim, i) => {
-        const s = scores[i]; const g = getScoreGrade(s);
-        var groupLabel = getDimGroup(dim);
-        var groupCls = getDimGroupCls(dim);
-        return '<div class="text-center p-2 rounded-xl dim-tooltip-wrap" style="background:' + dim.color + '10; border: 1px solid ' + dim.color + '22; cursor:help;">' +
-          '<span class="dim-group-tag ' + groupCls + '" style="margin-bottom:2px;">' + groupLabel + '</span>' +
-          '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
-          '<p class="text-xs font-bold mt-1" style="color:' + dim.color + ';">' + displayVals[i] + '</p>' +
-          '<p class="text-xs truncate" style="font-size:9px; color: rgba(255,255,255,0.35);">' + getRadarSubLabel(i) + '</p>' +
-          '<span class="dim-tooltip-text" style="bottom:auto;top:calc(100% + 8px);"><b style="color:' + dim.color + ';">' + getDimLabel(dim) + '</b><br>' + getDimDesc(dim) + '</span>' +
+      document.getElementById('abDimGrid').innerHTML = PRIMARY_CATEGORIES.map(function(cat) {
+        var catName = currentLang === 'zh' ? cat.zhName : cat.enName;
+        var items = [];
+        RADAR_DIMENSIONS.forEach(function(dim, i) {
+          var belongCat = DIM_TO_PRIMARY[dim.key];
+          if (belongCat && belongCat.id === cat.id) {
+            items.push({ dim: dim, idx: i, score: scores[i] });
+          }
+        });
+        if (items.length === 0) return '';
+        var catAvg = Math.round(items.reduce(function(s, it) { return s + it.score; }, 0) / items.length);
+        return '<div class="mb-3">' +
+          '<div class="flex items-center gap-2 mb-1.5">' +
+            '<i class="fas ' + cat.icon + '" style="color:' + cat.color + '; font-size:10px;"></i>' +
+            '<span class="text-xs font-bold" style="color:' + cat.color + ';">' + catName + '</span>' +
+            '<span class="text-xs font-mono font-bold" style="color:' + cat.color + '; margin-left:auto;">' + catAvg + '</span>' +
+          '</div>' +
+          '<div class="grid gap-2" style="grid-template-columns: repeat(' + items.length + ', 1fr);">' +
+            items.map(function(it) {
+              return '<div class="text-center p-2 rounded-xl dim-tooltip-wrap" style="background:' + cat.color + '10; border: 1px solid ' + cat.color + '22; cursor:help;">' +
+                '<i class="fas ' + it.dim.icon + '" style="color:' + cat.color + '; font-size:11px;"></i>' +
+                '<p class="text-xs font-bold mt-1" style="color:' + cat.color + ';">' + displayVals[it.idx] + '</p>' +
+                '<p class="text-xs truncate" style="font-size:9px; color: rgba(255,255,255,0.35);">' + getRadarSubLabel(it.idx) + '</p>' +
+                '<span class="dim-tooltip-text" style="bottom:auto;top:calc(100% + 8px);"><b style="color:' + cat.color + ';">' + getDimLabel(it.dim) + '</b><br>' + getDimDesc(it.dim) + '</span>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
         '</div>';
       }).join('');
 
