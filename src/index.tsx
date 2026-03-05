@@ -3902,10 +3902,25 @@ app.get('/', (c) => {
       if (descs) return currentLang === 'zh' ? descs.zh : descs.en;
       return '';
     }
-    function getDimFormula(dim) {
+    function getDimFormula(dim, displayVal) {
       var f = V1_DIM_FORMULAS[dim.key];
-      if (f) return currentLang === 'zh' ? f.zh : f.en;
-      return '';
+      if (!f) return '';
+      var formulaHtml = currentLang === 'zh' ? f.zh : f.en;
+      // Prepend display value + dim name as header
+      var cat = DIM_TO_PRIMARY[dim.key];
+      var catColor = cat ? cat.color : '#5A9A90';
+      var catName = cat ? (currentLang === 'zh' ? cat.zhName : cat.enName) : '';
+      var dimName = getDimLabel(dim);
+      var header = '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(46,196,182,0.15);">';
+      if (displayVal) {
+        header += '<span style="font-size:14px;font-weight:900;color:' + catColor + ';font-family:\'SF Mono\',\'Fira Code\',monospace;">' + displayVal + '</span>';
+      }
+      header += '<span style="font-size:11px;font-weight:700;color:#B0D5CF;">' + dimName + '</span>';
+      if (catName) {
+        header += '<span style="margin-left:auto;font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700;background:' + catColor.replace(')', ',0.12)').replace('rgb', 'rgba') + ';color:' + catColor + ';">' + catName + '</span>';
+      }
+      header += '</div>';
+      return header + formulaHtml;
     }
     // 获取维度分组标签（风险/收益/管控）
     function getDimGroup(dim) {
@@ -4323,13 +4338,14 @@ app.get('/', (c) => {
           var oLx = cx + oLabelR * oCosA;
           var oLy = cy + oLabelR * oSinA;
           var oDim = dispDims[oi];
-          var oFormula = getDimFormula(oDim);
+          var oDispVal = displayLabels ? displayLabels[oi] : null;
+          var oFormula = getDimFormula(oDim, oDispVal);
           if (!oFormula || !parent) continue;
 
           var oDiv = document.createElement('div');
           oDiv.className = 'radar-label-overlay';
-          // Size of the hover zone
-          var zoneW = 90, zoneH = 28;
+          // Enlarged hover zone for better UX
+          var zoneW = 120, zoneH = 36;
           // Position relative to canvas
           var canvasRect = canvasEl.getBoundingClientRect();
           var parentRect = parent.getBoundingClientRect();
@@ -4348,7 +4364,12 @@ app.get('/', (c) => {
           oDiv.style.cssText = 'position:absolute;z-index:50;cursor:help;' +
             'left:' + (centerX - zoneW / 2) + 'px;' +
             'top:' + (centerY + midY - zoneH / 2) + 'px;' +
-            'width:' + zoneW + 'px;height:' + zoneH + 'px;';
+            'width:' + zoneW + 'px;height:' + zoneH + 'px;' +
+            'border-radius:6px;transition:background 0.15s;';
+
+          // Add hover highlight effect via inline event
+          oDiv.addEventListener('mouseenter', function() { this.style.background = 'rgba(46,196,182,0.06)'; });
+          oDiv.addEventListener('mouseleave', function() { this.style.background = 'transparent'; });
 
           // Tooltip element
           var oTip = document.createElement('div');
@@ -5010,7 +5031,7 @@ app.get('/', (c) => {
               '<div class="flex-1 min-w-0">' +
                 '<div class="flex items-center justify-between mb-1">' +
                   '<div class="flex items-center gap-1.5">' +
-                    '<span class="dim-tooltip-wrap"><span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span><i class="fas fa-info-circle" style="font-size:9px;color:#3D7A70;margin-left:2px;"></i><span class="dim-tooltip-text"><b style="color:' + axis.color + ';">' + getDimLabel(dim) + '</b><br>' + getDimDesc(dim) + '</span></span>' +
+                    '<span class="dim-tooltip-wrap"><span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span><i class="fas fa-info-circle" style="font-size:9px;color:#3D7A70;margin-left:2px;"></i><span class="dim-tooltip-text">' + getDimFormula(dim, dealDisplayVals ? dealDisplayVals[i] : null) + '</span></span>' +
                     '<span class="flex items-center">' + tierStars + '</span>' +
                   '</div>' +
                   '<div class="flex items-center gap-2">' +
