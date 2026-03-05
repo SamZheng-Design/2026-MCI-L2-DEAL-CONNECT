@@ -604,8 +604,9 @@ app.get('/', (c) => {
     /* Group tag pill */
     .dim-group-tag { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.04em; }
     .dim-group-risk { background: rgba(239,68,68,0.1); color: #f87171; }
-    .dim-group-return { background: rgba(245,158,11,0.1); color: #fbbf24; }
+    .dim-group-return { background: rgba(96,165,250,0.1); color: #60a5fa; }
     .dim-group-control { background: rgba(139,92,246,0.1); color: #a78bfa; }
+    .dim-group-adequacy { background: rgba(74,222,128,0.1); color: #4ade80; }
     .skeleton-line { height: 12px; background: linear-gradient(90deg, rgba(46,196,182,0.06) 0%, rgba(46,196,182,0.12) 50%, rgba(46,196,182,0.06) 100%); background-size: 200% 100%; border-radius: 6px; animation: shimmer 1.5s infinite; margin-bottom: 8px; }
     .skeleton-line.w-60 { width: 60%; }
     .skeleton-line.w-80 { width: 80%; }
@@ -1589,7 +1590,7 @@ app.get('/', (c) => {
             <div class="rounded-2xl overflow-hidden bg-[#0F2E2B]" style="border: 1px solid rgba(46,196,182,0.1); box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
               <div class="p-4 flex items-center justify-between" style="border-bottom: 1px solid rgba(46,196,182,0.08);">
                 <span class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-chart-pie mr-1.5 text-[#2EC4B6]"></i><span data-i18n="abRadarTitle">Portfolio Radar Assessment</span></span>
-                <span class="text-xs text-[#3D7A70]" data-i18n="abRadar8Dim">8-Dimension Scoring</span>
+                <span class="text-xs text-[#3D7A70]" data-i18n="abRadar8Dim">4 Dimensions · 8 Indicators</span>
               </div>
               <div class="flex items-center justify-center py-4 px-2">
                 <canvas id="abRadarCanvas" style="max-width:100%;"></canvas>
@@ -1713,7 +1714,7 @@ app.get('/', (c) => {
         dealSubscribe: '认购', dealViewDetail: '查看详情',
         // Detail
         detailBack: '返回看板', detailProjectInfo: '项目信息', detailContractInfo: '合约核心信息',
-        detailRadarTitle: '多维雷达评估', detailRadar8Dim: '风险·收益·管控 3维·8指标',
+        detailRadarTitle: '多维雷达评估', detailRadar8Dim: '回报·风险·管控·收益 4维·8指标',
         detailOverallScore: '综合评分', detailDimDetail: '维度详评',
         detailSieveOverview: '筛子匹配概览', detailSieveResults: '各筛子检验结果',
         detailIncomeTitle: '收入预测', detailTimeline: '项目流程时间线',
@@ -1753,7 +1754,7 @@ app.get('/', (c) => {
         abWaitTitle: '等待 AI 构建您的专属组合',
         abWaitDesc: '在左侧与 AI 对话后，您的专属投资组合将在此呈现',
         abPortfolioTitle: 'AI 推荐组合', abPortfolioGrade: '综合评级',
-        abRadarTitle: '组合雷达评估', abRadar8Dim: '风险·收益·管控 3维·8指标',
+        abRadarTitle: '组合雷达评估', abRadar8Dim: '回报·风险·管控·收益 4维·8指标',
         abIndustryTitle: '行业配比', abContractListTitle: '推荐合约清单',
         abApply: '一键认购全部', abRefine: '继续调整',
         abOneClickPurchase: '确认认购全部合约', abPurchaseHint: '左侧继续对话可实时调整组合',
@@ -1896,9 +1897,12 @@ app.get('/', (c) => {
         abBudgetQ: '您计划投入多少资金？（每张合约 ¥1,000）',
         abIndDining: '餐饮美食', abIndTech: '科技创新', abIndHealth: '医疗健康', abIndRetail: '零售消费', abIndEdu: '教育培训', abIndEnter: '演艺娱乐',
         abIndAll: '不限行业，全面配置',
-        // Radar Dims (简单名词)
-        dimRiskRating: '风险总评级', dimHealthIndex: '合约健康度', dimAnnualROI: '年化回报率', dimReturnAdequacy: '收益够不够',
-        dimUnitReturn: '单位收益', dimLeverage: 'Leverage评分', dimLabour: 'Labour评分', dimLand: 'Land评分',
+        // Radar Dims (二级标签名称)
+        dimReturnIntensity: '回报强度', dimReturnQuality: '回报质量', dimVolatilityControl: '波动可控性',
+        dimCashFlowReliability: '现金流可靠性', dimLifecycleVisibility: '生命周期可见性',
+        dimLeverageControl: 'Leverage管控力', dimAutoReport: '自动报数和打款', dimProfitMargin: '生意的利润率',
+        // 一级标签
+        catReturn: '回报', catRisk: '风险', catControl: '管控够不够', catAdequacy: '收益够不够',
         // Industries
         indDining: '餐饮', indRetail: '零售', indTech: '科技', indEducation: '教育', indHealth: '医疗', indEntertainment: '娱乐',
         // Portfolio Categories
@@ -1976,7 +1980,7 @@ app.get('/', (c) => {
         detProjectTotal: '项目总额', detShareRatio: '分成比例', detSharePeriod: '分成期限', detAIScoreLabel: 'AI评分',
         detBizData: '经营数据（发起通提供）', detAvgRevenue: '月均营收', detNoData: '暂无',
         detEmployeeCount: '员工人数', detOpYears: '运营年限', detRiskGrade: '风控评级', detMaturityDate: '到期日',
-        detRadarTitle: '合约多维评估', detRadar8Dim: '风险·收益·管控 3维8指标 · 综合评级',
+        detRadarTitle: '合约多维评估', detRadar8Dim: '回报·风险·管控·收益 4维8指标 · 综合评级',
         detDimDetail: '维度详解', detExpandAll: '全部展开', detScoringBasis: '评分依据',
         detAbovePct: '优于{pct}%同类合约', detAroundMedian: '处于中位数附近', detBelowPct: '低于{pct}%同类合约',
         detCurrentSieveMatch: '当前筛子匹配度',
@@ -2006,20 +2010,20 @@ app.get('/', (c) => {
         // Grade labels
         gradeExcellent: '卓越', gradeGood: '优秀', gradeAboveAvg: '良好', gradeAverage: '一般', gradeBelowAvg: '偏低', gradeRisky: '风险',
         gradeLevelSuffix: '水平',
-        // Radar dims (dynamic)
-        rdRiskRating: '风险总评级', rdHealthIndex: '合约健康度', rdAnnualROI: '年化回报率', rdReturnAdequacy: '收益够不够',
-        rdUnitReturn: '单位收益', rdLeverage: 'Leverage评分', rdLabour: 'Labour评分', rdLand: 'Land评分',
-        rdRiskRatingDesc: '综合风控等级（评级制）：含信用风险、运营风险、市场风险，EL=PD×LGD',
-        rdHealthIndexDesc: '合约健康度 = 合约时长 / 行业平均寿命，反映存续期是否合理匹配行业特征',
-        rdAnnualROIDesc: '年化投资回报率（Annual ROI），基于收益分成比例折算',
-        rdReturnAdequacyDesc: '收益够不够 = 合约回报 / 行业平均回报，>1表示优于行业水平；含DSCR安全垫',
-        rdUnitReturnDesc: '单位收益 = ROI / CAPEX，每一元投入产生多少回报；回本越快分越高',
-        rdLeverageDesc: 'Leverage评分：融资规模 / 月营收比值评级，杠杆越低越健康',
-        rdLabourDesc: 'Labour评分：团队规模 × 运营年限综合评级，反映人力治理成熟度',
-        rdLandDesc: 'Land评分：城市等级 × 行业地产敏感度评级，含分账/审计/执行预案',
+        // Radar dims (dynamic) — 二级标签
+        rdRiskRating: '波动可控性', rdHealthIndex: '生命周期可见性', rdAnnualROI: '回报强度', rdReturnAdequacy: '生意的利润率',
+        rdUnitReturn: '回报质量', rdLeverage: '现金流可靠性', rdLabour: 'Leverage管控力', rdLand: '自动报数和打款',
+        rdRiskRatingDesc: '波动可控性：综合风控等级评估（评级制），含信用风险、运营风险、市场风险；EL=PD×LGD',
+        rdHealthIndexDesc: '生命周期可见性：合约时长 / 行业平均寿命，反映合约存续期是否合理匹配行业特征',
+        rdAnnualROIDesc: '回报强度：年化投资回报率（Annual ROI），基于收益分成比例折算',
+        rdReturnAdequacyDesc: '生意的利润率：合约回报 / 行业平均回报，>1表示优于行业水平；含DSCR安全垫',
+        rdUnitReturnDesc: '回报质量：单位收益 = ROI / CAPEX，每一元投入产生多少回报；回本越快分越高',
+        rdLeverageDesc: '现金流可靠性：融资规模 / 月营收比值评级，杠杆越低越健康',
+        rdLabourDesc: 'Leverage管控力：团队规模 × 运营年限综合评级，反映人力治理成熟度',
+        rdLandDesc: '自动报数和打款：分账自动化/数据审计/权限管控/执行预案评级',
         // Radar sub-labels
-        rslRiskRating: '风险评级', rslHealthIndex: '健康度', rslAnnualROI: '年化回报', rslReturnAdequacy: '够不够',
-        rslUnitReturn: '单位收益', rslLeverage: 'Leverage', rslLabour: 'Labour', rslLand: 'Land',
+        rslRiskRating: '波动可控', rslHealthIndex: '生命周期', rslAnnualROI: '回报强度', rslReturnAdequacy: '利润率',
+        rslUnitReturn: '回报质量', rslLeverage: '现金流', rslLabour: 'Leverage', rslLand: '自动报数',
         // My Contracts dynamic
         mcSubtitle: '已认购 {count} 张 · 总投入 ¥{total}',
         mcStatHolding: '持有合约', mcStatUnit: '', mcStatInvest: '总投入', mcStatInvestNote: '面值合计',
@@ -2034,7 +2038,7 @@ app.get('/', (c) => {
         mpRiskLow: '低风险', mpRiskMedHigh: '中高风险', mpRiskHigh: '高风险', mpRiskMedium: '中等风险',
         // Portfolio Detail dynamic
         pdSubtitle: '{contracts} 张合约 · 覆盖 {projects} 个项目',
-        pdRadar8Dim: '风险·收益·管控 3维·8指标',
+        pdRadar8Dim: '回报·风险·管控·收益 4维·8指标',
         pdOverallScore: '综合评分',
         pdWeightedRadar: '组合加权雷达图',
         pdContractList: '组合内合约',
@@ -2140,7 +2144,7 @@ app.get('/', (c) => {
         dealSubscribe: 'Subscribe', dealViewDetail: 'View Details',
         // Detail
         detailBack: 'Back to Dashboard', detailProjectInfo: 'Project Information', detailContractInfo: 'Contract Key Metrics',
-        detailRadarTitle: 'Multi-Dimension Radar Analysis', detailRadar8Dim: 'Risk·Return·Control · 8 Indicators',
+        detailRadarTitle: 'Multi-Dimension Radar Analysis', detailRadar8Dim: 'Return·Risk·Control·Adequacy · 4 Dimensions 8 Indicators',
         detailOverallScore: 'Overall Score', detailDimDetail: 'Dimension Breakdown',
         detailSieveOverview: 'Sieve Match Overview', detailSieveResults: 'Individual Sieve Results',
         detailIncomeTitle: 'Income Projection', detailTimeline: 'Project Timeline',
@@ -2180,7 +2184,7 @@ app.get('/', (c) => {
         abWaitTitle: 'Awaiting AI Portfolio Construction',
         abWaitDesc: 'Converse with AI on the left, and your personalized portfolio will appear here',
         abPortfolioTitle: 'AI Recommended Portfolio', abPortfolioGrade: 'Overall Rating',
-        abRadarTitle: 'Portfolio Radar Analysis', abRadar8Dim: 'Risk·Return·Control · 8 Indicators',
+        abRadarTitle: 'Portfolio Radar Analysis', abRadar8Dim: 'Return·Risk·Control·Adequacy · 4 Dimensions 8 Indicators',
         abIndustryTitle: 'Sector Allocation', abContractListTitle: 'Recommended Contracts',
         abApply: 'Subscribe All Contracts', abRefine: 'Continue Refining',
         abOneClickPurchase: 'Confirm & Subscribe All', abPurchaseHint: 'Keep chatting on the left to adjust portfolio in real-time',
@@ -2323,9 +2327,12 @@ app.get('/', (c) => {
         abBudgetQ: 'How much are you planning to invest? (¥1,000 per contract)',
         abIndDining: 'F&B / Dining', abIndTech: 'Tech / Innovation', abIndHealth: 'Healthcare', abIndRetail: 'Retail / Consumer', abIndEdu: 'Education', abIndEnter: 'Entertainment',
         abIndAll: 'All sectors, diversified',
-        // Radar Dims (investor-friendly names)
-        dimRiskRating: 'Risk Rating', dimHealthIndex: 'Contract Health', dimAnnualROI: 'Annual Return', dimReturnAdequacy: 'Return Adequacy',
-        dimUnitReturn: 'Unit Return', dimLeverage: 'Leverage Score', dimLabour: 'Labour Score', dimLand: 'Land Score',
+        // Radar Dims (二级标签 en)
+        dimReturnIntensity: 'Return Intensity', dimReturnQuality: 'Return Quality', dimVolatilityControl: 'Volatility Control',
+        dimCashFlowReliability: 'Cash Flow Reliability', dimLifecycleVisibility: 'Lifecycle Visibility',
+        dimLeverageControl: 'Leverage Control', dimAutoReport: 'Auto-Report & Payment', dimProfitMargin: 'Business Profit Margin',
+        // Primary categories
+        catReturn: 'Return', catRisk: 'Risk', catControl: 'Control', catAdequacy: 'Adequacy',
         // Industries
         indDining: 'F&B', indRetail: 'Retail', indTech: 'Technology', indEducation: 'Education', indHealth: 'Healthcare', indEntertainment: 'Entertainment',
         // Portfolio Categories
@@ -2403,7 +2410,7 @@ app.get('/', (c) => {
         detProjectTotal: 'Total Raise', detShareRatio: 'Revenue Share', detSharePeriod: 'Contract Term', detAIScoreLabel: 'AI Score',
         detBizData: 'Business Metrics (from Originate)', detAvgRevenue: 'Avg Monthly Revenue', detNoData: 'N/A',
         detEmployeeCount: 'Headcount', detOpYears: 'Yrs in Operation', detRiskGrade: 'Risk Rating', detMaturityDate: 'Maturity Date',
-        detRadarTitle: 'Multi-Dimension Assessment', detRadar8Dim: 'Risk·Return·Governance · 8 Indicators',
+        detRadarTitle: 'Multi-Dimension Assessment', detRadar8Dim: 'Return·Risk·Control·Adequacy · 4 Dimensions 8 Indicators',
         detDimDetail: 'Dimension Breakdown', detExpandAll: 'Expand All', detScoringBasis: 'Scoring Basis',
         detAbovePct: 'Outperforms {pct}% of peers', detAroundMedian: 'Near median range', detBelowPct: 'Below {pct}% of peers',
         detCurrentSieveMatch: 'Current Sieve Match',
@@ -2433,20 +2440,20 @@ app.get('/', (c) => {
         // Grade labels
         gradeExcellent: 'Exceptional', gradeGood: 'Excellent', gradeAboveAvg: 'Above Avg', gradeAverage: 'Average', gradeBelowAvg: 'Below Avg', gradeRisky: 'At Risk',
         gradeLevelSuffix: ' level',
-        // Radar dims (dynamic)
-        rdRiskRating: 'Risk Rating', rdHealthIndex: 'Contract Health', rdAnnualROI: 'Annual Return', rdReturnAdequacy: 'Return Adequacy',
-        rdUnitReturn: 'Unit Return', rdLeverage: 'Leverage Score', rdLabour: 'Labour Score', rdLand: 'Land Score',
-        rdRiskRatingDesc: 'Risk grade (rating-based): credit, operational & market risks; EL=PD×LGD',
-        rdHealthIndexDesc: 'Contract Health = Duration / Industry Avg Lifespan, reflects term-industry fit',
-        rdAnnualROIDesc: 'Annualized ROI derived from revenue share ratio',
-        rdReturnAdequacyDesc: 'Return Adequacy = Contract Return / Industry Avg Return, >1 = above avg; incl. DSCR cushion',
-        rdUnitReturnDesc: 'Unit Return = ROI / CAPEX, return per capital unit; faster payback = higher score',
-        rdLeverageDesc: 'Leverage Score: financing scale / monthly revenue ratio; lower leverage = healthier; incl. CF volatility',
-        rdLabourDesc: 'Labour Score: team size × operational years composite; reflects HR governance maturity',
-        rdLandDesc: 'Land Score: city tier × industry RE sensitivity; incl. split-payment, audit, enforcement playbook',
+        // Radar dims (dynamic) — 二级标签 en
+        rdRiskRating: 'Volatility Control', rdHealthIndex: 'Lifecycle Visibility', rdAnnualROI: 'Return Intensity', rdReturnAdequacy: 'Business Profit Margin',
+        rdUnitReturn: 'Return Quality', rdLeverage: 'Cash Flow Reliability', rdLabour: 'Leverage Control', rdLand: 'Auto-Report & Payment',
+        rdRiskRatingDesc: 'Volatility Control: Risk grade assessment incl. credit, operational & market risks; EL=PD×LGD',
+        rdHealthIndexDesc: 'Lifecycle Visibility: Contract Duration / Industry Avg Lifespan, reflects term-industry fit',
+        rdAnnualROIDesc: 'Return Intensity: Annualized ROI derived from revenue share ratio',
+        rdReturnAdequacyDesc: 'Business Profit Margin: Contract Return / Industry Avg Return, >1 = above avg; incl. DSCR cushion',
+        rdUnitReturnDesc: 'Return Quality: Unit Return = ROI / CAPEX, return per capital unit; faster payback = higher score',
+        rdLeverageDesc: 'Cash Flow Reliability: financing scale / monthly revenue ratio; lower leverage = healthier; incl. CF volatility',
+        rdLabourDesc: 'Leverage Control: team size × operational years composite; reflects governance maturity',
+        rdLandDesc: 'Auto-Report & Payment: split-payment automation, data audit, permission control, enforcement playbook',
         // Radar sub-labels
-        rslRiskRating: 'Risk', rslHealthIndex: 'Health', rslAnnualROI: 'Return', rslReturnAdequacy: 'Adequacy',
-        rslUnitReturn: 'Unit Ret.', rslLeverage: 'Leverage', rslLabour: 'Labour', rslLand: 'Land',
+        rslRiskRating: 'Volatility', rslHealthIndex: 'Lifecycle', rslAnnualROI: 'Intensity', rslReturnAdequacy: 'Profit',
+        rslUnitReturn: 'Quality', rslLeverage: 'Cash Flow', rslLabour: 'Leverage', rslLand: 'Auto-Report',
         // My Contracts dynamic
         mcSubtitle: '{count} contracts held · Total investment ¥{total}',
         mcStatHolding: 'Holdings', mcStatUnit: 'contracts', mcStatInvest: 'Total Invested', mcStatInvestNote: 'Aggregate face value',
@@ -2461,7 +2468,7 @@ app.get('/', (c) => {
         mpRiskLow: 'Low Risk', mpRiskMedHigh: 'Med-High Risk', mpRiskHigh: 'High Risk', mpRiskMedium: 'Moderate Risk',
         // Portfolio Detail dynamic
         pdSubtitle: '{contracts} contracts · {projects} projects',
-        pdRadar8Dim: 'Risk·Return·Control · 8 Indicators',
+        pdRadar8Dim: 'Return·Risk·Control·Adequacy · 4 Dimensions 8 Indicators',
         pdOverallScore: 'Overall Score',
         pdWeightedRadar: 'Portfolio Weighted Radar',
         pdContractList: 'Portfolio Contracts',
@@ -3759,39 +3766,55 @@ app.get('/', (c) => {
       return { key: a.id, labelKey: 'rdV1_' + a.id, icon: a.icon, color: a.color, descKey: 'rdV1Desc_' + a.id, group: a.group, nameCN: a.nameCN, nameEN: a.nameEN };
     });
 
-    // V1 维度名称映射 (中/英双语) — 简单名词版本 (投资人友好)
+    // ╔══════════════════════════════════════════════════════════════════════════╗
+    // ║  一级标签 (Primary Categories) — 资产端评估雷达图 4象限                    ║
+    // ║  回报(Return) · 风险(Risk) · 管控够不够 · 收益够不够                       ║
+    // ╚══════════════════════════════════════════════════════════════════════════╝
+    var PRIMARY_CATEGORIES = [
+      { id: 'return',    zhName: '回报',     enName: 'Return',    icon: 'fa-chart-line',    color: '#60a5fa', bgColor: 'rgba(96,165,250,0.08)',  borderColor: 'rgba(96,165,250,0.2)',  dimKeys: ['return_level', 'payback_speed'] },
+      { id: 'risk',      zhName: '风险',     enName: 'Risk',      icon: 'fa-shield-alt',    color: '#f87171', bgColor: 'rgba(239,68,68,0.08)',   borderColor: 'rgba(239,68,68,0.2)',   dimKeys: ['default_loss', 'volatility', 'lifecycle_tenor_fit'] },
+      { id: 'control',   zhName: '管控够不够', enName: 'Control',   icon: 'fa-sliders-h',     color: '#a78bfa', bgColor: 'rgba(139,92,246,0.08)',  borderColor: 'rgba(139,92,246,0.2)',  dimKeys: ['frequency_continuity', 'control_enforceability'] },
+      { id: 'adequacy',  zhName: '收益够不够', enName: 'Adequacy',  icon: 'fa-balance-scale',  color: '#4ade80', bgColor: 'rgba(74,222,128,0.08)',  borderColor: 'rgba(74,222,128,0.2)',  dimKeys: ['coverage_cushion'] }
+    ];
+    // 快速查找: dimKey → 所属一级标签
+    var DIM_TO_PRIMARY = {};
+    PRIMARY_CATEGORIES.forEach(function(cat) {
+      cat.dimKeys.forEach(function(k) { DIM_TO_PRIMARY[k] = cat; });
+    });
+
+    // V1 维度名称映射 (中/英双语) — 按雷达图二级标签命名
     // 鼠标hover显示专业逻辑（V1_DIM_DESCS）
     var V1_DIM_LABELS = {
-      return_level:           { zh: '年化回报率',       en: 'Annual Return' },
-      payback_speed:          { zh: '单位收益',         en: 'Unit Return' },
-      frequency_continuity:   { zh: 'Labour评分',       en: 'Labour Score' },
-      volatility:             { zh: 'Leverage评分',     en: 'Leverage Score' },
-      coverage_cushion:       { zh: '收益够不够',       en: 'Return Adequacy' },
-      default_loss:           { zh: '风险总评级',       en: 'Risk Rating' },
-      lifecycle_tenor_fit:    { zh: '合约健康度',       en: 'Contract Health' },
-      control_enforceability: { zh: 'Land评分',         en: 'Land Score' }
+      return_level:           { zh: '回报强度',         en: 'Return Intensity' },
+      payback_speed:          { zh: '回报质量',         en: 'Return Quality' },
+      frequency_continuity:   { zh: 'Leverage管控力',   en: 'Leverage Control' },
+      volatility:             { zh: '现金流可靠性',     en: 'Cash Flow Reliability' },
+      coverage_cushion:       { zh: '生意的利润率',     en: 'Business Profit Margin' },
+      default_loss:           { zh: '波动可控性',       en: 'Volatility Control' },
+      lifecycle_tenor_fit:    { zh: '生命周期可见性',   en: 'Lifecycle Visibility' },
+      control_enforceability: { zh: '自动报数和打款',   en: 'Auto-Report & Payment' }
     };
-    // 分组标签
+    // 分组标签 — 4个一级标签
     var V1_DIM_GROUPS = {
-      return_level:           { zh: '收益', en: 'Return' },
-      payback_speed:          { zh: '收益', en: 'Return' },
-      frequency_continuity:   { zh: '管控', en: 'Control' },
-      volatility:             { zh: '管控', en: 'Control' },
-      coverage_cushion:       { zh: '收益', en: 'Return' },
+      return_level:           { zh: '回报', en: 'Return' },
+      payback_speed:          { zh: '回报', en: 'Return' },
+      frequency_continuity:   { zh: '管控够不够', en: 'Control' },
+      volatility:             { zh: '风险', en: 'Risk' },
+      coverage_cushion:       { zh: '收益够不够', en: 'Adequacy' },
       default_loss:           { zh: '风险', en: 'Risk' },
       lifecycle_tenor_fit:    { zh: '风险', en: 'Risk' },
-      control_enforceability: { zh: '管控', en: 'Control' }
+      control_enforceability: { zh: '管控够不够', en: 'Control' }
     };
     // 专业tooltip描述 — hover时显示
     var V1_DIM_DESCS = {
-      return_level:           { zh: '计算口径：年化投资回报率（Annual ROI），基于收益分成比例折算；含IRR/MOIC等回报指标', en: 'Annual ROI derived from revenue share ratio; includes IRR/MOIC metrics, scored by sector thresholds' },
-      payback_speed:          { zh: '计算口径：单位收益 = ROI / CAPEX，衡量每一元投入产生的回报效率；回本天数越短，单位收益越高', en: 'Unit Return = ROI / CAPEX, measures return efficiency per capital unit; shorter payback = higher unit return' },
-      frequency_continuity:   { zh: '计算口径：团队规模 × 运营年限综合评级，反映人力治理成熟度与组织稳定性', en: 'Team size × operational years composite rating, reflects HR governance maturity and organizational stability' },
-      volatility:             { zh: '计算口径：融资规模 / 月营收比值评级，杠杆越低越健康；含现金流波动系数CV', en: 'Financing scale / monthly revenue ratio rating, lower leverage = healthier; includes cash flow CV' },
-      coverage_cushion:       { zh: '计算口径：收益够不够 = 合约回报 / 行业平均回报，>1表示优于行业平均；含DSCR偿债覆盖倍数', en: 'Return Adequacy = Contract Return / Industry Avg Return, >1 means above average; includes DSCR coverage' },
-      default_loss:           { zh: '计算口径：综合风控等级评估（评级制），含信用风险、运营风险、市场风险；EL=PD×LGD', en: 'Comprehensive risk grade assessment including credit, operational, market risks; EL=PD×LGD' },
-      lifecycle_tenor_fit:    { zh: '计算口径：合约健康度 = 合约时长 / 行业平均寿命，反映合约存续期是否合理匹配行业特征', en: 'Contract Health = Contract Duration / Industry Avg Lifespan, reflects whether contract term matches industry norms' },
-      control_enforceability: { zh: '计算口径：项目所在城市等级 × 行业地产敏感度综合评级，含分账自动化/数据审计/执行预案', en: 'City tier × industry real estate sensitivity rating; includes split-payment automation, data audit, enforcement playbook' }
+      return_level:           { zh: '回报强度：年化投资回报率（Annual ROI），基于收益分成比例折算；含IRR/MOIC等回报指标', en: 'Return Intensity: Annual ROI derived from revenue share ratio; includes IRR/MOIC metrics' },
+      payback_speed:          { zh: '回报质量：单位收益 = ROI / CAPEX，衡量每一元投入产生的回报效率；回本天数越短，质量越高', en: 'Return Quality: Unit Return = ROI / CAPEX, return efficiency per capital unit; shorter payback = higher quality' },
+      frequency_continuity:   { zh: 'Leverage管控力：团队规模 × 运营年限综合评级，反映人力治理成熟度与杠杆管控能力', en: 'Leverage Control: Team size × operational years composite rating, reflects governance maturity and leverage management' },
+      volatility:             { zh: '现金流可靠性：融资规模 / 月营收比值评级，杠杆越低越健康；含现金流波动系数CV', en: 'Cash Flow Reliability: Financing scale / monthly revenue ratio; lower leverage = healthier; includes CF volatility CV' },
+      coverage_cushion:       { zh: '生意的利润率：合约回报 / 行业平均回报，>1表示优于行业平均；含DSCR偿债覆盖倍数', en: 'Business Profit Margin: Contract Return / Industry Avg Return, >1 = above average; includes DSCR coverage' },
+      default_loss:           { zh: '波动可控性：综合风控等级评估（评级制），含信用风险、运营风险、市场风险；EL=PD×LGD', en: 'Volatility Control: Risk grade assessment incl. credit, operational, market risks; EL=PD×LGD' },
+      lifecycle_tenor_fit:    { zh: '生命周期可见性：合约时长 / 行业平均寿命，反映合约存续期是否合理匹配行业特征', en: 'Lifecycle Visibility: Contract Duration / Industry Avg Lifespan, reflects term-industry fit' },
+      control_enforceability: { zh: '自动报数和打款：分账自动化/数据审计/权限管控/执行预案综合评级', en: 'Auto-Report & Payment: Split-payment automation, data audit, permission control, enforcement playbook' }
     };
 
     // 兼容旧代码的 getDimLabel / getDimDesc / getDimGroup
@@ -3813,13 +3836,19 @@ app.get('/', (c) => {
     }
     // 分组颜色
     function getDimGroupColor(dim) {
-      var g = V1_DIM_GROUPS[dim.key];
-      if (!g) return '#5A9A90';
-      var zh = g.zh;
-      if (zh === '风险') return '#ef4444';
-      if (zh === '收益') return '#f59e0b';
-      if (zh === '管控') return '#8b5cf6';
+      var cat = DIM_TO_PRIMARY[dim.key];
+      if (cat) return cat.color;
       return '#5A9A90';
+    }
+    // 获取维度对应的一级标签CSS class
+    function getDimGroupCls(dim) {
+      var cat = DIM_TO_PRIMARY[dim.key];
+      if (!cat) return '';
+      if (cat.id === 'risk') return 'dim-group-risk';
+      if (cat.id === 'return') return 'dim-group-return';
+      if (cat.id === 'control') return 'dim-group-control';
+      if (cat.id === 'adequacy') return 'dim-group-adequacy';
+      return '';
     }
 
     // 保留行业参考常量(用于其他地方)
@@ -4651,7 +4680,7 @@ app.get('/', (c) => {
         // 分组标签（风险/收益/管控）
         var groupLabel = getDimGroup(dim);
         var groupColor = getDimGroupColor(dim);
-        var groupCls = V1_DIM_GROUPS[dim.key] ? (V1_DIM_GROUPS[dim.key].zh === '风险' ? 'dim-group-risk' : V1_DIM_GROUPS[dim.key].zh === '收益' ? 'dim-group-return' : 'dim-group-control') : '';
+        var groupCls = getDimGroupCls(dim);
         // missing 字段提示
         var missingHtml = '';
         if (axis.missing && axis.missing.length > 0) {
@@ -4707,7 +4736,7 @@ app.get('/', (c) => {
             '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(46,196,182,0.04), rgba(6,182,212,0.03)); border-bottom: 1px solid rgba(46,196,182,0.08);">' +
               '<div class="flex items-center gap-3">' +
                 '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4); box-shadow: 0 4px 12px rgba(46,196,182,0.3);"><i class="fas fa-fingerprint text-white text-sm" style="font-size:16px;"></i></div>' +
-                '<div><h3 class="text-sm font-bold text-[#E8F5F3]">' + (currentLang === 'zh' ? '\u98CE\u9669\u00B7\u6536\u76CA\u00B7\u7BA1\u63A7 \u8BC4\u4F30\u56FE\u8C31' : 'Risk\u00B7Return\u00B7Control Radar') + '</h3><p class="text-xs text-[#3D7A70]">' + (currentLang === 'zh' ? '3\u5927\u7EF4\u5EA68\u6307\u6807 \u00B7 \u53EF\u4FE1\u5EA6' + overallConfidence + '%' : '3 Dimensions 8 Indicators \u00B7 Conf. ' + overallConfidence + '%') + '</p></div>' +
+                '<div><h3 class="text-sm font-bold text-[#E8F5F3]">' + (currentLang === 'zh' ? '\u56DE\u62A5\u00B7\u98CE\u9669\u00B7\u7BA1\u63A7\u00B7\u6536\u76CA \u8BC4\u4F30\u56FE\u8C31' : 'Return\u00B7Risk\u00B7Control\u00B7Adequacy Radar') + '</h3><p class="text-xs text-[#3D7A70]">' + (currentLang === 'zh' ? '4\u5927\u7EF4\u5EA68\u6307\u6807 \u00B7 \u53EF\u4FE1\u5EA6' + overallConfidence + '%' : '4 Dimensions 8 Indicators \u00B7 Conf. ' + overallConfidence + '%') + '</p></div>' +
               '</div>' +
               '<div class="flex items-center gap-3">' +
                 '<div class="text-right">' +
@@ -5655,7 +5684,7 @@ app.get('/', (c) => {
         var tailGap = axis.weighted_mean - axis.tail_metric;
         var hasTailDrag = tailGap > 15;
         var groupLabel = getDimGroup(dim);
-        var groupCls = V1_DIM_GROUPS[dim.key] ? (V1_DIM_GROUPS[dim.key].zh === '风险' ? 'dim-group-risk' : V1_DIM_GROUPS[dim.key].zh === '收益' ? 'dim-group-return' : 'dim-group-control') : '';
+        var groupCls = getDimGroupCls(dim);
         dimensionDetails += '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]">' +
           '<div class="flex items-center gap-3">' +
             '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + axis.color + '15;"><i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:13px;"></i></div>' +
@@ -7024,7 +7053,7 @@ app.get('/', (c) => {
       document.getElementById('abDimGrid').innerHTML = RADAR_DIMENSIONS.map((dim, i) => {
         const s = scores[i]; const g = getScoreGrade(s);
         var groupLabel = getDimGroup(dim);
-        var groupCls = V1_DIM_GROUPS[dim.key] ? (V1_DIM_GROUPS[dim.key].zh === '风险' ? 'dim-group-risk' : V1_DIM_GROUPS[dim.key].zh === '收益' ? 'dim-group-return' : 'dim-group-control') : '';
+        var groupCls = getDimGroupCls(dim);
         return '<div class="text-center p-2 rounded-xl dim-tooltip-wrap" style="background:' + dim.color + '10; border: 1px solid ' + dim.color + '22; cursor:help;">' +
           '<span class="dim-group-tag ' + groupCls + '" style="margin-bottom:2px;">' + groupLabel + '</span>' +
           '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
