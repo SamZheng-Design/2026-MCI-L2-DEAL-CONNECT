@@ -131,12 +131,73 @@
 └── README.md
 ```
 
+## RADAR V1 — 统一评估图谱引擎 (v1_20260305)
+
+### 架构概览
+全站统一的「雷达图谱/指纹」评分语言，替代原有 8 维松散评分体系。
+
+**核心约束**: 越靠外越好 · 全站统一来源 · 缺失字段显式标红 · 纯前端本地阈值表
+
+### 10 维度定义
+| # | 维度 ID | 中文名 | 方向 | 权重 | 组 |
+|---|---------|--------|------|------|-----|
+| 1 | return_level | 回报水平 | higherBetter | 20% | return |
+| 2 | payback_speed | 回本速度 | lowerBetter ↻ | 10% | return |
+| 3 | frequency_continuity | 频率连续性 | higherBetter | 10% | cashflow |
+| 4 | volatility | 现金流波动 | lowerBetter ↻ | 10% | cashflow |
+| 5 | coverage_cushion | 安全垫(DSCR) | higherBetter | 15% | risk |
+| 6 | default_loss | 违约损失(EL) | lowerBetter ↻ | 15% | risk |
+| 7 | lifecycle_tenor_fit | 期限匹配 | higherBetter | 10% | structure |
+| 8 | control_enforceability | 管控执行 | higherBetter | 10% | structure |
+| 9 | single_name_concentration | 单项目集中度 | lowerBetter ↻ | 5% | portfolio |
+| 10 | sector_concentration | 行业集中度 | lowerBetter ↻ | 5% | portfolio |
+
+> ↻ = 反向映射（原始值越小 → 雷达分越高）
+
+### 旧 → 新维度映射
+| 旧维度 | 新维度 | 映射方式 |
+|--------|--------|----------|
+| riskRating | return_level | 语义重构：用 revenueShare/IRR |
+| healthIndex | payback_speed | 口径变更：365/yield% 估算 |
+| annualROI | frequency_continuity | **新增**：缺失数据默认 0.85 |
+| returnAdequacy | volatility | **新增**：缺失数据默认 CV=0.35 |
+| unitReturn | coverage_cushion | 口径变更：DSCR 估算 |
+| leverage | default_loss | 语义变更：EL=PD×LGD |
+| labour | lifecycle_tenor_fit | 口径变更：tenor coverage |
+| land | control_enforceability | **新增**：4项管控枚举 |
+| — | single_name_concentration | **新增(组合专用)** |
+| — | sector_concentration | **新增(组合专用)** |
+
+### 引擎组件
+| 文件位置 | 功能 |
+|----------|------|
+| §1 radarSchema_v1 | V1_AXIS_DEFS (10 轴定义 + rawExtract + explanationTemplate) |
+| §2 scoringEngine | v1Clamp, v1ScoreByThreshold, v1TierFromScore, v1ConfidenceFromEvidence |
+| §3 calcContractRadarV1(deal, ctx) | 单张合约 8 维评分 → axes[], radarPoints, overallScore, confidence |
+| §4 calcPortfolioRadarV1(deals[], ctx) | 组合 10 维 → weighted_mean, tail_metric, effective_value, warnings |
+| §5 旧接口兼容层 | calcRadarScores → V1 代理；calcOverallScore → V1 代理 |
+
+### 赛道阈值表
+覆盖 10 个行业 (F&B, Retail, Technology, Healthcare, Education, Entertainment, Finance, Logistics, Agriculture, Real Estate) + 全局兜底。
+
+### 验收测试 (41/41 ✅)
+- TC1-4: 方向性验证 (higherBetter + 4 个 lowerBetter 维度)
+- TC5: Tier 分档一致性 (1-5)
+- TC6: 边界 clamp (score 2~98)
+- TC7: 集中度维度方向性
+- TC8: 全 10 维单调性
+- TC9: 性能 (1000 次 10 维评分 < 500ms → 实测 17ms)
+- TC10: 权重合计 (合约 1.0 / 全部 1.1)
+- TC11: 缺失数据 confidence 降低
+- TC12: 低可信度折扣
+
 ## Version History
 - **SAM-V1**: 初版看板
 - **SAM-V2**: 筛子驱动看板 + 我的合约/组合完整版
 - **SAM-V2 + AI V1**: 本地NLP关键词匹配的AI组合构建器
 - **SAM-V2 + AI V2**: 接入GPT-5-mini API，真正的自然语言理解
-- **SAM-V2 + AI V3 (Current)**: 多模式对话(followup/analyze/adjust/explain) + 智能追问 + 组合解说 + 上下文感知
+- **SAM-V2 + AI V3**: 多模式对话(followup/analyze/adjust/explain) + 智能追问 + 组合解说 + 上下文感知
+- **SAM-V2 + RADAR V1 (Current)**: 统一 8+2 维雷达图谱引擎，全站统一评估语言，赛道阈值表，缺失数据标红+降可信，组合集中度惩罚
 
 ## Local Development
 

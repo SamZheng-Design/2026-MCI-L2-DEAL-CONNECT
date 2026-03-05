@@ -2567,27 +2567,32 @@ app.get('/', (c) => {
         }
       },
       risk: {
-        name: 'Risk-First Sieve', icon: 'fa-shield-alt', color: '#10b981', category: 'Risk Mgmt',
-        desc: 'Strict risk controls: AI Score>=8.5, Raise<=8M, clear exit mechanisms',
+        name: 'V1 Risk-First Sieve', icon: 'fa-shield-alt', color: '#10b981', category: 'Risk Mgmt',
+        desc: 'V1\u56FE\u8C31\u7B5B\u9009: \u5B89\u5168\u57AB\u2265T4 \u4E14 \u8FDD\u7EA6\u635F\u5931\u2265T4 \u4E14 \u6CE2\u52A8\u6027\u2265T3',
         filter: function(deals) {
-          return deals.map(d => {
-            const score = parseFloat(d.aiScore);
-            const amt = d.projectTotalAmount || 0;
-            const pass = score >= 8.5 && amt <= 800;
-            return { ...d, matchScore: pass ? 80 + Math.floor(Math.random() * 20) : 20 + Math.floor(Math.random() * 25), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
-          }).filter(d => d.sieveResult === 'pass');
+          return deals.map(function(d) {
+            var r = calcContractRadarV1(d);
+            var cushion = r.axes[4]; // coverage_cushion
+            var defLoss = r.axes[5]; // default_loss
+            var vol = r.axes[3]; // volatility
+            var pass = cushion.tier >= 4 && defLoss.tier >= 4 && vol.tier >= 3;
+            var matchScore = pass ? Math.round((cushion.score + defLoss.score + vol.score) / 3) : Math.round((cushion.score + defLoss.score + vol.score) / 3 * 0.5);
+            return Object.assign({}, d, { matchScore: matchScore, sieveResult: pass ? 'pass' : 'fail', sieveName: 'V1 Risk-First' });
+          }).filter(function(d) { return d.sieveResult === 'pass'; });
         }
       },
       'return': {
-        name: 'High Return Sieve', icon: 'fa-chart-line', color: '#f59e0b', category: 'Return',
-        desc: 'Target high-return: Rev Share>=12%, AI Score>=8.0',
+        name: 'V1 High Return Sieve', icon: 'fa-chart-line', color: '#f59e0b', category: 'Return',
+        desc: 'V1\u56FE\u8C31\u7B5B\u9009: \u56DE\u62A5\u6C34\u5E73\u2265T4 \u4E14 \u56DE\u672C\u901F\u5EA6\u2265T3',
         filter: function(deals) {
-          return deals.map(d => {
-            const share = parseInt(d.revenueShare);
-            const score = parseFloat(d.aiScore);
-            const pass = share >= 12 && score >= 8.0;
-            return { ...d, matchScore: pass ? 82 + Math.floor(Math.random() * 18) : 25 + Math.floor(Math.random() * 20), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
-          }).filter(d => d.sieveResult === 'pass');
+          return deals.map(function(d) {
+            var r = calcContractRadarV1(d);
+            var ret = r.axes[0]; // return_level
+            var pb = r.axes[1]; // payback_speed
+            var pass = ret.tier >= 4 && pb.tier >= 3;
+            var matchScore = pass ? Math.round((ret.score * 0.6 + pb.score * 0.4)) : Math.round((ret.score * 0.6 + pb.score * 0.4) * 0.5);
+            return Object.assign({}, d, { matchScore: matchScore, sieveResult: pass ? 'pass' : 'fail', sieveName: 'V1 High Return' });
+          }).filter(function(d) { return d.sieveResult === 'pass'; });
         }
       },
       location: {
@@ -2602,16 +2607,15 @@ app.get('/', (c) => {
         }
       },
       composite: {
-        name: 'Composite Assessment Sieve', icon: 'fa-layer-group', color: '#06b6d4', category: 'Composite',
-        desc: 'Multi-factor assessment: AI score, sector outlook, risk rating, return potential',
+        name: 'V1 Composite Sieve', icon: 'fa-layer-group', color: '#06b6d4', category: 'Composite',
+        desc: 'V1\u56FE\u8C31\u7EFC\u5408\u7B5B: overallScore\u226570 \u4E14 \u65E0\u4EFB\u4F55\u8F74\u4F4ETier1',
         filter: function(deals) {
-          return deals.map(d => {
-            const score = parseFloat(d.aiScore);
-            const share = parseInt(d.revenueShare);
-            const composite = (score / 10) * 40 + (share / 20) * 30 + (Math.random() * 30);
-            const pass = composite >= 55;
-            return { ...d, matchScore: Math.min(99, Math.floor(composite)), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
-          }).filter(d => d.sieveResult === 'pass');
+          return deals.map(function(d) {
+            var r = calcContractRadarV1(d);
+            var noTier1 = r.axes.every(function(a) { return a.tier >= 2; });
+            var pass = r.overallScore >= 70 && noTier1;
+            return Object.assign({}, d, { matchScore: r.overallScore, sieveResult: pass ? 'pass' : 'fail', sieveName: 'V1 Composite' });
+          }).filter(function(d) { return d.sieveResult === 'pass'; });
         }
       },
       // ---- Extended sieves from library ----
@@ -2651,27 +2655,31 @@ app.get('/', (c) => {
         }
       },
       quickReturn: {
-        name: 'Short-Cycle Sieve', icon: 'fa-bolt', color: '#eab308', category: 'Cycle',
-        desc: 'Focus on short-duration <=24 months contracts',
+        name: 'V1 Quick Payback Sieve', icon: 'fa-bolt', color: '#eab308', category: 'Cycle',
+        desc: 'V1\u56FE\u8C31\u7B5B: \u56DE\u672C\u901F\u5EA6\u2265T4 \u4E14 \u671F\u9650\u5339\u914D\u2265T3',
         filter: function(deals) {
-          return deals.map(d => {
-            const months = parseInt(d.period);
-            const pass = months <= 24;
-            return { ...d, matchScore: pass ? 80 + Math.floor(Math.random() * 20) : 20 + Math.floor(Math.random() * 22), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
-          }).filter(d => d.sieveResult === 'pass');
+          return deals.map(function(d) {
+            var r = calcContractRadarV1(d);
+            var pb = r.axes[1]; // payback_speed
+            var tenor = r.axes[6]; // lifecycle_tenor_fit
+            var pass = pb.tier >= 4 && tenor.tier >= 3;
+            var matchScore = pass ? Math.round((pb.score * 0.6 + tenor.score * 0.4)) : Math.round((pb.score * 0.6 + tenor.score * 0.4) * 0.5);
+            return Object.assign({}, d, { matchScore: matchScore, sieveResult: pass ? 'pass' : 'fail', sieveName: 'V1 Quick Payback' });
+          }).filter(function(d) { return d.sieveResult === 'pass'; });
         }
       },
       safeHaven: {
-        name: 'Ultra-Conservative Sieve', icon: 'fa-umbrella', color: '#64748b', category: 'Risk Mgmt',
-        desc: 'Ultra-conservative: Grade A+, AI Score>=9.0, Raise<=5M',
+        name: 'V1 Ultra-Safe Sieve', icon: 'fa-umbrella', color: '#64748b', category: 'Risk Mgmt',
+        desc: 'V1\u56FE\u8C31\u7B5B: \u51688\u7EF4\u2265T3 \u4E14 \u98CE\u9669\u8F74(4,5,6)\u5747\u2265T4',
         filter: function(deals) {
-          return deals.map(d => {
-            const score = parseFloat(d.aiScore);
-            const amt = d.projectTotalAmount || 0;
-            const grade = d.riskGrade || '';
-            const pass = score >= 9.0 && amt <= 500 && (grade.startsWith('A'));
-            return { ...d, matchScore: pass ? 88 + Math.floor(Math.random() * 12) : 8 + Math.floor(Math.random() * 20), sieveResult: pass ? 'pass' : 'fail', sieveName: this.name };
-          }).filter(d => d.sieveResult === 'pass');
+          return deals.map(function(d) {
+            var r = calcContractRadarV1(d);
+            var allT3 = r.axes.every(function(a) { return a.tier >= 3; });
+            var riskAxes = [r.axes[3], r.axes[4], r.axes[5]]; // vol, cushion, default
+            var riskT4 = riskAxes.every(function(a) { return a.tier >= 4; });
+            var pass = allT3 && riskT4;
+            return Object.assign({}, d, { matchScore: r.overallScore, sieveResult: pass ? 'pass' : 'fail', sieveName: 'V1 Ultra-Safe' });
+          }).filter(function(d) { return d.sieveResult === 'pass'; });
         }
       }
     };
@@ -4561,10 +4569,12 @@ app.get('/', (c) => {
       const hasMatch = currentDeal.matchScore !== null && currentDeal.matchScore !== undefined;
       const matchColor = hasMatch ? (currentDeal.matchScore >= 80 ? '#10b981' : currentDeal.matchScore >= 60 ? '#f59e0b' : '#ef4444') : '#3D7A70';
 
-      // Calculate radar scores
-      const radarScores = calcRadarScores(currentDeal);
-      const overallScore = calcOverallScore(radarScores);
+      // Calculate radar scores — V1 统一引擎
+      const v1Result = calcContractRadarV1(currentDeal);
+      const radarScores = v1Result.axes.map(function(a) { return a.score; });
+      const overallScore = v1Result.overallScore;
       const gradeInfo = getScoreGrade(overallScore);
+      const overallConfidence = v1Result.overallConfidence;
 
       // Generate assessment results for each sieve
       let sieveResults = '';
@@ -4587,46 +4597,70 @@ app.get('/', (c) => {
         sieveResults = '<div class="text-center py-4"><p class="text-sm text-[#3D7A70]">' + t('detNoSieve') + '</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-[#06B6D4] mt-1 hover:underline">' + t('detGoManageSieve') + '</button></div>';
       }
 
-      // Dimension detail list HTML
+      // Dimension detail list HTML — V1 图谱维度卡片
       let dimensionDetails = '';
-      RADAR_DIMENSIONS.forEach((dim, i) => {
-        const score = radarScores[i];
-        const dGrade = getScoreGrade(score);
-        const barWidth = score;
+      v1Result.axes.forEach(function(axis, i) {
+        var dim = RADAR_DIMENSIONS[i];
+        var score = axis.score;
+        var dGrade = getScoreGrade(score);
+        var barWidth = score;
+        var tierStars = '';
+        for (var t_ = 0; t_ < 5; t_++) { tierStars += '<i class="fas fa-star" style="font-size:8px; color:' + (t_ < axis.tier ? axis.color : 'rgba(46,196,182,0.15)') + '; margin-right:1px;"></i>'; }
+        // confidence 色条
+        var confColor = axis.confidence >= 70 ? '#10b981' : axis.confidence >= 40 ? '#f59e0b' : '#ef4444';
+        var confLabel = axis.confidence >= 70 ? (currentLang === 'zh' ? '高可信' : 'High') : axis.confidence >= 40 ? (currentLang === 'zh' ? '中可信' : 'Med') : (currentLang === 'zh' ? '低可信' : 'Low');
+        // missing 字段提示
+        var missingHtml = '';
+        if (axis.missing && axis.missing.length > 0) {
+          missingHtml = '<div class="flex flex-wrap gap-1 mt-1.5">' +
+            axis.missing.slice(0, 4).map(function(f) { return '<span class="px-1.5 py-0.5 rounded text-xs" style="background:rgba(239,68,68,0.08); color:#f87171; font-size:9px; border:1px solid rgba(239,68,68,0.15);"><i class="fas fa-exclamation-circle mr-0.5" style="font-size:7px;"></i>' + f + '</span>'; }).join('') +
+            (axis.missing.length > 4 ? '<span class="text-xs text-[#3D7A70]">+' + (axis.missing.length - 4) + '</span>' : '') +
+          '</div>';
+        }
         dimensionDetails += '<div class="radar-dim-item p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-[rgba(46,196,182,0.12)] transition-all cursor-pointer" onclick="toggleDimDetail(this)">' +
           '<div class="flex items-center gap-3">' +
-            '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + dim.color + '15;"><i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:13px;"></i></div>' +
+            '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + axis.color + '15;"><i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:13px;"></i></div>' +
             '<div class="flex-1 min-w-0">' +
               '<div class="flex items-center justify-between mb-1">' +
-                '<span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span>' +
+                '<div class="flex items-center gap-1.5"><span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span><span class="flex items-center">' + tierStars + '</span></div>' +
                 '<div class="flex items-center gap-2">' +
+                  '<span class="text-xs font-mono" style="color:' + confColor + ';">' + confLabel + '</span>' +
                   '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + score + '</span>' +
-                  '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">' + dGrade.grade + '</span>' +
+                  '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">T' + axis.tier + '</span>' +
                 '</div>' +
               '</div>' +
-              '<div class="h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden"><div class="h-full rounded-full transition-all" style="width:' + barWidth + '%; background: linear-gradient(90deg, ' + dim.color + ', ' + dim.color + 'cc);"></div></div>' +
+              '<div class="h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden"><div class="h-full rounded-full transition-all" style="width:' + barWidth + '%; background: linear-gradient(90deg, ' + axis.color + ', ' + axis.color + 'cc);"></div></div>' +
             '</div>' +
             '<i class="fas fa-chevron-down text-[#2A5E58] text-xs flex-shrink-0 dim-arrow transition-transform"></i>' +
           '</div>' +
           '<div class="dim-detail hidden mt-3 pt-3 border-t border-[rgba(46,196,182,0.08)]">' +
-            '<p class="text-xs text-[#5A9A90] leading-relaxed mb-2"><i class="fas fa-info-circle mr-1" style="color:' + dim.color + ';"></i>' + getDimDesc(dim) + '</p>' +
-            '<div class="flex items-center justify-between">' +
-              '<span class="text-xs text-[#3D7A70]">' + t('detScoringBasis') + '</span>' +
-              '<span class="text-xs font-medium" style="color:' + dGrade.color + ';">' + dGrade.label + t('gradeLevelSuffix') + ' · ' + (score >= 75 ? t('detAbovePct', {pct: 85 + Math.floor(Math.random()*10)}) : score >= 55 ? t('detAroundMedian') : t('detBelowPct', {pct: 55 + Math.floor(Math.random()*15)})) + '</span>' +
+            // explanation (可审计文案)
+            '<p class="text-xs text-[#8EBDB5] leading-relaxed mb-2"><i class="fas fa-calculator mr-1" style="color:' + axis.color + ';"></i>' + axis.explanation + '</p>' +
+            // 维度描述
+            '<p class="text-xs text-[#5A9A90] leading-relaxed mb-2"><i class="fas fa-info-circle mr-1" style="color:' + axis.color + ';"></i>' + getDimDesc(dim) + '</p>' +
+            // confidence 条
+            '<div class="flex items-center gap-2 mb-1.5">' +
+              '<span class="text-xs text-[#3D7A70]">' + (currentLang === 'zh' ? '可信度' : 'Confidence') + '</span>' +
+              '<div class="flex-1 h-1.5 rounded-full bg-[rgba(46,196,182,0.08)] overflow-hidden"><div class="h-full rounded-full" style="width:' + axis.confidence + '%; background:' + confColor + ';"></div></div>' +
+              '<span class="text-xs font-mono font-bold" style="color:' + confColor + ';">' + axis.confidence + '%</span>' +
             '</div>' +
+            // 缺失字段
+            (axis.missing && axis.missing.length > 0 ? '<div class="flex items-start gap-1.5"><span class="text-xs text-[#ef4444] flex-shrink-0"><i class="fas fa-exclamation-triangle" style="font-size:9px;"></i></span><div class="text-xs text-[#f87171]">' + (currentLang === 'zh' ? '缺失字段: ' : 'Missing: ') + axis.missing.join(', ') + '</div></div>' : '<div class="text-xs text-[#10b981]"><i class="fas fa-check-circle mr-1" style="font-size:9px;"></i>' + (currentLang === 'zh' ? '数据完整' : 'Data complete') + '</div>') +
           '</div>' +
         '</div>';
       });
 
       document.getElementById('detailRight').innerHTML =
         '<div class="space-y-4">' +
+          // ===== V1 低可信度预警 =====
+          (v1Result.lowConfidenceWarning ? '<div class="p-3 bg-[rgba(239,68,68,0.06)] rounded-xl border border-[rgba(239,68,68,0.15)] flex items-start gap-2"><i class="fas fa-exclamation-triangle text-[#f87171] mt-0.5"></i><div><p class="text-xs font-bold text-[#f87171]">' + (currentLang === 'zh' ? '低可信度预警' : 'Low Confidence Warning') + '</p><p class="text-xs text-[#ef4444]">' + (currentLang === 'zh' ? '综合可信度' + overallConfidence + '%，部分维度数据缺失，评分已做保守折扣。缺失字段: ' + v1Result.missingFields.filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,6).join(', ') : 'Overall confidence ' + overallConfidence + '%, some dimensions lack data. Missing: ' + v1Result.missingFields.filter(function(v,i,a){return a.indexOf(v)===i;}).slice(0,6).join(', ')) + '</p></div></div>' : '') +
           // ===== Contract radar assessment =====
           '<div class="bg-[#0F2E2B] rounded-2xl border border-[rgba(46,196,182,0.08)] overflow-hidden">' +
-            // Header: composite score + grade
+            // Header: composite score + grade + confidence
             '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(46,196,182,0.04), rgba(6,182,212,0.03)); border-bottom: 1px solid rgba(46,196,182,0.08);">' +
               '<div class="flex items-center gap-3">' +
-                '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4); box-shadow: 0 4px 12px rgba(46,196,182,0.3);"><i class="fas fa-radar text-white text-sm" style="font-size:16px;">&#x25CE;</i></div>' +
-                '<div><h3 class="text-sm font-bold text-[#E8F5F3]">' + t('detRadarTitle') + '</h3><p class="text-xs text-[#3D7A70]">' + t('detRadar8Dim') + '</p></div>' +
+                '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #2EC4B6, #06b6d4); box-shadow: 0 4px 12px rgba(46,196,182,0.3);"><i class="fas fa-fingerprint text-white text-sm" style="font-size:16px;"></i></div>' +
+                '<div><h3 class="text-sm font-bold text-[#E8F5F3]">' + (currentLang === 'zh' ? 'DNA\u56FE\u8C31 v1' : 'DNA Radar v1') + '</h3><p class="text-xs text-[#3D7A70]">' + (currentLang === 'zh' ? '8\u7EF4\u6807\u51C6\u5316\u8BC4\u4F30 \u00B7 \u53EF\u4FE1\u5EA6' + overallConfidence + '%' : '8-Dim Standardized \u00B7 Conf. ' + overallConfidence + '%') + '</p></div>' +
               '</div>' +
               '<div class="flex items-center gap-3">' +
                 '<div class="text-right">' +
@@ -5446,8 +5480,10 @@ app.get('/', (c) => {
       if (!currentPortfolio) return;
 
       const contracts = currentPortfolio.contracts;
-      const scores = calcPortfolioRadarScores(contracts);
-      const overall = calcOverallScore(scores);
+      // V1 组合引擎
+      const pv1 = calcPortfolioRadarV1(contracts);
+      const scores = pv1.contractAxes.map(function(a) { return a.effective_value; });
+      const overall = pv1.overallScore;
       const grade = getScoreGrade(overall);
       const totalValue = contracts.length * 1000;
       const avgAI = (contracts.reduce(function(s, c) { return s + parseFloat(c.aiScore); }, 0) / contracts.length).toFixed(1);
@@ -5563,39 +5599,80 @@ app.get('/', (c) => {
         '<div>' + projectGroupsHTML + '</div>' +
         '</div>';
 
-      // Right panel — weighted radar + dimension analysis
+      // Right panel — V1 weighted radar + dimension analysis + concentration
       let dimensionDetails = '';
-      RADAR_DIMENSIONS.forEach((dim, i) => {
-        const score = scores[i];
-        const dGrade = getScoreGrade(score);
-        // Each contract's score in this dimension
-        const contractScoresForDim = contracts.map(c => calcRadarScores(c)[i]);
-        const minS = Math.min(...contractScoresForDim);
-        const maxS = Math.max(...contractScoresForDim);
-        dimensionDetails += '<div class="flex items-center gap-3 p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]">' +
-          '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + dim.color + '15;"><i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:13px;"></i></div>' +
-          '<div class="flex-1 min-w-0">' +
-            '<div class="flex items-center justify-between mb-1">' +
-              '<span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span>' +
-              '<div class="flex items-center gap-2">' +
-                '<span class="text-xs text-[#3D7A70]">' + minS + '~' + maxS + '</span>' +
-                '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + score + '</span>' +
-                '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">' + dGrade.grade + '</span>' +
+      pv1.contractAxes.forEach(function(axis, i) {
+        var dim = RADAR_DIMENSIONS[i];
+        var effVal = axis.effective_value;
+        var dGrade = getScoreGrade(effVal);
+        var tailGap = axis.weighted_mean - axis.tail_metric;
+        var hasTailDrag = tailGap > 15;
+        dimensionDetails += '<div class="p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)]">' +
+          '<div class="flex items-center gap-3">' +
+            '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + axis.color + '15;"><i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:13px;"></i></div>' +
+            '<div class="flex-1 min-w-0">' +
+              '<div class="flex items-center justify-between mb-1">' +
+                '<span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span>' +
+                '<div class="flex items-center gap-1.5">' +
+                  '<span class="text-xs text-[#3D7A70]" title="min~max">' + axis.min + '~' + axis.max + '</span>' +
+                  '<span class="text-xs text-[#5A9A90]" title="P10 tail">' + (currentLang === 'zh' ? 'P10:' : 'P10:') + axis.tail_metric + '</span>' +
+                  '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + effVal + '</span>' +
+                  '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">T' + v1TierFromScore(effVal) + '</span>' +
+                '</div>' +
               '</div>' +
+              // 双层条: weighted_mean + effective_value
+              '<div class="relative h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden">' +
+                '<div class="absolute h-full rounded-full opacity-40" style="width:' + axis.weighted_mean + '%; background:' + axis.color + ';"></div>' +
+                '<div class="absolute h-full rounded-full" style="width:' + effVal + '%; background: linear-gradient(90deg, ' + axis.color + ', ' + axis.color + 'cc);"></div>' +
+              '</div>' +
+              (hasTailDrag ? '<p class="text-xs mt-1" style="color:#f59e0b;"><i class="fas fa-exclamation-circle mr-0.5" style="font-size:8px;"></i>' + (currentLang === 'zh' ? '\u5C3E\u90E8\u62D6\u7D2F: \u5747\u503C' + axis.weighted_mean + ' vs P10=' + axis.tail_metric : 'Tail drag: mean=' + axis.weighted_mean + ' vs P10=' + axis.tail_metric) + '</p>' : '') +
             '</div>' +
-            '<div class="h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden"><div class="h-full rounded-full" style="width:' + score + '%; background: linear-gradient(90deg, ' + dim.color + ', ' + dim.color + 'cc);"></div></div>' +
           '</div>' +
         '</div>';
       });
 
+      // 组合新增2轴卡片 (集中度)
+      var concCards = '';
+      pv1.portfolioAxes.forEach(function(pa) {
+        var paGrade = getScoreGrade(pa.score);
+        concCards += '<div class="p-3 bg-[#0B2624] rounded-xl border border-[' + pa.color + '25]">' +
+          '<div class="flex items-center gap-3">' +
+            '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + pa.color + '15;"><i class="fas ' + pa.icon + '" style="color:' + pa.color + '; font-size:13px;"></i></div>' +
+            '<div class="flex-1">' +
+              '<div class="flex items-center justify-between mb-1">' +
+                '<span class="text-xs font-bold text-[#B0D5CF]">' + pa.nameCN + '</span>' +
+                '<div class="flex items-center gap-2">' +
+                  '<span class="text-xs font-bold" style="color:' + paGrade.color + ';">' + pa.score + '</span>' +
+                  '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + paGrade.bg + '; color:' + paGrade.color + ';">T' + pa.tier + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden"><div class="h-full rounded-full" style="width:' + pa.score + '%; background:' + pa.color + ';"></div></div>' +
+              '<p class="text-xs text-[#5A9A90] mt-1">' + pa.explanation + '</p>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+
+      // warnings 面板
+      var warningsHtml = '';
+      if (pv1.warnings && pv1.warnings.length > 0) {
+        warningsHtml = '<div class="p-3 bg-[rgba(245,158,11,0.06)] rounded-xl border border-[rgba(245,158,11,0.15)]">' +
+          '<div class="flex items-start gap-2"><i class="fas fa-exclamation-triangle text-amber-400 mt-0.5"></i><div>' +
+          '<p class="text-xs font-bold text-[#FBBF24] mb-1">' + (currentLang === 'zh' ? '\u7EC4\u5408\u98CE\u9669\u63D0\u793A' : 'Portfolio Risk Alerts') + '</p>' +
+          pv1.warnings.map(function(w) { return '<p class="text-xs text-[#F59E0B] mb-0.5"><i class="fas fa-angle-right mr-1" style="font-size:9px;"></i>' + w + '</p>'; }).join('') +
+          '</div></div></div>';
+      }
+
       document.getElementById('pdRight').innerHTML =
         '<div class="space-y-4">' +
+          // Warnings
+          warningsHtml +
           // Portfolio radar chart
           '<div class="bg-[#0F2E2B] rounded-2xl border border-[rgba(46,196,182,0.08)] overflow-hidden">' +
             '<div class="p-4 flex items-center justify-between" style="background: linear-gradient(135deg, rgba(139,92,246,0.04), rgba(124,58,237,0.03)); border-bottom: 1px solid rgba(139,92,246,0.08);">' +
               '<div class="flex items-center gap-3">' +
-                '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-chart-pie text-white text-sm"></i></div>' +
-                '<div><h3 class="text-sm font-bold text-[#E8F5F3]">' + t('pdWeightedRadar') + '</h3><p class="text-xs text-[#3D7A70]">' + t('pdWeightedRadarSub', {projects: currentPortfolio.projectCount, contracts: contracts.length}) + '</p></div>' +
+                '<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);"><i class="fas fa-fingerprint text-white text-sm"></i></div>' +
+                '<div><h3 class="text-sm font-bold text-[#E8F5F3]">' + (currentLang === 'zh' ? '\u7EC4\u5408\u56FE\u8C31 v1' : 'Portfolio Radar v1') + '</h3><p class="text-xs text-[#3D7A70]">' + (currentLang === 'zh' ? '8+2\u7EF4\u7EFC\u5408\u8BC4\u4F30 \u00B7 ' + currentPortfolio.projectCount + '\u9879\u76EE/' + contracts.length + '\u5408\u7EA6' : '8+2 Dim Assessment \u00B7 ' + currentPortfolio.projectCount + ' proj/' + contracts.length + ' contracts') + '</p></div>' +
               '</div>' +
               '<div class="flex items-center gap-3">' +
                 '<div class="text-right">' +
@@ -5612,32 +5689,34 @@ app.get('/', (c) => {
             '</div>' +
             '<div class="px-4 pb-4">' +
               '<div class="grid grid-cols-4 gap-2">' +
-                (function() {
-                  var pdDisplayVals = calcPortfolioDisplayValues(contracts);
-                  return RADAR_DIMENSIONS.map((dim, i) => {
-                    const s = scores[i]; const g = getScoreGrade(s);
-                    return '<div class="text-center p-2 rounded-xl" style="background:' + dim.color + '08; border: 1px solid ' + dim.color + '15;">' +
-                      '<i class="fas ' + dim.icon + '" style="color:' + dim.color + '; font-size:11px;"></i>' +
-                      '<p class="text-xs font-bold mt-1" style="color:' + dim.color + ';">' + pdDisplayVals[i] + '</p>' +
-                      '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + getRadarSubLabel(i) + '</p>' +
-                    '</div>';
-                  }).join('');
-                })() +
+                pv1.contractAxes.map(function(axis, i) {
+                  var g = getScoreGrade(axis.effective_value);
+                  return '<div class="text-center p-2 rounded-xl" style="background:' + axis.color + '08; border: 1px solid ' + axis.color + '15;">' +
+                    '<i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:11px;"></i>' +
+                    '<p class="text-xs font-bold mt-1" style="color:' + axis.color + ';">' + axis.effective_value + (currentLang === 'zh' ? '\u5206' : 'pt') + '</p>' +
+                    '<p class="text-xs text-[#3D7A70] truncate" style="font-size:9px;">' + getRadarSubLabel(i) + '</p>' +
+                  '</div>';
+                }).join('') +
               '</div>' +
             '</div>' +
           '</div>' +
-          // Dimension details
+          // Concentration axes (2 new)
+          '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(139,92,246,0.12)]">' +
+            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-crosshairs mr-1.5 text-[#7c3aed]"></i>' + (currentLang === 'zh' ? '\u96C6\u4E2D\u5EA6\u8BC4\u4F30' : 'Concentration Assessment') + '</h3>' +
+            '<div class="space-y-2">' + concCards + '</div>' +
+          '</div>' +
+          // 8-dim weighted details
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
-            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-list-ul mr-1.5 text-[#8B5CF6]"></i>' + t('pdDimWeightedDetail') + '</h3>' +
+            '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-list-ul mr-1.5 text-[#8B5CF6]"></i>' + (currentLang === 'zh' ? '8\u7EF4\u52A0\u6743\u660E\u7EC6 (eff/mean/P10)' : '8-Dim Weighted Detail (eff/mean/P10)') + '</h3>' +
             '<div class="space-y-2">' + dimensionDetails + '</div>' +
           '</div>' +
           // Contract distribution
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
             '<h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-chart-bar mr-1.5 text-[#2EC4B6]"></i>' + t('pdScoreDist') + '</h3>' +
             '<div class="h-32 flex items-end justify-around gap-1">' +
-              contracts.map((c, i) => {
-                const cs = calcRadarScores(c); const co = calcOverallScore(cs); const cg = getScoreGrade(co);
-                return '<div class="flex flex-col items-center flex-1" title="' + (c.mcn || '') + ' — ' + co + ' pts">' +
+              contracts.map(function(c, i) {
+                var cr = calcContractRadarV1(c); var co = cr.overallScore; var cg = getScoreGrade(co);
+                return '<div class="flex flex-col items-center flex-1" title="' + (c.mcn || '') + ' \u2014 ' + co + ' pts">' +
                   '<div class="w-full rounded-t-md cursor-pointer hover:opacity-80 transition-opacity" style="height:' + co + '%; background: linear-gradient(180deg, ' + cg.color + ', ' + cg.color + '88); min-height:8px;" onclick="openDetail(&#39;' + c.id + '&#39;)"></div>' +
                   '<span class="text-xs text-[#3D7A70] mt-1" style="font-size:8px;">#' + (i + 1) + '</span>' +
                 '</div>';
