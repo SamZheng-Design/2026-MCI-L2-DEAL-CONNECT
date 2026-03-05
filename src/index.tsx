@@ -602,7 +602,7 @@ app.get('/', (c) => {
     .radar-formula-tooltip {
       visibility: hidden; opacity: 0;
       position: absolute; z-index: 200;
-      min-width: 220px; max-width: 280px;
+      min-width: 240px; max-width: 320px;
       padding: 10px 14px; border-radius: 10px;
       font-size: 11px; line-height: 1.65; color: #E8F5F3;
       background: rgba(8,24,22,0.98);
@@ -3868,15 +3868,136 @@ app.get('/', (c) => {
       control_enforceability: { zh: '管控够不够', en: 'Control' }
     };
     // 简洁计算公式tooltip — 二级标签悬停时显示
+    // 每个tooltip包含：① 核心公式 ② 数据来源字段 ③ Tier评分阈值 ④ 方向提示
     var V1_DIM_FORMULAS = {
-      return_level:           { zh: '<b>计算公式</b><br>年化收益率 = revenueShare%<br>含IRR / MOIC辅助修正<br><span style="color:#f59e0b;">↑ 越高越好</span>', en: '<b>Formula</b><br>Annual Yield = revenueShare%<br>Adjusted by IRR / MOIC if available<br><span style="color:#f59e0b;">↑ Higher is better</span>' },
-      payback_speed:          { zh: '<b>计算公式</b><br>回本天数 = 365 ÷ (年化收益%)<br>单位回报 = ROI ÷ CAPEX<br><span style="color:#10b981;">↓ 越快越好</span>', en: '<b>Formula</b><br>Payback Days = 365 ÷ (Annual Yield%)<br>Unit Return = ROI ÷ CAPEX<br><span style="color:#10b981;">↓ Faster is better</span>' },
-      frequency_continuity:   { zh: '<b>计算公式</b><br>综合评级 = 团队规模 × 运营年限<br>员工数/50 × min(年限/5, 1)<br><span style="color:#06b6d4;">↑ 越高越好</span>', en: '<b>Formula</b><br>Composite = Team Size × Op Years<br>Employees/50 × min(Years/5, 1)<br><span style="color:#06b6d4;">↑ Higher is better</span>' },
-      volatility:             { zh: '<b>计算公式</b><br>CV = 融资总额 ÷ (月营收 × 12)<br>杠杆比值，越低现金流越稳定<br><span style="color:#8b5cf6;">↓ 越低越好</span>', en: '<b>Formula</b><br>CV = Total Financing ÷ (Monthly Rev × 12)<br>Lower leverage = more stable cash flow<br><span style="color:#8b5cf6;">↓ Lower is better</span>' },
-      coverage_cushion:       { zh: '<b>计算公式</b><br>DSCR = 月分成收入 ÷ 月均本金<br>利润率 = 合约回报 ÷ 行业均值<br>&gt;1 表示优于行业平均<br><span style="color:#ef4444;">↑ 越高越好</span>', en: '<b>Formula</b><br>DSCR = Monthly Share Income ÷ Monthly Capital<br>Margin = Contract Return ÷ Industry Avg<br>&gt;1 = above average<br><span style="color:#ef4444;">↑ Higher is better</span>' },
-      default_loss:           { zh: '<b>计算公式</b><br>EL = PD × LGD<br>PD: 从riskGrade推算隐含违约率<br>LGD: 违约损失率(默认45%)<br><span style="color:#dc2626;">↓ 越低越好</span>', en: '<b>Formula</b><br>EL = PD × LGD<br>PD: Implied default rate from riskGrade<br>LGD: Loss Given Default (default 45%)<br><span style="color:#dc2626;">↓ Lower is better</span>' },
-      lifecycle_tenor_fit:    { zh: '<b>计算公式</b><br>期限覆盖 = 剩余天数 ÷ 回本天数<br>合约期 ÷ 行业平均寿命<br><span style="color:#0d9488;">↑ 越高越好</span>', en: '<b>Formula</b><br>Tenor Coverage = Remaining Days ÷ Payback Days<br>Contract Period ÷ Industry Avg Lifespan<br><span style="color:#0d9488;">↑ Higher is better</span>' },
-      control_enforceability: { zh: '<b>计算公式</b><br>管控综合 = AVG(4项评分)<br>① 分账自动化 ② 数据审计<br>③ 权限管控 ④ 执行预案<br><span style="color:#ec4899;">↑ 越高越好</span>', en: '<b>Formula</b><br>Control Score = AVG(4 sub-scores)<br>① Split-payment ② Data Audit<br>③ Permission Ctrl ④ Enforcement<br><span style="color:#ec4899;">↑ Higher is better</span>' }
+      return_level: {
+        zh: '<div style="margin-bottom:5px;"><b style="color:#f59e0b;">计算逻辑</b></div>' +
+            '<div style="background:rgba(245,158,11,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#F5D896;">' +
+            '年化收益率 = revenueShare %<br>辅助参考: IRR, MOIC</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>数据源:</b> revenueShare, irr, moic</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tier阈值: <span style="color:#ef4444;">≤5%</span> → <span style="color:#f59e0b;">8%</span> → <span style="color:#eab308;">12%</span> → <span style="color:#22c55e;">18%</span> → <span style="color:#10b981;">≥18%</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#f59e0b;">↑ 越高越好 · 权重 20%</div>',
+        en: '<div style="margin-bottom:5px;"><b style="color:#f59e0b;">Calculation Logic</b></div>' +
+            '<div style="background:rgba(245,158,11,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#F5D896;">' +
+            'Annual Yield = revenueShare %<br>Ref: IRR, MOIC if available</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>Source:</b> revenueShare, irr, moic</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tiers: <span style="color:#ef4444;">≤5%</span> → <span style="color:#f59e0b;">8%</span> → <span style="color:#eab308;">12%</span> → <span style="color:#22c55e;">18%</span> → <span style="color:#10b981;">≥18%</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#f59e0b;">↑ Higher is better · Weight 20%</div>'
+      },
+      payback_speed: {
+        zh: '<div style="margin-bottom:5px;"><b style="color:#10b981;">计算逻辑</b></div>' +
+            '<div style="background:rgba(16,185,129,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#86EFAC;">' +
+            '回本天数 = 365 ÷ (revenueShare/100)<br>实际值优先: paybackDaysBase</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>数据源:</b> revenueShare, paybackDaysBase,<br>&nbsp;&nbsp;&nbsp;&nbsp;paybackDaysDownside, rampUpDays</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tier阈值: <span style="color:#ef4444;">≥2500d</span> → <span style="color:#f59e0b;">1600d</span> → <span style="color:#eab308;">900d</span> → <span style="color:#22c55e;">450d</span> → <span style="color:#10b981;">≤450d</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#10b981;">↓ 天数越少越好 · 权重 10%</div>',
+        en: '<div style="margin-bottom:5px;"><b style="color:#10b981;">Calculation Logic</b></div>' +
+            '<div style="background:rgba(16,185,129,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#86EFAC;">' +
+            'Payback Days = 365 ÷ (revenueShare/100)<br>Actual value priority: paybackDaysBase</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>Source:</b> revenueShare, paybackDaysBase,<br>&nbsp;&nbsp;&nbsp;&nbsp;paybackDaysDownside, rampUpDays</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tiers: <span style="color:#ef4444;">≥2500d</span> → <span style="color:#f59e0b;">1600d</span> → <span style="color:#eab308;">900d</span> → <span style="color:#22c55e;">450d</span> → <span style="color:#10b981;">≤450d</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#10b981;">↓ Fewer days = better · Weight 10%</div>'
+      },
+      frequency_continuity: {
+        zh: '<div style="margin-bottom:5px;"><b style="color:#06b6d4;">计算逻辑</b></div>' +
+            '<div style="background:rgba(6,182,212,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#67E8F9;">' +
+            '连续性比率 = continuityRatio<br>辅助: 月均现金流频次, 最大间隔天数<br>无数据时默认估算 = 0.85</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>数据源:</b> continuityRatio, cashflowPerMonth,<br>&nbsp;&nbsp;&nbsp;&nbsp;avgIntervalDays, maxGapDays</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tier阈值: <span style="color:#ef4444;">≤50%</span> → <span style="color:#f59e0b;">70%</span> → <span style="color:#eab308;">85%</span> → <span style="color:#22c55e;">95%</span> → <span style="color:#10b981;">≥95%</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#06b6d4;">↑ 越高越好 · 权重 10%</div>',
+        en: '<div style="margin-bottom:5px;"><b style="color:#06b6d4;">Calculation Logic</b></div>' +
+            '<div style="background:rgba(6,182,212,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#67E8F9;">' +
+            'Continuity Ratio = continuityRatio<br>Ref: monthly CF frequency, max gap days<br>Default estimate = 0.85 when no data</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>Source:</b> continuityRatio, cashflowPerMonth,<br>&nbsp;&nbsp;&nbsp;&nbsp;avgIntervalDays, maxGapDays</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tiers: <span style="color:#ef4444;">≤50%</span> → <span style="color:#f59e0b;">70%</span> → <span style="color:#eab308;">85%</span> → <span style="color:#22c55e;">95%</span> → <span style="color:#10b981;">≥95%</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#06b6d4;">↑ Higher is better · Weight 10%</div>'
+      },
+      volatility: {
+        zh: '<div style="margin-bottom:5px;"><b style="color:#8b5cf6;">计算逻辑</b></div>' +
+            '<div style="background:rgba(139,92,246,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#C4B5FD;">' +
+            'CV = 现金流标准差 ÷ 现金流均值<br>(变异系数，衡量月度波动幅度)<br>无月序列时默认估值 = 0.35</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>数据源:</b> cashflowCV,<br>&nbsp;&nbsp;&nbsp;&nbsp;worstMonthOverMean, downsideMonthRatio</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tier阈值: <span style="color:#ef4444;">≥0.70</span> → <span style="color:#f59e0b;">0.50</span> → <span style="color:#eab308;">0.30</span> → <span style="color:#22c55e;">0.15</span> → <span style="color:#10b981;">≤0.15</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#8b5cf6;">↓ 越低越好 · 权重 10%</div>',
+        en: '<div style="margin-bottom:5px;"><b style="color:#8b5cf6;">Calculation Logic</b></div>' +
+            '<div style="background:rgba(139,92,246,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#C4B5FD;">' +
+            'CV = CF Std Dev ÷ CF Mean<br>(Coefficient of Variation for monthly volatility)<br>Default estimate = 0.35 when no data</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>Source:</b> cashflowCV,<br>&nbsp;&nbsp;&nbsp;&nbsp;worstMonthOverMean, downsideMonthRatio</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tiers: <span style="color:#ef4444;">≥0.70</span> → <span style="color:#f59e0b;">0.50</span> → <span style="color:#eab308;">0.30</span> → <span style="color:#22c55e;">0.15</span> → <span style="color:#10b981;">≤0.15</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#8b5cf6;">↓ Lower is better · Weight 10%</div>'
+      },
+      coverage_cushion: {
+        zh: '<div style="margin-bottom:5px;"><b style="color:#ef4444;">计算逻辑</b></div>' +
+            '<div style="background:rgba(239,68,68,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#FCA5A5;">' +
+            'DSCR = 月分成收入 ÷ 月均还本额<br>月分成 = monthlyRev × revenueShare%<br>月还本 = totalAmount ÷ 期数(月)</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>数据源:</b> monthlyRevenue, revenueShare,<br>&nbsp;&nbsp;&nbsp;&nbsp;projectTotalAmount, period, coverageMultiple</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tier阈值: <span style="color:#ef4444;">≤0.8x</span> → <span style="color:#f59e0b;">1.2x</span> → <span style="color:#eab308;">1.8x</span> → <span style="color:#22c55e;">2.5x</span> → <span style="color:#10b981;">≥2.5x</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#ef4444;">↑ 越高越好 · 权重 15%</div>',
+        en: '<div style="margin-bottom:5px;"><b style="color:#ef4444;">Calculation Logic</b></div>' +
+            '<div style="background:rgba(239,68,68,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#FCA5A5;">' +
+            'DSCR = Monthly Share Income ÷ Monthly Principal<br>Share = monthlyRev × revenueShare%<br>Principal = totalAmount ÷ period(months)</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>Source:</b> monthlyRevenue, revenueShare,<br>&nbsp;&nbsp;&nbsp;&nbsp;projectTotalAmount, period, coverageMultiple</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tiers: <span style="color:#ef4444;">≤0.8x</span> → <span style="color:#f59e0b;">1.2x</span> → <span style="color:#eab308;">1.8x</span> → <span style="color:#22c55e;">2.5x</span> → <span style="color:#10b981;">≥2.5x</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#ef4444;">↑ Higher is better · Weight 15%</div>'
+      },
+      default_loss: {
+        zh: '<div style="margin-bottom:5px;"><b style="color:#dc2626;">计算逻辑</b></div>' +
+            '<div style="background:rgba(220,38,38,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#FCA5A5;">' +
+            'EL = PD × LGD<br>PD: 隐含违约率(从riskGrade映射)<br>LGD: 违约损失率(默认45%)<br>等级映射: A+→0.5% | A→1% | B+→5% | B→8%</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>数据源:</b> riskGrade, defaultRate, lgd,<br>&nbsp;&nbsp;&nbsp;&nbsp;recoveryRate, closeRate</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tier阈值: <span style="color:#ef4444;">≥8%</span> → <span style="color:#f59e0b;">4%</span> → <span style="color:#eab308;">2%</span> → <span style="color:#22c55e;">0.5%</span> → <span style="color:#10b981;">≤0.5%</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#dc2626;">↓ 越低越好 · 权重 15%</div>',
+        en: '<div style="margin-bottom:5px;"><b style="color:#dc2626;">Calculation Logic</b></div>' +
+            '<div style="background:rgba(220,38,38,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#FCA5A5;">' +
+            'EL = PD × LGD<br>PD: Implied Default Rate (from riskGrade)<br>LGD: Loss Given Default (default 45%)<br>Grade map: A+→0.5% | A→1% | B+→5% | B→8%</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>Source:</b> riskGrade, defaultRate, lgd,<br>&nbsp;&nbsp;&nbsp;&nbsp;recoveryRate, closeRate</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tiers: <span style="color:#ef4444;">≥8%</span> → <span style="color:#f59e0b;">4%</span> → <span style="color:#eab308;">2%</span> → <span style="color:#22c55e;">0.5%</span> → <span style="color:#10b981;">≤0.5%</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#dc2626;">↓ Lower is better · Weight 15%</div>'
+      },
+      lifecycle_tenor_fit: {
+        zh: '<div style="margin-bottom:5px;"><b style="color:#0d9488;">计算逻辑</b></div>' +
+            '<div style="background:rgba(13,148,136,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#5EEAD4;">' +
+            '期限覆盖 = 剩余合约天数 ÷ 回本天数<br>剩余天数 = period × 30<br>回本天数 = 365 ÷ (revenueShare/100)<br>&gt;1x 表示合约期限足以覆盖回本</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>数据源:</b> period, revenueShare,<br>&nbsp;&nbsp;&nbsp;&nbsp;remainingTenorDays, renewalProb</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tier阈值: <span style="color:#ef4444;">≤0.5x</span> → <span style="color:#f59e0b;">1.0x</span> → <span style="color:#eab308;">1.5x</span> → <span style="color:#22c55e;">2.5x</span> → <span style="color:#10b981;">≥2.5x</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#0d9488;">↑ 越高越好 · 权重 10%</div>',
+        en: '<div style="margin-bottom:5px;"><b style="color:#0d9488;">Calculation Logic</b></div>' +
+            '<div style="background:rgba(13,148,136,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#5EEAD4;">' +
+            'Tenor Coverage = Remaining Days ÷ Payback Days<br>Remaining = period × 30<br>Payback = 365 ÷ (revenueShare/100)<br>&gt;1x means contract covers payback</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>Source:</b> period, revenueShare,<br>&nbsp;&nbsp;&nbsp;&nbsp;remainingTenorDays, renewalProb</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tiers: <span style="color:#ef4444;">≤0.5x</span> → <span style="color:#f59e0b;">1.0x</span> → <span style="color:#eab308;">1.5x</span> → <span style="color:#22c55e;">2.5x</span> → <span style="color:#10b981;">≥2.5x</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#0d9488;">↑ Higher is better · Weight 10%</div>'
+      },
+      control_enforceability: {
+        zh: '<div style="margin-bottom:5px;"><b style="color:#ec4899;">计算逻辑</b></div>' +
+            '<div style="background:rgba(236,72,153,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#F9A8D4;">' +
+            '管控综合 = AVG(4项子评分)<br>① 分账自动化 splitPaymentAutomation<br>② 数据审计 dataAuditability<br>③ 权限管控 permissionControl<br>④ 执行预案 enforcementPlaybook<br>等级: none→0 | low→25 | med→50 | high→75 | full→100</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>数据源:</b> 4项Level字段<br>&nbsp;&nbsp;&nbsp;&nbsp;缺失项使用默认值50</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tier阈值: <span style="color:#ef4444;">≤25</span> → <span style="color:#f59e0b;">45</span> → <span style="color:#eab308;">65</span> → <span style="color:#22c55e;">85</span> → <span style="color:#10b981;">≥85</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#ec4899;">↑ 越高越好 · 权重 10%</div>',
+        en: '<div style="margin-bottom:5px;"><b style="color:#ec4899;">Calculation Logic</b></div>' +
+            '<div style="background:rgba(236,72,153,0.06);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-family:\'SF Mono\',monospace;font-size:10px;color:#F9A8D4;">' +
+            'Control Score = AVG(4 sub-scores)<br>① Split-payment splitPaymentAutomation<br>② Data Audit dataAuditability<br>③ Permission Ctrl permissionControl<br>④ Enforcement enforcementPlaybook<br>Levels: none→0 | low→25 | med→50 | high→75 | full→100</div>' +
+            '<div style="font-size:10px;color:#8BAFA8;margin-bottom:4px;">📊 <b>Source:</b> 4 Level fields<br>&nbsp;&nbsp;&nbsp;&nbsp;Missing items default to 50</div>' +
+            '<div style="font-size:10px;color:#6B9A92;border-top:1px dashed rgba(46,196,182,0.12);padding-top:4px;margin-top:2px;">' +
+            '⚡ Tiers: <span style="color:#ef4444;">≤25</span> → <span style="color:#f59e0b;">45</span> → <span style="color:#eab308;">65</span> → <span style="color:#22c55e;">85</span> → <span style="color:#10b981;">≥85</span></div>' +
+            '<div style="margin-top:4px;font-size:10px;font-weight:700;color:#ec4899;">↑ Higher is better · Weight 10%</div>'
+      }
     };
 
     // 专业tooltip描述 — hover时显示
