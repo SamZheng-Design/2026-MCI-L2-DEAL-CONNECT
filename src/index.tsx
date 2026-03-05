@@ -3993,7 +3993,7 @@ app.get('/', (c) => {
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       const dpr = window.devicePixelRatio || 1;
-      const size = options.size || 320;
+      const size = options.size || 360;
       canvas.width = size * dpr;
       canvas.height = size * dpr;
       canvas.style.width = size + 'px';
@@ -4002,7 +4002,7 @@ app.get('/', (c) => {
 
       const cx = size / 2;
       const cy = size / 2;
-      const maxR = (size / 2) - 52;
+      const maxR = (size / 2) - 62;
       const n = RADAR_DISPLAY_ORDER.length; // 8 axes
       const angleStep = (Math.PI * 2) / n;
       const startAngle = -Math.PI / 2; // Start from top (12 o'clock)
@@ -4021,45 +4021,59 @@ app.get('/', (c) => {
       // Clear
       ctx.clearRect(0, 0, size, size);
 
-      // ===== 1. Draw quadrant background tints =====
-      var quadrantAngles = [
-        { startA: startAngle - angleStep * 0.5, endA: startAngle + angleStep * 0.5, color: 'rgba(239,68,68,0.03)' },    // Risk (top-left quadrant)
-        { startA: startAngle + angleStep * 0.5, endA: startAngle + angleStep * 2.5, color: 'rgba(96,165,250,0.03)' },    // Return (top-right)
-        { startA: startAngle + angleStep * 2.5, endA: startAngle + angleStep * 4.5, color: 'rgba(167,139,250,0.03)' },   // Control (bottom-right)
-        { startA: startAngle + angleStep * 4.5, endA: startAngle + angleStep * 6.5, color: 'rgba(74,222,128,0.03)' },    // Adequacy (bottom-left)
-      ];
+      // ===== 1. Subtle quadrant background wedges =====
+      RADAR_QUADRANTS.forEach(function(quad) {
+        var indices = quad.displayIndices;
+        if (indices.length === 0) return;
+        var minIdx = Math.min.apply(null, indices);
+        var maxIdx = Math.max.apply(null, indices);
+        var a1 = startAngle + (minIdx - 0.5) * angleStep;
+        var a2 = startAngle + (maxIdx + 0.5) * angleStep;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, maxR + 4, a1, a2);
+        ctx.closePath();
+        var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR + 4);
+        grad.addColorStop(0, 'transparent');
+        grad.addColorStop(0.6, 'transparent');
+        grad.addColorStop(1, quad.fillColor.replace(/[\d.]+\)$/, '0.06)'));
+        ctx.fillStyle = grad;
+        ctx.fill();
+      });
 
-      // ===== 2. Draw concentric circular grid (5 rings, 0-10 scale → 0,2,4,6,8,10) =====
+      // ===== 2. Concentric polygon grid (5 levels) =====
       for (let ring = 1; ring <= 5; ring++) {
         const r = maxR * (ring / 5);
         ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        for (let i = 0; i <= n; i++) {
+          var pt = getXY(i % n, r);
+          if (i === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        }
         ctx.closePath();
-        ctx.strokeStyle = ring === 5 ? 'rgba(46,196,182,0.18)' : 'rgba(46,196,182,0.07)';
-        ctx.lineWidth = ring === 5 ? 1 : 0.6;
+        if (ring === 5) {
+          ctx.strokeStyle = 'rgba(46,196,182,0.2)';
+          ctx.lineWidth = 1;
+        } else {
+          ctx.strokeStyle = 'rgba(46,196,182,0.08)';
+          ctx.lineWidth = 0.5;
+          ctx.setLineDash([3, 3]);
+        }
         ctx.stroke();
+        ctx.setLineDash([]);
       }
 
-      // Scale labels along vertical axis (top side)
-      ctx.fillStyle = 'rgba(142,189,181,0.35)';
-      ctx.font = '8px Inter, sans-serif';
+      // Scale labels along vertical axis (right side of spokes)
+      ctx.fillStyle = 'rgba(142,189,181,0.3)';
+      ctx.font = '9px "SF Mono", "Fira Code", monospace';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       for (let ring = 1; ring <= 5; ring++) {
         const r = maxR * (ring / 5);
-        var scaleVal = ring * 2; // 2,4,6,8,10
-        ctx.fillText(scaleVal.toString(), cx + 3, cy - r + 1);
+        ctx.fillText((ring * 2).toString(), cx + 4, cy - r + 1);
       }
 
-      // ===== 3. Draw cross-hair dividers (vertical + horizontal through center) =====
-      ctx.strokeStyle = 'rgba(46,196,182,0.12)';
-      ctx.lineWidth = 0.8;
-      // Vertical
-      ctx.beginPath(); ctx.moveTo(cx, cy - maxR - 5); ctx.lineTo(cx, cy + maxR + 5); ctx.stroke();
-      // Horizontal
-      ctx.beginPath(); ctx.moveTo(cx - maxR - 5, cy); ctx.lineTo(cx + maxR + 5, cy); ctx.stroke();
-
-      // ===== 4. Draw axis spokes =====
+      // ===== 3. Draw axis spokes =====
       for (let i = 0; i < n; i++) {
         var angle = startAngle + i * angleStep;
         ctx.beginPath();
@@ -4070,48 +4084,66 @@ app.get('/', (c) => {
         ctx.stroke();
       }
 
-      // ===== 5. Draw 4 separate quadrant data polygons =====
+      // ===== 4. Draw unified data polygon with gradient fill =====
+      // First, draw a filled polygon connecting ALL 8 data points
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        var val = dispScores[i] / 100;
+        var pt = getXY(i, maxR * val);
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.closePath();
+
+      // Radial gradient fill for the unified polygon
+      var polyGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+      polyGrad.addColorStop(0, 'rgba(46,196,182,0.02)');
+      polyGrad.addColorStop(0.5, 'rgba(46,196,182,0.08)');
+      polyGrad.addColorStop(1, 'rgba(46,196,182,0.15)');
+      ctx.fillStyle = polyGrad;
+      ctx.fill();
+
+      // Unified outline stroke
+      ctx.strokeStyle = 'rgba(46,196,182,0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // ===== 5. Overlay colored quadrant segments on the unified polygon =====
       RADAR_QUADRANTS.forEach(function(quad) {
         var indices = quad.displayIndices;
-        if (indices.length === 0) return;
+        if (indices.length < 2) return;
 
         ctx.beginPath();
-        // Start from center
-        ctx.moveTo(cx, cy);
-        // Line to first axis data point
-        var firstPt = getXY(indices[0], maxR * dispScores[indices[0]] / 100);
-        ctx.lineTo(firstPt.x, firstPt.y);
-
-        // Connect through all axes in this quadrant
-        for (var k = 1; k < indices.length; k++) {
+        for (var k = 0; k < indices.length; k++) {
           var pt = getXY(indices[k], maxR * dispScores[indices[k]] / 100);
-          ctx.lineTo(pt.x, pt.y);
+          if (k === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
         }
-
-        // Back to center
-        ctx.lineTo(cx, cy);
-        ctx.closePath();
-
-        // Fill
-        ctx.fillStyle = quad.fillColor;
-        ctx.fill();
-
-        // Stroke
-        ctx.strokeStyle = quad.strokeColor;
-        ctx.lineWidth = 2;
+        // Stroke segment in quadrant color
+        ctx.strokeStyle = quad.strokeColor.replace(/[\d.]+\)$/, '0.55)');
+        ctx.lineWidth = 2.5;
         ctx.stroke();
       });
 
-      // ===== 6. Draw data points on each axis =====
+      // ===== 6. Draw data points with glow =====
       for (let i = 0; i < n; i++) {
         var val = dispScores[i] / 100;
         var pt = getXY(i, maxR * val);
         var cat = DIM_TO_PRIMARY[dispDims[i].key];
         var dotColor = cat ? cat.color : dispDims[i].color;
 
-        // Outer circle
+        // Glow
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
+        ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2);
+        var glowGrad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 8);
+        glowGrad.addColorStop(0, dotColor.replace(')', ',0.3)').replace('rgb', 'rgba'));
+        glowGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = glowGrad;
+        ctx.fill();
+
+        // Outer ring
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
         ctx.fillStyle = '#0B1E1C';
         ctx.fill();
         ctx.strokeStyle = dotColor;
@@ -4125,70 +4157,79 @@ app.get('/', (c) => {
         ctx.fill();
       }
 
-      // ===== 7. Draw quadrant labels (回报/Return, 风险/Risk, etc.) =====
+      // ===== 7. Draw quadrant labels (4 corners, neatly separated) =====
       var quadLabelPositions = [
-        // Risk: top-left (3 axes spanning from top to left, so label goes left-center)
-        { x: cx - maxR * 0.78, y: cy - maxR * 0.55, align: 'right' },
-        // Return: top-right (2 axes)
-        { x: cx + maxR * 0.78, y: cy - maxR * 0.55, align: 'left' },
-        // Control: bottom-right (2 axes)
-        { x: cx + maxR * 0.78, y: cy + maxR * 0.58, align: 'left' },
-        // Adequacy: bottom-left (1 axis)
-        { x: cx - maxR * 0.78, y: cy + maxR * 0.58, align: 'right' }
+        { x: 8,          y: 10,          align: 'left',  valign: 'top' },
+        { x: size - 8,   y: 10,          align: 'right', valign: 'top' },
+        { x: size - 8,   y: size - 10,   align: 'right', valign: 'bottom' },
+        { x: 8,          y: size - 10,   align: 'left',  valign: 'bottom' }
       ];
       RADAR_QUADRANTS.forEach(function(quad, qi) {
         var pos = quadLabelPositions[qi];
         ctx.textAlign = pos.align;
-        ctx.textBaseline = 'middle';
-        // Primary label (Chinese)
-        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textBaseline = pos.valign;
+
+        // Colored dot indicator
+        var dotX = pos.align === 'left' ? pos.x : pos.x;
+        var dotY = pos.valign === 'top' ? pos.y + 6 : pos.y - 6;
+        ctx.beginPath();
+        ctx.arc(pos.align === 'left' ? pos.x + 4 : pos.x - 4, dotY, 3, 0, Math.PI * 2);
+        ctx.fillStyle = quad.color;
+        ctx.fill();
+
+        // Primary label
+        var labelOffset = pos.align === 'left' ? 12 : -12;
+        ctx.font = 'bold 11px Inter, system-ui, sans-serif';
         ctx.fillStyle = quad.color;
         var mainLabel = currentLang === 'zh' ? quad.labelZH : quad.labelEN;
-        ctx.fillText(mainLabel, pos.x, pos.y);
-        // Sub label (English/alternate)
-        ctx.font = '9px Inter, sans-serif';
-        ctx.fillStyle = quad.color;
-        ctx.globalAlpha = 0.6;
+        ctx.fillText(mainLabel, pos.x + labelOffset, dotY);
+
+        // Sub label
+        ctx.font = '9px Inter, system-ui, sans-serif';
+        ctx.globalAlpha = 0.5;
         var subLabel = currentLang === 'zh' ? quad.subEN : quad.subZH;
-        ctx.fillText(subLabel, pos.x, pos.y + 13);
+        var subY = pos.valign === 'top' ? dotY + 14 : dotY - 14;
+        ctx.fillText(subLabel, pos.x + labelOffset, subY);
         ctx.globalAlpha = 1.0;
       });
 
-      // ===== 8. Draw dimension labels (二级标签 + score values) =====
+      // ===== 8. Draw dimension labels around the chart =====
       ctx.textBaseline = 'middle';
       for (let i = 0; i < n; i++) {
         var angle = startAngle + i * angleStep;
-        var labelR = maxR + 18;
-        var lx = cx + labelR * Math.cos(angle);
-        var ly = cy + labelR * Math.sin(angle);
+        var cosA = Math.cos(angle);
+        var sinA = Math.sin(angle);
         var cat = DIM_TO_PRIMARY[dispDims[i].key];
         var dimColor = cat ? cat.color : dispDims[i].color;
 
-        // Determine text alignment based on position
-        var cosA = Math.cos(angle);
-        var sinA = Math.sin(angle);
-        if (cosA < -0.3) ctx.textAlign = 'right';
-        else if (cosA > 0.3) ctx.textAlign = 'left';
+        // Label position (further out for clarity)
+        var labelR = maxR + 24;
+        var lx = cx + labelR * cosA;
+        var ly = cy + labelR * sinA;
+
+        // Text alignment
+        if (cosA < -0.25) ctx.textAlign = 'right';
+        else if (cosA > 0.25) ctx.textAlign = 'left';
         else ctx.textAlign = 'center';
 
-        // Score value (number)
-        ctx.font = 'bold 12px Inter, sans-serif';
+        // Score value (bold, colored)
+        ctx.font = 'bold 13px "SF Mono", "Fira Code", monospace';
         ctx.fillStyle = dimColor;
-        var scoreText = displayLabels ? displayLabels[i] : Math.round(dispScores[i] / 10).toString();
-        var scoreOffsetY = sinA < -0.3 ? -8 : (sinA > 0.3 ? 8 : 0);
-        ctx.fillText(scoreText, lx, ly + scoreOffsetY);
+        var scoreVal = displayLabels ? displayLabels[i] : (dispScores[i] / 10).toFixed(1);
+        var scoreOffsetY = sinA < -0.25 ? -7 : (sinA > 0.25 ? 7 : 0);
+        ctx.fillText(scoreVal, lx, ly + scoreOffsetY);
 
-        // Dimension name below/above the score
-        ctx.font = '9px Inter, sans-serif';
-        ctx.fillStyle = 'rgba(142,189,181,0.6)';
-        var nameOffsetY = sinA < -0.3 ? 4 : (sinA > 0.3 ? -4 : (i === 0 ? 10 : -8));
+        // Dimension name (muted, below/above score)
+        ctx.font = '9px Inter, system-ui, sans-serif';
+        ctx.fillStyle = 'rgba(142,189,181,0.55)';
         var dimLabel = getDimLabel(dispDims[i]);
+        var nameOffsetY = sinA < -0.25 ? 6 : (sinA > 0.25 ? -6 : (i === 0 ? 11 : -10));
         ctx.fillText(dimLabel, lx, ly + nameOffsetY);
       }
       ctx.textAlign = 'start';
     }
 
-    // Mini radar chart (for card preview) — with quadrant coloring
+    // Mini radar chart (for card preview) — unified polygon with quadrant coloring
     function drawMiniRadar(canvasId, scores) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
@@ -4212,35 +4253,61 @@ app.get('/', (c) => {
         return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
       }
 
-      // Background circle
+      // Background polygon outline
       ctx.beginPath();
-      ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(46,196,182,0.1)';
+      for (var i = 0; i <= n; i++) {
+        var pt = miniXY(i % n, maxR);
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(46,196,182,0.12)';
       ctx.lineWidth = 0.5;
       ctx.stroke();
 
-      // Cross-hair
+      // Mid ring
+      ctx.beginPath();
+      for (var j = 0; j <= n; j++) {
+        var pt2 = miniXY(j % n, maxR * 0.5);
+        if (j === 0) ctx.moveTo(pt2.x, pt2.y);
+        else ctx.lineTo(pt2.x, pt2.y);
+      }
+      ctx.closePath();
       ctx.strokeStyle = 'rgba(46,196,182,0.06)';
-      ctx.lineWidth = 0.4;
-      ctx.beginPath(); ctx.moveTo(cx, cy - maxR); ctx.lineTo(cx, cy + maxR); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - maxR, cy); ctx.lineTo(cx + maxR, cy); ctx.stroke();
+      ctx.lineWidth = 0.3;
+      ctx.stroke();
 
-      // 4 quadrant polygons
+      // Unified data polygon
+      ctx.beginPath();
+      for (var k = 0; k < n; k++) {
+        var pt3 = miniXY(k, maxR * dispScores[k] / 100);
+        if (k === 0) ctx.moveTo(pt3.x, pt3.y);
+        else ctx.lineTo(pt3.x, pt3.y);
+      }
+      ctx.closePath();
+
+      // Gradient fill
+      var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+      g.addColorStop(0, 'rgba(46,196,182,0.03)');
+      g.addColorStop(1, 'rgba(46,196,182,0.18)');
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(46,196,182,0.5)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Colored segment strokes on top for quadrant identity
       RADAR_QUADRANTS.forEach(function(quad) {
         var indices = quad.displayIndices;
-        if (indices.length === 0) return;
+        if (indices.length < 2) return;
         ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        indices.forEach(function(di) {
-          var pt = miniXY(di, maxR * dispScores[di] / 100);
-          ctx.lineTo(pt.x, pt.y);
-        });
-        ctx.lineTo(cx, cy);
-        ctx.closePath();
-        ctx.fillStyle = quad.fillColor;
-        ctx.fill();
-        ctx.strokeStyle = quad.strokeColor;
-        ctx.lineWidth = 1;
+        for (var m = 0; m < indices.length; m++) {
+          var ptq = miniXY(indices[m], maxR * dispScores[indices[m]] / 100);
+          if (m === 0) ctx.moveTo(ptq.x, ptq.y);
+          else ctx.lineTo(ptq.x, ptq.y);
+        }
+        ctx.strokeStyle = quad.strokeColor.replace(/[\d.]+\)$/, '0.6)');
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       });
     }
