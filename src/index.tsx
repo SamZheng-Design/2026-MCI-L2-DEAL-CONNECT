@@ -607,6 +607,18 @@ app.get('/', (c) => {
     .dim-group-return { background: rgba(96,165,250,0.1); color: #60a5fa; }
     .dim-group-control { background: rgba(139,92,246,0.1); color: #a78bfa; }
     .dim-group-adequacy { background: rgba(74,222,128,0.1); color: #4ade80; }
+    /* Primary Category Card (一级标签折叠卡片) */
+    .primary-cat-card { border-radius: 16px; overflow: hidden; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+    .primary-cat-card:hover { transform: translateY(-1px); }
+    .primary-cat-header { cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px 16px; transition: background 0.2s; user-select: none; }
+    .primary-cat-header:hover { filter: brightness(1.08); }
+    .primary-cat-body { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.3s; padding: 0 16px; }
+    .primary-cat-body.expanded { max-height: 2000px; padding: 0 16px 16px 16px; }
+    .primary-cat-arrow { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+    .primary-cat-arrow.rotated { transform: rotate(180deg); }
+    .primary-cat-score-ring { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; }
+    .primary-cat-score-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2.5px solid currentColor; opacity: 0.2; }
+    .primary-cat-dims-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 9px; font-size: 10px; font-weight: 700; padding: 0 5px; }
     .skeleton-line { height: 12px; background: linear-gradient(90deg, rgba(46,196,182,0.06) 0%, rgba(46,196,182,0.12) 50%, rgba(46,196,182,0.06) 100%); background-size: 200% 100%; border-radius: 6px; animation: shimmer 1.5s infinite; margin-bottom: 8px; }
     .skeleton-line.w-60 { width: 60%; }
     .skeleton-line.w-80 { width: 80%; }
@@ -4665,63 +4677,89 @@ app.get('/', (c) => {
         sieveResults = '<div class="text-center py-4"><p class="text-sm text-[#3D7A70]">' + t('detNoSieve') + '</p><button onclick="goToDashboard(); setTimeout(showSieveManager, 300);" class="text-xs text-[#06B6D4] mt-1 hover:underline">' + t('detGoManageSieve') + '</button></div>';
       }
 
-      // Dimension detail list HTML — V1 图谱维度卡片 (简单名词 + hover tooltip)
+      // Dimension detail list HTML — 一级标签(PRIMARY_CATEGORIES)折叠 → 二级标签(V1维度)展开
       let dimensionDetails = '';
-      v1Result.axes.forEach(function(axis, i) {
-        var dim = RADAR_DIMENSIONS[i];
-        var score = axis.score;
-        var dGrade = getScoreGrade(score);
-        var barWidth = score;
-        var tierStars = '';
-        for (var t_ = 0; t_ < 5; t_++) { tierStars += '<i class="fas fa-star" style="font-size:8px; color:' + (t_ < axis.tier ? axis.color : 'rgba(46,196,182,0.15)') + '; margin-right:1px;"></i>'; }
-        // confidence 色条
-        var confColor = axis.confidence >= 70 ? '#10b981' : axis.confidence >= 40 ? '#f59e0b' : '#ef4444';
-        var confLabel = axis.confidence >= 70 ? (currentLang === 'zh' ? '高可信' : 'High') : axis.confidence >= 40 ? (currentLang === 'zh' ? '中可信' : 'Med') : (currentLang === 'zh' ? '低可信' : 'Low');
-        // 分组标签（风险/收益/管控）
-        var groupLabel = getDimGroup(dim);
-        var groupColor = getDimGroupColor(dim);
-        var groupCls = getDimGroupCls(dim);
-        // missing 字段提示
-        var missingHtml = '';
-        if (axis.missing && axis.missing.length > 0) {
-          missingHtml = '<div class="flex flex-wrap gap-1 mt-1.5">' +
-            axis.missing.slice(0, 4).map(function(f) { return '<span class="px-1.5 py-0.5 rounded text-xs" style="background:rgba(239,68,68,0.08); color:#f87171; font-size:9px; border:1px solid rgba(239,68,68,0.15);"><i class="fas fa-exclamation-circle mr-0.5" style="font-size:7px;"></i>' + f + '</span>'; }).join('') +
-            (axis.missing.length > 4 ? '<span class="text-xs text-[#3D7A70]">+' + (axis.missing.length - 4) + '</span>' : '') +
-          '</div>';
-        }
-        dimensionDetails += '<div class="radar-dim-item p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-[rgba(46,196,182,0.12)] transition-all cursor-pointer" onclick="toggleDimDetail(this)">' +
-          '<div class="flex items-center gap-3">' +
-            '<div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + axis.color + '15;"><i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:13px;"></i></div>' +
-            '<div class="flex-1 min-w-0">' +
-              '<div class="flex items-center justify-between mb-1">' +
-                '<div class="flex items-center gap-1.5">' +
-                  '<span class="dim-group-tag ' + groupCls + '">' + groupLabel + '</span>' +
-                  '<span class="dim-tooltip-wrap"><span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span><i class="fas fa-info-circle" style="font-size:9px;color:#3D7A70;margin-left:2px;"></i><span class="dim-tooltip-text"><b style="color:' + axis.color + ';">' + getDimLabel(dim) + '</b><br>' + getDimDesc(dim) + '</span></span>' +
-                  '<span class="flex items-center">' + tierStars + '</span>' +
+      PRIMARY_CATEGORIES.forEach(function(cat) {
+        // 收集该一级标签下的所有二级维度
+        var catDims = [];
+        var catScoreSum = 0;
+        v1Result.axes.forEach(function(axis, i) {
+          var dim = RADAR_DIMENSIONS[i];
+          var belongCat = DIM_TO_PRIMARY[dim.key];
+          if (belongCat && belongCat.id === cat.id) {
+            catDims.push({ axis: axis, dim: dim, idx: i });
+            catScoreSum += axis.score;
+          }
+        });
+        if (catDims.length === 0) return;
+        var catAvgScore = Math.round(catScoreSum / catDims.length);
+        var catGrade = getScoreGrade(catAvgScore);
+        var catName = currentLang === 'zh' ? cat.zhName : cat.enName;
+
+        // 生成二级维度卡片HTML
+        var innerDimsHtml = '';
+        catDims.forEach(function(item) {
+          var axis = item.axis, dim = item.dim;
+          var score = axis.score;
+          var dGrade = getScoreGrade(score);
+          var barWidth = score;
+          var tierStars = '';
+          for (var t_ = 0; t_ < 5; t_++) { tierStars += '<i class="fas fa-star" style="font-size:8px; color:' + (t_ < axis.tier ? axis.color : 'rgba(46,196,182,0.15)') + '; margin-right:1px;"></i>'; }
+          var confColor = axis.confidence >= 70 ? '#10b981' : axis.confidence >= 40 ? '#f59e0b' : '#ef4444';
+          var confLabel = axis.confidence >= 70 ? (currentLang === 'zh' ? '高可信' : 'High') : axis.confidence >= 40 ? (currentLang === 'zh' ? '中可信' : 'Med') : (currentLang === 'zh' ? '低可信' : 'Low');
+          innerDimsHtml += '<div class="radar-dim-item p-3 bg-[#0B2624] rounded-xl border border-[rgba(46,196,182,0.08)] hover:border-[rgba(46,196,182,0.12)] transition-all cursor-pointer" onclick="toggleDimDetail(this)">' +
+            '<div class="flex items-center gap-3">' +
+              '<div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background: ' + axis.color + '15;"><i class="fas ' + axis.icon + '" style="color:' + axis.color + '; font-size:12px;"></i></div>' +
+              '<div class="flex-1 min-w-0">' +
+                '<div class="flex items-center justify-between mb-1">' +
+                  '<div class="flex items-center gap-1.5">' +
+                    '<span class="dim-tooltip-wrap"><span class="text-xs font-bold text-[#B0D5CF]">' + getDimLabel(dim) + '</span><i class="fas fa-info-circle" style="font-size:9px;color:#3D7A70;margin-left:2px;"></i><span class="dim-tooltip-text"><b style="color:' + axis.color + ';">' + getDimLabel(dim) + '</b><br>' + getDimDesc(dim) + '</span></span>' +
+                    '<span class="flex items-center">' + tierStars + '</span>' +
+                  '</div>' +
+                  '<div class="flex items-center gap-2">' +
+                    '<span class="text-xs font-mono" style="color:' + confColor + ';">' + confLabel + '</span>' +
+                    '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + score + '</span>' +
+                    '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">T' + axis.tier + '</span>' +
+                  '</div>' +
                 '</div>' +
-                '<div class="flex items-center gap-2">' +
-                  '<span class="text-xs font-mono" style="color:' + confColor + ';">' + confLabel + '</span>' +
-                  '<span class="text-xs font-bold" style="color:' + dGrade.color + ';">' + score + '</span>' +
-                  '<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:' + dGrade.bg + '; color:' + dGrade.color + ';">T' + axis.tier + '</span>' +
-                '</div>' +
+                '<div class="h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden"><div class="h-full rounded-full transition-all" style="width:' + barWidth + '%; background: linear-gradient(90deg, ' + axis.color + ', ' + axis.color + 'cc);"></div></div>' +
               '</div>' +
-              '<div class="h-1.5 rounded-full bg-[rgba(46,196,182,0.1)] overflow-hidden"><div class="h-full rounded-full transition-all" style="width:' + barWidth + '%; background: linear-gradient(90deg, ' + axis.color + ', ' + axis.color + 'cc);"></div></div>' +
+              '<i class="fas fa-chevron-down text-[#2A5E58] text-xs flex-shrink-0 dim-arrow transition-transform"></i>' +
             '</div>' +
-            '<i class="fas fa-chevron-down text-[#2A5E58] text-xs flex-shrink-0 dim-arrow transition-transform"></i>' +
+            '<div class="dim-detail hidden mt-3 pt-3 border-t border-[rgba(46,196,182,0.08)]">' +
+              '<p class="text-xs text-[#8EBDB5] leading-relaxed mb-2"><i class="fas fa-calculator mr-1" style="color:' + axis.color + ';"></i>' + axis.explanation + '</p>' +
+              '<p class="text-xs text-[#5A9A90] leading-relaxed mb-2"><i class="fas fa-info-circle mr-1" style="color:' + axis.color + ';"></i>' + getDimDesc(dim) + '</p>' +
+              '<div class="flex items-center gap-2 mb-1.5">' +
+                '<span class="text-xs text-[#3D7A70]">' + (currentLang === 'zh' ? '可信度' : 'Confidence') + '</span>' +
+                '<div class="flex-1 h-1.5 rounded-full bg-[rgba(46,196,182,0.08)] overflow-hidden"><div class="h-full rounded-full" style="width:' + axis.confidence + '%; background:' + confColor + ';"></div></div>' +
+                '<span class="text-xs font-mono font-bold" style="color:' + confColor + ';">' + axis.confidence + '%</span>' +
+              '</div>' +
+              (axis.missing && axis.missing.length > 0 ? '<div class="flex items-start gap-1.5"><span class="text-xs text-[#ef4444] flex-shrink-0"><i class="fas fa-exclamation-triangle" style="font-size:9px;"></i></span><div class="text-xs text-[#f87171]">' + (currentLang === 'zh' ? '缺失字段: ' : 'Missing: ') + axis.missing.join(', ') + '</div></div>' : '<div class="text-xs text-[#10b981]"><i class="fas fa-check-circle mr-1" style="font-size:9px;"></i>' + (currentLang === 'zh' ? '数据完整' : 'Data complete') + '</div>') +
+            '</div>' +
+          '</div>';
+        });
+
+        // 一级标签卡片
+        dimensionDetails += '<div class="primary-cat-card" style="background:' + cat.bgColor + '; border: 1px solid ' + cat.borderColor + ';">' +
+          '<div class="primary-cat-header" onclick="togglePrimaryCategory(this)">' +
+            '<div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:' + cat.color + '20;"><i class="fas ' + cat.icon + '" style="color:' + cat.color + '; font-size:16px;"></i></div>' +
+            '<div class="flex-1 min-w-0">' +
+              '<div class="flex items-center gap-2">' +
+                '<span class="text-sm font-bold" style="color:#E8F5F3;">' + catName + '</span>' +
+                '<span class="primary-cat-dims-count" style="background:' + cat.color + '20; color:' + cat.color + ';">' + catDims.length + '</span>' +
+              '</div>' +
+              '<div class="flex items-center gap-3 mt-1">' +
+                '<div class="flex-1 h-1.5 rounded-full overflow-hidden" style="background:' + cat.color + '15;"><div class="h-full rounded-full" style="width:' + catAvgScore + '%; background:' + cat.color + ';"></div></div>' +
+                '<span class="text-xs font-bold" style="color:' + cat.color + ';">' + catAvgScore + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-2">' +
+              '<span class="text-xs px-2 py-0.5 rounded-md font-bold" style="background:' + catGrade.bg + '; color:' + catGrade.color + ';">' + catGrade.grade + '</span>' +
+              '<i class="fas fa-chevron-down primary-cat-arrow" style="color:' + cat.color + '; font-size:12px;"></i>' +
+            '</div>' +
           '</div>' +
-          '<div class="dim-detail hidden mt-3 pt-3 border-t border-[rgba(46,196,182,0.08)]">' +
-            // explanation (可审计文案)
-            '<p class="text-xs text-[#8EBDB5] leading-relaxed mb-2"><i class="fas fa-calculator mr-1" style="color:' + axis.color + ';"></i>' + axis.explanation + '</p>' +
-            // 维度描述
-            '<p class="text-xs text-[#5A9A90] leading-relaxed mb-2"><i class="fas fa-info-circle mr-1" style="color:' + axis.color + ';"></i>' + getDimDesc(dim) + '</p>' +
-            // confidence 条
-            '<div class="flex items-center gap-2 mb-1.5">' +
-              '<span class="text-xs text-[#3D7A70]">' + (currentLang === 'zh' ? '可信度' : 'Confidence') + '</span>' +
-              '<div class="flex-1 h-1.5 rounded-full bg-[rgba(46,196,182,0.08)] overflow-hidden"><div class="h-full rounded-full" style="width:' + axis.confidence + '%; background:' + confColor + ';"></div></div>' +
-              '<span class="text-xs font-mono font-bold" style="color:' + confColor + ';">' + axis.confidence + '%</span>' +
-            '</div>' +
-            // 缺失字段
-            (axis.missing && axis.missing.length > 0 ? '<div class="flex items-start gap-1.5"><span class="text-xs text-[#ef4444] flex-shrink-0"><i class="fas fa-exclamation-triangle" style="font-size:9px;"></i></span><div class="text-xs text-[#f87171]">' + (currentLang === 'zh' ? '缺失字段: ' : 'Missing: ') + axis.missing.join(', ') + '</div></div>' : '<div class="text-xs text-[#10b981]"><i class="fas fa-check-circle mr-1" style="font-size:9px;"></i>' + (currentLang === 'zh' ? '数据完整' : 'Data complete') + '</div>') +
+          '<div class="primary-cat-body">' +
+            '<div class="space-y-2">' + innerDimsHtml + '</div>' +
           '</div>' +
         '</div>';
       });
@@ -4770,13 +4808,13 @@ app.get('/', (c) => {
               '</div>' +
             '</div>' +
           '</div>' +
-          // ===== Dimension details (expandable) =====
+          // ===== Dimension details — 一级标签折叠展开 =====
           '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]">' +
             '<div class="flex items-center justify-between mb-3">' +
-              '<h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-list-ul mr-1.5 text-[#2EC4B6]"></i>' + t('detDimDetail') + '</h3>' +
+              '<h3 class="text-sm font-bold text-[#E8F5F3]"><i class="fas fa-layer-group mr-1.5 text-[#2EC4B6]"></i>' + t('detDimDetail') + '</h3>' +
               '<button onclick="toggleAllDims()" class="text-xs text-[#3DD8CA] hover:text-[#2EC4B6] font-medium"><i class="fas fa-expand-alt mr-1"></i>' + t('detExpandAll') + '</button>' +
             '</div>' +
-            '<div class="space-y-2">' + dimensionDetails + '</div>' +
+            '<div class="space-y-3">' + dimensionDetails + '</div>' +
           '</div>' +
           // Sieve match overview
           (hasMatch ? '<div class="bg-[#0F2E2B] rounded-2xl p-4 border border-[rgba(46,196,182,0.08)]"><h3 class="text-sm font-bold text-[#E8F5F3] mb-3"><i class="fas fa-bullseye mr-1.5" style="color:' + matchColor + ';"></i>' + t('detCurrentSieveMatch') + '</h3><div class="flex items-center gap-4"><div class="w-16 h-16 rounded-full border-4 flex items-center justify-center" style="border-color:' + matchColor + ';"><span class="text-xl font-bold" style="color:' + matchColor + ';">' + currentDeal.matchScore + '%</span></div><div class="flex-1"><p class="text-sm font-semibold text-[#B0D5CF]">' + (currentDeal.sieveName || t('dealSieve')) + '</p><p class="text-xs text-[#5A9A90] mt-1">' + (currentDeal.matchScore >= 80 ? t('detHighMatch') : currentDeal.matchScore >= 60 ? t('detMidMatch') : t('detLowMatch')) + '</p><div class="match-bar mt-2" style="height:4px;"><div class="match-bar-fill" style="width:' + currentDeal.matchScore + '%; background:' + matchColor + ';"></div></div></div></div></div>' : '') +
@@ -4849,6 +4887,27 @@ app.get('/', (c) => {
           else { detail.classList.add('hidden'); if (arrow) arrow.style.transform = ''; }
         }
       });
+      // Also expand/collapse all primary categories
+      document.querySelectorAll('.primary-cat-card').forEach(el => {
+        var body = el.querySelector('.primary-cat-body');
+        var arrow = el.querySelector('.primary-cat-arrow');
+        if (body) {
+          if (allDimsExpanded) { body.classList.add('expanded'); if (arrow) arrow.classList.add('rotated'); }
+          else { body.classList.remove('expanded'); if (arrow) arrow.classList.remove('rotated'); }
+        }
+      });
+    }
+
+    // 一级标签折叠/展开
+    function togglePrimaryCategory(el) {
+      var card = el.closest('.primary-cat-card');
+      if (!card) return;
+      var body = card.querySelector('.primary-cat-body');
+      var arrow = card.querySelector('.primary-cat-arrow');
+      if (body) {
+        body.classList.toggle('expanded');
+        if (arrow) arrow.classList.toggle('rotated');
+      }
     }
 
     function switchDetailView(view) {
